@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第九章 二重积分 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin: 12px 0;
+        }
+        
+        .sidebar a {
+            color: #555;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .sidebar a:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            width: calc(100% - 280px);
+            background: white;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        /* Section Styles */
+        .section {
+            background: #f8f9fa;
+            padding: 35px;
+            margin: 30px 0;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid #764ba2;
+        }
+        
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+        
+        tr:hover {
+            background: #f0f4ff;
+        }
+        
+        /* Math Formula Styles */
+        .formula-box {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 12px;
+            border: 2px solid #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .MathJax {
+            color: #1e40af !important;
+        }
+        
+        /* Collapsible Sections */
+        .collapsible {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            padding: 20px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            font-weight: 600;
+            border-radius: 10px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .collapsible:hover {
+            opacity: 0.9;
+            transform: translateX(5px);
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            font-size: 0.9em;
+            transition: transform 0.3s ease;
+        }
+        
+        .collapsible.active:after {
+            transform: rotate(-180deg);
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: white;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .content-inner {
+            padding: 25px;
+        }
+        
+        /* Example Box */
+        .example-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 12px;
+            border-left: 5px solid #f59e0b;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+        }
+        
+        .example-box h4 {
+            color: #92400e;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+        
+        /* Note Box */
+        .note-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #3b82f6;
+        }
+        
+        .note-box strong {
+            color: #1e40af;
+        }
+        
+        /* Property Box */
+        .property-box {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 5px solid #10b981;
+        }
+        
+        /* Interactive Button */
+        .interactive-btn {
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 15px 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .interactive-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        /* Quiz Container */
+        .quiz-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 25px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .quiz-option {
+            background: #f3f4f6;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .quiz-option:hover {
+            background: #e5e7eb;
+            border-color: #667eea;
+        }
+        
+        .quiz-option.correct {
+            background: #d1fae5;
+            border-color: #10b981;
+        }
+        
+        .quiz-option.incorrect {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+        
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 999;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+        
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .scroll-top:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <h2>📚 目录导航</h2>
+            <ul>
+                <li><a href="#overview">考试大纲概要</a></li>
+                <li><a href="#concept">一、概念与性质</a></li>
+                <li><a href="#calculation">二、计算方法</a></li>
+                <li><a href="#examples">三、典型例题</a></li>
+                <li><a href="#quiz">四、互动测验</a></li>
+            </ul>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h1>第九章 二重积分</h1>
+                <p>深入理解二重积分的概念、性质与计算方法</p>
+            </div>
+            
+            <!-- 考试大纲 -->
+            <section id="overview" class="section">
+                <h2>📋 考试大纲要求</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>大纲考试内容</th>
+                            <th>数学一</th>
+                            <th>数学二</th>
+                            <th>数学三</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>二重积分的概念</td>
+                            <td>理解</td>
+                            <td>理解</td>
+                            <td>理解</td>
+                        </tr>
+                        <tr>
+                            <td>二重积分的中值定理</td>
+                            <td>了解</td>
+                            <td>了解</td>
+                            <td>了解</td>
+                        </tr>
+                        <tr>
+                            <td>二重积分的计算方法（直角坐标、极坐标）</td>
+                            <td>掌握</td>
+                            <td>掌握</td>
+                            <td>掌握</td>
+                        </tr>
+                        <tr>
+                            <td>无界区域上较简单的反常二重积分</td>
+                            <td></td>
+                            <td></td>
+                            <td>了解并会计算</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- 概念与性质 -->
+            <section id="concept" class="section">
+                <h2>🎯 一、二重积分的概念及性质</h2>
+                
+                <button class="collapsible">1. 二重积分的概念</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <h3>定义</h3>
+                        <p>设函数 \(z = f(x,y)\) 在有界闭区域 \(D\) 上有定义，将区域 \(D\) 任意分成 \(n\) 个小闭区域：</p>
+                        <div class="formula-box">
+                            $$\Delta\sigma_1, \Delta\sigma_2, \cdots, \Delta\sigma_n$$
+                        </div>
+                        <p>其中 \(\Delta\sigma_i\) 表示第 \(i\) 个小区域，也表示它的面积。在每个 \(\Delta\sigma_i\) 上任取一点 \((\xi_i, \eta_i)\)，作乘积 \(f(\xi_i, \eta_i)\Delta\sigma_i\)，并求和 \(\sum_{i=1}^{n}f(\xi_i, \eta_i)\Delta\sigma_i\)。</p>
+                        <p>记 \(\lambda\) 为 \(n\) 个小区域 \(\Delta\sigma_1, \Delta\sigma_2, \cdots, \Delta\sigma_n\) 中的最大直径，如果当 \(\lambda \to 0\) 时，此极限存在，则此极限值为函数 \(f(x,y)\) 在区域 \(D\) 上的<strong>二重积分</strong>，记为：</p>
+                        <div class="formula-box">
+                            $$\iint_D f(x,y)d\sigma = \lim_{\lambda \to 0}\sum_{i=1}^{n}f(\xi_i, \eta_i)\Delta\sigma_i$$
+                        </div>
+                        
+                        <h3>几何意义</h3>
+                        <div class="note-box">
+                            <p><strong>当 \(f(x,y) \geq 0\) 时：</strong>二重积分 \(\iint_D f(x,y)d\sigma\) 表示以区域 \(D\) 为底、以曲面 \(z = f(x,y)\) 为顶的曲顶柱体的体积。</p>
+                            <p><strong>当 \(f(x,y) < 0\) 时：</strong>二重积分的值为负值，其绝对值等于上述曲顶柱体的体积。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">2. 二重积分的性质</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <h3>性质1（不等式性质）</h3>
+                        <div class="property-box">
+                            <p><strong>(1)</strong> 若在 \(D\) 上 \(f(x,y) \leq g(x,y)\)，则：</p>
+                            <div class="formula-box">
+                                $$\iint_D f(x,y)d\sigma \leq \iint_D g(x,y)d\sigma$$
+                            </div>
+                        </div>
+                        
+                        <div class="property-box">
+                            <p><strong>(2)</strong> 若在 \(D\) 上 \(m \leq f(x,y) \leq M\)，则：</p>
+                            <div class="formula-box">
+                                $$m\sigma \leq \iint_D f(x,y)d\sigma \leq M\sigma$$
+                            </div>
+                            <p>其中 \(\sigma\) 为区域 \(D\) 的面积。</p>
+                        </div>
+                        
+                        <div class="property-box">
+                            <p><strong>(3)</strong> 绝对值不等式：</p>
+                            <div class="formula-box">
+                                $$\left|\iint_D f(x,y)d\sigma\right| \leq \iint_D |f(x,y)|d\sigma$$
+                            </div>
+                        </div>
+                        
+                        <h3>性质2（中值定理）</h3>
+                        <div class="property-box">
+                            <p>设函数 \(f(x,y)\) 在闭区域 \(D\) 上连续，\(\sigma\) 为区域 \(D\) 的面积，则在 \(D\) 上至少存在一点 \((\xi, \eta)\)，使得：</p>
+                            <div class="formula-box">
+                                $$\iint_D f(x,y)d\sigma = f(\xi, \eta) \cdot \sigma$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 计算方法 -->
+            <section id="calculation" class="section">
+                <h2>🔢 二、二重积分的计算</h2>
+                
+                <button class="collapsible">1. 利用直角坐标计算</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <h3>(1) 先 \(y\) 后 \(x\) 积分</h3>
+                        <p>若积分区域 \(D\) 可以用 \(a \leq x \leq b\)，\(\varphi_1(x) \leq y \leq \varphi_2(x)\) 表示，则：</p>
+                        <div class="formula-box">
+                            $$\iint_D f(x,y)d\sigma = \int_a^b dx \int_{\varphi_1(x)}^{\varphi_2(x)} f(x,y)dy$$
+                        </div>
+                        
+                        <h3>(2) 先 \(x\) 后 \(y\) 积分</h3>
+                        <p>若积分区域 \(D\) 可以用 \(c \leq y \leq d\)，\(\psi_1(y) \leq x \leq \psi_2(y)\) 表示，则：</p>
+                        <div class="formula-box">
+                            $$\iint_D f(x,y)d\sigma = \int_c^d dy \int_{\psi_1(y)}^{\psi_2(y)} f(x,y)dx$$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">2. 利用极坐标计算</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>先 \(r\) 后 \(\theta\) 积分，若区域 \(D\) 可以用 \(\alpha \leq \theta \leq \beta\)，\(\varphi_1(\theta) \leq r \leq \varphi_2(\theta)\) 表示，则：</p>
+                        <div class="formula-box">
+                            $$\iint_D f(x,y)d\sigma = \int_\alpha^\beta d\theta \int_{\varphi_1(\theta)}^{\varphi_2(\theta)} f(r\cos\theta, r\sin\theta)rdr$$
+                        </div>
+                        
+                        <div class="note-box">
+                            <p><strong>【注】适合用极坐标计算的二重积分的特征：</strong></p>
+                            <p>(1) 适合用极坐标计算的被积函数：\(f(\sqrt{x^2+y^2})\)，\(f\left(\frac{y}{x}\right)\)，\(f\left(\frac{x}{y}\right)\)</p>
+                            <p>(2) 适合用极坐标的积分域，如：</p>
+                            <div class="formula-box">
+                                $$x^2 + y^2 \leq R^2; \quad r^2 \leq x^2 + y^2 \leq R^2; \quad x^2 + y^2 \leq 2ax; \quad x^2 + y^2 \leq 2by$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">3. 利用函数的奇偶性计算</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <div class="property-box">
+                            <p><strong>(1)</strong> 若积分域 \(D\) 关于 \(y\) 轴对称，\(f(x,y)\) 关于 \(x\) 有奇偶性，则：</p>
+                            <div class="formula-box">
+                                $$\iint_D f(x,y)d\sigma = \begin{cases}
+                                2\iint_{D_{x\geq 0}} f(x,y)d\sigma, & f(x,y) \text{关于}x\text{为偶函数}\\
+                                0, & f(x,y) \text{关于}x\text{为奇函数}
+                                \end{cases}$$
+                            </div>
+                        </div>
+                        
+                        <div class="property-box">
+                            <p><strong>(2)</strong> 若积分域 \(D\) 关于 \(x\) 轴对称，\(f(x,y)\) 关于 \(y\) 有奇偶性，则：</p>
+                            <div class="formula-box">
+                                $$\iint_D f(x,y)d\sigma = \begin{cases}
+                                2\iint_{D_{y\geq 0}} f(x,y)d\sigma, & f(x,y) \text{关于}y\text{为偶函数}\\
+                                0, & f(x,y) \text{关于}y\text{为奇函数}
+                                \end{cases}$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">4. 利用变量的轮换对称性计算</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <div class="note-box">
+                            <p>如果积分域 \(D\) 具有轮换对称性（即关于直线 \(y=x\) 对称），则 \(D\) 的表达式中 \(x\)、\(y\) 互换后不变，此时：</p>
+                            <div class="formula-box">
+                                $$\iint_D f(x,y)d\sigma = \iint_D f(y,x)d\sigma$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 典型例题 -->
+            <section id="examples" class="section">
+                <h2>📝 三、常考题型与典型例题</h2>
+                
+                <div class="example-box">
+                    <h4>例题1：交换积分次序</h4>
+                    <p><strong>题目：</strong>交换累次积分 \(\int_0^1 dx \int_{x^2}^{2-x} f(x,y)dy\) 的次序。</p>
+                    <button class="interactive-btn" onclick="showSolution('sol1')">显示解答</button>
+                    <div id="sol1" style="display:none; margin-top:15px;">
+                        <p><strong>解：</strong></p>
+                        <p>首先画域，\(y\) 应介于 \(y=x^2\) 与 \(y=2-x\) 之间，\(x\) 介于0与1之间。</p>
+                        <p>原式 = \(\int_0^1 dy \int_0^{\sqrt{y}} f(x,y)dx + \int_1^2 dy \int_0^{2-y} f(x,y)dx\)</p>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例题6：奇偶性应用</h4>
+                    <p><strong>题目：</strong>设 \(D = \{(x,y) | x^2 + y^2 \leq 1\}\)，则 \(\iint_D (x^2 - y)dxdy =\) ______</p>
+                    <button class="interactive-btn" onclick="showSolution('sol6')">显示解答</button>
+                    <div id="sol6" style="display:none; margin-top:15px;">
+                        <p><strong>解：</strong></p>
+                        <p>\(y\) 关于 \(y\) 为奇函数，积分域关于 \(x\) 轴上下对称，则 \(\iint_D y\,dxdy = 0\)</p>
+                        <div class="formula-box">
+                            $$\text{原式} = \iint_D x^2 dxdy = \frac{1}{2}\iint_D (x^2+y^2)dxdy$$
+                        </div>
+                        <p>（变量对称性）</p>
+                        <div class="formula-box">
+                            $$= \frac{1}{2}\int_0^{2\pi}d\theta\int_0^1 r^3 dr = \frac{1}{2} \cdot 2\pi \cdot \frac{1}{4} = \frac{\pi}{4}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例题11：复杂区域积分</h4>
+                    <p><strong>题目：</strong>设平面域 \(D = \{(x,y) | 1 \leq x^2 + y^2 \leq 4, x \geq 0, y \geq 0\}\)，计算：</p>
+                    <div class="formula-box">
+                        $$\iint_D \frac{x\sin(\pi\sqrt{x^2+y^2})}{x+y}dxdy$$
+                    </div>
+                    <button class="interactive-btn" onclick="showSolution('sol11')">显示解答</button>
+                    <div id="sol11" style="display:none; margin-top:15px;">
+                        <p><strong>解：</strong>由于积分域关于直线 \(y=x\) 对称：</p>
+                        <div class="formula-box">
+                            $$\text{原式} = \frac{1}{2}\iint_D \sin(\pi\sqrt{x^2+y^2})dxdy$$
+                        </div>
+                        <p>转换为极坐标：</p>
+                        <div class="formula-box">
+                            $$= \frac{1}{2}\int_0^{\pi/2}d\theta\int_1^2 r\sin(\pi r)dr$$
+                        </div>
+                        <p>最终结果：\(\displaystyle -\frac{3}{4}\)</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 互动测验 -->
+            <section id="quiz" class="section">
+                <h2>🎓 四、互动测验</h2>
+                <div class="quiz-container">
+                    <h3>测试题1：二重积分的性质</h3>
+                    <p>若在区域 \(D\) 上，\(f(x,y) \leq g(x,y)\)，则下列哪个结论正确？</p>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">
+                        A. \(\iint_D f(x,y)d\sigma \leq \iint_D g(x,y)d\sigma\)
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        B. \(\iint_D f(x,y)d\sigma \geq \iint_D g(x,y)d\sigma\)
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        C. \(\iint_D f(x,y)d\sigma = \iint_D g(x,y)d\sigma\)
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        D. 无法确定
+                    </div>
+                </div>
+                
+                <div class="quiz-container">
+                    <h3>测试题2：极坐标应用</h3>
+                    <p>下列哪种积分域最适合使用极坐标计算？</p>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        A. \(0 \leq x \leq 1, 0 \leq y \leq 1\)
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">
+                        B. \(x^2 + y^2 \leq 1\)
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        C. \(0 \leq x \leq 1, x \leq y \leq 2x\)
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        D. \(x + y \leq 1, x \geq 0, y \geq 0\)
+                    </div>
+                </div>
+            </section>
+            
+            <div style="text-align:center; margin: 50px 0; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
+                <h2>🎉 恭喜你完成学习！</h2>
+                <p style="font-size: 1.2em; margin-top: 15px;">继续努力，掌握更多数学知识！</p>
+            </div>
+        </main>
+    </div>
+    
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
+    
+    <script>
+        // Collapsible sections
+        const collapsibles = document.getElementsByClassName("collapsible");
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+        
+        // Show solution
+        function showSolution(id) {
+            const sol = document.getElementById(id);
+            if (sol.style.display === "none") {
+                sol.style.display = "block";
+                event.target.textContent = "隐藏解答";
+            } else {
+                sol.style.display = "none";
+                event.target.textContent = "显示解答";
+            }
+        }
+        
+        // Quiz answer check
+        function checkAnswer(element, isCorrect) {
+            const options = element.parentElement.getElementsByClassName('quiz-option');
+            for (let option of options) {
+                option.style.pointerEvents = 'none';
+            }
+            
+            if (isCorrect) {
+                element.classList.add('correct');
+                alert('✅ 回答正确！做得好！');
+            } else {
+                element.classList.add('incorrect');
+                alert('❌ 回答错误，请再想想！');
+            }
+        }
+        
+        // Scroll to top
+        window.onscroll = function() {
+            const scrollTop = document.getElementById('scrollTop');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollTop.style.display = "flex";
+            } else {
+                scrollTop.style.display = "none";
+            }
+        };
+        
+        function scrollToTop() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+        
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+        
+        // Smooth scroll for navigation links
+        document.querySelectorAll('.sidebar a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({behavior: 'smooth'});
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

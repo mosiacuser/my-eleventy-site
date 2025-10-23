@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第10讲：一元函数微分学的几何应用 - 交互式教程</title>
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Fira+Code&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: float 20s linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 30px); }
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Navigation */
+        nav {
+            background: #2c3e50;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        nav a:hover {
+            background: #3498db;
+            transform: translateY(-2px);
+        }
+        
+        /* Main Content */
+        main {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+            position: relative;
+        }
+        
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: #e74c3c;
+        }
+        
+        h3 {
+            color: #34495e;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 5px solid #3498db;
+        }
+        
+        h4 {
+            color: #555;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        /* Formula Box */
+        .formula-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .formula-box.important {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-left-color: #e17055;
+        }
+        
+        /* Interactive Accordion */
+        .accordion {
+            background: #f8f9fa;
+            margin: 15px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        
+        .accordion-header::after {
+            content: '▼';
+            transition: transform 0.3s;
+        }
+        
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+        }
+        
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 20px;
+        }
+        
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #e3f2fd;
+            transition: background-color 0.3s;
+        }
+        
+        /* Example Box */
+        .example {
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #00acc1;
+            position: relative;
+        }
+        
+        .example::before {
+            content: '📝 例题';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #00acc1;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .solution {
+            background: white;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Note Box */
+        .note {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .note::before {
+            content: '💡 注意';
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        
+        /* Button */
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        /* Math Display */
+        .MathJax {
+            color: #2c3e50 !important;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            main {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+        /* Figure placeholder */
+        .figure {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px dashed #dee2e6;
+        }
+        
+        .figure-caption {
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第 10 讲</h1>
+            <div class="subtitle">一元函数微分学的应用（一）—— 几何应用</div>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#overview">总览</a></li>
+                <li><a href="#formulas">计算公式</a></li>
+                <li><a href="#basic-shapes">基本图形</a></li>
+                <li><a href="#examples">典型例题</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <!-- Overview Section -->
+            <section id="overview">
+                <h2>三问解题法</h2>
+                <p style="margin: 20px 0;">本讲介绍如何使用微积分计算几何量，包括面积、体积、弧长等。解题思路分为三个层次：</p>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span><strong>D₁：计算公式（常规操作）</strong></span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>掌握基本的积分公式，包括直角坐标、极坐标、参数方程下的面积、体积、弧长等计算公式。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span><strong>D₁：基本图形的相关几何量大观（常规操作）</strong></span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>熟记常见图形（心形线、玫瑰线、阿基米德螺线等）的面积、体积、弧长等几何量。这些是考试中的常见题型。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span><strong>D₁（常规操作）+ D₂₃（化归经典形式）：各种函数表达形式的几何量计算</strong></span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>对于复杂的函数表达式，需要先化归为标准形式，再使用相应的计算公式。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Formulas Section -->
+            <section id="formulas">
+                <h2>一、计算公式（D₁ 常规操作）</h2>
+                
+                <h3>1. 面积</h3>
+                
+                <div class="formula-box">
+                    <h4>(1) 直角坐标系下的面积公式</h4>
+                    <p>曲线 \( f_1(x) \) 和 \( f_2(x) \) 之间的面积：</p>
+                    <p>$$S = \int_a^b |f_1(x) - f_2(x)| \, dx$$</p>
+                </div>
+                
+                <div class="formula-box">
+                    <h4>(2) 极坐标系下的面积公式</h4>
+                    <p>$$S = \int_a^b \frac{1}{2}[r_1^2(\theta) - r_2^2(\theta)] \, d\theta$$</p>
+                    <div class="figure">
+                        <p>📊 [图(a): 直角坐标下的区域] [图(b): 极坐标下的扇形区域]</p>
+                        <div class="figure-caption">图示：不同坐标系下的面积计算</div>
+                    </div>
+                </div>
+                
+                <div class="formula-box">
+                    <h4>(3) 参数方程表示的曲线</h4>
+                    <p>由参数方程 \(\begin{cases} x = x(t) \\ y = y(t) \end{cases}\) (\(\alpha \leq t \leq \beta\)) 给出的曲线梯形的面积为：</p>
+                    <p>$$S = \int_\alpha^\beta |y| \, dx \stackrel{x=x(t)}{=} \int_\alpha^\beta |y(t) \cdot x'(t)| \, dt$$</p>
+                </div>
+                
+                <h3>2. 旋转体体积</h3>
+                
+                <div class="formula-box">
+                    <h4>(1) 绕 x 轴旋转</h4>
+                    <p>曲线 \( y = f(x) \) 与 \( x = a \), \( x = b \) (\( a < b \)) 及 x 轴围成的曲边梯形绕 x 轴旋转一周所得旋转体的体积为：</p>
+                    <p>$$V = \pi \int_a^b f^2(x) \, dx$$</p>
+                </div>
+                
+                <div class="formula-box">
+                    <h4>(2) 绕 y 轴旋转</h4>
+                    <p>曲线 \( y = f(x) \) 与 \( x = a \), \( x = b(0 \leq a < b) \) 及 x 轴围成的曲边梯形绕 y 轴旋转一周所得旋转体的体积为：</p>
+                    <p>$$V = 2\pi \int_a^b x|f(x)| \, dx$$</p>
+                </div>
+                
+                <div class="formula-box important">
+                    <h4>(3) 平面曲线绕定直线旋转</h4>
+                    <p>设平面曲线为 \( y = f(x) \), \( a \leq x \leq b \)，且 \( f(x) \) 可导。</p>
+                    <p>定直线 \( L_0 \): \( Ax + By + C = 0 \)，且 \( L_0 \) 的任一条垂线与 L 至多有一个交点，则 L 绕 \( L_0 \) 旋转一周所得旋转体的体积为：</p>
+                    <p>$$V = \frac{\pi}{(A^2 + B^2)^{\frac{3}{2}}} \int_a^b [Ax + Bf(x) + C]^2 |Af'(x) - B| \, dx$$</p>
+                    <div class="note">
+                        <p><strong>特别地</strong>，若 \( A = C = 0 \), \( B \neq 0 \)，则 \( L_0 \) 为 \( y = 0 \) (x 轴)，此时体积为：</p>
+                        <p>$$V = \pi \int_a^b f^2(x) \, dx$$</p>
+                    </div>
+                </div>
+                
+                <div class="formula-box">
+                    <h4>(4) 极坐标表示的平面图形</h4>
+                    <p>设平面图形 \( D = \{(r, \theta) \mid 0 \leq r \leq r(\theta), \theta \in [\alpha, \beta] \subset [0, \pi]\} \)，则 D 绕极轴旋转一周所得旋转体的体积为：</p>
+                    <p>$$V = \frac{2}{3}\pi \int_\alpha^\beta r^3(\theta) \sin\theta \, d\theta$$</p>
+                </div>
+                
+                <h3>3. 平均值</h3>
+                <div class="formula-box">
+                    <p>设 \( x \in [a, b] \)，函数 \( f(x) \) 在 \([a, b]\) 上的平均值为：</p>
+                    <p>$$\bar{f} = \frac{1}{b-a} \int_a^b f(x) \, dx$$</p>
+                </div>
+                
+                <h3>4. 平面曲线的弧长（仅数学一、数学二）</h3>
+                
+                <div class="formula-box">
+                    <h4>(1) 直角坐标方程</h4>
+                    <p>若平面光滑曲线由直角坐标方程 \( y = y(x) \) (\( a \leq x \leq b \)) 给出，则：</p>
+                    <p>$$s = \int_a^b \sqrt{1 + [y'(x)]^2} \, dx$$</p>
+                </div>
+                
+                <div class="formula-box">
+                    <h4>(2) 极坐标方程</h4>
+                    <p>若平面光滑曲线由极坐标方程 \( r = r(\theta) \) (\( \alpha \leq \theta \leq \beta \)) 给出，则：</p>
+                    <p>$$s = \int_\alpha^\beta \sqrt{[r(\theta)]^2 + [r'(\theta)]^2} \, d\theta$$</p>
+                </div>
+                
+                <div class="formula-box">
+                    <h4>(3) 参数方程</h4>
+                    <p>若平面光滑曲线由参数方程 \(\begin{cases} x = x(t) \\ y = y(t) \end{cases}\) (\(\alpha \leq t \leq \beta\)) 给出，则：</p>
+                    <p>$$s = \int_\alpha^\beta \sqrt{[x'(t)]^2 + [y'(t)]^2} \, dt$$</p>
+                </div>
+                
+                <h3>5. 旋转曲面的面积（侧面积）（仅数学一、数学二）</h3>
+                
+                <div class="formula-box">
+                    <h4>(1) 绕 x 轴旋转</h4>
+                    <p>曲线 \( y = y(x) \) 在区间 \([a, b]\) 上的曲线弧段绕 x 轴旋转一周所得旋转曲面的面积为：</p>
+                    <p>$$S = 2\pi \int_a^b |y(x)| \sqrt{1 + [y'(x)]^2} \, dx$$</p>
+                </div>
+                
+                <div class="formula-box">
+                    <h4>(2) 绕 y 轴旋转（极坐标）</h4>
+                    <p>曲线 \( r = r(\theta) \) 在区间 \([\alpha, \beta] \subset [0, \pi]\) 上的曲线弧段绕 x 轴旋转一周所得旋转曲面的面积为：</p>
+                    <p>$$S = 2\pi \int_\alpha^\beta |r(\theta)| \sin\theta \sqrt{[r(\theta)]^2 + [r'(\theta)]^2} \, d\theta$$</p>
+                </div>
+                
+                <div class="formula-box">
+                    <h4>(3) 参数方程表示</h4>
+                    <p>曲线 \(\begin{cases} x = x(t) \\ y = y(t) \end{cases}\) (\(\alpha \leq t \leq \beta\), \( x'(t) \neq 0 \)) 在区间 \([\alpha, \beta]\) 上的曲线弧段绕 x 轴旋转一周所得旋转曲面的面积为：</p>
+                    <p>$$S = 2\pi \int_\alpha^\beta |y(t)| \sqrt{[x'(t)]^2 + [y'(t)]^2} \, dt$$</p>
+                </div>
+            </section>
+            
+            <!-- Basic Shapes Section -->
+            <section id="basic-shapes">
+                <h2>二、基本图形的相关几何量大观（D₁ 常规操作）</h2>
+                <p>在数学考试题中，经常考到基本图形的某些几何量，现将此问题汇总于此，一是供考生练习之用，后附详解；二是供考生时常翻阅，图形与对应表达式须熟知，表格中打"(•)"的几何量，可记之。</p>
+                
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>图形</th>
+                                <th>表达式</th>
+                                <th>所围面积</th>
+                                <th>绕轴体积</th>
+                                <th>弧长（仅数一、数二）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>心形线<br>(顶点在极轴上)</td>
+                                <td>\( r = a(1 - \cos\theta) \)<br>\( (a > 0) \)</td>
+                                <td>(•)<br>\( \frac{3}{2}\pi a^2 \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                                <td>(•)<br>\( \frac{8}{3}\pi a^3 \)<br>(绕极轴)</td>
+                                <td>(•)<br>\( 8a \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                            </tr>
+                            <tr>
+                                <td>心形线<br>(顶点在极轴上)</td>
+                                <td>\( r = a(1 + \cos\theta) \)<br>\( (a > 0) \)</td>
+                                <td>\( \frac{3}{2}\pi a^2 \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                                <td>\( \frac{8}{3}\pi a^3 \)<br>(绕极轴)</td>
+                                <td>\( 8a \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                            </tr>
+                            <tr>
+                                <td>心形线<br>(顶点在 \(\theta=\frac{\pi}{2}\))</td>
+                                <td>\( r = a(1 - \sin\theta) \)<br>\( (a > 0) \)</td>
+                                <td>\( \frac{3}{2}\pi a^2 \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                                <td>/</td>
+                                <td>\( 8a \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                            </tr>
+                            <tr>
+                                <td>心形线<br>(顶点在 \(\theta=\frac{3\pi}{2}\))</td>
+                                <td>\( r = a(1 + \sin\theta) \)<br>\( (a > 0) \)</td>
+                                <td>\( \frac{3}{2}\pi a^2 \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                                <td>/</td>
+                                <td>\( 8a \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                            </tr>
+                            <tr>
+                                <td>双纽线<br>(对称于极轴)</td>
+                                <td>\( r^2 = a^2 \cos 2\theta \)<br>\( (a > 0) \)</td>
+                                <td>\( a^2 \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                                <td>(•)<br>\( \frac{\sqrt{2}}{8}\pi^2 a^3 \)<br>(绕y轴)</td>
+                                <td>/</td>
+                            </tr>
+                            <tr>
+                                <td>双纽线<br>(对称于 \(\theta=\frac{\pi}{4}\))</td>
+                                <td>\( r^2 = a^2 \sin 2\theta \)<br>\( (a > 0) \)</td>
+                                <td>\( a^2 \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                                <td>\( \frac{\pi^2}{4}a^3 \)<br>(绕极轴)</td>
+                                <td>/</td>
+                            </tr>
+                            <tr>
+                                <td>阿基米德螺线</td>
+                                <td>\( r = a\theta \)<br>\( (a > 0, \theta \geq 0) \)</td>
+                                <td>\( \frac{4}{3}a^2\pi^3 \)<br>\( ((0, 2\pi] \)段与极轴所围)</td>
+                                <td>/</td>
+                                <td>/</td>
+                            </tr>
+                            <tr>
+                                <td>对数螺线</td>
+                                <td>\( r = e^{a\theta} \)<br>\( (a > 0) \)</td>
+                                <td>\( \frac{1}{4a}(e^{4\pi a} - 1) \)<br>\( ((0, 2\pi] \)段与极轴所围)</td>
+                                <td>/</td>
+                                <td>(•)<br>\( \frac{\sqrt{1+a^2}}{a}(e^{2\pi a} - 1) \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                            </tr>
+                            <tr>
+                                <td>三叶玫瑰线</td>
+                                <td>\( r = a \sin 3\theta \)<br>\( (a > 0) \)</td>
+                                <td>\( \frac{\pi a^2}{4} \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                                <td>/</td>
+                                <td>/</td>
+                            </tr>
+                            <tr>
+                                <td>三叶玫瑰线</td>
+                                <td>\( r = a \cos 3\theta \)<br>\( (a > 0) \)</td>
+                                <td>\( \frac{\pi}{4}a^2 \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                                <td>/</td>
+                                <td>/</td>
+                            </tr>
+                            <tr>
+                                <td>四叶玫瑰线</td>
+                                <td>\( r = a \sin 2\theta \)<br>\( (a > 0) \)</td>
+                                <td>\( \frac{\pi}{2}a^2 \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                                <td>/</td>
+                                <td>/</td>
+                            </tr>
+                            <tr>
+                                <td>四叶玫瑰线</td>
+                                <td>\( r = a \cos 2\theta \)<br>\( (a > 0) \)</td>
+                                <td>\( \frac{\pi}{2}a^2 \)<br>\( (0 \leq \theta \leq 2\pi) \)</td>
+                                <td>/</td>
+                                <td>/</td>
+                            </tr>
+                            <tr>
+                                <td>摆线（一拱）</td>
+                                <td>\(\begin{cases} x = a(t - \sin t) \\ y = a(1 - \cos t) \end{cases}\)<br>\( (a > 0) \)</td>
+                                <td>(•)<br>\( 3\pi a^2 \)<br>\( (0 \leq t \leq 2\pi) \)</td>
+                                <td>(•)<br>\( 5\pi^2 a^3 \)<br>\( (0 \leq t \leq 2\pi) \)(绕x轴)</td>
+                                <td>(•)<br>\( 8a \)<br>\( (0 \leq t \leq 2\pi) \)</td>
+                            </tr>
+                            <tr>
+                                <td>星形线</td>
+                                <td>\(\begin{cases} x = a\cos^3 t \\ y = a\sin^3 t \end{cases}\)<br>或 \( x^{\frac{2}{3}} + y^{\frac{2}{3}} = a^{\frac{2}{3}} \)<br>\( (a > 0) \)</td>
+                                <td>(•)<br>\( \frac{3}{8}\pi a^2 \)<br>\( (0 \leq t \leq 2\pi) \)</td>
+                                <td>(•)<br>\( \frac{32\pi}{105}a^3 \)<br>(绕x轴)</td>
+                                <td>(•)<br>\( 6a \)<br>\( (0 \leq t \leq 2\pi) \)</td>
+                            </tr>
+                            <tr>
+                                <td>笛卡尔叶形线</td>
+                                <td>\( x^3 + y^3 - 3axy = 0 \)<br>或<br>\(\begin{cases} x = \frac{3at}{1+t^3} \\ y = \frac{3at^2}{1+t^3} \end{cases}\) \((a > 0)\)</td>
+                                <td>\( \frac{3}{2}a^2 \)</td>
+                                <td>/</td>
+                                <td>/</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="btn" onclick="alert('提示：重点记忆标记为 (•) 的几何量！')">💡 查看记忆要点</button>
+            </section>
+            
+            <!-- Examples Section -->
+            <section id="examples">
+                <h2>三、典型例题解析</h2>
+                
+                <div class="example">
+                    <h3>例 10.1</h3>
+                    <p><strong>题目：</strong>求心形线 \( r = a(1 - \cos\theta) \) (\( a > 0, 0 \leq \theta \leq 2\pi \)) 的弧长（仅数学一、数学二）、所围图形的面积及曲线绕 Ox 轴旋转得到的旋转体的体积。</p>
+                    
+                    <div class="solution">
+                        <h4>📝 解：</h4>
+                        
+                        <p><strong>① 心形线的弧长为：</strong></p>
+                        <p>$$\begin{align}
+                        s &= 2\int_0^\pi \sqrt{[r^2(\theta)] + [r'(\theta)]^2} \, d\theta \\
+                        &= 2\int_0^\pi \sqrt{a^2(1-\cos\theta)^2 + a^2\sin^2\theta} \, d\theta \\
+                        &= 2\int_0^\pi \sqrt{a^2(1 - 2\cos\theta + \cos^2\theta) + a^2\sin^2\theta} \, d\theta \\
+                        &= 2\sqrt{2}a \int_0^\pi \sqrt{1 - \cos\theta} \, d\theta \\
+                        &= 2\sqrt{2}a \int_0^\pi \sqrt{2\sin^2\frac{\theta}{2}} \, d\theta \\
+                        &= 4a \int_0^\pi \sin\frac{\theta}{2} \, d\theta = 8a
+                        \end{align}$$</p>
+                        
+                        <p><strong>② 所围图形的面积为：</strong></p>
+                        <p>$$\begin{align}
+                        S &= 2\int_0^\pi \frac{1}{2}r^2(\theta) \, d\theta \\
+                        &= 2\int_0^\pi \frac{1}{2}a^2(1 + \cos\theta)^2 \, d\theta \\
+                        &= a^2 \int_0^\pi 4\cos^4\frac{\theta}{2} \, d\theta \\
+                        &= 8a^2 \times \frac{3}{4} \times \frac{1}{2} \times \frac{\pi}{2} = \frac{3}{2}\pi a^2
+                        \end{align}$$</p>
+                        
+                        <p><strong>③ 曲线绕 Ox 轴旋转得到的旋转体的体积为：</strong></p>
+                        <p>$$\begin{align}
+                        V &= \frac{2\pi}{3}\int_0^\pi r^3(\theta)\sin\theta \, d\theta \\
+                        &= -\frac{2\pi}{3}\int_0^\pi a^3(1-\cos\theta)^3 \, d(\cos\theta) \\
+                        &= -\frac{2\pi}{3}a^3 \int_1^{-1}(1-t)^3 \, dt = \frac{8}{3}\pi a^3
+                        \end{align}$$</p>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <h3>例 10.2</h3>
+                    <p><strong>题目：</strong>求阿基米德螺线 \( r = a\theta \) (\( a > 0, 0 \leq \theta \leq 2\pi \)) 与 Ox 轴所围图形的面积。</p>
+                    
+                    <div class="solution">
+                        <h4>📝 解：</h4>
+                        <p>在指定的这段螺线上，\(\theta\) 的变化区间为 \([0, 2\pi]\)，面积微元为：</p>
+                        <p>$$dS = \frac{1}{2}(a\theta)^2 d\theta$$</p>
+                        <p>于是所求面积为：</p>
+                        <p>$$S = \int_0^{2\pi} \frac{a^2\theta^2}{2} \, d\theta = \frac{a^2\theta^3}{2 \cdot 3}\bigg|_0^{2\pi} = \frac{4}{3}a^2\pi^3$$</p>
+                    </div>
+                </div>
+                
+                <div class="note">
+                    <p>在解题时要特别注意：</p>
+                    <ul style="margin-left: 20px;">
+                        <li>选择合适的坐标系（直角坐标、极坐标或参数方程）</li>
+                        <li>确定积分的上下限</li>
+                        <li>注意对称性，可简化计算</li>
+                        <li>绕不同轴旋转时，公式不同</li>
+                    </ul>
+                </div>
+                
+                <div class="example">
+                    <h3>例 10.7</h3>
+                    <p><strong>题目：</strong>设 \( y = \lim_{n \to \infty} \frac{1+x}{1+nx^{2n}} \)，则曲线 \( y = y(x) \) 与 x 轴及 \( x = 1 \) 所围图形的面积为_______。</p>
+                    
+                    <div class="solution">
+                        <h4>📝 解：</h4>
+                        <p>应填 <strong>2</strong>。</p>
+                        
+                        <p>当 \( |x| < 1, n \to \infty \) 时，\( x^{2n} \to 0 \)，\( \frac{1+x}{1+nx^{2n}} \to 1+x \)；</p>
+                        <p>当 \( |x| \geq 1, n \to \infty \) 时，\( nx^{2n} \to +\infty \)，\( \frac{1+x}{1+nx^{2n}} \to 0 \)，故</p>
+                        <p>$$y = \begin{cases} 0, & |x| \geq 1 \\ 1+x, & |x| < 1 \end{cases}$$</p>
+                        
+                        <p>则曲线 \( y = y(x) \) 与 x 轴及 \( x = 1 \) 所围图形的面积为：</p>
+                        <p>$$\int_{-1}^1 (1+x) \, dx = \left(x + \frac{x^2}{2}\right)\bigg|_{-1}^1 = 2$$</p>
+                    </div>
+                </div>
+            </section>
+            
+            <div style="text-align: center; margin: 40px 0;">
+                <button class="btn" onclick="scrollToTop()">⬆️ 返回顶部</button>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Accordion functionality
+        function toggleAccordion(element) {
+            element.classList.toggle('active');
+            const content = element.nextElementSibling;
+            content.classList.toggle('active');
+        }
+        
+        // Smooth scroll to top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Smooth scroll for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+        
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.example, .formula-box, .note').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

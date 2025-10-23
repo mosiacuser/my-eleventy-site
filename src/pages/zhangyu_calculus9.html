@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第9讲：一元函数积分学的计算 - 交互式教程</title>
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        /* Navigation */
+        nav {
+            background: rgba(255,255,255,0.95);
+            padding: 1rem;
+            position: sticky;
+            top: 120px;
+            z-index: 99;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #667eea;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* Content Card */
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Section Headers */
+        .section-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .section-header:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .section-header h2 {
+            font-size: 1.8rem;
+        }
+        
+        .toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+        
+        /* Method Boxes */
+        .method-box {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-left: 5px solid #667eea;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .method-box h3 {
+            color: #1e3c72;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        /* Example Boxes */
+        .example {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        
+        .example::before {
+            content: "例题";
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        .solution {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 5px;
+        }
+        
+        .solution::before {
+            content: "【解】";
+            color: #0066cc;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Formula highlighting */
+        .mjx-chtml {
+            color: #1e3c72 !important;
+        }
+        
+        /* Note boxes */
+        .note {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-left: 5px solid #f39c12;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .note::before {
+            content: "📝 注意";
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #d35400;
+        }
+        
+        /* Collapsible content */
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .collapsible-content.active {
+            max-height: 10000px;
+        }
+        
+        /* Interactive buttons */
+        .interactive-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+        
+        .interactive-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            text-align: left;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 500;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        /* Formula card */
+        .formula-card {
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .content-card {
+                padding: 1rem;
+            }
+        }
+        
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        /* Scroll to top button */
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        #scrollTopBtn:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📘 第9讲：一元函数积分学的计算</h1>
+        <p>高等数学18讲 - 交互式学习教程</p>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#overview">概览</a></li>
+            <li><a href="#method1">恒等变形法</a></li>
+            <li><a href="#method2">第一类换元法</a></li>
+            <li><a href="#method3">第二类换元法</a></li>
+            <li><a href="#method4">有理函数积分</a></li>
+            <li><a href="#method5">分部积分法</a></li>
+            <li><a href="#method6">三角有理式</a></li>
+            <li><a href="#method7">求原函数</a></li>
+            <li><a href="#method8">变限积分</a></li>
+            <li><a href="#method9">分段函数</a></li>
+            <li><a href="#method10">几何法</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <!-- Overview Section -->
+        <div class="content-card" id="overview">
+            <div class="section-header" onclick="toggleSection('overview-content')">
+                <h2>🎯 三问解题法概览</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div id="overview-content" class="collapsible-content active">
+                <p style="font-size: 1.2rem; margin-bottom: 1rem;">
+                    <strong>核心目标：</strong>求一元函数的积分 \(\int f(x)dx\)
+                </p>
+                
+                <div class="method-box">
+                    <h3>主要方法体系</h3>
+                    <ol style="padding-left: 2rem;">
+                        <li><strong>恒等变形法</strong> - 通过代数变形将积分化为基本积分公式</li>
+                        <li><strong>第一类换元法（凑微分法）</strong> - 利用复合函数求导法则</li>
+                        <li><strong>第二类换元法</strong> - 通过变量替换简化积分</li>
+                        <li><strong>有理函数的积分</strong> - 处理分式函数的积分</li>
+                        <li><strong>分部积分法</strong> - 利用乘积求导法则</li>
+                        <li><strong>三角有理式的积分</strong> - 处理三角函数</li>
+                        <li><strong>求出原函数并计算积分值</strong> - 牛顿-莱布尼茨公式</li>
+                        <li><strong>变限积分函数的求导</strong> - 处理积分上下限含变量的情况</li>
+                        <li><strong>分段函数的积分</strong> - 分区间处理</li>
+                        <li><strong>几何法</strong> - 利用几何意义求积分</li>
+                    </ol>
+                </div>
+                
+                <button class="interactive-btn" onclick="showAllMethods()">展开所有方法</button>
+                <button class="interactive-btn" onclick="hideAllMethods()">收起所有方法</button>
+            </div>
+        </div>
+        
+        <!-- Method 1: 恒等变形法 -->
+        <div class="content-card" id="method1">
+            <div class="section-header" onclick="toggleSection('method1-content')">
+                <h2>1️⃣ 恒等变形法</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div id="method1-content" class="collapsible-content">
+                <div class="formula-card">
+                    <p><strong>核心思想：</strong>通过简单的代数变形将被积函数化为基本积分公式中的被积函数，从而获得原函数。</p>
+                    <p style="margin-top: 1rem;">使用规则：\(D_1\)（常规操作）+ \(D_{23}\)（化归经典形式）</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.1</strong> 求 \(\int \frac{x}{x^2+2x+2}dx\)</p>
+                    
+                    <div class="solution">
+                        <p>$$\int \frac{x}{x^2+2x+2}dx = \frac{1}{2}\int \frac{2x+2}{x^2+2x+2}dx - \int \frac{1}{x^2+2x+2}dx$$</p>
+                        
+                        <p>$$= \frac{1}{2}\ln(x^2+2x+2) - \int \frac{1}{1+(x+1)^2}dx$$</p>
+                        
+                        <p>$$= \frac{1}{2}\ln(x^2+2x+2) - \arctan(x+1) + C$$</p>
+                    </div>
+                </div>
+                
+                <div class="note">
+                    <strong>关键技巧：</strong>将分子配凑成分母的导数形式，剩余部分配方成标准形式。
+                </div>
+            </div>
+        </div>
+        
+        <!-- Method 2: 第一类换元法 -->
+        <div class="content-card" id="method2">
+            <div class="section-header" onclick="toggleSection('method2-content')">
+                <h2>2️⃣ 第一类换元法（凑微分法）</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div id="method2-content" class="collapsible-content">
+                <div class="formula-card">
+                    <p><strong>基本公式：</strong></p>
+                    <p>$$\int f[g(x)]g'(x)dx = \int f[g(x)]d[g(x)] = \int f(u)du$$</p>
+                    <p style="margin-top: 1rem;">即如果被积函数是 \(g(x)\) 的函数与 \(g(x)\) 的导函数的乘积，则凑微分后，获得原函数。</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.2</strong> 求下列不定积分：</p>
+                    <p>(1) \(\int \sqrt{a^2-x^2}dx\) (a > 0) ；(2) \(\int \sqrt{a^2+x^2}dx\) (a > 0) ；(3) \(\int \sqrt{x^2-a^2}dx\) (a > 0)</p>
+                    
+                    <div class="solution">
+                        <p><strong>(1)</strong> 令 \(x = a\sin u\)，则 \(dx = a\cos u du\)，故</p>
+                        <p>$$\int \sqrt{a^2-x^2}dx = \int a\cos u \cdot a\cos u du = \frac{a^2}{2}\int (1+\cos 2u)du$$</p>
+                        <p>$$= \frac{a^2}{2}(u + \frac{1}{2}\sin 2u) + C = \frac{a^2}{2}(u + \sin u \cos u) + C$$</p>
+                        <p>$$= \frac{a^2}{2}(\arcsin \frac{x}{a} + \frac{x}{a}\sqrt{1-\frac{x^2}{a^2}}) + C$$</p>
+                        
+                        <p style="margin-top: 1rem;"><strong>(2)</strong> 令 \(x = a\tan t\)，则 \(dx = a\sec^2 t dt\)，所以</p>
+                        <p>$$\int \sqrt{a^2+x^2}dx = \int a\sec t \cdot a\sec^2 t dt = a^2 \int \sec^3 t dt$$</p>
+                        <p>$$= \frac{a^2}{2}\sec t \tan t + \frac{a^2}{2}\ln|\sec t + \tan t| + C$$</p>
+                        <p>$$= \frac{1}{2}x\sqrt{a^2+x^2} + \frac{a^2}{2}\ln\left|\frac{x+\sqrt{a^2+x^2}}{a}\right| + C$$</p>
+                        
+                        <p style="margin-top: 1rem;"><strong>(3)</strong> 令 \(x = a\sec t\)，则 \(x^2-a^2 = a^2\tan^2 t\)，\(dx = a\sec t \tan t dt\)，所以</p>
+                        <p>$$\int \sqrt{x^2-a^2}dx = \int a\tan t \cdot a\sec t \tan t dt = a^2 \int \sec t \tan^2 t dt$$</p>
+                        <p>$$= \frac{a^2}{2}(\sec t \tan t - \ln|\sec t + \tan t|) + C$$</p>
+                        <p>$$= \frac{x\sqrt{x^2-a^2}}{2} - \frac{a^2}{2}\ln\left|\frac{x+\sqrt{x^2-a^2}}{a}\right| + C$$</p>
+                    </div>
+                </div>
+                
+                <div class="note">
+                    三角替换是处理根式的常用方法：
+                    <ul style="margin-top: 0.5rem; padding-left: 2rem;">
+                        <li>\(\sqrt{a^2-x^2}\) → 令 \(x = a\sin u\)</li>
+                        <li>\(\sqrt{a^2+x^2}\) → 令 \(x = a\tan t\)</li>
+                        <li>\(\sqrt{x^2-a^2}\) → 令 \(x = a\sec t\)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Method 3: 第二类换元法 -->
+        <div class="content-card" id="method3">
+            <div class="section-header" onclick="toggleSection('method3-content')">
+                <h2>3️⃣ 第二类换元法</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div id="method3-content" class="collapsible-content">
+                <div class="formula-card">
+                    <p><strong>基本思路：</strong></p>
+                    <p>$$\int f(x)dx \stackrel{x=g(u)}{=} \int f[g(u)]d[g(u)] = \int f[g(u)]g'(u)du$$</p>
+                    <p style="margin-top: 1rem;">即如果被积函数复杂，令 \(x = g(u)\)，引入新的自变量 \(u\)，使 \(f(x) = f[g(u)] = h(u)\)，若 \(h(u)\) 简单，则换元成功。</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.4</strong> 求 \(\int \sqrt{\frac{2x+1}{x+1}}dx\)</p>
+                    
+                    <div class="solution">
+                        <p>令 \(\sqrt{\frac{2x+1}{x+1}} = t\)，则 \(x = \frac{1-t^2}{t^2-2}\)，\(dx = \frac{2t}{(t^2-2)^2}dt\)，所以</p>
+                        
+                        <p>$$\int \sqrt{\frac{2x+1}{x+1}}dx = \int t \cdot \frac{2t}{(t^2-2)^2}dt = \int \frac{2t^2}{(t^2-2)^2}dt$$</p>
+                        
+                        <p>进行部分分式分解后积分，最终得到结果。</p>
+                    </div>
+                </div>
+                
+                <div class="note">
+                    对于形如 \(\sqrt{\frac{ax+b}{cx+d}}\) 的积分，常用替换 \(\sqrt{\frac{ax+b}{cx+d}} = t\) 来简化。
+                </div>
+            </div>
+        </div>
+        
+        <!-- Method 4: 有理函数的积分 -->
+        <div class="content-card" id="method4">
+            <div class="section-header" onclick="toggleSection('method4-content')">
+                <h2>4️⃣ 有理函数的积分</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div id="method4-content" class="collapsible-content">
+                <div class="formula-card">
+                    <p><strong>定义：</strong>形如 \(\int \frac{P_n(x)}{Q_m(x)}dx\) (n < m) 的积分称为有理函数的积分，其中 \(P_n(x)\)、\(Q_m(x)\) 分别是 \(x\) 的 \(n\) 次多项式和 \(m\) 次多项式。</p>
+                </div>
+                
+                <div class="method-box">
+                    <h3>四个简单积分（部分分式的积分）</h3>
+                    <p>① \(\int \frac{A}{ax+b}dx = \frac{A}{a}\ln|ax+b| + C\)</p>
+                    <p>② \(\int \frac{A}{(ax+b)^k}dx = \frac{A}{a(1-k)(ax+b)^{k-1}} + C\)，\(k > 0\) 且 \(k \neq 1\)</p>
+                    <p>③ \(\int \frac{Bx+C}{px^2+qx+r}dx\) (\(q^2-4pr < 0\))</p>
+                    <p>④ \(\int \frac{Bx+C}{(px^2+qx+r)^k}dx\) (\(q^2-4pr < 0, k > 0\) 且 \(k \neq 1\))</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.10</strong> 计算 \(\int_0^1 \frac{1}{(x+1)(x^2-2x+2)}dx\)</p>
+                    
+                    <div class="solution">
+                        <p>令 \(\frac{1}{(x+1)(x^2-2x+2)} = \frac{A}{x+1} + \frac{Bx+C}{x^2-2x+2}\)</p>
+                        
+                        <p>得 \(A(x^2-2x+2) + (Bx+C)(x+1) = 1\)</p>
+                        
+                        <p>解得：\(A = \frac{1}{5}\)，\(B = -\frac{1}{5}\)，\(C = \frac{3}{5}\)，则</p>
+                        
+                        <p>$$\int_0^1 \frac{1}{(x+1)(x^2-2x+2)}dx = \int_0^1 \left(\frac{\frac{1}{5}}{x+1} + \frac{-\frac{1}{5}x+\frac{3}{5}}{x^2-2x+2}\right)dx$$</p>
+                        
+                        <p>$$= \frac{1}{5}\ln|1+x|\Big|_0^1 - \frac{1}{10}\ln|x^2-2x+2|\Big|_0^1 + \frac{2}{5}\arctan(x-1)\Big|_0^1$$</p>
+                        
+                        <p>$$= \frac{3}{10}\ln 2 + \frac{1}{10}\pi$$</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Method 5: 分部积分法 -->
+        <div class="content-card" id="method5">
+            <div class="section-header" onclick="toggleSection('method5-content')">
+                <h2>5️⃣ 分部积分法</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div id="method5-content" class="collapsible-content">
+                <div class="formula-card">
+                    <p><strong>基本公式：</strong></p>
+                    <p>$$\int udv = uv - \int vdu$$</p>
+                </div>
+                
+                <div class="method-box">
+                    <h3>使用原则</h3>
+                    <p>(1) 总的来说，对于 \(\int f(x) \cdot g(x)dx\)，如果 \(f(x)\)、\(g(x)\) 是不同类型函数，可考虑用分部积分法。</p>
+                    <p>(2) 对于 \(\int f(x)g(x)dx\)，易于看出有一部分 \(g(x) = v'(x)\)，即使没有明显的不同类型函数乘积，亦可考虑分部积分法。</p>
+                    <p>(3) 通过分部积分公式建立方程，为积分再现法。</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.6</strong> 求 \(\int \frac{xe^x}{\sqrt{e^x+1}}dx\)</p>
+                    
+                    <div class="solution">
+                        <p>$$\int \frac{xe^x}{\sqrt{e^x+1}}dx = \int x d(2\sqrt{e^x+1}) = 2x\sqrt{e^x+1} - \int 2\sqrt{e^x+1}dx$$</p>
+                        
+                        <p>令 \(\sqrt{e^x+1} = t\)，则 \(x = \ln(t^2-1)\)，\(dx = \frac{2t}{t^2-1}dt\)，所以</p>
+                        
+                        <p>$$\int \sqrt{e^x+1}dx = \int \frac{2t^2}{t^2-1}dt = 2\sqrt{e^x+1} + \ln\frac{\sqrt{e^x+1}-1}{\sqrt{e^x+1}+1} + C_1$$</p>
+                        
+                        <p>故原式 = \(2x\sqrt{e^x+1} - 4\sqrt{e^x+1} - 2\ln\frac{\sqrt{e^x+1}-1}{\sqrt{e^x+1}+1} + C\)</p>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.9</strong> 设 \(n\) 为非负整数，则 \(\int_0^{\pi} x|\sin x|dx\)，\(n = 1,2,\cdots\)，求 \(a_n\) 的表达式。</p>
+                    
+                    <div class="solution">
+                        <p>由于 \(\int_0^{n\pi} x|\sin x|dx \stackrel{x=n\pi-t}{=} n\pi \int_0^{n\pi} |\sin t|dt - \int_0^{n\pi} t|\sin t|dt\)，于是有</p>
+                        
+                        <p>$$\int_0^{n\pi} x|\sin x|dx = \frac{n\pi}{2}\int_0^{n\pi} |\sin x|dx$$</p>
+                        
+                        <p>又 \(|\sin(x+\pi)| = |\sin x|\)，则 \(\int_0^{n\pi} |\sin x|dx = n\int_0^{\pi} |\sin x|dx\)，故</p>
+                        
+                        <p>$$\int_0^{n\pi} x|\sin x|dx = \frac{n^2\pi}{2}\int_0^{\pi} |\sin x|dx$$</p>
+                        
+                        <p>所以 \(a_n = \frac{n^2\pi}{2}\int_0^{\pi} \sin x dx = \frac{n^2\pi}{2} \cdot 2 = n^2\pi\) (\(n = 1,2,\cdots\))</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Method 6: 三角有理式的积分 -->
+        <div class="content-card" id="method6">
+            <div class="section-header" onclick="toggleSection('method6-content')">
+                <h2>6️⃣ 三角有理式的积分法</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div id="method6-content" class="collapsible-content">
+                <div class="formula-card">
+                    <p><strong>定义：</strong>形如 \(\int R(\sin x, \cos x)dx\) 的积分称为三角有理式的积分。</p>
+                </div>
+                
+                <div class="method-box">
+                    <h3>1. 全角换元法</h3>
+                    <p><strong>(1) 当 \(R(-\sin x, \cos x) = -R(\sin x, \cos x)\) 时</strong>，令 \(t = \cos x\)</p>
+                    <p><strong>(2) 当 \(R(\sin x, -\cos x) = -R(\sin x, \cos x)\) 时</strong>，令 \(t = \sin x\)</p>
+                    <p><strong>(3) 当 \(R(-\sin x, -\cos x) = R(\sin x, \cos x)\)</strong>，即 \(R(\sin x, \cos x) = R(\tan x)\) 时，令 \(t = \tan x\)</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.13</strong> 求不定积分 \(\int \frac{2\sin x + \cos x}{\sin x + 2\cos x}dx\)</p>
+                    
+                    <div class="solution">
+                        <p><strong>法一：</strong></p>
+                        <p>$$\int \frac{2\sin x + \cos x}{\sin x + 2\cos x}dx = \int \frac{2\tan x+1}{\tan x+2} \cdot \frac{dt}{1+t^2}$$</p>
+                        <p>（其中 \(t = \tan x\)）</p>
+                        <p>$$= 2\int \frac{1}{1+t^2}dt - 3\int \frac{1}{(t+2)(1+t^2)}dt$$</p>
+                        <p>$$= 2\arctan t - \frac{3}{5}\int \frac{1}{t+2}dt + \frac{3}{5}\int \frac{t-2}{1+t^2}dt$$</p>
+                        <p>$$= \frac{4}{5}x - \frac{3}{5}\ln|\sin x + 2\cos x| + C$$</p>
+                        
+                        <p style="margin-top: 1rem;"><strong>法二：</strong> 设 \(\int \frac{2\sin x + \cos x}{\sin x + 2\cos x}dx = \int \left[\frac{A(\sin x + 2\cos x) + B(\cos x - 2\sin x)}{\sin x + 2\cos x}\right]dx\)</p>
+                        <p>由 \(2\sin x + \cos x = (A - 2B)\sin x + (2A + B)\cos x\)，得 \(A = \frac{4}{5}\)，\(B = -\frac{3}{5}\)，所以</p>
+                        <p>$$\int \frac{2\sin x + \cos x}{\sin x + 2\cos x}dx = \frac{4}{5}x - \frac{3}{5}\ln|\sin x + 2\cos x| + C$$</p>
+                    </div>
+                </div>
+                
+                <div class="method-box">
+                    <h3>2. 半角万能换元（万能公式）</h3>
+                    <p>令 \(\tan \frac{x}{2} = t\)，则 \(dx = \frac{2}{1+t^2}dt\)，\(\cos x = \frac{1-t^2}{1+t^2}\)，所以</p>
+                    <div class="formula-card">
+                        <p>$$\int R(\sin x, \cos x)dx \stackrel{\tan \frac{x}{2} = t}{=} \int R\left(\frac{2t}{1+t^2}, \frac{1-t^2}{1+t^2}\right) \frac{2}{1+t^2}dt = \int \frac{Q(t)}{P(t)}dt$$</p>
+                    </div>
+                </div>
+                
+                <div class="note">
+                    若不能全角换元的情形，只好使出最后一招，即若不能全角换元的万能形，只好使出最后一招，即万能公式。理论上来说，三角有理式是一定可以用全角换元法解决的，但事实上，有理式的分解却并非易事。
+                </div>
+            </div>
+        </div>
+        
+        <!-- Method 7: 求出原函数并计算积分值 -->
+        <div class="content-card" id="method7">
+            <div class="section-header" onclick="toggleSection('method7-content')">
+                <h2>7️⃣ 求出原函数并计算积分值</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div id="method7-content" class="collapsible-content">
+                <div class="formula-card">
+                    <p><strong>1. 定积分的牛顿-莱布尼茨公式</strong></p>
+                    <p>设函数 \(F(x)\) 是连续函数 \(f(x)\) 在 \([a, b]\) 上的一个原函数，则</p>
+                    <p>$$\int_a^b f(x)dx = F(x)\Big|_a^b = F(b) - F(a)$$</p>
+                </div>
+                
+                <div class="method-box">
+                    <h3>2. 反常积分收敛时的牛顿-莱布尼茨公式</h3>
+                    <p><strong>(1)</strong> 设 \(F(x)\) 是 \(f(x)\) 在相应区间上的一个原函数，则</p>
+                    <p>$$\int_a^{+\infty} f(x)dx = \lim_{x \to +\infty} F(x) - F(a), \quad \int_{-\infty}^b f(x)dx = F(b) - \lim_{x \to -\infty} F(x)$$</p>
+                    <p>$$\int_{-\infty}^{+\infty} f(x)dx = \int_{-\infty}^{x_0} f(x)dx + \int_{x_0}^{+\infty} f(x)dx$$</p>
+                    
+                    <p style="margin-top: 1rem;"><strong>(2)</strong> 设 \(F(x)\) 是 \(f(x)\) 在相应区间上的一个原函数，\(x = x_0\) 为 \(f(x)\) 的瑕点。</p>
+                    <p>若 \(x = a\) 是唯一瑕点，则 \(\int_a^b f(x)dx = F(b) - \lim_{x \to a^+} F(x)\)</p>
+                    <p>若 \(x = b\) 是唯一瑕点，则 \(\int_a^b f(x)dx = \lim_{x \to b^-} F(x) - F(a)\)</p>
+                    <p>若 \(x = c \in (a, b)\) 是唯一瑕点，则 \(\int_a^b f(x)dx = \int_a^c f(x)dx + \int_c^b f(x)dx\)</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.15</strong> 设 \(\int_1^{+\infty} \frac{a}{x(2x+a)}dx = \ln 2\)，则 \(a = \)_______。</p>
+                    
+                    <div class="solution">
+                        <p>应填 2。</p>
+                        <p>$$\int_1^{+\infty} \frac{a}{x(2x+a)}dx = \ln \left|\frac{x}{2x+a}\right|\Big|_1^{+\infty} = -\ln 2 + \ln|2+a| = \ln 2$$</p>
+                        <p>得 \(a = 2\) 或 \(a = -6\)。因为当 \(a = -6\) 时，原积分发散，故排除，所以 \(a = 2\)。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Method 8: 变限积分函数的求导 -->
+        <div class="content-card" id="method8">
+            <div class="section-header" onclick="toggleSection('method8-content')">
+                <h2>8️⃣ 变限积分函数的求导</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div id="method8-content" class="collapsible-content">
+                <div class="method-box">
+                    <h3>1. 直接求导型</h3>
+                    <p>可直接用求导公式①、②求导的积分称为直接求导型积分。</p>
+                    <p>① \(\left[\int_a^{\varphi(x)} f(t)dt\right]' = f[\varphi(x)] \cdot \varphi'(x)\)</p>
+                    <p>② \(\left[\int_{\psi(x)}^{\varphi(x)} f(t)dt\right]' = f[\varphi_2(x)] \cdot \varphi_2'(x) - f[\varphi_1(x)] \cdot \varphi_1'(x)\)</p>
+                </div>
+                
+                <div class="method-box">
+                    <h3>2. 换元求导型</h3>
+                    <p>先用换元法处理，再用求导公式①、②求导的积分称为换元求导型积分。</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.16</strong> 设函数 \(f(x)\) 在 \([0, +\infty)\) 内可导，\(f(0) = 0\)，且反函数为 \(g(x)\)。若 \(\int_x^{x+f(x)} g(t-x)dt = x^2\ln(1+x)\)，求 \(f(x)\)。</p>
+                    
+                    <div class="solution">
+                        <p>令 \(t - x = u\)，则 \(dt = du\)，于是</p>
+                        <p>$$\int_x^{x+f(x)} g(t-x)dt = \int_0^{f(x)} g(u)du = x^2\ln(1+x)$$</p>
+                        
+                        <p>将等式 \(\int_0^{f(x)} g(u)du = x^2\ln(1+x)\) 两边对 \(x\) 求导，同时注意到 \(g[f(x)] = x\)，于是有</p>
+                        <p>$$xf'(x) = 2x\ln(1+x) + \frac{x^2}{1+x}$$</p>
+                        
+                        <p>当 \(x \neq 0\) 时，有 \(f'(x) = 2\ln(1+x) + \frac{x}{1+x}\)，两边对 \(x\) 积分，得</p>
+                        <p>$$f(x) = \int \left[2\ln(1+x) + \frac{x}{1+x}\right]dx = 2[\ln(1+x) + x\ln(1+x) - x] + x - \ln(1+x) + C$$</p>
+                        <p>$$= \ln(1+x) + 2x\ln(1+x) - x + C$$</p>
+                        
+                        <p>于是 \(\lim_{x \to 0^+} f(x) = C\)，由于 \(f(x)\) 在 \(x = 0\) 处右连续，且 \(f(0) = 0\)，故 \(C = 0\)，于是</p>
+                        <p>$$f(x) = \ln(1+x) + 2x\ln(1+x) - x \quad (x \geq 0)$$</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Method 9: 分段函数的积分 -->
+        <div class="content-card" id="method9">
+            <div class="section-header" onclick="toggleSection('method9-content')">
+                <h2>9️⃣ 分段函数的积分</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div id="method9-content" class="collapsible-content">
+                <div class="method-box">
+                    <h3>处理方法</h3>
+                    <p>① 分段函数的不定积分</p>
+                    <p>分段求原函数，并注意分段点的连续性。</p>
+                    
+                    <p style="margin-top: 1rem;">② 分段函数的定积分</p>
+                    <p>分段积分再相加。</p>
+                    
+                    <p style="margin-top: 1rem;">③ 分段函数的变限积分</p>
+                    <p>按变量 \(x\) 的不同取值分情况讨论，注意 \(F(x) = \int_a^x f(t)dt\) 为累加函数。</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.20</strong> 函数 \(f(x) = \begin{cases} \frac{1}{\sqrt{1+x^2}}, & x \leq 0 \\ (x+1)\cos x, & x > 0 \end{cases}\)，求一个原函数为（&nbsp;&nbsp;&nbsp;）。</p>
+                    
+                    <div class="solution">
+                        <p>应选 (D)。</p>
+                        
+                        <p>当 \(x > 0\) 时，\(F(x) = \int (x+1)\cos x dx = (x+1)\sin x - \int \sin x dx = (x+1)\sin x + \cos x + C_1\)</p>
+                        
+                        <p>当 \(x \leq 0\) 时，\(F(x) = \int \frac{1}{\sqrt{1+x^2}}dx = \ln(\sqrt{1+x^2} + x) + C_2\)</p>
+                        
+                        <p>令 \(\lim_{x \to 0^+} F(x) = \lim_{x \to 0^-} F(x)\)，可得 \(1 + C_1 = C_2\)，故取 \(C_1 = 0\)，\(C_2 = 1\)，可得 \(f(x)\) 的一个原函数</p>
+                        
+                        <p>$$F(x) = \begin{cases} \ln(\sqrt{1+x^2} + x) + 1, & x \leq 0 \\ (x+1)\sin x + \cos x, & x > 0 \end{cases}$$</p>
+                        
+                        <p>故选 (D)。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Method 10: 几何法 -->
+        <div class="content-card" id="method10">
+            <div class="section-header" onclick="toggleSection('method10-content')">
+                <h2>🔟 几何法</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div id="method10-content" class="collapsible-content">
+                <div class="formula-card">
+                    <p><strong>由定积分的几何背景，可得如下两个式子：</strong></p>
+                    <p>(1) \(\int_{-a}^a \sqrt{a^2-x^2}dx = \frac{\pi a^2}{2}\)</p>
+                    <p>(2) \(\int_0^{2a} \sqrt{x(2a-x)}dx = \int_0^{2a} \sqrt{a^2-(x-a)^2}dx = \frac{\pi a^2}{4}\)（回哪有 \(\int_0^{2a} \sqrt{x(2a-x)}dx = \frac{\pi a^2}{2}\)，\(\int_a^{2a} \sqrt{x(2a-x)}dx = \frac{\pi a^2}{4}\)）</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.22</strong> \(\int_0^1 \sqrt{2x-x^2}dx = \)_______。</p>
+                    
+                    <div class="solution">
+                        <p>应填 \(\frac{\pi}{4}\)。</p>
+                        
+                        <p>原式 = \(\int_0^1 \sqrt{x(2-x)}dx \stackrel{上述(2)\pi}{=} \frac{\pi}{4}\)</p>
+                    </div>
+                </div>
+                
+                <div class="note">
+                    用好这两个式子，有时可快速得到答案。
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2025 高等数学交互式教程 | 基于第9讲：一元函数积分学的计算</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">使用 MathJax 渲染数学公式 | 响应式设计适配所有设备</p>
+    </footer>
+    
+    <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
+    
+    <script>
+        // Toggle section visibility
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId);
+            const icon = content.previousElementSibling.querySelector('.toggle-icon');
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                icon.classList.remove('rotated');
+            } else {
+                content.classList.add('active');
+                icon.classList.add('rotated');
+            }
+        }
+        
+        // Show all methods
+        function showAllMethods() {
+            const allContents = document.querySelectorAll('.collapsible-content');
+            const allIcons = document.querySelectorAll('.toggle-icon');
+            
+            allContents.forEach(content => content.classList.add('active'));
+            allIcons.forEach(icon => icon.classList.add('rotated'));
+        }
+        
+        // Hide all methods
+        function hideAllMethods() {
+            const allContents = document.querySelectorAll('.collapsible-content');
+            const allIcons = document.querySelectorAll('.toggle-icon');
+            
+            allContents.forEach(content => content.classList.remove('active'));
+            allIcons.forEach(icon => icon.classList.remove('rotated'));
+        }
+        
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Show scroll to top button
+        window.onscroll = function() {
+            const btn = document.getElementById('scrollTopBtn');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                btn.style.display = 'block';
+            } else {
+                btn.style.display = 'none';
+            }
+        };
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    const yOffset = -150;
+                    const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                    
+                    window.scrollTo({top: y, behavior: 'smooth'});
+                }
+            });
+        });
+        
+        // Initialize - show overview by default
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('交互式教程已加载完成！');
+        });
+    </script>
+</body>
+</html>

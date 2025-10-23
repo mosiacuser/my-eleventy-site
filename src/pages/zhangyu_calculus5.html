@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第5讲：一元函数微积分的应用（一）——几何应用</title>
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            min-height: 100vh;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 5px solid #0084ff;
+        }
+        
+        header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: #2c3e50;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0 20px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        nav a:hover {
+            background: #3498db;
+            transform: translateY(-2px);
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .section h3 {
+            color: #4facfe;
+            font-size: 1.4em;
+            margin: 25px 0 15px 0;
+        }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe6cc 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ff9800;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .example {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 5px solid #4caf50;
+            position: relative;
+        }
+        
+        .example::before {
+            content: "📝 例题";
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .solution {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 2px solid #81c784;
+        }
+        
+        .solution::before {
+            content: "💡 解答：";
+            color: #4caf50;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .theorem {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .theorem::before {
+            content: "📌 重要结论";
+            color: #1976d2;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .highlight {
+            background: #fff176;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .collapsible {
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        
+        .collapsible:hover {
+            background: #764ba2;
+            transform: scale(1.02);
+        }
+        
+        .collapsible:after {
+            content: ' ▼';
+            float: right;
+        }
+        
+        .collapsible.active:after {
+            content: ' ▲';
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f5f5f5;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .collapsible-content-inner {
+            padding: 20px;
+        }
+        
+        .flowchart {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .flowchart-box {
+            background: #e3f2fd;
+            border: 3px solid #2196f3;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: bold;
+            color: #1565c0;
+        }
+        
+        .flowchart-arrow {
+            text-align: center;
+            color: #2196f3;
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .grid-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        
+        .grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .section {
+                padding: 20px 15px;
+            }
+        }
+        
+        .MathJax {
+            font-size: 1.1em !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第5讲 一元函数微积分的应用（一）</h1>
+            <p>几何应用 - 交互式教程</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#overview">三问解题法</a></li>
+                <li><a href="#tangent">切线与法线</a></li>
+                <li><a href="#monotone">单调性与极值</a></li>
+                <li><a href="#asymptote">渐近线</a></li>
+                <li><a href="#extremum">最值或值域</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <section id="overview" class="section">
+                <h2>三问解题法总览</h2>
+                <div class="flowchart">
+                    <div class="flowchart-box" style="background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); border-color: #ff6b6b;">
+                        计算图形的相关几何量(性态)<br>
+                        (O(旧性目标))
+                    </div>
+                    <div class="flowchart-arrow">↓</div>
+                    <div class="grid-container">
+                        <div class="grid-item">
+                            <strong>切线、法线与截距</strong><br>
+                            \(D_1\)(常规操作)+\(D_{22}\)(转换等价表述)
+                        </div>
+                        <div class="grid-item">
+                            <strong>单调性、极值、凹凸性与拐点</strong><br>
+                            \(D_1\)(常规操作)+\(D_{22}\)(转换等价表述)
+                        </div>
+                        <div class="grid-item">
+                            <strong>渐近线</strong><br>
+                            \(D_1\)(常规操作)
+                        </div>
+                        <div class="grid-item">
+                            <strong>最值或值域</strong><br>
+                            \(D_1\)(常规操作)+\(D_{23}\)(化归经典形式)
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="tangent" class="section">
+                <h2>一、切线、法线与截距</h2>
+                <h3>\(D_1\)(常规操作) + \(D_{22}\)(转换等价表述)</h3>
+                
+                <div class="formula-box">
+                    <p><strong>基本公式：</strong></p>
+                    <p>设 \(y = y(x)\) 可导且 \(y'(x) \neq 0\)，切点为 \((x_0, y_0)\)。</p>
+                    <p><strong>(1) 切线方程：</strong>\(y - y_0 = y'(x_0)(x - x_0)\)</p>
+                    <p><strong>(2) 法线方程：</strong>\(y - y_0 = \frac{-1}{y'(x_0)}(x - x_0)\)</p>
+                    <p><strong>(3) 切线在x轴上的截距为：</strong>\(x_0 - \frac{y_0}{y'(x_0)}\)</p>
+                    <p style="margin-left: 30px;">切线在y轴上的截距为：\(y_0 - x_0 y'(x_0)\)</p>
+                    <p style="margin-left: 30px;">法线在x轴上的截距为：\(x_0 + y_0 y'(x_0)\)</p>
+                    <p style="margin-left: 30px;">法线在y轴上的截距为：\(y_0 + \frac{x_0}{y'(x_0)}\)</p>
+                </div>
+                
+                <button class="collapsible">例5.1 - 连续可导函数的切线截距问题</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <p><strong>题目：</strong>设 \(f(x)\) 有连续的一阶导数，且 \(f(0) = 0\)，\(f'(0) = 1\)。求极限 \(\lim_{x \to 0} \frac{xf(u)}{uf(x)}\)，其中 \(u\) 是曲线 \(y = f(x)\) 在点 \((x, f(x))\) 处的切线在x轴上的截距。</p>
+                            
+                            <div class="solution">
+                                <p>曲线在点 \((x, f(x))\) 处的切线方程为 \(Y - f(x) = f'(x)(X - x)\)</p>
+                                <p>令 \(Y = 0\)，得 \(X = x - \frac{f(x)}{f'(x)}\)，即 \(u = x - \frac{f(x)}{f'(x)}\)，因为</p>
+                                <p>\[\lim_{x \to 0} u = \lim_{x \to 0} \left[x - \frac{f(x)}{f'(x)}\right] = -\frac{f(0)}{f'(0)} = 0\]</p>
+                                <p>所以</p>
+                                <p>\[\lim_{x \to 0} \frac{xf(u)}{uf(x)} = \lim_{x \to 0} \frac{x}{f(x)} \cdot \lim_{u \to 0} \frac{f(u)}{u} = \lim_{x \to 0} \frac{1}{f(x) - f(0)} \cdot \lim_{u \to 0} \frac{f(u) - f(0)}{u - 0} = \frac{1}{f'(0)} \cdot f'(0) = 1\]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="monotone" class="section">
+                <h2>二、单调性、极值、凹凸性与拐点</h2>
+                <h3>\(D_1\)(常规操作) + \(D_{22}\)(转换等价表述)</h3>
+                
+                <div class="theorem">
+                    <p><strong>1. 单调性的判别</strong>（\(D_1\)(常规操作)）</p>
+                    <p>设函数 \(y = f(x)\) 在 \([a, b]\) 上连续，在 \((a, b)\) 内可导。</p>
+                    <p>① 如果在 \((a, b)\) 内 \(f'(x) \geq 0\)，且等号仅在有限多个点处成立，那么函数 \(y = f(x)\) 在 \([a, b]\) 上<span class="highlight">严格单调增加</span>；</p>
+                    <p>② 如果在 \((a, b)\) 内 \(f'(x) \leq 0\)，且等号仅在有限多个点处成立，那么函数 \(y = f(x)\) 在 \([a, b]\) 上<span class="highlight">严格单调减少</span>。</p>
+                </div>
+                
+                <div class="theorem">
+                    <p><strong>2. 极值的定义</strong>（\(D_{22}\)(转换等价表述)）</p>
+                    <p>对于函数 \(f(x)\)，若存在点 \(x_0\) 的某个邻域，使得在该邻域内任意一点 \(x\)，均有</p>
+                    <p>\[f(x) \leq f(x_0) \text{(或 } f(x) \geq f(x_0)\text{)}\]</p>
+                    <p>成立，则称点 \(x_0\) 为 \(f(x)\) 的<span class="highlight">极大值点</span>(或极小值点)，\(f(x_0)\) 为 \(f(x)\) 的<span class="highlight">极大值</span>(或极小值)。</p>
+                </div>
+                
+                <div class="theorem">
+                    <p><strong>3. 凹凸性的定义</strong>（\(D_{22}\)(转换等价表述)）</p>
+                    <p><strong>定义1</strong> 设函数 \(f(x)\) 在区间 \(I\) 上连续。如果对 \(I\) 上任意不同两点 \(x_1, x_2\)，恒有</p>
+                    <p>\[f\left(\frac{x_1 + x_2}{2}\right) < \frac{f(x_1) + f(x_2)}{2}\]</p>
+                    <p>则称 \(y = f(x)\) 在 \(I\) 上的图形是<span class="highlight">凹的</span>，如图(a)所示；如果恒有</p>
+                    <p>\[f\left(\frac{x_1 + x_2}{2}\right) > \frac{f(x_1) + f(x_2)}{2}\]</p>
+                    <p>则称 \(y = f(x)\) 在 \(I\) 上的图形是<span class="highlight">凸的</span>，如图(b)所示。</p>
+                    
+                    <p style="margin-top: 20px;"><strong>定义2</strong> 设 \(f(x)\) 在 \([a, b]\) 上连续，在 \((a, b)\) 内可导，若对 \((a, b)\) 内的任意 \(x\) 及 \(x_0\) (\(x \neq x_0\))，均有</p>
+                    <p>\[f(x_0) + f'(x_0)(x - x_0) < f(x)\]</p>
+                    <p>则称 \(f(x)\) 在 \([a, b]\) 上的图形是<span class="highlight">凹的</span>。</p>
+                </div>
+                
+                <div class="theorem">
+                    <p><strong>4. 拐点的定义</strong>（\(D_{22}\)(转换等价表述)）</p>
+                    <p>连续曲线的凹弧与凸弧的分界点称为该曲线的<span class="highlight">拐点</span>。</p>
+                </div>
+                
+                <div class="theorem">
+                    <p><strong>5. 重要结论</strong></p>
+                    <p>使价值连续体系法：\(D_{23}\)(结论等价表述)，不可以不轻松，量价线覆盖同等止此本语及某论述，某价量刹雷。</p>
+                    <p><strong>(1) 设 \(f(x)\) 可导，</strong></p>
+                    <ul style="list-style-position: inside; margin-left: 20px;">
+                        <li>有极值点 \(\Rightarrow\) \(f'(x)\) 有零点，</li>
+                        <li>无极值点 \(\Rightarrow\) \(f(x)\) 的单调性不变，\(f'(x) \begin{cases} \geq 0 \\ \leq 0 \end{cases}\)</li>
+                    </ul>
+                    <p><strong>(2) 设 \(f(x)\) 二阶可导，</strong></p>
+                    <ul style="list-style-position: inside; margin-left: 20px;">
+                        <li>有拐点 \(\Rightarrow\) \(f''(x)\) 有零点，</li>
+                        <li>无拐点 \(\Rightarrow\) \(f'(x)\) 的单调性不变，\(f''(x) \begin{cases} \geq 0 \\ \leq 0 \end{cases}\)</li>
+                    </ul>
+                    <p><strong>(3) (仅数学一、数学二)</strong> 若 \(f(x)\) 在点 \(P_0(x_0, y_0)\) 处的曲率圆方程为 \((x - a)^2 + (y - b)^2 = r^2\)，对 \(x\) 求导可得 \(y'_c\)，再对 \(x\) 求导可得 \(y''_c\)，则 \(y'_c|_{x=x_0} = f'(x_0)\)，\(y''_c|_{x=x_0} = f''(x_0)\)</p>
+                </div>
+                
+                <button class="collapsible">例5.2 - 极值范围问题</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <p><strong>题目：</strong>设函数 \(f(x) = (x^2 + a)e^x\)，若 \(f(x)\) 没有极值点，但曲线 \(y = f(x)\) 有拐点，则 \(a\) 的取值范围是（ ）。</p>
+                            <p>(A) [0,1) &nbsp;&nbsp; (B) [1,+∞) &nbsp;&nbsp; (C) [1,2) &nbsp;&nbsp; (D) [2,+∞)</p>
+                            
+                            <div class="solution">
+                                <p><strong>应选(C)。</strong></p>
+                                <p>\[f'(x) = (x^2 + 2x + a)e^x\]</p>
+                                <p>曲线无极值点，故 \(\Delta = 4 - 4a \leq 0\)，即 \(a \geq 1\)。</p>
+                                <p>\[f''(x) = (x^2 + 4x + a + 2)e^x\]</p>
+                                <p>曲线有拐点，故 \(\Delta = 16 - 4(a + 2) > 0\)，即 \(a < 2\)。故选(C)。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">例5.3 - 曲率圆与切线问题</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <p><strong>题目：</strong>(仅数学一、数学二) 已知曲线 \(y = f(x)\) 在点 (0,1) 处的曲率圆方程为 \((x-1)^2 + y^2 = 2\)，且当 \(x \to 0\) 时，二阶可导函数 \(f(x)\) 与 \(a + bx + cx^2\) 的差为 \(o(x^2)\)，则（ ）。</p>
+                            <p>(A) \(a = 0, b = 1, c = \frac{3}{2}\) &nbsp;&nbsp; (B) \(a = 1, b = 0, c = 1\)</p>
+                            <p>(C) \(a = 1, b = 1, c = -1\) &nbsp;&nbsp; (D) \(a = 1, b = 0, c = -1\)</p>
+                            
+                            <div class="solution">
+                                <p><strong>应选(C)。</strong></p>
+                                <p>由题意可知，点 (0,1) 在曲线上，故 \(f(0) = 1\)。</p>
+                                <p>对曲率圆方程 \((x-1)^2 + y^2 = 2\) 关于 \(x\) 求导，得</p>
+                                <p>\[2(x-1) + 2yy' = 0 \quad (*)\]</p>
+                                <p>故可得</p>
+                                <p>\[y' = \frac{-(x-1)}{y}\]</p>
+                                <p>即有 \(f'(0) = y'|_{x=0} = 1\)。</p>
+                                <p>对(*)式两边关于 \(x\) 求导，得</p>
+                                <p>\[2 + 2(y')^2 + 2yy'' = 0\]</p>
+                                <p>代入 \(f(0) = 1\)，\(f'(0) = 1\)，可得 \(f''(0) = y''|_{x=0} = -2\)。</p>
+                                <p>故当 \(x \to 0\) 时，有</p>
+                                <p>\[f(x) = f(0) + f'(0)x + \frac{f''(0)}{2}x^2 + o(x^2) = 1 + x - x^2 + o(x^2)\]</p>
+                                <p>故由题意知，\(a = 1, b = 1, c = -1\)。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">例5.4 - 函数单调性判断</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <p><strong>题目：</strong>设函数 \(f(x)\) 在 \(x = x_0\) 处有二阶导数，则（ ）。</p>
+                            <p>(A) 当 \(f(x)\) 在 \(x_0\) 的某邻域内单调增加时，\(f'(x_0) > 0\)</p>
+                            <p>(B) 当 \(f'(x_0) > 0\) 时，\(f(x)\) 在 \(x_0\) 的某邻域内单调增加</p>
+                            <p>(C) 当曲线 \(f(x)\) 在 \(x_0\) 的某邻域内是凹的时，\(f''(x_0) > 0\)</p>
+                            <p>(D) 当 \(f''(x_0) > 0\) 时，曲线 \(f(x)\) 在 \(x_0\) 的某邻域内是凹的</p>
+                            
+                            <div class="solution">
+                                <p><strong>应选(B)。</strong></p>
+                                <p><strong>对于选项(A)</strong>，若曲线上的点相距很近，变化率用 \(f'(x)\) 可能测不到，即可能 \(f'(x_0) = 0\)。如 \(f(x) = x^3, x_0 = 0\)，则 \(f(x)\) 在 \(x = 0\) 的某邻域内单调增加，但 \(f'(0) = 0\)，排除(A)。</p>
+                                <p><strong>对于选项(B)</strong>，由于 \(f(x)\) 在 \(x = x_0\) 处有二阶导数，故 \(f(x)\) 在 \(x = x_0\) 处一阶导数连续，即 \(\lim_{x \to x_0} f'(x) = f'(x_0) > 0\)。由局部保号性，存在 \(\delta > 0\)，当 \(x \in U(x_0, \delta)\) 时，有 \(f'(x) > 0\)，于是，\(f(x)\) 在 \(x_0\) 的某邻域内单调增加，故选(B)。</p>
+                                <p><strong>对于选项(C)</strong>，说理同(A)，点相距很近，凹凸性用 \(f''(x)\) 可能测不到。如 \(f(x) = x^4, x_0 = 0\)，则曲线 \(f(x)\) 在 \(x = 0\) 的某邻域内是凹的，但 \(f''(0) = 0\)，排除(C)。</p>
+                                <p><strong>对于选项(D)</strong>，一点附近的凹凸性不能由该点二阶导数的正负确定，除非二阶导数在该点还连续，使得其在该点附近均有二阶导数的定号结构，排除(D)。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="asymptote" class="section">
+                <h2>三、渐近线</h2>
+                <h3>\(D_1\)(常规操作)</h3>
+                
+                <div class="formula-box">
+                    <p><strong>渐近线的求法：</strong></p>
+                    <p><strong>1. 铅直渐近线：</strong>若 \(\lim_{x \to x_0} f(x) = \infty\)，则 \(x = x_0\) 为铅直渐近线</p>
+                    <p><strong>2. 水平渐近线：</strong>若 \(\lim_{x \to \infty} f(x) = A\)，则 \(y = A\) 为水平渐近线</p>
+                    <p><strong>3. 斜渐近线：</strong>若 \(a = \lim_{x \to \infty} \frac{y}{x}\) 存在，且 \(b = \lim_{x \to \infty}(y - ax)\) 存在，则 \(y = ax + b\) 为斜渐近线</p>
+                </div>
+                
+                <button class="collapsible">例5.5 - 斜渐近线问题</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <p><strong>题目：</strong>曲线 \(y = x\ln\left(e + \frac{1}{x-1}\right)\) 的斜渐近线方程为（ ）。</p>
+                            <p>(A) \(y = x + e\) &nbsp;&nbsp; (B) \(y = x + \frac{1}{e}\) &nbsp;&nbsp; (C) \(y = x\) &nbsp;&nbsp; (D) \(y = x - \frac{1}{e}\)</p>
+                            
+                            <div class="solution">
+                                <p><strong>应选(B)。</strong></p>
+                                <p>\[a = \lim_{x \to \infty} \frac{y}{x} = \lim_{x \to \infty} \ln\left(e + \frac{1}{x-1}\right) = \ln e = 1\]</p>
+                                <p>\[b = \lim_{x \to \infty}(y - ax) = \lim_{x \to \infty}\left[x\ln\left(e + \frac{1}{x-1}\right) - x\right] \overset{\text{由例1.9}}{=} \frac{1}{e}\]</p>
+                                <p>所以所求斜渐近线方程为 \(y = x + \frac{1}{e}\)。故选(B)。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">例5.6 - 复合函数的渐近线</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <p><strong>题目：</strong>曲线 \(y = \frac{(1+x)^{\frac{3}{2}}}{\sqrt{x}}\) 的斜渐近线方程为_______。</p>
+                            
+                            <div class="solution">
+                                <p><strong>应填 \(y = x + \frac{3}{2}\)。</strong></p>
+                                <p>因为</p>
+                                <p>\[a = \lim_{x \to +\infty} \frac{y}{x} = \lim_{x \to +\infty} \frac{(1+x)^{\frac{3}{2}}}{x^{\frac{3}{2}}} = \lim_{x \to +\infty} \left(\frac{1}{x} + 1\right)^{\frac{3}{2}} = 1\]</p>
+                                <p>\[b = \lim_{x \to +\infty}(y - ax) = \lim_{x \to +\infty}\left[\frac{(1+x)^{\frac{3}{2}}}{\sqrt{x}} - x\right]\]</p>
+                                <p>\[= \lim_{x \to +\infty}\frac{(1+x)^{\frac{3}{2}} - x^{\frac{3}{2}}}{\sqrt{x}} = \lim_{x \to +\infty}\frac{x^{\frac{3}{2}}\left[\left(1 + \frac{1}{x}\right)^{\frac{3}{2}} - 1\right]}{\sqrt{x}}\]</p>
+                                <p>\[= \lim_{x \to +\infty} x \cdot \frac{3}{2} \cdot \frac{1}{x} = \frac{3}{2}\]</p>
+                                <p>故所求斜渐近线方程为 \(y = x + \frac{3}{2}\)。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">例5.7 - 反函数的渐近线</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <p><strong>题目：</strong>设 \(g(x)\) 是函数 \(f(x) = \frac{1}{2}\ln\frac{3+x}{3-x}\) 的反函数，则曲线 \(y = g(x)\) 的斜渐近线方程为_______。</p>
+                            
+                            <div class="solution">
+                                <p><strong>应填 \(y = \pm 3\)。</strong></p>
+                                <p>令 \(y = \frac{1}{2}\ln\frac{3+x}{3-x}\)，则 \(2y = \ln\frac{3+x}{3-x}\)，\(e^{2y} = \frac{3+x}{3-x}\)，\(x = 3 - \frac{6}{e^{2y}+1}\)，即</p>
+                                <p>\[g(x) = 3 - \frac{6}{e^{2x}+1}, \quad \lim_{x \to +\infty} g(x) = 3, \quad \lim_{x \to -\infty} g(x) = -3\]</p>
+                                <p>故曲线 \(y = g(x)\) 的渐近线方程为 \(y = \pm 3\)。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="extremum" class="section">
+                <h2>四、最值或值域</h2>
+                <h3>\(D_1\)(常规操作) + \(D_{23}\)(化归经典形式)</h3>
+                
+                <div class="theorem">
+                    <p><strong>(1)</strong> 当 \(f(x)\) 在 \([a, b]\) 上连续时，最值只可能在驻点、导数不存在的点或区间端点上取到。</p>
+                    <p><strong>(2)</strong> 当有唯一极值点时：若函数 \(f(x)\) 在 \((a, b)\) 内连续，且有唯一的极值点 \(x_0\)，则 \(x_0\) 是 \(f(x)\) 在 \((a, b)\) 内的最值点。</p>
+                </div>
+                
+                <button class="collapsible">例5.8 - 积分函数的最值</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <p><strong>题目：</strong>\(f(x) = \int_0^x \frac{t}{t^2 + 2t + 2}dt\) 在 [0,1] 上的最大值为_______。</p>
+                            
+                            <div class="solution">
+                                <p><strong>应填 \(\frac{1}{2}\ln\frac{5}{2} - \arctan 2 + \frac{\pi}{4}\)。</strong></p>
+                                <p>由题意得 \(f'(x) = \frac{x}{(x+1)^2 + 1}\)，当 \(0 < x \leq 1\) 时，\(f'(x) > 0\)，故 \(f(x)\) 为单调递增函数，其在 [0,1] 上的最大值为</p>
+                                <p>\[f(1) = \int_0^1 \frac{t}{t^2 + 2t + 2}dt = \int_0^1 \frac{t+1}{(t+1)^2 + 1}dt - \int_0^1 \frac{1}{(t+1)^2 + 1}dt\]</p>
+                                <p>\[= \frac{1}{2}\left[\ln((t+1)^2 + 1)\right]_0^1 - \left[\arctan(t+1)\right]_0^1\]</p>
+                                <p>\[= \frac{1}{2}\ln\frac{5}{2} - \arctan 2 + \frac{\pi}{4}\]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">例5.9 - 分段函数的最值</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <p><strong>题目：</strong>设 \(f'(x)\) 在区间 [0,4] 上连续，曲线 \(y = f'(x)\) 与直线 \(x = 0, x = 4, y = 0\) 围成如图所示的三个区域，其面积分别为 \(S_1 = 3, S_2 = 4, S_3 = 2\)，且 \(f(0) = 1\)，则 \(f(x)\) 在 [0,4] 上的最大值与最小值分别为（ ）。</p>
+                            <p>(A) 2,-3 &nbsp;&nbsp; (B) 4,-3 &nbsp;&nbsp; (C) 2,-2 &nbsp;&nbsp; (D) 4,-2</p>
+                            
+                            <div class="solution">
+                                <p><strong>应选(C)。</strong></p>
+                                <p>由题图可知，\(f'(1) = f'(3) = 0\)，即函数 \(f(x)\) 在区间 (0,4) 内有两个驻点 \(x = 1\) 和 \(x = 3\)，故 \(f(x)\) 在 [0,4] 上的最大值和最小值只能在 \(f(0), f(1), f(3), f(4)\) 中取得。</p>
+                                <p>由 \(f(0) = 1\)，有（使用 \(D_{23}\)(化归经典形式)）</p>
+                                <p>\[f(1) = f(0) + \int_0^1 f'(x)dx = 1 + (-3) = -2\]</p>
+                                <p>\[f(3) = f(1) + \int_1^3 f'(x)dx = -2 + 4 = 2\]</p>
+                                <p>\[f(4) = f(3) + \int_3^4 f'(x)dx = 2 + (-2) = 0\]</p>
+                                <p>故最大值为 \(f(3) = 2\)，最小值为 \(f(1) = -2\)，应选(C)。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>📚 高等数学18讲 - 第5讲交互式教程</p>
+            <p>💡 使用说明：点击蓝色按钮展开/折叠详细内容，使用顶部导航快速跳转</p>
+            <p>© 2025 数学学习资源</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Collapsible functionality
+        const collapsibles = document.querySelectorAll('.collapsible');
+        
+        collapsibles.forEach(collapsible => {
+            collapsible.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Add animation when sections come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

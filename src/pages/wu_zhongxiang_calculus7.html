@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微分方程 - 交互式教程</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 40px rgba(0,0,0,0.3);
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: #2d3748;
+            padding: 15px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            background: #667eea;
+            transform: translateY(-2px);
+        }
+
+        main {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.6em;
+            margin: 25px 0 15px;
+        }
+
+        .concept {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 5px solid #667eea;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .concept strong {
+            color: #764ba2;
+            font-size: 1.1em;
+        }
+
+        .formula {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'Roboto Mono', monospace;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .example {
+            background: #fef5e7;
+            border: 2px solid #f39c12;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .example::before {
+            content: "📝 例题";
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #f39c12;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .solution {
+            background: #e8f8f5;
+            border: 2px solid #1abc9c;
+            padding: 25px;
+            margin: 15px 0;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .solution::before {
+            content: "✓ 解答";
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #1abc9c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .note::before {
+            content: "💡 ";
+            font-size: 1.2em;
+        }
+
+        .accordion {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .accordion-header:hover {
+            background: #5568d3;
+        }
+
+        .accordion-header::after {
+            content: "▼";
+            transition: transform 0.3s;
+        }
+
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+        }
+
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            background: white;
+        }
+
+        tr:nth-child(even) td {
+            background: #f8f9fa;
+        }
+
+        .interactive-quiz {
+            background: #e3f2fd;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #2196f3;
+        }
+
+        .quiz-button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+
+        .quiz-button:hover {
+            background: #1976d2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+            }
+            
+            header h1 {
+                font-size: 2em;
+            }
+            
+            main {
+                padding: 20px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        code {
+            background: #2d3748;
+            color: #63b3ed;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Roboto Mono', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📐 微分方程</h1>
+            <p>第七章 - 交互式教程</p>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="#intro">基本概念</a></li>
+                <li><a href="#first-order">一阶微分方程</a></li>
+                <li><a href="#reduction">可降阶方程</a></li>
+                <li><a href="#linear">高阶线性方程</a></li>
+                <li><a href="#difference">差分方程</a></li>
+                <li><a href="#examples">典型例题</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <section id="intro" class="section">
+                <h2>一、常微分方程的基本概念</h2>
+                
+                <div class="concept">
+                    <strong>1. 微分方程</strong>
+                    <p>含有未知函数的导数或微分的方程称为<span class="highlight">微分方程</span>，简称方程。</p>
+                </div>
+
+                <div class="concept">
+                    <strong>2. 微分方程的阶</strong>
+                    <p>微分方程中所出现的未知函数最高阶导数的阶数，称为<span class="highlight">微分方程的阶</span>。</p>
+                </div>
+
+                <div class="concept">
+                    <strong>3. 微分方程的解</strong>
+                    <p>满足微分方程的函数，称为该方程的<span class="highlight">解</span>。</p>
+                </div>
+
+                <div class="concept">
+                    <strong>4. 微分方程的通解</strong>
+                    <p>如果微分方程的解中含有任意常数，且任意常数与微分方程的阶数相同，则称之为微分方程的<span class="highlight">通解</span>。</p>
+                </div>
+
+                <div class="concept">
+                    <strong>5. 微分方程的特解</strong>
+                    <p>微分方程的不含任意常数的解，称之为<span class="highlight">特解</span>。</p>
+                </div>
+
+                <div class="concept">
+                    <strong>6. 初始条件</strong>
+                    <p>确定特解的一组常数称为<span class="highlight">初始条件</span>。</p>
+                </div>
+
+                <div class="note">
+                    <strong>积分曲线：</strong>方程的一个解在平面上对应一条曲线，称为该微分方程的积分曲线。
+                </div>
+            </section>
+
+            <section id="first-order" class="section">
+                <h2>二、一阶微分方程</h2>
+
+                <div class="accordion">
+                    <div class="accordion-header">1. 可分离变量的方程</div>
+                    <div class="accordion-content">
+                        <p>能表示为 \(g(y)dy = f(x)dx\) 的方程称为<span class="highlight">可分离变量的方程</span>。</p>
+                        <div class="formula">
+                            求解方法是两端积分：
+                            $$\int g(y)dy = \int f(x)dx$$
+                        </div>
+                        
+                        <div class="example">
+                            <strong>例题 1 (2006，数二)：</strong>微分方程 \(y' = \frac{y(1-x)}{x}\) 的通解是？
+                        </div>
+                        
+                        <div class="solution">
+                            <p>分离变量：</p>
+                            $$\frac{dy}{dx} = \frac{y(1-x)}{x}$$
+                            $$\frac{dy}{y} = \frac{1-x}{x}dx$$
+                            $$\int\frac{dy}{y} = \int\frac{1-x}{x}dx$$
+                            $$\ln|y| = \ln|x| - x + C_1$$
+                            $$y = Cxe^{-x}$$
+                            <p>其中 \(C\) 为任意常数。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">2. 齐次微分方程</div>
+                    <div class="accordion-content">
+                        <p>能化为 \(\frac{dy}{dx} = \varphi\left(\frac{y}{x}\right)\) 的方程称为<span class="highlight">齐次微分方程</span>。</p>
+                        <div class="note">
+                            求解齐次微分方程的标准方法：令 \(u = \frac{y}{x}\)，则 \(y = ux\)，代入后化为可分离变量方程。
+                        </div>
+                        
+                        <div class="formula">
+                            $$xu' = \varphi(u) - u$$
+                        </div>
+
+                        <div class="example">
+                            <strong>例题 2 (1993，数二)：</strong>求微分方程 \(x^2y' + xy = y^2\) 满足初始条件 \(y(1) = 1\) 的特解。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">3. 一阶线性微分方程</div>
+                    <div class="accordion-content">
+                        <p>形如 \(y' + p(x)y = q(x)\) 的方程称为<span class="highlight">一阶线性微分方程</span>。</p>
+                        
+                        <div class="formula">
+                            通解公式（常数变易法）：
+                            $$y = e^{-\int p(x)dx}\left[\int q(x)e^{\int p(x)dx}dx + C\right]$$
+                        </div>
+
+                        <div class="example">
+                            <strong>例题 3 (2008，数二、四)：</strong>微分方程 \((y + x^2e^{-x})dx - xdy = 0\) 的通解是？
+                        </div>
+                        
+                        <div class="solution">
+                            <p>原方程可改写为：</p>
+                            $$\frac{dy}{dx} - \frac{1}{x}y = xe^{-x}$$
+                            <p>由线性方程通解公式得：</p>
+                            $$y = e^{\int\frac{1}{x}dx}\left[\int xe^{-x}e^{-\int\frac{1}{x}dx}dx + C\right]$$
+                            $$= x\left[\int e^{-x}dx + C\right]$$
+                            $$= x(C - e^{-x})$$
+                            <p>其中 \(C\) 为任意常数。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">4. 伯努利方程</div>
+                    <div class="accordion-content">
+                        <p>形如 \(y' + p(x)y = Q(x)y^n\) (\(n \neq 0, 1\)) 的方程称为<span class="highlight">伯努利方程</span>。</p>
+                        <div class="note">
+                            求解伯努利方程的方法：令 \(u = y^{1-n}\)，将原方程化为一阶线性微分方程。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">5. 全微分方程</div>
+                    <div class="accordion-content">
+                        <p>如果方程 \(P(x,y)dx + Q(x,y)dy = 0\) 是某个函数 \(u(x,y)\) 的全微分：</p>
+                        <div class="formula">
+                            $$du(x,y) = P(x,y)dx + Q(x,y)dy$$
+                        </div>
+                        <p>则称该方程为<span class="highlight">全微分方程</span>。此方程的通解为 \(u(x,y) = C\)。</p>
+                        
+                        <div class="note">
+                            <strong>充要条件：</strong>当 \(P(x,y)\)，\(Q(x,y)\) 在连通域 \(G\) 内具有一阶连续偏导数时，方程为全微分方程的充要条件是：
+                            $$\frac{\partial P}{\partial y} = \frac{\partial Q}{\partial x}, \quad (x,y) \in G$$
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="reduction" class="section">
+                <h2>三、可降阶的高阶微分方程</h2>
+                <p class="note">数学三不要求</p>
+
+                <h3>1. \(y^{(n)} = f(x)\) 型的微分方程</h3>
+                <p>连续积分 \(n\) 次即可。</p>
+
+                <h3>2. \(y'' = f(x, y')\) 型的方程</h3>
+                <p>令 \(y' = p\)，则 \(y'' = p'\)，原方程化为一阶方程。</p>
+
+                <h3>3. \(y'' = f(y, y')\) 型的方程</h3>
+                <p>令 \(y' = p\)，则 \(y'' = p\frac{dp}{dy}\)，原方程化为一阶方程。</p>
+
+                <div class="example">
+                    <strong>例题 5 (2002，数一、二)：</strong>求微分方程 \(yy'' + y'^2 = 0\) 满足初始条件 \(y|_{x=0} = 1, y'|_{x=0} = \frac{1}{2}\) 的特解。
+                </div>
+                
+                <div class="solution">
+                    <p>令 \(y' = p\)，则 \(y'' = p\frac{dp}{dy}\)，代入原方程得：</p>
+                    $$yp\frac{dp}{dy} + p^2 = 0$$
+                    $$y\frac{dp}{dy} = -p$$
+                    <p>分离变量积分得：</p>
+                    $$\ln|yp| = C_1$$
+                    $$yp = C$$
+                    <p>由初始条件得 \(C = \frac{1}{2}\)，所以：</p>
+                    $$y\frac{dy}{dx} = \frac{1}{2}$$
+                    $$\int ydy = \frac{1}{2}\int dx$$
+                    $$\frac{1}{2}y^2 = \frac{1}{2}x + C_2$$
+                    <p>由 \(y|_{x=0} = 1\) 得 \(C_2 = \frac{1}{2}\)，故特解为：</p>
+                    $$y = \sqrt{x + 1}$$
+                </div>
+            </section>
+
+            <section id="linear" class="section">
+                <h2>四、高阶线性微分方程</h2>
+
+                <h3>1. 线性微分方程解的结构</h3>
+                
+                <p>二阶线性微分方程的一般形式为：</p>
+                <div class="formula">
+                    $$y'' + p(x)y' + q(x)y = f(x)$$
+                </div>
+
+                <div class="concept">
+                    <strong>齐次方程：</strong>\(y'' + p(x)y' + q(x)y = 0\)
+                </div>
+                
+                <div class="concept">
+                    <strong>非齐次方程：</strong>\(y'' + p(x)y' + q(x)y = f(x)\)
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>定理</th>
+                            <th>内容</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>定理1</td>
+                            <td>如果 \(y_1(x)\) 和 \(y_2(x)\) 是齐次方程的两个线性无关的特解，那么 \(y = C_1y_1(x) + C_2y_2(x)\) 就是方程的通解。</td>
+                        </tr>
+                        <tr>
+                            <td>定理2</td>
+                            <td>如果 \(y^*(x)\) 是非齐次方程的一个特解，\(y_1(x)\)、\(y_2(x)\) 是齐次方程的两个线性无关的特解，则 \(y = C_1y_1(x) + C_2y_2(x) + y^*(x)\) 是非齐次微分方程的通解。</td>
+                        </tr>
+                        <tr>
+                            <td>定理3</td>
+                            <td>如果 \(y_1^*(x)\)，\(y_2^*(x)\) 是非齐次方程的两个特解，则 \(y(x) = y_1^*(x) - y_2^*(x)\) 是齐次微分方程的解。</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>2. 常系数齐次线性微分方程</h3>
+                
+                <p>常系数齐次微分方程的一般形式为：</p>
+                <div class="formula">
+                    $$y'' + py' + qy = 0$$
+                </div>
+                
+                <p>其特征方程为：\(r^2 + pr + q = 0\)</p>
+
+                <div class="note">
+                    <strong>通解形式：</strong>
+                    <ul>
+                        <li>(1) 若 \(r_1 \neq r_2\) 为两个不相等的实特征根，通解为 \(y = C_1e^{r_1x} + C_2e^{r_2x}\)</li>
+                        <li>(2) 若 \(r_1 = r_2\) 为二重实特征根，通解为 \(y = (C_1 + C_2x)e^{r_1x}\)</li>
+                        <li>(3) 若 \(r_{1,2} = \alpha \pm i\beta\) 为复根，通解为 \(y = e^{\alpha x}(C_1\cos\beta x + C_2\sin\beta x)\)</li>
+                    </ul>
+                </div>
+
+                <div class="example">
+                    <strong>例题 7 (1996，数三)：</strong>微分方程 \(y'' + 2y' + 5y = 0\) 的通解为？
+                </div>
+                
+                <div class="solution">
+                    <p>特征方程：\(r^2 + 2r + 5 = 0\)</p>
+                    <p>特征根：\(r_{1,2} = -1 \pm 2i\)</p>
+                    <p>因此通解为：</p>
+                    $$y = e^{-x}(C_1\cos 2x + C_2\sin 2x)$$
+                </div>
+
+                <h3>3. 常系数非齐次线性微分方程</h3>
+                
+                <p>非齐次微分方程的一般形式为：</p>
+                <div class="formula">
+                    $$y'' + py' + qy = f(x)$$
+                </div>
+
+                <div class="note">
+                    <strong>特解设定规则：</strong>
+                    <ul>
+                        <li>(1) 若 \(f(x) = P_m(x)e^{kx}\)，则特解 \(y^* = x^kQ_m(x)e^{kx}\)，其中 \(k\) 是特征根 \(k\) 的重复次数</li>
+                        <li>(2) 若 \(f(x) = e^{\alpha x}[P_l^{(1)}(x)\cos\beta x + P_n^{(2)}(x)\sin\beta x]\)，则特解 \(y^* = x^ke^{\alpha x}[R_m^{(1)}(x)\cos\beta x + R_m^{(2)}(x)\sin\beta x]\)，其中 \(m = \max(l,n)\)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="difference" class="section">
+                <h2>五、差分方程</h2>
+                <p class="note">数学三要求</p>
+
+                <h3>1. 一阶常系数线性齐次差分方程</h3>
+                <div class="formula">
+                    $$y_{t+1} + ay_t = 0$$
+                </div>
+                <p>通解为：\(y_t = C \cdot (-a)^t\)，\(C\) 为任意常数。</p>
+
+                <h3>2. 一阶常系数线性非齐次差分方程</h3>
+                <div class="formula">
+                    $$y_{t+1} + ay_t = f(t)$$
+                </div>
+                <p>通解为：\(y_t = y_c(t) + y^*\)，其中 \(y^*\) 是非齐次差分方程的特解。</p>
+
+                <div class="interactive-quiz">
+                    <h4>🎯 互动练习：差分方程求解</h4>
+                    <p>尝试求解差分方程：\(y_{t+1} - 2y_t = 2^t\)</p>
+                    <button class="quiz-button" onclick="showAnswer1()">查看提示</button>
+                    <button class="quiz-button" onclick="showAnswer2()">查看完整解答</button>
+                    <div id="answer1" style="display:none; margin-top:15px; padding:15px; background:white; border-radius:5px;"></div>
+                    <div id="answer2" style="display:none; margin-top:15px; padding:15px; background:white; border-radius:5px;"></div>
+                </div>
+            </section>
+
+            <section id="examples" class="section">
+                <h2>六、典型例题与应用</h2>
+
+                <div class="example">
+                    <strong>例题 14 (2001，数三)：</strong>某公司每年的工资总额在比上一年增加20%的基础上再追加2百万元，若以 \(W_t\) 表示第 \(t\) 年的工资总额（单位：百万元），则 \(W_t\) 满足的差分方程是？
+                </div>
+
+                <div class="solution">
+                    <p>根据题意：</p>
+                    $$W_t = 1.2 \cdot W_{t-1} + 2$$
+                </div>
+
+                <div class="example">
+                    <strong>例题 16 (2014，数一)：</strong>微分方程 \(xy' + y(\ln x - \ln y) = 0\) 满足条件 \(y(1) = e^3\) 的解为？
+                </div>
+
+                <div class="solution">
+                    <p>这是齐次方程。令 \(u = \frac{y}{x}\)，代入后：</p>
+                    $$u' = \frac{u(\ln u - 1)}{x}$$
+                    <p>分离变量积分：</p>
+                    $$\frac{du}{u(\ln u - 1)} = \frac{dx}{x}$$
+                    $$\ln|\ln u - 1| = \ln x + C_1$$
+                    <p>由 \(y(1) = e^3\) 得 \(C = 2\)，因此：</p>
+                    $$\ln\frac{y}{x} - 1 = 2x$$
+                    $$y = xe^{2x+1}$$
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>🎓 综合测验</h4>
+                    <p>你已经学习了微分方程的基本内容。点击下方按钮测试你的理解程度！</p>
+                    <button class="quiz-button" onclick="alert('测验功能：请尝试独立求解以上例题，然后对照解答检查。')">开始测验</button>
+                </div>
+            </section>
+
+            <section class="section" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+                <h2>📚 学习要点总结</h2>
+                <ul style="font-size: 1.1em; line-height: 2;">
+                    <li>掌握微分方程的基本概念：解、通解、特解、初始条件</li>
+                    <li>熟练求解可分离变量、齐次方程、一阶线性方程</li>
+                    <li>理解高阶线性方程解的结构</li>
+                    <li>掌握常系数齐次和非齐次方程的求解方法</li>
+                    <li>了解差分方程的基本求解方法（数学三）</li>
+                    <li>能够应用微分方程解决实际问题</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2025 微分方程交互式教程 | 基于考研数学教材制作</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">本页面使用 MathJax 渲染数学公式</p>
+        </footer>
+    </div>
+
+    <script>
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+
+        // Quiz answer functions
+        function showAnswer1() {
+            const div = document.getElementById('answer1');
+            div.style.display = 'block';
+            div.innerHTML = '<strong>💡 提示：</strong>齐次方程通解为 y<sub>t</sub><sup>(c)</sup> = C · 2<sup>t</sup>。非齐次项为 2<sup>t</sup>，由于 2 是特征根，所以特解形式应为 y* = t · a · 2<sup>t</sup>。';
+        }
+
+        function showAnswer2() {
+            const div = document.getElementById('answer2');
+            div.style.display = 'block';
+            div.innerHTML = '<strong>✓ 完整解答：</strong><br>齐次方程 y<sub>t+1</sub> - 2y<sub>t</sub> = 0 的通解为 y<sub>t</sub><sup>(c)</sup> = C · 2<sup>t</sup>。<br>设特解 y* = t · a · 2<sup>t</sup>，代入原方程：<br>(t+1) · a · 2<sup>t+1</sup> - 2 · t · a · 2<sup>t</sup> = 2<sup>t</sup><br>化简得 a = 1，因此通解为：<br><strong>y<sub>t</sub> = C · 2<sup>t</sup> + t · 2<sup>t</sup></strong>';
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // MathJax configuration
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            CommonHTML: { 
+                scale: 120,
+                styles: {
+                    '.MathJax': {
+                        color: '#2d3748 !important'
+                    }
+                }
+            }
+        });
+
+        console.log('📐 微分方程交互式教程已加载');
+        console.log('💡 提示：点击折叠面板标题展开内容，点击导航栏快速跳转到各章节');
+    </script>
+</body>
+</html>

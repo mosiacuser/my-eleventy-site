@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高等数学交互式教程 - 函数极限连续</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": {
+                styles: {
+                    ".MathJax": {
+                        color: "#2563eb"
+                    }
+                }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+        
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav h1 {
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            color: #667eea;
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 100px auto 2rem;
+            padding: 0 2rem;
+        }
+        
+        /* Content Card */
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Headers */
+        h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        h2 {
+            color: #764ba2;
+            font-size: 2rem;
+            margin: 2rem 0 1rem;
+        }
+        
+        h3 {
+            color: #f093fb;
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        /* Accordion Sections */
+        .accordion {
+            margin: 1.5rem 0;
+        }
+        
+        .accordion-item {
+            margin-bottom: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .accordion-item:hover {
+            border-color: #667eea;
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        
+        .accordion-header::after {
+            content: '+';
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+        
+        .accordion-header.active::after {
+            transform: rotate(45deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f8f9fa;
+            padding: 0 1.5rem;
+        }
+        
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 1.5rem;
+        }
+        
+        /* Definition Box */
+        .definition-box {
+            background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+            border-left: 5px solid #00897b;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        .definition-box h4 {
+            color: #00695c;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Theorem Box */
+        .theorem-box {
+            background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+            border-left: 5px solid #f9a825;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        .theorem-box h4 {
+            color: #f57f17;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Example Box */
+        .example-box {
+            background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+            border-left: 5px solid #0277bd;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        .example-box h4 {
+            color: #01579b;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Code Block */
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        /* Formula Display */
+        .formula-display {
+            background: #f5f5f5;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px dashed #667eea;
+        }
+        
+        /* Interactive Quiz */
+        .quiz-container {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+        }
+        
+        .quiz-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #880e4f;
+            margin-bottom: 1rem;
+        }
+        
+        .quiz-options {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .quiz-option {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .quiz-option:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+        
+        .quiz-option.correct {
+            background: #c8e6c9;
+            border-color: #2e7d32;
+        }
+        
+        .quiz-option.incorrect {
+            background: #ffcdd2;
+            border-color: #c62828;
+        }
+        
+        .quiz-feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .quiz-feedback.show {
+            display: block;
+        }
+        
+        .quiz-feedback.correct {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+        
+        .quiz-feedback.incorrect {
+            background: #ffcdd2;
+            color: #b71c1c;
+        }
+        
+        /* Button */
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .content-card {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            color: #667eea;
+            cursor: help;
+            font-weight: 600;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>📚 高等数学教程</h1>
+            <ul>
+                <li><a href="#chapter1">第一章</a></li>
+                <li><a href="#chapter2">极限</a></li>
+                <li><a href="#chapter3">连续性</a></li>
+                <li><a href="#quiz">测验</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="content-card">
+            <h1>第一章：函数、极限与连续</h1>
+            
+            <div class="definition-box">
+                <h4>📖 课程概述</h4>
+                <p>本章介绍高等数学的基础内容，包括函数的概念、极限的定义与性质、以及连续性的理论。这些是微积分学习的基石。</p>
+            </div>
+
+            <h2 id="chapter1">第一节：函数</h2>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        1.1 函数的概念及常见函数
+                    </div>
+                    <div class="accordion-content">
+                        <div class="definition-box">
+                            <h4>定义</h4>
+                            <p>设 $x$ 和 $y$ 是两个变量，$D$ 是一个给定的数集。如果对于每个数 $x \in D$，按照一定的法则总有一个确定的数值 $y$ 和它对应，则称 $y$ 是 $x$ 的<strong>函数</strong>，记为：</p>
+                            <div class="formula-display">
+                                $$y = f(x), \quad x \in D$$
+                            </div>
+                            <p>其中 $x$ 称为<span class="tooltip">自变量<span class="tooltiptext">函数的输入值</span></span>，$y$ 称为<span class="tooltip">因变量<span class="tooltiptext">函数的输出值</span></span>，$D$ 称为函数的<strong>定义域</strong>。</p>
+                        </div>
+                        
+                        <h4>基本初等函数</h4>
+                        <table>
+                            <tr>
+                                <th>函数类型</th>
+                                <th>表达式</th>
+                                <th>定义域</th>
+                            </tr>
+                            <tr>
+                                <td>幂函数</td>
+                                <td>$y = x^\alpha$</td>
+                                <td>取决于 $\alpha$ 的取值</td>
+                            </tr>
+                            <tr>
+                                <td>指数函数</td>
+                                <td>$y = a^x$ ($a > 0, a \neq 1$)</td>
+                                <td>$(-\infty, +\infty)$</td>
+                            </tr>
+                            <tr>
+                                <td>对数函数</td>
+                                <td>$y = \log_a x$ ($a > 0, a \neq 1$)</td>
+                                <td>$(0, +\infty)$</td>
+                            </tr>
+                            <tr>
+                                <td>三角函数</td>
+                                <td>$\sin x, \cos x, \tan x$</td>
+                                <td>各不相同</td>
+                            </tr>
+                            <tr>
+                                <td>反三角函数</td>
+                                <td>$\arcsin x, \arctan x$</td>
+                                <td>$[-1,1], (-\infty, +\infty)$</td>
+                            </tr>
+                        </table>
+                        
+                        <div class="example-box">
+                            <h4>📝 例1：符号函数</h4>
+                            <p>符号函数定义为：</p>
+                            <div class="formula-display">
+                                $$y = \text{sgn}(x) = \begin{cases} -1, & x < 0 \\ 0, & x = 0 \\ 1, & x > 0 \end{cases}$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        1.2 函数的性质
+                    </div>
+                    <div class="accordion-content">
+                        <h4>1. 单调性</h4>
+                        <div class="definition-box">
+                            <p>设函数 $f(x)$ 在某区间 $I$ 上有定义，如果对于区间 $I$ 上的任意两点 $x_1 < x_2$，恒有：</p>
+                            <ul>
+                                <li>$f(x_1) < f(x_2)$，则称 $f(x)$ 在该区间内<strong>单调递增</strong></li>
+                                <li>$f(x_1) > f(x_2)$，则称 $f(x)$ 在该区间内<strong>单调递减</strong></li>
+                            </ul>
+                        </div>
+                        
+                        <h4>2. 奇偶性</h4>
+                        <div class="theorem-box">
+                            <p>设函数 $f(x)$ 的定义域 $D$ 关于原点对称，若对 $\forall x \in D$：</p>
+                            <ul>
+                                <li>若 $f(-x) = f(x)$，则 $f(x)$ 为<strong>偶函数</strong></li>
+                                <li>若 $f(-x) = -f(x)$，则 $f(x)$ 为<strong>奇函数</strong></li>
+                            </ul>
+                        </div>
+                        
+                        <h4>3. 周期性</h4>
+                        <div class="definition-box">
+                            <p>若存在实数 $T > 0$，对于任意 $x$，恒有 $f(x+T) = f(x)$，则称 $f(x)$ 为<strong>周期函数</strong>，使上式成立的最小正数 $T$ 称为 $f(x)$ 的<strong>最小正周期</strong>。</p>
+                        </div>
+                        
+                        <h4>4. 有界性</h4>
+                        <div class="definition-box">
+                            <p>若存在 $M > 0$，使得对所有 $x \in X$，恒有 $|f(x)| \leq M$，则称 $f(x)$ 在 $X$ 上<strong>有界</strong>。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 id="chapter2">第二节：极限</h2>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        2.1 数列的极限
+                    </div>
+                    <div class="accordion-content">
+                        <div class="definition-box">
+                            <h4>定义（$\varepsilon$-$N$ 语言）</h4>
+                            <p>如果对于任意 $\varepsilon > 0$，总存在正整数 $N$，当 $n > N$ 时恒有 $|x_n - a| < \varepsilon$，则称常数 $a$ 为数列 $\{x_n\}$ 当 $n \to \infty$ 时的<strong>极限</strong>，记为：</p>
+                            <div class="formula-display">
+                                $$\lim_{n \to \infty} x_n = a$$
+                            </div>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>📝 例题：求 $\lim_{n \to \infty} \frac{n+1}{n}$</h4>
+                            <p><strong>解：</strong></p>
+                            <div class="formula-display">
+                                $$\lim_{n \to \infty} \frac{n+1}{n} = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right) = 1 + 0 = 1$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        2.2 函数的极限
+                    </div>
+                    <div class="accordion-content">
+                        <h4>1. 自变量趋于无穷大时的极限</h4>
+                        <div class="definition-box">
+                            <p>若对任意 $\varepsilon > 0$，总存在 $X > 0$，当 $x > X$ 时恒有 $|f(x) - A| < \varepsilon$，则称常数 $A$ 为函数 $f(x)$ 当 $x \to +\infty$ 时的极限：</p>
+                            <div class="formula-display">
+                                $$\lim_{x \to +\infty} f(x) = A$$
+                            </div>
+                        </div>
+                        
+                        <h4>2. 自变量趋于有限值时的极限</h4>
+                        <div class="definition-box">
+                            <p>若对任意 $\varepsilon > 0$，总存在 $\delta > 0$，当 $0 < |x - x_0| < \delta$ 时恒有 $|f(x) - A| < \varepsilon$，则称 $A$ 为 $f(x)$ 当 $x \to x_0$ 时的极限：</p>
+                            <div class="formula-display">
+                                $$\lim_{x \to x_0} f(x) = A$$
+                            </div>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>重要极限公式</h4>
+                            <div class="formula-display">
+                                $$\lim_{x \to 0} \frac{\sin x}{x} = 1$$
+                            </div>
+                            <div class="formula-display">
+                                $$\lim_{x \to 0} (1 + x)^{\frac{1}{x}} = e$$
+                            </div>
+                            <div class="formula-display">
+                                $$\lim_{x \to \infty} \left(1 + \frac{1}{x}\right)^x = e$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        2.3 极限的运算法则
+                    </div>
+                    <div class="accordion-content">
+                        <div class="theorem-box">
+                            <h4>四则运算法则</h4>
+                            <p>若 $\lim f(x) = A$，$\lim g(x) = B$，则：</p>
+                            <ul>
+                                <li>$\lim[f(x) \pm g(x)] = A \pm B$</li>
+                                <li>$\lim[f(x) \cdot g(x)] = A \cdot B$</li>
+                                <li>$\lim\frac{f(x)}{g(x)} = \frac{A}{B}$（$B \neq 0$）</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>洛必达法则（L'Hôpital's Rule）</h4>
+                            <p>若：</p>
+                            <ol>
+                                <li>$\lim f(x) = \lim g(x) = 0$（或 $\infty$）</li>
+                                <li>$f(x)$ 和 $g(x)$ 在 $x_0$ 的某去心邻域内可导，且 $g'(x) \neq 0$</li>
+                                <li>$\lim \frac{f'(x)}{g'(x)}$ 存在（或为 $\infty$）</li>
+                            </ol>
+                            <p>则：</p>
+                            <div class="formula-display">
+                                $$\lim \frac{f(x)}{g(x)} = \lim \frac{f'(x)}{g'(x)}$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 id="chapter3">第三节：连续性</h2>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        3.1 连续性的概念
+                    </div>
+                    <div class="accordion-content">
+                        <div class="definition-box">
+                            <h4>函数在一点连续的定义</h4>
+                            <p>设 $y = f(x)$ 在点 $x_0$ 的某邻域内有定义，若：</p>
+                            <div class="formula-display">
+                                $$\lim_{\Delta x \to 0} \Delta y = \lim_{\Delta x \to 0} [f(x_0 + \Delta x) - f(x_0)] = 0$$
+                            </div>
+                            <p>则称 $y = f(x)$ 在点 $x_0$ <strong>处连续</strong>。</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>等价定义</h4>
+                            <p>$f(x)$ 在点 $x_0$ 处连续 $\Leftrightarrow$ $\lim_{x \to x_0} f(x) = f(x_0)$</p>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>📝 例题：讨论函数的连续性</h4>
+                            <p>讨论函数 $f(x) = \begin{cases} 1 - \cos x, & x \neq 0 \\ a, & x = 0 \end{cases}$ 在 $x = 0$ 处连续，则 $a = $？</p>
+                            <p><strong>解：</strong>函数在 $x = 0$ 处连续需要：</p>
+                            <div class="formula-display">
+                                $$\lim_{x \to 0} f(x) = f(0)$$
+                            </div>
+                            <div class="formula-display">
+                                $$\lim_{x \to 0} (1 - \cos x) = \lim_{x \to 0} \frac{1}{2}x^2 = 0$$
+                            </div>
+                            <p>因此 $a = 0$。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        3.2 间断点及其分类
+                    </div>
+                    <div class="accordion-content">
+                        <div class="definition-box">
+                            <h4>间断点的定义</h4>
+                            <p>若 $f(x)$ 在 $x_0$ 的某去心邻域内有定义，但在 $x_0$ 处不连续，则称 $x_0$ 为 $f(x)$ 的<strong>间断点</strong>。</p>
+                        </div>
+                        
+                        <h4>间断点的分类：</h4>
+                        
+                        <div class="theorem-box">
+                            <h4>第一类间断点</h4>
+                            <p>左右极限都存在的间断点，包括：</p>
+                            <ul>
+                                <li><strong>可去间断点</strong>：左右极限存在且相等，但不等于函数值</li>
+                                <li><strong>跳跃间断点</strong>：左右极限存在但不相等</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>第二类间断点</h4>
+                            <p>至少有一个单侧极限不存在的间断点，包括：</p>
+                            <ul>
+                                <li><strong>无穷间断点</strong>：至少有一侧极限为 $\infty$</li>
+                                <li><strong>振荡间断点</strong>：如 $y = \sin\frac{1}{x}$ 在 $x = 0$ 处</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        3.3 闭区间上连续函数的性质
+                    </div>
+                    <div class="accordion-content">
+                        <div class="theorem-box">
+                            <h4>最值定理</h4>
+                            <p>若 $f(x)$ 在闭区间 $[a,b]$ 上连续，则 $f(x)$ 在 $[a,b]$ 上必有最大值与最小值。</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>介值定理</h4>
+                            <p>若 $f(x)$ 在 $[a,b]$ 上连续，且 $f(a) \neq f(b)$，则对于介于 $f(a)$ 与 $f(b)$ 之间的任何数 $C$，至少存在一点 $\xi \in (a,b)$，使 $f(\xi) = C$。</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>零点定理</h4>
+                            <p>若 $f(x)$ 在 $[a,b]$ 上连续，且 $f(a) \cdot f(b) < 0$，则至少存在一点 $\xi \in (a,b)$，使 $f(\xi) = 0$。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Quiz Section -->
+        <div class="content-card" id="quiz">
+            <h2>📝 互动测验</h2>
+            <p>测试您对极限和连续性的理解！</p>
+            
+            <div class="quiz-container">
+                <div class="quiz-question">
+                    问题 1：$\lim_{x \to 0} \frac{\sin x}{x} = $ ?
+                </div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">A. 0</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">B. 1</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">C. $\infty$</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">D. 不存在</div>
+                </div>
+                <div class="quiz-feedback"></div>
+            </div>
+            
+            <div class="quiz-container">
+                <div class="quiz-question">
+                    问题 2：函数 $f(x) = \frac{1}{x}$ 在 $x = 0$ 处是什么类型的间断点？
+                </div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">A. 可去间断点</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">B. 跳跃间断点</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">C. 无穷间断点</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">D. 振荡间断点</div>
+                </div>
+                <div class="quiz-feedback"></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn" onclick="resetQuiz()">重置测验</button>
+            </div>
+        </div>
+
+        <!-- Additional Resources -->
+        <div class="content-card">
+            <h2>🔗 学习资源</h2>
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        常用公式速查表
+                    </div>
+                    <div class="accordion-content">
+                        <h4>基本极限</h4>
+                        <ul>
+                            <li>$\lim_{x \to 0} \frac{\sin x}{x} = 1$</li>
+                            <li>$\lim_{x \to 0} \frac{1 - \cos x}{x^2} = \frac{1}{2}$</li>
+                            <li>$\lim_{x \to 0} (1+x)^{\frac{1}{x}} = e$</li>
+                            <li>$\lim_{x \to 0} \frac{e^x - 1}{x} = 1$</li>
+                            <li>$\lim_{x \to 0} \frac{\ln(1+x)}{x} = 1$</li>
+                        </ul>
+                        
+                        <h4>等价无穷小（$x \to 0$）</h4>
+                        <ul>
+                            <li>$x \sim \sin x \sim \tan x \sim \arcsin x \sim \arctan x \sim \ln(1+x) \sim e^x - 1$</li>
+                            <li>$1 - \cos x \sim \frac{1}{2}x^2$</li>
+                            <li>$(1+x)^\alpha - 1 \sim \alpha x$</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        解题技巧与方法
+                    </div>
+                    <div class="accordion-content">
+                        <h4>求极限的八种方法：</h4>
+                        <ol>
+                            <li>利用基本极限求极限</li>
+                            <li>利用等价无穷小代换求极限</li>
+                            <li>利用有理运算法则求极限</li>
+                            <li>利用洛必达法则求极限</li>
+                            <li>利用泰勒公式求极限</li>
+                            <li>利用夹逼准则求极限</li>
+                            <li>利用单调有界准则求极限</li>
+                            <li>利用定积分定义求极限</li>
+                        </ol>
+                        
+                        <div class="definition-box">
+                            <h4>💡 解题提示</h4>
+                            <p>遇到 $\frac{0}{0}$ 或 $\frac{\infty}{\infty}$ 型极限时，优先考虑等价无穷小代换，其次考虑洛必达法则。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+
+        // Quiz functionality
+        function checkAnswer(element, isCorrect) {
+            const container = element.closest('.quiz-container');
+            const feedback = container.querySelector('.quiz-feedback');
+            const options = container.querySelectorAll('.quiz-option');
+            
+            // Disable all options
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            // Show feedback
+            feedback.classList.add('show');
+            if (isCorrect) {
+                feedback.classList.add('correct');
+                feedback.textContent = '✓ 回答正确！做得很好！';
+            } else {
+                feedback.classList.add('incorrect');
+                feedback.textContent = '✗ 回答错误，请再想想看。';
+            }
+        }
+
+        function resetQuiz() {
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect');
+                opt.style.pointerEvents = 'auto';
+            });
+            document.querySelectorAll('.quiz-feedback').forEach(feedback => {
+                feedback.classList.remove('show', 'correct', 'incorrect');
+            });
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.content-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease-out';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

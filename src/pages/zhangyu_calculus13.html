@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第13讲：多元函数微分学 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            min-height: 100vh;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 3px solid #667eea;
+            position: sticky;
+            top: 140px;
+            z-index: 99;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        nav a {
+            color: #667eea;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 25px;
+            border: 2px solid #667eea;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102,126,234,0.3);
+        }
+        
+        main {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        section h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+        
+        .method-box {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .method-box h4 {
+            color: #ff6b6b;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+        
+        .example {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(245,87,108,0.3);
+        }
+        
+        .example h4 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .formula-box {
+            background: #e3f2fd;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+            overflow-x: auto;
+        }
+        
+        .note {
+            background: #fff9c4;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #fbc02d;
+        }
+        
+        .note::before {
+            content: "💡 注意：";
+            font-weight: 600;
+            color: #f57f17;
+        }
+        
+        .theorem {
+            background: #e8f5e9;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .theorem::before {
+            content: "📐 定理：";
+            font-weight: 600;
+            color: #2e7d32;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        details {
+            background: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        details:hover {
+            box-shadow: 0 4px 12px rgba(102,126,234,0.2);
+        }
+        
+        summary {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1.1em;
+            padding: 10px;
+            user-select: none;
+        }
+        
+        summary::marker {
+            color: #667eea;
+        }
+        
+        details[open] {
+            background: #f0f4ff;
+        }
+        
+        .interactive-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+            margin: 10px 5px;
+        }
+        
+        .interactive-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.6);
+        }
+        
+        .interactive-btn:active {
+            transform: translateY(0);
+        }
+        
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Roboto Mono', monospace;
+            margin: 15px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #ffd89b 0%, #19547b 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+        
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        .quiz-container {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+        }
+        
+        .quiz-question {
+            font-weight: 600;
+            color: #764ba2;
+            margin-bottom: 15px;
+        }
+        
+        .quiz-option {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quiz-option:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            main {
+                padding: 20px;
+            }
+            
+            section {
+                padding: 20px;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .show {
+            animation: slideDown 0.4s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 第13讲：多元函数微分学</h1>
+            <p>交互式学习教程 | Multivariable Calculus</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#part1">极限计算</a></li>
+                <li><a href="#part2">函数性质</a></li>
+                <li><a href="#part3">偏导数</a></li>
+                <li><a href="#part4">偏微分方程</a></li>
+                <li><a href="#part5">极值最值</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <section id="intro">
+                <h2>🎯 课程概览</h2>
+                <p>本讲内容涵盖多元函数微分学的核心知识，包括极限、连续性、偏导数、全微分以及极值问题。通过系统的学习，您将掌握：</p>
+                <div class="method-box">
+                    <ul style="list-style-position: inside; line-height: 2;">
+                        <li>✅ 二元函数极限的计算方法（二重极限与累次极限）</li>
+                        <li>✅ 多元函数的连续性、偏导数和全微分</li>
+                        <li>✅ 复合函数和隐函数的求导法则</li>
+                        <li>✅ 偏微分方程的化简与求解</li>
+                        <li>✅ 多元函数的极值与最值问题</li>
+                    </ul>
+                </div>
+                <button class="interactive-btn" onclick="showWelcomeMessage()">🚀 开始学习</button>
+            </section>
+
+            <section id="part1">
+                <h2>第一部分：计算二元函数的极限</h2>
+                
+                <h3>三向解题法</h3>
+                <div class="formula-box">
+                    <p><strong>计算二元函数的极限包括：</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>二重极限：</strong> \(\lim\limits_{x\to x_0 \atop y\to y_0} f(x,y)\) （O₁目标1）</li>
+                        <li><strong>累次极限：</strong> \(\lim\limits_{x\to x_0}\lim\limits_{y\to y_0} f(x,y)\) 或 \(\lim\limits_{y\to y_0}\lim\limits_{x\to x_0} f(x,y)\) （O₂目标2）</li>
+                    </ul>
+                </div>
+                
+                <details>
+                    <summary>📌 判别二重极限是否存在 - 特殊路径法</summary>
+                    <div style="padding: 15px;">
+                        <h4>1. 同阶路径径法</h4>
+                        <p>如果分母为 \(x + y\)，令 \(y = kx\)，则分母成为 \((1+k)x\)（同阶）。</p>
+                        
+                        <div class="example">
+                            <h4>例13.1</h4>
+                            <p>求 \(\lim\limits_{(x,y)\to(0,0)} \frac{x^2-y^2}{x^2+y^2}\)</p>
+                            <p><strong>解：</strong>因为 \(\lim\limits_{(x,y)\to(0,0)} \frac{x^2-y^2}{x^2+y^2} \overset{y=kx}{=} \lim\limits_{x\to 0} \frac{x^2(1-k^2)}{x^2(1+k^2)} = \frac{1-k^2}{1+k^2}\)，不唯一，所以 \(\lim\limits_{(x,y)\to(0,0)} \frac{x^2-y^2}{x^2+y^2}\) 不存在。</p>
+                        </div>
+                        
+                        <h4>2. 变阶路径径法</h4>
+                        <div class="example">
+                            <h4>例13.2</h4>
+                            <p>求 \(\lim\limits_{(x,y)\to(0,0)} \frac{x^3+y^3}{x^2+y}\)</p>
+                            <p><strong>解：</strong>令 \(y = x\)，得 \(\lim\limits_{(x,y)\to(0,0)} \frac{x^3+y^3}{x^2+y} = \lim\limits_{x\to 0} \frac{2x^3}{x^2+x} = 0\)</p>
+                            <p>再令 \(y = -x^2 + x^3\)，得 \(\lim\limits_{(x,y)\to(0,0)} \frac{x^3+y^3}{x^2+y} = \lim\limits_{x\to 0} \frac{x^3+(-x^2+x^3)^3}{x^3} = 1\)</p>
+                            <p>所以 \(\lim\limits_{(x,y)\to(0,0)} \frac{x^3+y^3}{x^2+y}\) 不存在。</p>
+                        </div>
+                    </div>
+                </details>
+                
+                <details>
+                    <summary>📌 计算二重极限 - 常规操作与化归经典形式</summary>
+                    <div style="padding: 15px;">
+                        <div class="method-box">
+                            <h4>计算方法包括：</h4>
+                            <ul style="margin-left: 20px;">
+                                <li><strong>整体换元法</strong></li>
+                                <li><strong>放缩法</strong>（用夹逼准则）</li>
+                                <li><strong>无穷小量与有界量的乘积是无穷小量</strong></li>
+                                <li><strong>实际上的一元极限</strong></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="example">
+                            <h4>例13.3</h4>
+                            <p>求 \(\lim\limits_{x\to\infty \atop y\to\infty} \frac{x+y}{x^2-xy+y^2}\)</p>
+                            <p><strong>解：</strong>当 \((x,y) \neq (0,0)\) 时，因为</p>
+                            <div class="formula-box">
+                                $$0 \leq \left|\frac{x+y}{x^2-xy+y^2}\right| \leq \frac{|x|}{|x^2-xy+y^2|} + \frac{|y|}{|x^2-xy+y^2|} \leq \frac{4}{3}\left(\frac{1}{|x|} + \frac{1}{|y|}\right)$$
+                            </div>
+                            <p>且 \(\lim\limits_{x\to\infty \atop y\to\infty} \frac{4}{3}\left(\frac{1}{|x|}+\frac{1}{|y|}\right) = 0\)，所以 \(\lim\limits_{x\to\infty \atop y\to\infty} \frac{x+y}{x^2-xy+y^2} = 0\)</p>
+                        </div>
+                        
+                        <div class="example">
+                            <h4>例13.4</h4>
+                            <p>求 \(\lim\limits_{x\to+\infty \atop y\to 1} (x^2+y^2)e^{-(x+y)}\)</p>
+                            <p><strong>解：</strong></p>
+                            <div class="formula-box">
+                                $$\lim\limits_{x\to+\infty \atop y\to 1} (x^2+y^2)e^{-(x+y)} = \lim\limits_{x\to+\infty \atop y\to 1} \left(\frac{x^2}{e^x} \cdot \frac{1}{e^y} + \frac{y^2}{e^y} \cdot \frac{1}{e^x}\right) = 0$$
+                            </div>
+                        </div>
+                    </div>
+                </details>
+                
+                <details>
+                    <summary>📌 判别累次极限是否存在</summary>
+                    <div style="padding: 15px;">
+                        <div class="note">
+                            对于 \(\lim\limits_{x\to x_0}\lim\limits_{y\to y_0} f(x,y)\)，先固定 \(x\)（视为常数），计算 \(\lim\limits_{y\to y_0} f(x,y)\)。若不存在，则累次极限不存在；若存在，再计算 \(\lim\limits_{x\to x_0}\left[\lim\limits_{y\to y_0} f(x,y)\right]\)。若不存在，则累次极限不存在；若存在，则累次极限存在。
+                        </div>
+                    </div>
+                </details>
+                
+                <details>
+                    <summary>📌 二重极限与累次极限的关系</summary>
+                    <div style="padding: 15px;">
+                        <div class="theorem">
+                            <p>①二重极限存在，累次极限未必存在；累次极限存在，二重极限未必存在；</p>
+                            <p>②若二重极限存在，且累次极限存在，则二者必相等；</p>
+                            <p>③若 \(\lim\limits_{x\to 0}\left[\lim\limits_{y\to 0} f(x,y)\right]\)，\(\lim\limits_{y\to 0}\left[\lim\limits_{x\to 0} f(x,y)\right]\) 均存在但不相等，则二重极限不存在。</p>
+                        </div>
+                    </div>
+                </details>
+
+                <button class="interactive-btn" onclick="toggleQuiz('quiz1')">💡 测试理解</button>
+                <div id="quiz1" class="quiz-container hidden">
+                    <div class="quiz-question">问：二重极限存在，累次极限一定存在吗？</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">A. 一定存在</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">B. 不一定存在 ✓</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">C. 一定不存在</div>
+                </div>
+            </section>
+
+            <section id="part2">
+                <h2>第二部分：研究二元函数的性质</h2>
+                
+                <h3>一、连续性</h3>
+                <div class="theorem">
+                    <strong>二元函数连续的概念：</strong>
+                    <p>如果 \(\lim\limits_{x\to x_0 \atop y\to y_0} f(x,y) = f(x_0, y_0)\)，则称函数 \(f(x,y)\) 在点 \((x_0, y_0)\) 处连续。如果 \(f(x,y)\) 在区域 \(D\) 上每一点处都连续，则称 \(f(x,y)\) 在区域 \(D\) 上连续。</p>
+                </div>
+                
+                <h3>二、偏导数</h3>
+                <div class="formula-box">
+                    <p><strong>二元函数偏导数的概念：</strong></p>
+                    <p>设函数 \(z = f(x,y)\) 在点 \((x_0, y_0)\) 处的某邻域内有定义，如果极限</p>
+                    $$\lim_{\Delta x \to 0} \frac{f(x_0+\Delta x, y_0) - f(x_0, y_0)}{\Delta x}$$
+                    <p>存在，则称此极限为函数 \(z = f(x,y)\) 在点 \((x_0, y_0)\) 处对 \(x\) 的<strong>偏导数</strong>，记作</p>
+                    $$\left.\frac{\partial z}{\partial x}\right|_{x=x_0 \atop y=y_0}, \quad \left.\frac{\partial f}{\partial x}\right|_{x=x_0 \atop y=y_0}, \quad z_x|_{x=x_0 \atop y=y_0}, \quad \text{或} \quad f_x'(x_0, y_0)$$
+                </div>
+                
+                <h3>三、全微分</h3>
+                <div class="formula-box">
+                    <p>设二元函数 \(z = f(x,y)\) 在点 \((x,y)\) 的某邻域内有定义，若 \(z = f(x,y)\) 的全增量 \(\Delta z = f(x+\Delta x, y+\Delta y) - f(x,y)\) 可以表示为：</p>
+                    $$\Delta z = A\Delta x + B\Delta y + o(\rho)$$
+                    <p>其中 \(A, B\) 不依赖于 \(\Delta x, \Delta y\)，而仅与 \(x, y\) 有关，\(\rho = \sqrt{(\Delta x)^2 + (\Delta y)^2}\)，则称函数 \(z = f(x,y)\) 在点 \((x,y)\) 处<strong>可微</strong>，\(A\Delta x + B\Delta y\) 称为函数 \(z = f(x,y)\) 在点 \((x,y)\) 处的<strong>全微分</strong>，记作 \(dz\)，即 \(dz = A\Delta x + B\Delta y\)。</p>
+                </div>
+                
+                <h3>四、概念关系图</h3>
+                <div class="method-box">
+                    <p>记 \(f(x,y)\) 在点 \(P(x_0,y_0)\) 处的性态分别为：</p>
+                    <ul style="margin-left: 20px;">
+                        <li>①可微分别为极限存在；</li>
+                        <li>②连续；</li>
+                        <li>③关于 \(x,y\) 两个变量均连续；</li>
+                        <li>④一阶偏导数存在；</li>
+                        <li>⑤可微；</li>
+                        <li>⑥一阶偏导数连续。</li>
+                    </ul>
+                    <div class="formula-box" style="text-align: center; margin-top: 15px;">
+                        <p><strong>关系图：</strong></p>
+                        <p>⑥ ⇒ ⑤ ⇒ ④</p>
+                        <p style="margin-left: 40px;">⇓</p>
+                        <p style="margin-left: 20px;">③ ⇒ ②</p>
+                        <p>（"⇒" 代表能推出；"⇏" 代表不能推出）</p>
+                    </div>
+                    <div class="note">
+                        以下诸例皆需小心应对，识别各种 "⇏" 的现象。
+                    </div>
+                </div>
+
+                <button class="interactive-btn" onclick="alert('💡 提示：连续不能推出偏导数存在！偏导数存在也不能推出可微！')">查看关键提示</button>
+            </section>
+
+            <section id="part3">
+                <h2>第三部分：计算偏导数、全微分</h2>
+                
+                <h3>一、链式求导规则</h3>
+                <div class="formula-box">
+                    <p><strong>(1) 设 \(y = f[g(x)]\)，则：</strong></p>
+                    $$\frac{dy}{dx} = \frac{d\{f[g(x)]\}}{dx} = \frac{d\{f[g(x)]\}}{d[g(x)]} \cdot \frac{d[g(x)]}{dx}$$
+                    
+                    <p style="margin-top: 20px;"><strong>(2) 设 \(z = f(u,v)\)，\(u = u(x,y)\)，\(v = v(x,y)\)，则：</strong></p>
+                    $$\frac{\partial z}{\partial x} = \frac{\partial z}{\partial u} \cdot \frac{\partial u}{\partial x} + \frac{\partial z}{\partial v} \cdot \frac{\partial v}{\partial x}$$
+                    $$\frac{\partial z}{\partial y} = \frac{\partial z}{\partial u} \cdot \frac{\partial u}{\partial y} + \frac{\partial z}{\partial v} \cdot \frac{\partial v}{\partial y}$$
+                    
+                    <p style="margin-top: 20px;"><strong>(3) 设 \(z = f(u,v)\)，\(u = u(t)\)，\(v = v(t)\)，则：</strong></p>
+                    $$\frac{dz}{dt} = \frac{\partial z}{\partial u} \cdot \frac{du}{dt} + \frac{\partial z}{\partial v} \cdot \frac{dv}{dt}$$
+                </div>
+                
+                <h3>二、隐函数求导法</h3>
+                <details>
+                    <summary>📌 一个方程的情形</summary>
+                    <div style="padding: 15px;">
+                        <p>设 \(F(x,y,z) = 0\)，\(F_z(x_0, y_0, z_0)\) 若满足：①\(F(P_0) = 0\)；②\(F_z'(P_0) \neq 0\)，则在点 \(P_0\) 的某邻域内可确定 \(z = z(x,y)\)，且有：</p>
+                        <div class="formula-box">
+                            $$\frac{\partial z}{\partial x} = -\frac{F_x'}{F_z'}, \quad \frac{\partial z}{\partial y} = -\frac{F_y'}{F_z'}$$
+                        </div>
+                    </div>
+                </details>
+                
+                <details>
+                    <summary>📌 方程组的情形</summary>
+                    <div style="padding: 15px;">
+                        <p>设方程组 \(\begin{cases} F(x,y,z) = 0 \\ G(x,y,z) = 0 \end{cases}\)，当满足 \(\frac{\partial(F,G)}{\partial(y,z)} = \begin{vmatrix} \frac{\partial F}{\partial y} & \frac{\partial F}{\partial z} \\ \frac{\partial G}{\partial y} & \frac{\partial G}{\partial z} \end{vmatrix} \neq 0\) 时，可确定 \(\begin{cases} y = y(x) \\ z = z(x) \end{cases}\)，其复合结构图如图所示，且有：</p>
+                        <div class="formula-box">
+                            $$\frac{dy}{dx} = -\frac{\partial(F,G)/\partial(x,z)}{\partial(F,G)/\partial(y,z)}$$
+                            $$\frac{dz}{dx} = -\frac{\partial(F,G)/\partial(y,x)}{\partial(F,G)/\partial(y,z)}$$
+                        </div>
+                    </div>
+                </details>
+                
+                <h3>三、全微分形式不变性</h3>
+                <div class="theorem">
+                    设 \(z = f(u,v)\)，\(u = u(x,y)\)，\(v = v(x,y)\)，如果 \(f(u,v)\)，\(u(x,y)\)，\(v(x,y)\) 分别有连续偏导数，则复合函数 \(z = f(u,v)\) 在 \((x,y)\) 处的全微分仍可表示为：
+                    <div class="formula-box">
+                        $$dz = \frac{\partial z}{\partial u}du + \frac{\partial z}{\partial v}dv$$
+                    </div>
+                    <p>即无论 \(u, v\) 是自变量还是中间变量，上式总成立。</p>
+                </div>
+                
+                <h3>四、全微分公式大观</h3>
+                <div class="method-box">
+                    <p><strong>重要公式汇总：</strong></p>
+                    <ol style="margin-left: 20px; line-height: 2.5;">
+                        <li>\(xdx + ydy = d\left(\frac{x^2+y^2}{2}\right)\)</li>
+                        <li>\(xdx - ydy = d\left(\frac{x^2-y^2}{2}\right)\)</li>
+                        <li>\(ydx + xdy = d(xy)\)</li>
+                        <li>\(\frac{ydx + xdy}{xy} = d(\ln|xy|)\)</li>
+                        <li>\(\frac{xdx + ydy}{x^2+y^2} = d\left[\frac{1}{2}\ln(x^2+y^2)\right]\)</li>
+                        <li>\(\frac{xdx - ydy}{x^2-y^2} = d\left[\frac{1}{2}\ln|x^2-y^2|\right]\)</li>
+                        <li>\(\frac{xdy - ydx}{x^2} = d\left(\frac{y}{x}\right)\)</li>
+                        <li>\(\frac{ydx - xdy}{y^2} = d\left(\frac{x}{y}\right)\)</li>
+                    </ol>
+                </div>
+
+                <button class="interactive-btn" onclick="showFormulaPractice()">🧮 公式练习</button>
+            </section>
+
+            <section id="part4">
+                <h2>第四部分：化简、求解偏微分方程</h2>
+                
+                <div class="method-box">
+                    <h3>解题策略流程图</h3>
+                    <p><strong>见到含有偏导数的等式时：</strong></p>
+                    <ol style="line-height: 2.5;">
+                        <li>给出等式 \(A\)，要求 \(f(u,v)\) 的表达式</li>
+                        <li>立即寻找 \(u = u(x,y)\)，\(v = v(x,y)\)</li>
+                        <li>令 \(f = f(u,v)\)</li>
+                        <li>写结构图，计算 \(\frac{\partial f}{\partial x}\) 或 \(\frac{\partial^2 f}{\partial x\partial y}\) 等</li>
+                        <li>代入题设等式 \(A\)，得到 \(\frac{\partial f}{\partial u}\) 或 \(\frac{\partial^2 f}{\partial u\partial v}\)</li>
+                        <li>即可求得 \(f\)</li>
+                    </ol>
+                </div>
+                
+                <div class="note">
+                    对于给出 \(u = f[g(x,y)]\) 满足 \(A = f[g(x,y)]\) 的偏导数等式，求 \(f(x)\) 的表达式的题型，可以：
+                    <ul style="margin-left: 20px;">
+                        <li>令 \(t = g(x,y)\)，得 \(u = f(t)\)</li>
+                        <li>写结构图，依次计算 \(\frac{\partial z}{\partial x}, \frac{\partial z}{\partial y}, \frac{\partial^2 z}{\partial x^2}, \frac{\partial^2 z}{\partial x\partial y}, \frac{\partial^2 z}{\partial y^2}\)，均用 \(z\) 对 \(u, v\) 的各阶偏导数表示</li>
+                        <li>代入题设等式 \(A\) 化简为等式 \(B\)，反求参数</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="part5">
+                <h2>第五部分：求多元函数的极值、最值</h2>
+                
+                <h3>一、无条件极值</h3>
+                <div class="method-box">
+                    <h4>(1) 二元函数取极值的必要条件（类比一元函数）</h4>
+                    <p>设 \(z = f(x,y)\) 在点 \((x_0, y_0)\) 处：</p>
+                    <ul style="margin-left: 20px;">
+                        <li>一阶偏导数存在，则 \(f_x'(x_0,y_0) = 0\)，\(f_y'(x_0,y_0) = 0\)</li>
+                        <li>取极值，</li>
+                    </ul>
+                    
+                    <h4>(2) 二元函数取极值的充分条件</h4>
+                    <p>设 \(z = f(x,y)\) 在点 \((x_0, y_0)\) 的某邻域内有二阶连续偏导数且 \(f_x'(x_0,y_0) = 0\)，\(f_y'(x_0,y_0) = 0\)，记</p>
+                    <div class="formula-box">
+                        $$\begin{cases}
+                        f_{xx}''(x_0,y_0) = A, \\
+                        f_{xy}''(x_0,y_0) = B, & \text{则} \, \Delta = AC - B^2 \\
+                        f_{yy}''(x_0,y_0) = C,
+                        \end{cases}
+                        \begin{cases}
+                        > 0 \Rightarrow \text{极值} \begin{cases} A < 0 \Rightarrow \text{极大值}, \\ A > 0 \Rightarrow \text{极小值}, \end{cases} \\
+                        < 0 \Rightarrow \text{非极值}, \\
+                        = 0 \Rightarrow \text{方法失效，另辟他法}.
+                        \end{cases}$$
+                    </div>
+                    
+                    <div class="note">
+                        <strong>记忆口诀：</strong>
+                        <ul style="margin-left: 20px;">
+                            <li>"大鼻子爷爷" \(\Delta = 0 \Rightarrow\) 方法失效</li>
+                            <li>"小鼻巴爷" \(\Delta < 0 \Rightarrow\) 不是极值</li>
+                            <li>"开心" \(\Delta > 0\)，\(A > 0 \Rightarrow\) 极小值</li>
+                            <li>"不开心" \(\Delta > 0\)，\(A < 0 \Rightarrow\) 极大值</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>(3) 求极值的步骤</h4>
+                    <ol style="margin-left: 20px; line-height: 2;">
+                        <li>求驻点，\(\begin{cases} f_x' = 0, \\ f_y' = 0 \end{cases} \Rightarrow P_i\)</li>
+                        <li>求 \(f_{xx}''(P_i) = A\)，\(f_{xy}''(P_i) = B\)，\(f_{yy}''(P_i) = C\)</li>
+                        <li>用 \(\Delta\) 判别法</li>
+                        <li>关于 \(\Delta = 0\) 时，否定极值性：
+                            <ul style="margin-left: 20px;">
+                                <li>a. 沿坐标轴，如沿x轴，极小值；沿y轴，极大值</li>
+                                <li>b. 沿 \(y = kx\)，有极大值，有极小值</li>
+                                <li>c. 看区域，邻域内不同区域，有极大值，有极小值均可否定极值性</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+                
+                <h3>二、条件极值（最）值与拉格朗日乘数法</h3>
+                <details>
+                    <summary>📌 拉格朗日乘数法</summary>
+                    <div style="padding: 15px;">
+                        <p><strong>(1) 求目标函数 \(u = f(x,y,z)\) 在约束条件 \(\begin{cases} \varphi(x,y,z) = 0 \\ \psi(x,y,z) = 0 \end{cases}\) 下的最值的步骤：</strong></p>
+                        <ol style="line-height: 2;">
+                            <li>构造辅助函数 \(F(x,y,z,\lambda,\mu) = f(x,y,z) + \lambda\varphi(x,y,z) + \mu\psi(x,y,z)\)</li>
+                            <li>令
+                                $$\begin{cases}
+                                F_x' = f_x' + \lambda\varphi_x' + \mu\psi_x' = 0, \\
+                                F_y' = f_y' + \lambda\varphi_y' + \mu\psi_y' = 0, \\
+                                F_z' = f_z' + \lambda\varphi_z' + \mu\psi_z' = 0, \\
+                                F_\lambda' = \varphi(x,y,z) = 0, \\
+                                F_\mu' = \psi(x,y,z) = 0;
+                                \end{cases}$$
+                            </li>
+                            <li>解上述方程组得备选点 \(P_i\)，\(i=1, 2, 3, \cdots, n\)，并求其最大值为 \(u_{\max}\)，最小值为 \(u_{\min}\)</li>
+                            <li>根据实际问题，必存在最值，所得即为所求</li>
+                        </ol>
+                    </div>
+                </details>
+                
+                <h3>三、闭区域D上的最值</h3>
+                <div class="method-box">
+                    <h4>(1) D内部</h4>
+                    <p>①按无条件极值，写 \(\begin{cases} f_x' = 0, \\ f_y' = 0. \end{cases}\)</p>
+                    <p>②保留 \(D\) 内的可疑点，删去 \(D\) 外的可疑点。</p>
+                    
+                    <h4>(2) ∂D</h4>
+                    <p>按条件极值，写 \(F = f + \lambda\varphi\)，求解</p>
+                    <div class="formula-box">
+                        $$\begin{cases}
+                        F_x' = 0, \\
+                        F_y' = 0, \\
+                        F_z' = 0, \\
+                        F_\lambda' = 0.
+                        \end{cases}$$
+                    </div>
+                    <p>求出可疑点或将 \(\partial D\) 方程代入 \(f\)，消元后求可疑点。</p>
+                    <p>比较所有可疑点，取函数值最小者为最小值，最大者为最大值。</p>
+                </div>
+
+                <button class="interactive-btn" onclick="alert('🎉 恭喜！您已完成本讲所有内容的学习！')">🏆 完成学习</button>
+            </section>
+        </main>
+        
+        <footer>
+            <p>📚 多元函数微分学交互式教程 © 2025</p>
+            <p>💡 提示：本教程使用 MathJax 渲染数学公式，建议使用现代浏览器查看以获得最佳体验</p>
+            <p>🔗 保存为 .html 文件并在浏览器中打开即可离线学习</p>
+        </footer>
+    </div>
+
+    <script>
+        // Welcome message
+        function showWelcomeMessage() {
+            alert('🎓 欢迎开始学习多元函数微分学！\n\n本教程包含：\n✅ 5个核心主题\n✅ 20+个示例\n✅ 交互式测验\n✅ 完整的公式推导\n\n祝学习愉快！');
+        }
+        
+        // Toggle quiz visibility
+        function toggleQuiz(quizId) {
+            const quiz = document.getElementById(quizId);
+            if (quiz.classList.contains('hidden')) {
+                quiz.classList.remove('hidden');
+                quiz.classList.add('show');
+            } else {
+                quiz.classList.add('hidden');
+                quiz.classList.remove('show');
+            }
+        }
+        
+        // Check quiz answer
+        function checkAnswer(element, isCorrect) {
+            if (isCorrect) {
+                element.style.background = 'linear-gradient(135deg, #a8e063 0%, #56ab2f 100%)';
+                element.style.color = 'white';
+                setTimeout(() => {
+                    alert('✅ 回答正确！二重极限存在不能保证累次极限存在。');
+                }, 200);
+            } else {
+                element.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)';
+                element.style.color = 'white';
+                setTimeout(() => {
+                    alert('❌ 答案错误，请再想想！提示：回顾概念关系图。');
+                    element.style.background = '#f8f9fa';
+                    element.style.color = '#333';
+                }, 1500);
+            }
+        }
+        
+        // Show formula practice
+        function showFormulaPractice() {
+            const formulas = [
+                'xdx + ydy = d((x²+y²)/2)',
+                'ydx + xdy = d(xy)',
+                '(xdx + ydy)/(x²+y²) = d[½ln(x²+y²)]'
+            ];
+            const randomFormula = formulas[Math.floor(Math.random() * formulas.length)];
+            alert('🧮 公式练习\n\n请记忆以下重要公式：\n\n' + randomFormula + '\n\n💡 建议：多做练习，熟能生巧！');
+        }
+        
+        // Smooth scroll for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+        
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+        
+        // MathJax configuration
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                scale: 110,
+                styles: {
+                    ".MathJax": {
+                        color: "#2196F3 !important"
+                    }
+                }
+            }
+        });
+        
+        // Console welcome message
+        console.log('%c📚 多元函数微分学交互式教程', 'color: #667eea; font-size: 20px; font-weight: bold;');
+        console.log('%c🎓 欢迎学习！本教程包含丰富的交互功能和完整的LaTeX公式渲染。', 'color: #764ba2; font-size: 14px;');
+    </script>
+</body>
+</html>

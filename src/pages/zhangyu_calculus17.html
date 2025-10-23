@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第17讲：多元函数微分学预备知识 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        /* Navigation */
+        nav {
+            background: #2d3748;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        nav li {
+            margin: 5px 10px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            display: block;
+        }
+        
+        nav a:hover {
+            background: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        /* Content */
+        .content {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+        }
+        
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+        
+        /* Accordion */
+        .accordion {
+            background: #f7fafc;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            font-size: 1.3em;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        
+        .accordion-header::after {
+            content: '▼';
+            transition: transform 0.3s;
+        }
+        
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+        }
+        
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 20px;
+        }
+        
+        /* Math formulas */
+        .math-block {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        
+        .math-inline {
+            color: #764ba2;
+            font-weight: 500;
+        }
+        
+        /* Examples */
+        .example {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #e17055;
+        }
+        
+        .example-title {
+            font-weight: bold;
+            color: #d63031;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        /* Solution */
+        .solution {
+            background: linear-gradient(135deg, #dfe6e9 0%, #b2bec3 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #2d3436;
+        }
+        
+        .solution-title {
+            font-weight: bold;
+            color: #2d3436;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        /* Notes */
+        .note {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .note-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        /* Diagram */
+        .diagram {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .box-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .box-small {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+        
+        /* Interactive button */
+        .interactive-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+        
+        .interactive-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Footer */
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第17讲 多元函数微分学的预备知识</h1>
+            <p>（权数学一）</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#overview">三向解题法</a></li>
+                <li><a href="#directional">方向导数</a></li>
+                <li><a href="#gradient">梯度</a></li>
+                <li><a href="#taylor">泰勒多项式</a></li>
+                <li><a href="#curve">空间曲线</a></li>
+                <li><a href="#surface">空间曲面</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <!-- Overview Section -->
+            <section id="overview">
+                <h2>三向解题法概览</h2>
+                <div class="diagram">
+                    <h3>继续研究多元函数在一点的性质（O(旧性目标)）</h3>
+                    <div class="flowchart">
+                        <div class="box">继续研究多元函数在一点的性质</div>
+                        <div class="box-row">
+                            <div class="box-small">方向导数<br>(D₁(常规操作)+D₂₂(转换等价表达))</div>
+                            <div class="box-small">多元函数的泰勒多项式<br>(D₁(常规操作))</div>
+                            <div class="box-small">空间曲面的切平面与法线<br>(D₁(常规操作))</div>
+                        </div>
+                        <div class="box-row">
+                            <div class="box-small">梯度的概念<br>(D₂₂(转换等价表达))</div>
+                            <div class="box-small">空间曲线的切线与法平面<br>(D₁(常规操作))</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Directional Derivative -->
+            <section id="directional">
+                <h2>一、方向导数（D₁（常规操作）+D₂₂（转换等价表达））</h2>
+                
+                <div class="accordion">
+                    <div class="accordion-header">1. 概念</div>
+                    <div class="accordion-content">
+                        <p>设函数\(f(x,y)\)在点\((a,b)\)及其附近有定义，\(\boldsymbol{l} = (\cos\alpha, \cos\beta)\)是一单位向量，若极限</p>
+                        <div class="math-block">
+                            $$\lim_{t\to 0^+} \frac{f(a+t\cos\alpha, b+t\cos\beta) - f(a,b)}{t}$$
+                        </div>
+                        <p>存在，则称其值为\(f(x,y)\)在点\((a,b)\)沿方向\(\boldsymbol{l} = (\cos\alpha, \cos\beta)\)的方向导数，记作\(\left.\frac{\partial f}{\partial l}\right|_{(a,b)}\)</p>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">📝 例17.1</div>
+                    <p>设函数\(f(x,y) = \begin{cases} 1, & y = x^2, x \neq 0 \\ 0, & \text{其他} \end{cases}\)，\(f(x,y)\)在点\((0,0)\)处沿任意方向的方向导数记为\(\left.\frac{\partial f}{\partial l}\right|_{(0,0)}\)，则（  ）。</p>
+                    <p><strong>(A)</strong> \(\left.\frac{\partial f}{\partial l}\right|_{(0,0)}\) 存在，\(f(x,y)\)在\((0,0)\)处连续</p>
+                    <p><strong>(B)</strong> \(\left.\frac{\partial f}{\partial l}\right|_{(0,0)}\) 存在，\(f(x,y)\)在\((0,0)\)处不连续</p>
+                    <p><strong>(C)</strong> \(\left.\frac{\partial f}{\partial l}\right|_{(0,0)}\) 不存在，\(f(x,y)\)在\((0,0)\)处不连续</p>
+                    <p><strong>(D)</strong> \(\left.\frac{\partial f}{\partial l}\right|_{(0,0)}\) 不存在，\(f(x,y)\)在\((0,0)\)处连续</p>
+                </div>
+                
+                <div class="solution">
+                    <div class="solution-title">💡 解答</div>
+                    <p>应选(B)。</p>
+                    <div class="math-block">
+                        $$\lim_{t\to 0^+} \frac{f(t\cos\alpha, t\cos\beta) - f(0,0)}{t} = \lim_{t\to 0^+} \frac{0-0}{t} = 0,$$
+                    </div>
+                    <p>存在，但\(\lim_{x\to 0, y\to x^2} f(x,y) = 1\)，\(\lim_{x\to 0, y\to x} f(x,y) = 0\)，故\(f(x,y)\)在\((0,0)\)处不连续，故选(B)。</p>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">2. 计算 → D₁（常规操作）</div>
+                    <div class="accordion-content">
+                        <p>定理：若函数\(f(x,y)\)在点\((a,b)\)可微，则其在点\((a,b)\)沿任意方向\(\boldsymbol{l} = (\cos\alpha, \cos\beta)\)的方向导数都存在，且</p>
+                        <div class="math-block">
+                            $$\left.\frac{\partial f}{\partial l}\right|_{(a,b)} = \left.\frac{\partial f}{\partial x}\right|_{(a,b)}\cos\alpha + \left.\frac{\partial f}{\partial y}\right|_{(a,b)}\cos\beta.$$
+                        </div>
+                        <div class="note">
+                            <div class="note-title">📌 注意</div>
+                            <p>\(\boldsymbol{l}\)是单位向量。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">📝 例17.2</div>
+                    <p>已知函数\(u(x,y,z) = xy^2z^3\)，向量\(\boldsymbol{n} = (2,2,-1)\)，则\(\left.\frac{\partial u}{\partial n}\right|_{(1,1,1)} = \)______。</p>
+                </div>
+                
+                <div class="solution">
+                    <div class="solution-title">💡 解答</div>
+                    <p>应填1。</p>
+                    <p>由题易知，</p>
+                    <div class="math-block">
+                        $$\frac{\partial u}{\partial x} = y^2z^3, \quad \frac{\partial u}{\partial y} = 2xyz^3, \quad \frac{\partial u}{\partial z} = 3xy^2z^2,$$
+                    </div>
+                    <p>则在\(x=1, y=1, z=1\)处有</p>
+                    <div class="math-block">
+                        $$\left(\frac{\partial u}{\partial x}, \frac{\partial u}{\partial y}, \frac{\partial u}{\partial z}\right)_{|(1,1,1)} = (1,2,3).$$
+                    </div>
+                    <p>对于向量\(\boldsymbol{n} = (2,2,-1)\)，单位化可得</p>
+                    <div class="math-block">
+                        $$\boldsymbol{n_0} = \left(\frac{2}{3}, \frac{2}{3}, -\frac{1}{3}\right),$$
+                    </div>
+                    <p>故</p>
+                    <div class="math-block">
+                        $$\left.\frac{\partial u}{\partial n}\right|_{(1,1,1)} = \left(\frac{\partial u}{\partial x}, \frac{\partial u}{\partial y}, \frac{\partial u}{\partial z}\right)_{|(1,1,1)} \cdot \boldsymbol{n_0} = (1,2,3)\left(\frac{2}{3}, \frac{2}{3}, -\frac{1}{3}\right) = 1\times\frac{2}{3} + 2\times\frac{2}{3} + 3\times\left(-\frac{1}{3}\right) = 1.$$
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Gradient -->
+            <section id="gradient">
+                <h2>二、梯度的概念（D₂₂（转换等价表达））</h2>
+                
+                <p>设函数\(f(x,y)\)在点\((a,b)\)及其附近有定义，若单位向量\(\boldsymbol{l_0}\)满足</p>
+                <div class="math-block">
+                    $$\left.\frac{\partial f}{\partial l_0}\right|_{(a,b)} = \max_{\|\boldsymbol{l}\|=1} \left\{\left.\frac{\partial f}{\partial l}\right|_{(a,b)}\right\},$$
+                </div>
+                <p>则称向量\(\left.\frac{\partial f}{\partial l_0}\right|_{(a,b)} \boldsymbol{l_0}\)为函数\(f(x,y)\)在点\((a,b)\)的梯度向量，记作\(\text{grad}\, f(a,b)\)。</p>
+                
+                <div class="note">
+                    <div class="note-title">📌 注意</div>
+                    <p>(1) 梯度向量的几何意义：方向为取到最大方向导数的方向；长度为方向导数的最大值。</p>
+                    <p>(2) 在可微条件下的梯度为\(\left(\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}\right)\)。</p>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">📝 例17.3</div>
+                    <p>设\(a, b\)为实数，函数\(f(x,y) = ax^2 + by^2\)在点\((2,1)\)处沿方向\(\boldsymbol{l} = i + 2j\)的方向导数最大，最大值为\(4\sqrt{5}\)，则\((a,b) = \)______。</p>
+                </div>
+                
+                <div class="solution">
+                    <div class="solution-title">💡 解答</div>
+                    <p>应填\((1,4)\)。</p>
+                    <p>函数\(f(x,y) = ax^2 + by^2\)在点\((2,1)\)处的梯度为</p>
+                    <div class="math-block">
+                        $$\text{grad}\, f(2,1) = \left(\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}\right)_{|(2,1)} = (2ax, 2by)_{|(2,1)} = (4a, 2b).$$
+                    </div>
+                    <p>由题设条件知，\(\sqrt{(4a)^2 + (2b)^2} = 4\sqrt{5}\)且\(\frac{4a}{1} = \frac{2b}{2} = k > 0\)，解得\(\begin{cases} a = 1, \\ b = 4, \end{cases}\)故\((a,b) = (1,4)\)。</p>
+                </div>
+            </section>
+            
+            <!-- Taylor Polynomial -->
+            <section id="taylor">
+                <h2>三、多元函数的泰勒多项式（D₁（常规操作））</h2>
+                
+                <p>设\(f(x,y)\)二阶偏导数连续，记\(X_0(x_0, y_0)\)，\(\Delta X = (\Delta x, \Delta y) = (x - x_0, y - y_0)\)，则\(f(x,y)\)的二次泰勒多项式为</p>
+                <div class="math-block">
+                    $$f(x_0, y_0) + (f'_x, f'_y)|_{X_0}\begin{pmatrix}\Delta x \\ \Delta y\end{pmatrix} + \frac{1}{2!}(\Delta x, \Delta y)\begin{pmatrix}f''_{xx} & f''_{xy} \\ f''_{yx} & f''_{yy}\end{pmatrix}_{|X_0}\begin{pmatrix}\Delta x \\ \Delta y\end{pmatrix}$$
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">📝 例17.4</div>
+                    <p>设\(f(x,y) = \frac{\cos x}{\cos y}\)在点\((0,0)\)处的二次泰勒多项式为\(a + bx^2 + cy^2\)，则（  ）。</p>
+                    <p><strong>(A)</strong> \(a=1, b=-\frac{1}{2}, c=\frac{1}{2}\) &nbsp;&nbsp;&nbsp; <strong>(B)</strong> \(a=1, b=\frac{1}{2}, c=-\frac{1}{2}\)</p>
+                    <p><strong>(C)</strong> \(a=-1, b=-\frac{1}{2}, c=\frac{1}{2}\) &nbsp;&nbsp;&nbsp; <strong>(D)</strong> \(a=-1, b=\frac{1}{2}, c=-\frac{1}{2}\)</p>
+                </div>
+                
+                <div class="solution">
+                    <div class="solution-title">💡 解答</div>
+                    <p>应选(A)。</p>
+                    <p>由题得</p>
+                    <div class="math-block">
+                        $$f(0,0) = 1, \quad f'_x(0,0) = 0, \quad f'_y(0,0) = 0,$$
+                        $$f''_{xx}(0,0) = -1, \quad f''_{xy}(0,0) = 0, \quad f''_{yy}(0,0) = 1.$$
+                    </div>
+                    <p>由</p>
+                    <div class="math-block">
+                        $$f(x,y) = f(0,0) + x \cdot f'_x(0,0) + y \cdot f'_y(0,0) + \frac{1}{2!}[x^2 \cdot f''_{xx}(0,0) + 2xy \cdot f''_{xy}(0,0) + y^2 \cdot f''_{yy}(0,0)] + o(x^2 + y^2),$$
+                    </div>
+                    <p>得\(\frac{\cos x}{\cos y} = 1 - \frac{1}{2}x^2 + \frac{1}{2}y^2 + o(x^2 + y^2)\)，故\(a=1, b=-\frac{1}{2}, c=\frac{1}{2}\)。</p>
+                </div>
+            </section>
+            
+            <!-- Space Curve -->
+            <section id="curve">
+                <h2>四、空间曲线的切线与法平面（D₁（常规操作））</h2>
+                
+                <p>设曲线\(L\)的方程为\(\begin{cases} x = x(t), \\ y = y(t), \\ z = z(t), \end{cases}\) \(t \in [\alpha, \beta]\)，点\(M_0\)对应参数\(t = t_0\)。设曲线\(L\)光滑，即\(x(t), y(t), z(t)\)在\([\alpha, \beta]\)上一阶偏导数连续，且\([x'(t)]^2 + [y'(t)]^2 + [z'(t)]^2 \neq 0\)，则曲线\(L\)在点\(M_0\)处的切向量为</p>
+                <div class="math-block">
+                    $$\boldsymbol{\tau} = (x'(t_0), y'(t_0), z'(t_0)),$$
+                </div>
+                <p>切线方程为</p>
+                <div class="math-block">
+                    $$\frac{x - x(t_0)}{x'(t_0)} = \frac{y - y(t_0)}{y'(t_0)} = \frac{z - z(t_0)}{z'(t_0)},$$
+                </div>
+                <p>法平面方程为</p>
+                <div class="math-block">
+                    $$x'(t_0)[x - x(t_0)] + y'(t_0)[y - y(t_0)] + z'(t_0)[z - z(t_0)] = 0.$$
+                </div>
+                
+                <div class="note">
+                    <div class="note-title">📌 注意</div>
+                    <p>(1) 切向量\(\boldsymbol{\tau} = (x'(t_0), y'(t_0), z'(t_0))\)的方向是由小参数指向大参数。</p>
+                    <p>(2) 当曲线\(L\)的方程是\(\begin{cases} y = y(x), \\ z = z(x) \end{cases}\)时，可写成\(\begin{cases} x = x, \\ y = y(x), \\ z = z(x), \end{cases}\)在点\((x_0, y(x_0), z(x_0))\)处的切向量为 \(\boldsymbol{\tau} = (1, y'(x_0), z'(x_0))\)。(L是两个特殊柱面的交线)</p>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">📝 例17.5</div>
+                    <p>求下列曲线在指定点处的切线与法平面。</p>
+                    <p>(1) \(x = \cos t + \sin^2 t, y = \sin t(1-\cos t), z = \cos t, t = \frac{\pi}{2}\)的对应点；</p>
+                    <p>(2) \(x = y^2, z = x^2\)，点\((1,1,1)\)。</p>
+                </div>
+                
+                <div class="solution">
+                    <div class="solution-title">💡 解答</div>
+                    <p><strong>(1)</strong> \(t = \frac{\pi}{2}\)对应点的坐标为\((1,1,0)\)，切线的方向向量为\(\left(x'\left(\frac{\pi}{2}\right), y'\left(\frac{\pi}{2}\right), z'\left(\frac{\pi}{2}\right)\right) = (-1,1,-1)\)，所求切线方程为\(\frac{x-1}{-1} = \frac{y-1}{1} = \frac{z}{-1}\)，法平面方程为\(-(x-1) + (y-1) - z = 0\)，即\(x - y + z = 0\)。</p>
+                    <p><strong>(2)</strong> 把曲线写成参数方程\(\begin{cases} x = y^2 = t^2, \\ y = t, \\ z = x^2 = t^4, \end{cases}\) 即此曲线在\(t=1\)对应点处切线的方向向量为\((x'(1), y'(1), z'(1)) =\)</p>
+                    <p>\((2,1,4)\)，所求切线方程为\(\frac{x-1}{2} = \frac{y-1}{1} = \frac{z-1}{4}\)，法平面方程为\(2(x-1) + (y-1) + 4(z-1) = 0\)，即\(2x + y + 4z - 7 = 0\)。</p>
+                </div>
+            </section>
+            
+            <!-- Surface -->
+            <section id="surface">
+                <h2>五、空间曲面的切平面与法线（D₁（常规操作））</h2>
+                
+                <p>记光滑曲面\(\Sigma\)方程为\(F(x,y,z) = 0\)，且有</p>
+                <div class="math-block">
+                    $$(F'_x)^2 + (F'_y)^2 + (F'_z)^2 \neq 0,$$
+                </div>
+                <p>则曲面\(\Sigma\)在点\((a,b,c)\)处的法向量为</p>
+                <div class="math-block">
+                    $$\boldsymbol{n} = (F'_x(a,b,c), F'_y(a,b,c), F'_z(a,b,c)),$$
+                </div>
+                <p>切平面方程为</p>
+                <div class="math-block">
+                    $$F'_x(a,b,c)(x-a) + F'_y(a,b,c)(y-b) + F'_z(a,b,c)(z-c) = 0,$$
+                </div>
+                <p>法线方程为</p>
+                <div class="math-block">
+                    $$\frac{x-a}{F'_x(a,b,c)} = \frac{y-b}{F'_y(a,b,c)} = \frac{z-c}{F'_z(a,b,c)}.$$
+                </div>
+                
+                <div class="note">
+                    <div class="note-title">📌 注意</div>
+                    <p>(1) \(\boldsymbol{n} = \text{grad}\, F\)；</p>
+                    <p>(2) 当曲面\(\Sigma\)由显式方程\(z = f(x,y)\)表示，且\(f(x,y)\)具有一阶连续偏导数时，法向量为\(\boldsymbol{n} = (-f'_x, -f'_y, 1)\)，曲面在点\((a,b,f(a,b))\)处的切平面方程为</p>
+                    <div class="math-block">
+                        $$-f'_x(a,b)(x-a) - f'_y(a,b)(y-b) + z - f(a,b) = 0,$$
+                    </div>
+                    <p>即</p>
+                    <div class="math-block">
+                        $$z - f(a,b) = f'_x(a,b)(x-a) + f'_y(a,b)(y-b),$$
+                    </div>
+                    <p>法线方程为</p>
+                    <div class="math-block">
+                        $$\frac{x-a}{-f'_x(a,b)} = \frac{y-b}{-f'_y(a,b)} = \frac{z-f(a,b)}{1}.$$
+                    </div>
+                    <p>类似地，当曲面方程是\(y = y(x,z)\)时，法向量是\(\boldsymbol{n} = (-y'_x, 1, -y'_z)\)；当曲面方程是\(x = x(y,z)\)时，法向量是\(\boldsymbol{n} = (1, -x'_y, -x'_z)\)。</p>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">📝 例17.6</div>
+                    <p>曲面\(z = x + 2y + \ln(1 + x^2 + y^2)\)在点\((0,0,0)\)处的切平面方程为______。</p>
+                </div>
+                
+                <div class="solution">
+                    <div class="solution-title">💡 解答</div>
+                    <p>应填\(x + 2y - z = 0\)。</p>
+                    <p>令\(F(x,y,z) = z - x - 2y - \ln(1 + x^2 + y^2)\)，有</p>
+                    <div class="math-block">
+                        $$F'_x = -1 - \frac{2x}{1+x^2+y^2}, F'_x(0,0,0) = -1,$$
+                        $$F'_y = -2 - \frac{2y}{1+x^2+y^2}, F'_y(0,0,0) = -2,$$
+                        $$F'_z = 1,$$
+                    </div>
+                    <p>故所求切平面方程为\(x + 2y - z = 0\)。</p>
+                </div>
+                
+                <button class="interactive-btn" onclick="toggleSummary()">显示/隐藏知识总结</button>
+                <div id="summary" style="display:none; margin-top: 20px;">
+                    <div class="note">
+                        <div class="note-title">📚 本讲知识点总结</div>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>方向导数</strong>：刻画函数在某一方向上的变化率</li>
+                            <li><strong>梯度</strong>：方向导数取得最大值的方向，梯度向量的模为该最大值</li>
+                            <li><strong>泰勒多项式</strong>：用于函数在某点附近的近似展开</li>
+                            <li><strong>空间曲线</strong>：切线方向由参数方程的导数确定</li>
+                            <li><strong>空间曲面</strong>：法向量为梯度向量</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>&copy; 2025 多元函数微分学交互式教程 | 基于权数学教材改编</p>
+            <p>使用MathJax渲染数学公式</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Accordion functionality
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+        
+        // Toggle summary function
+        function toggleSummary() {
+            const summary = document.getElementById('summary');
+            if (summary.style.display === 'none') {
+                summary.style.display = 'block';
+            } else {
+                summary.style.display = 'none';
+            }
+        }
+        
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+        
+        // Add animation on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+        
+        document.querySelectorAll('.example, .solution, .note').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第3讲 一元函数微分学的概念 - 交互式教程</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 50px rgba(0,0,0,0.3);
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        nav {
+            background: #34495e;
+            padding: 15px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        nav a:hover {
+            background: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        section {
+            margin-bottom: 60px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .formula-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #2196f3;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #ffd54f;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #f44336;
+        }
+
+        .example-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #4caf50;
+        }
+
+        .example-title {
+            color: #2e7d32;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .accordion {
+            background: #ecf0f1;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            transition: 0.4s;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .accordion:hover {
+            background: #bdc3c7;
+        }
+
+        .accordion.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .panel {
+            padding: 0 18px;
+            background: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .panel.show {
+            padding: 18px;
+            max-height: 2000px;
+        }
+
+        code {
+            background: #2c3e50;
+            color: #f39c12;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .mjx-math {
+            color: #1565c0 !important;
+            font-size: 1.1em !important;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 15px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        .interactive-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .interactive-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .quiz-container {
+            background: #f5f5f5;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .quiz-option {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .quiz-option:hover {
+            border-color: #3498db;
+            transform: translateX(5px);
+        }
+
+        .quiz-option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .quiz-option.wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        .flowchart {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .chart-box {
+            display: inline-block;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 15px 25px;
+            margin: 10px;
+            border-radius: 10px;
+            border: 2px solid #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第3讲 一元函数微分学的概念</h1>
+            <p class="subtitle">三向解题法 - 交互式学习教程</p>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="#overview">概念总览</a></li>
+                <li><a href="#differential">微分公式</a></li>
+                <li><a href="#derivative">导数极限</a></li>
+                <li><a href="#continuity">连续可导关系</a></li>
+                <li><a href="#properties">导函数性质</a></li>
+                <li><a href="#problems">求导问题</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section id="overview">
+                <h2>📊 一元函数微分学概念总览</h2>
+                
+                <div class="highlight-box">
+                    <h3>三向解题法框架</h3>
+                    <p>本讲采用三向解题法研究一元函数微分学的核心概念：</p>
+                    <ul>
+                        <li><strong>D₁（常规操作）</strong>：基础定义和标准方法</li>
+                        <li><strong>D₂（脱胎换骨）</strong>：转换等价表达，深入理解</li>
+                        <li><strong>D₂₁（观察研究对象）</strong>：分析函数特征</li>
+                        <li><strong>D₄₃（数形结合）</strong>：几何直观理解</li>
+                    </ul>
+                </div>
+
+                <div class="flowchart">
+                    <h3>知识体系结构图</h3>
+                    <div class="chart-box">研究一元函数微分学的概念</div>
+                    <br>↓<br>
+                    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
+                        <div class="chart-box">1. 微分——阶泰勒公式</div>
+                        <div class="chart-box">2. 导数——因变量差与自变量差的比值极限</div>
+                        <div class="chart-box">3. f(x)与|f(x)|连续、可导的关系</div>
+                        <div class="chart-box">4. 导函数f'(x)的性质</div>
+                        <div class="chart-box">5. 函数在一点求导的问题</div>
+                    </div>
+                </div>
+
+                <button class="interactive-button" onclick="showConcept()">点击查看核心概念</button>
+                <div id="concept-display" style="display:none; margin-top: 20px;">
+                    <div class="example-box">
+                        <p><strong>核心思想：</strong>微分学研究函数的局部变化率，通过极限过程将复杂的变化简化为线性近似。</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="differential">
+                <h2>📐 一、微分——阶泰勒公式</h2>
+                
+                <div class="formula-box">
+                    <h3>微分的定义</h3>
+                    <p>当\(f'(x_0)\)存在时，函数\(f(x)\)在点\(x_0\)处的微分是：</p>
+                    $$\mathrm{d}[f(x)]|_{x=x_0} = f'(x_0)\Delta x = f'(x_0)\mathrm{d}x$$
+                    <p>即：</p>
+                    $$f(x) - f(x_0) = f'(x_0)\Delta x + o(1)\Delta x = f'(x_0)\Delta x + o(\Delta x)$$
+                    <p>当\(\Delta x \to 0\)时成立。</p>
+                </div>
+
+                <button class="accordion">📌 重要注记：o(1)的说明</button>
+                <div class="panel">
+                    <div class="highlight-box">
+                        <p>记号\(o(1)\)的说明：若\(\lim_{x\to x_0} f(x) = 0\)，则称\(f(x)\)是\(x \to x_0\)时的<strong>无穷小量</strong>，记为\(o(1)\)，即：</p>
+                        $$f(x) = o(1), \quad x \to x_0$$
+                        <p>例如：</p>
+                        $$\lim_{n\to\infty} \frac{o\left(\frac{1}{n}\right)}{n} = 0, \quad \text{故} \quad \frac{o\left(\frac{1}{n}\right)}{n} = o(1), \quad n \to \infty$$
+                        $$\text{即} \quad o\left(\frac{1}{n}\right)n = o(1), \quad n \to \infty$$
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <div class="example-title">📝 例3.1</div>
+                    <p>设\(f(x) = 2 - x^4 - x + o(x-1)\)，\(x \to 1\)，且\(f'(1) = a\)，则\(a =\) ______。</p>
+                    
+                    <button class="accordion">查看详细解答</button>
+                    <div class="panel">
+                        <p><strong>【解】</strong>应填<code>-2</code>。</p>
+                        $$a = f'(1) = \lim_{x\to 1} \frac{f(x) - f(1)}{x-1} = \lim_{x\to 1} \frac{1-x^4 - (x-1) + o(x-1) - 0}{x-1}$$
+                        $$= \lim_{x\to 1} \frac{1-e^{\ln x^4}}{x-1} = \lim_{x\to 1} \frac{1-e^{(t+1)\ln(t+1)}}{t} = \lim_{t\to 0} \frac{1-e^{(t+1)\ln(t+1)}}{t}$$
+                        $$\stackrel{\text{洛必达}}{=} \lim_{t\to 0} \frac{1-e^{(t+1)\ln(t+1)}}{t} = -1 - 1 = -2$$
+                    </div>
+                </div>
+
+                <button class="accordion">📚 注记：微分的三种等价表达</button>
+                <div class="panel">
+                    <div class="warning-box">
+                        <p><strong>(1) 连续、可导、再到阶的表达分别为：</strong></p>
+                        <ul>
+                            <li>① 连续：\(f(x + \Delta x) - f(x) = o(1), \Delta x \to 0\)</li>
+                            <li>② 可导：\(f(x + \Delta x) - f(x) = f'(x)\Delta x + o(\Delta x), \Delta x \to 0\)</li>
+                            <li>③ 泰勒公式：$$f(x + \Delta x) - f(x) = f'(x)\Delta x + \frac{1}{2!}f''(x)(\Delta x)^2 + \cdots + \frac{1}{n!}f^{(n)}(x)(\Delta x)^n + o[(\Delta x)^n], \Delta x \to 0$$</li>
+                        </ul>
+                        <p style="margin-top: 15px;">可以看到，微分学就是将\(f(x + \Delta x) - f(x)\)表示成一个多项式和一个余项的和，且在一点处，多项式次数越高，则函数的性质越强，误差越小。</p>
+                        $$f'(x_0) = \lim_{x\to x_0} \frac{f(x) - f(x_0)}{x - x_0}$$
+                    </div>
+                </div>
+            </section>
+
+            <section id="derivative">
+                <h2>📈 二、导数——因变量差与自变量差的比值极限</h2>
+                
+                <div class="formula-box">
+                    <p>函数\(f(x)\)在点\(x_0\)处的导数是：</p>
+                    $$f'(x_0) = \lim_{\Delta x\to 0} \frac{\Delta f}{\Delta x} = \lim_{\Delta x\to 0} \frac{f(x_0 + \Delta x) - f(x_0)}{\Delta x} \quad (*)$$
+                    <p>由(*)式知，\(f(x_0 + \Delta x) - f(x_0) = f'(x_0)\Delta x + o(\Delta x), \Delta x \to 0\)，\(f'(x_0)\)是一次项的系数，也称微分系数。也就是说，它代表了因变量差和自变量差(一次项)的比值极限，若其存在，则称函数\(f(x)\)在点\(x_0\)处可导。</p>
+                </div>
+
+                <div class="example-box">
+                    <div class="example-title">📝 例3.2</div>
+                    <p>设函数\(f(x)\)在区间\((-1, 1)\)内有定义，且在点\(x = 0\)处连续，则下列命题中：</p>
+                    
+                    <div class="quiz-container">
+                        <div class="quiz-option" onclick="checkAnswer(this, false)">
+                            ①当\(\lim_{x\to 0} \frac{f(x)}{\sqrt{x}} = 0\)时，\(f(x)\)在点\(x = 0\)处可导
+                        </div>
+                        <div class="quiz-option" onclick="checkAnswer(this, false)">
+                            ②当\(\lim_{x\to 0} \frac{f(x)}{x^2} = 0\)时，\(f(x)\)在点\(x = 0\)处可导
+                        </div>
+                        <div class="quiz-option" onclick="checkAnswer(this, false)">
+                            ③当\(f(x)\)在点\(x = 0\)处可导时，\(\lim_{x\to 0} \frac{f(x)}{\sqrt{x}} = 0\)
+                        </div>
+                        <div class="quiz-option" onclick="checkAnswer(this, false)">
+                            ④当\(f(x)\)在点\(x = 0\)处可导时，\(\lim_{x\to 0} \frac{f(x)}{x^2} = 0\)
+                        </div>
+                    </div>
+                    
+                    <p>其命题的个数为（ ）。</p>
+                    <p>(A) 1　　(B) 2　　(C) 3　　(D) 4</p>
+                    
+                    <button class="accordion">查看详细解答</button>
+                    <div class="panel">
+                        <p><strong>【解】</strong>应选<strong>(A)</strong>。</p>
+                        <p><strong>① 分析：</strong>因为\(\lim_{x\to 0} \frac{f(x)}{\sqrt{x}} = 0\)，所以\(\lim_{x\to 0} f(x) = 0\)，又由于\(f(x)\)在点\(x = 0\)处连续，因此\(f(0) = 0\)。故：</p>
+                        $$\lim_{x\to 0} \frac{f(x) - f(0)}{x-0} = \lim_{x\to 0} \frac{f(x)}{x} = \lim_{x\to 0} \frac{f(x)}{\sqrt{x}} \cdot \frac{\sqrt{x}}{x}$$
+                        <p>因为\(\lim_{x\to 0} \frac{\sqrt{x}}{x} = \infty\)，\(\lim_{x\to 0} \frac{f(x)}{\sqrt{x}} = 0\)，故\(\lim_{x\to 0} \frac{f(x)}{\sqrt{x}} \cdot \frac{\sqrt{x}}{x}\)成为未定式，其存在性无法确定。</p>
+                        <p>例如，取\(f(x) = \sqrt{|x|}\)，就有\(\lim_{x\to 0} \frac{f(x)\sqrt{x}}{x} = \lim_{x\to 0} \frac{\sqrt{|x|}}{x} = \infty\)，满足①的条件但在\(x = 0\)处不可导。</p>
+                        <p><strong>②、③、④ 分析类似...</strong></p>
+                        <p>综上，只有②正确。</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="continuity">
+                <h2>🔗 三、f(x)与|f(x)|连续、可导的关系总结</h2>
+                
+                <div class="formula-box">
+                    <h3>核心命题</h3>
+                    <p><strong>(1)</strong> 设\(f(x)\)在\(x_0\)处连续，则\(|f(x)|\)在\(x_0\)处连续；反之不真。</p>
+                    <p><strong>(2)</strong> 设\(f(x)\)在\(x_0\)处可导，则</p>
+                    $$①f(x_0) \neq 0 \Rightarrow |f(x)|\text{在}x_0\text{处可导，且}\left[|f(x)|\right]'|_{x=x_0} = \begin{cases} f'(x_0), & f(x_0) > 0 \\ -f'(x_0), & f(x_0) < 0 \end{cases}$$
+                    $$②f(x_0) = 0, \text{且}\begin{cases} f'(x_0) = 0 \Rightarrow |f(x)|\text{在}x_0\text{处可导且}\left[|f(x)|\right]'|_{x=x_0} = 0 \\ f'(x_0) \neq 0 \Rightarrow |f(x)|\text{在}x_0\text{处不可导} \end{cases}$$
+                </div>
+
+                <button class="accordion">🔍 数形结合理解</button>
+                <div class="panel">
+                    <div class="highlight-box">
+                        <h4>为什么 f(x) 在 x₀ 处连续 ⇏ |f(x)| 在 x₀ 处连续？</h4>
+                        <p>因为在\(x_0\)处，\(f(x)\)的微观性态图（放大尺度多倍）如图(a)~图(c)所示。</p>
+                        <p>而\(|f(x)|\)如图(d)~图(f)所示。</p>
+                        <p>点点相依相伴的图(a)~图(c)，加上绝对值后依然相依相伴或为图(d)~图(f)，故成立。</p>
+                        <p style="margin-top: 15px;"><strong>关键点：</strong>即使\(f(x)\)相依相伴，连续（见图(h)），可\(f(x)\)却相依相伴、连续，自然不连续（见图(g)）。</p>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <div class="example-title">📝 例3.3</div>
+                    <p>设函数\(f(x)\)连续，给出下列4个条件：</p>
+                    <ol>
+                        <li>\(\lim_{x\to 0} \frac{|f(x)| - |f(0)|}{x}\)存在</li>
+                        <li>\(\lim_{x\to 0} \frac{f(x) - |f(0)|}{x}\)存在</li>
+                        <li>\(\lim_{x\to 0} \frac{|f(x)|}{x}\)存在</li>
+                        <li>\(\lim_{x\to 0} \frac{|f(x)| - |f(0)|}{x}\)存在</li>
+                    </ol>
+                    <p>其中可得到"\(f(x)\)在\(x = 0\)处可导"的条件个数为（ ）。</p>
+                    
+                    <button class="accordion">查看详细解答</button>
+                    <div class="panel">
+                        <p><strong>【解】</strong>应选<strong>(D)</strong>。</p>
+                        <p>通过逐一分析四个条件，利用极限定义、连续性质和绝对值函数的性质，可以证明只有条件④能确保\(f(x)\)在\(x=0\)处可导。</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="properties">
+                <h2>⚡ 四、导函数 f'(x) 的性质总结</h2>
+                
+                <div class="formula-box">
+                    <h3>1. f'(x) 的基本性质</h3>
+                    <ul>
+                        <li>① 如果导函数\(f'(x)\)存在，则当导函数在一点极限存在时，导函数在这一点必连续。</li>
+                        <li>② 如果导函数在一点存在，则这一点一定不会是导函数的第一类间断点。</li>
+                        <li>③ 若\(f(x)\)可导，则\(f'(x)\)可能连续，也可能含有振荡间断点。</li>
+                    </ul>
+                </div>
+
+                <div class="formula-box">
+                    <h3>2. \(\lim_{x\to+\infty} f'(x)\) 的性质</h3>
+                    <p>① \(\lim_{x\to+\infty} f(x)\)存在，但\(\lim_{x\to+\infty} f'(x)\)<strong>不一定存在</strong>。如：</p>
+                    $$f(x) = \frac{\sin x^2}{x}, \quad f'(x) = 2\cos x^2 - \frac{\sin x^2}{x^2}$$
+                    <p>② \(f(x)\)在\((0, +\infty)\)可导且曲线\(y = f(x)\)在\(x \to +\infty\)时有斜渐近线，但\(\lim_{x\to+\infty} f'(x)\)<strong>不一定存在</strong>。如：</p>
+                    $$y = f(x) = x + \frac{\sin x^2}{x}\text{在}x \to +\infty\text{时有斜

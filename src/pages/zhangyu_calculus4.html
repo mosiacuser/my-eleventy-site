@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第4讲 - 一元函数微分学的计算 交互式教程</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": { 
+                linebreaks: { automatic: true },
+                scale: 90
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 3px solid #667eea;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: white;
+            transition: all 0.3s;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(102,126,234,0.3);
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            color: #1e3c72;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        h3 {
+            color: #2a5298;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+        
+        .method-box {
+            background: linear-gradient(135deg, #e0f7fa 0%, #e1f5fe 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #00acc1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .example-box {
+            background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #fbc02d;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .solution-box {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #ab47bc;
+        }
+        
+        .note-box {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #e53935;
+        }
+        
+        .formula {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow-x: auto;
+            border: 2px solid #667eea;
+        }
+        
+        .interactive-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+            margin: 10px 5px;
+        }
+        
+        .interactive-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.6);
+        }
+        
+        .collapsible {
+            cursor: pointer;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 1.1em;
+            width: 100%;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        
+        .collapsible:hover {
+            background: #5568d3;
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            float: right;
+            font-weight: bold;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f8f9fa;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .collapsible-content.show {
+            padding: 20px;
+        }
+        
+        .diagram {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8em; }
+            nav ul { flex-direction: column; }
+            .content { padding: 20px; }
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        ul {
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第4讲 一元函数微分学的计算</h1>
+            <p>三问解题法 - 高阶导数计算详解</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#overview">概览</a></li>
+                <li><a href="#method1">泰勒展开法</a></li>
+                <li><a href="#method2">莱布尼茨公式</a></li>
+                <li><a href="#method3">求导转化法</a></li>
+                <li><a href="#method4">特殊点高阶导数</a></li>
+                <li><a href="#method5">奇偶周期函数</a></li>
+                <li><a href="#method6">隐函数二阶导</a></li>
+                <li><a href="#method7">参数方程二阶导</a></li>
+                <li><a href="#method8">反函数二阶导</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <section id="overview">
+                <h2>📊 三问解题法概览</h2>
+                <div class="diagram">
+                    <h3>计算高阶导数 (O(阶什目标))</h3>
+                    <p style="color: #666; margin: 20px 0;">形式化归纳系统</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px;">
+                        <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; border: 2px solid #2196f3;">
+                            <strong>泰勒展开法</strong><br>
+                            $D_1$(常规操作) + $D_{23}$(化归经典形式)
+                        </div>
+                        <div style="background: #e8f5e9; padding: 20px; border-radius: 10px; border: 2px solid #4caf50;">
+                            <strong>求导转化法</strong><br>
+                            $D_1$(常规操作) + $D_{23}$(化归经典形式)
+                        </div>
+                        <div style="background: #fff3e0; padding: 20px; border-radius: 10px; border: 2px solid #ff9800;">
+                            <strong>奇偶、周期函数</strong><br>
+                            $D_1$(常规操作)
+                        </div>
+                        <div style="background: #fce4ec; padding: 20px; border-radius: 10px; border: 2px solid #e91e63;">
+                            <strong>参数方程二阶导</strong><br>
+                            $D_1$(常规操作)
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="interactive-btn" onclick="showAllMethods()">📚 展开所有方法</button>
+                <button class="interactive-btn" onclick="hideAllMethods()">📕 收起所有方法</button>
+            </section>
+            
+            <section id="method1">
+                <h2>1️⃣ 泰勒展开法 ($D_1$(常规操作) + $D_{23}$(化归经典形式))</h2>
+                <div class="method-box">
+                    <h3>核心思想</h3>
+                    <p>若是 $e^x$, $\ln(1+x)$, $\sin x$, $\cos x$, $\frac{1}{1+x}$ 的<span class="highlight">"亲戚"</span>，则通过简单的恒等变形，变形到已知的展开式，即可进行泰勒展开，用展开式的唯一性，求得 $f^{(n)}(x_0)$。</p>
+                    
+                    <p style="margin-top: 20px;"><strong>⚠️ 尤其注意 $\langle 1 \rangle$ 通分的逆运算（瓦解敌方，各个击破）：</strong></p>
+                    
+                    <div class="formula">
+                        $$\frac{1}{x(x+1)} = \frac{1}{x} - \frac{1}{x+1}.$$
+                    </div>
+                    
+                    <p><strong>$(2)$ 对数运算性质：</strong></p>
+                    
+                    <div class="formula">
+                        $$\ln(2+x) = \ln\left[2\left(1+\frac{x}{2}\right)\right] = \ln 2 + \ln\left(1+\frac{x}{2}\right).$$
+                    </div>
+
+                    <p><strong>$(3)$ 三角公式：</strong></p>
+                    
+                    <div class="formula">
+                        $$\sin^2 x = \frac{1-\cos 2x}{2}.$$
+                    </div>
+
+                    <p><strong>$(4)$ 广义化，$x \to \lambda x$。</strong></p>
+                </div>
+                
+                <div class="note-box">
+                    <strong>📌 【注】</strong>其体公式见第6讲第一部分的"四、1.常用泰勒展开式或幂级数展开式大观"。
+                </div>
+
+                <div class="note-box" style="background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%); border-left-color: #0277bd;">
+                    <strong>$(5)$ "偏导数化"。</strong>
+                </div>
+                
+                <button class="collapsible">例4.1 "偏导数化"</button>
+                <div class="collapsible-content">
+                    <div class="example-box">
+                        <h3>🔍 例4.1</h3>
+                        <p>设函数 $f(x)$ 可导且满足 $x^2f'(x) = f^2(x)$，$f(1) = \frac{1}{3}$，则 $f^{(n)}(0) = $ (    )。</p>
+                        
+                        <p style="margin-top: 15px;"><strong>选项：</strong></p>
+                        <p>(A) $(-1)^n n!$ &nbsp;&nbsp;&nbsp; (B) $(-1)^{n-1} n!$</p>
+                        <p>(C) $(-2)^n n!$ &nbsp;&nbsp;&nbsp; (D) $(-2)^{n-1} n!$</p>
+                    </div>
+                    
+                    <div class="solution-box">
+                        <h3>【解】应选(D)。</h3>
+                        
+                        <p>$x^2f'(x) = f^2(x)$ 是一个变量可分离高微分方程，分离变量得</p>
+                        
+                        <div class="formula">
+                            $$\frac{\mathrm{d}[f(x)]}{f^2(x)} = \frac{\mathrm{d}x}{x^2},$$
+                        </div>
+                        
+                        <p>两边积分，得</p>
+                        
+                        <div class="formula">
+                            $$-\frac{1}{f(x)} = -\frac{1}{x} - C,$$
+                        </div>
+                        
+                        <p>故方程通解为</p>
+                        
+                        <div class="formula">
+                            $$f(x) = \frac{x}{Cx+1}.$$
+                        </div>
+                        
+                        <p>由 $f(1) = \frac{1}{3}$，得 $C = 2$，故</p>
+                        
+                        <div class="formula">
+                            $$f(x) = \frac{x}{2x+1} = \frac{1}{2} \cdot \frac{1}{2x+1} = \frac{1}{2} \cdot \frac{1}{2} \sum_{n=0}^{\infty} (-1)^n 2^n x^n.$$
+                        </div>
+                        
+                        <p>因此</p>
+                        
+                        <div class="formula">
+                            $$f^{(n)}(0) = (-2)^{n-1} n!.$$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">例4.2 复合函数高阶导数</button>
+                <div class="collapsible-content">
+                    <div class="example-box">
+                        <h3>🔍 例4.2</h3>
+                        <p>(1) 设 $y = \frac{1}{x(1-x)}$，求 $\frac{\mathrm{d}^n y}{\mathrm{d}x^n}$；</p>
+                        <p>(2) 设 $z = \frac{y^2}{x(1-x)}$，求 $\frac{\partial^n z}{\partial x^n}$。</p>
+                    </div>
+                    
+                    <div class="solution-box">
+                        <h3>【解】</h3>
+                        <p><strong>(1)</strong> 由于 $y = \frac{1}{x} + \frac{1}{1-x}$，因此</p>
+                        
+                        <div class="formula">
+                            $$\frac{\mathrm{d}^n y}{\mathrm{d}x^n} = (-1)^n \frac{n!}{x^{n+1}} + (-1)^{n+n} \frac{n!}{(1-x)^{n+1}}$$
+                            $$= \left[(-1)^n \frac{1}{x^{n+1}} + \frac{1}{(1-x)^{n+1}}\right] n!.$$
+                        </div>
+                        
+                        <p><strong>(2)</strong> 由于 $z = xy^2\left(\frac{1}{x} + \frac{1}{1-x}\right)$，因此</p>
+                        
+                        <div class="formula">
+                            $$\frac{\partial^n z}{\partial x^n} = y^2\left[(-1)^n \frac{1}{x^{n+1}} + \frac{1}{(1-x)^{n+1}}\right] n!.$$
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="method2">
+                <h2>2️⃣ 莱布尼茨公式法 ($D_1$(常规操作) + $D_{23}$(化归经典形式))</h2>
+                <div class="method-box">
+                    <h3>核心思想</h3>
+                    <p>若是(或可恒等变形为) $f(x) \cdot (ax^2 + bx + c)$，例如 $e^x(1+x^2)$，则用莱布尼茨乘积求导公式。</p>
+                    
+                    <p style="margin-top: 20px;">因为 $(ax^2 + bx + c)''' = 0$，使用莱布尼茨公式求导后只剩三项。</p>
+                    
+                    <h3 style="margin-top: 25px;">常用n阶导数公式（$n$ 为正整数）：</h3>
+                    
+                    <div class="formula">
+                        $$(a^x)^{(n)} = a^x \ln^n a;$$
+                    </div>
+                    
+                    <div class="formula">
+                        $$\left(\frac{1}{1+x}\right)^{(n)} = \frac{(-1)^n n!}{(1+x)^{n+1}};$$
+                    </div>
+                    
+                    <div class="formula">
+                        $$[\ln(1+x)]^{(n)} = \frac{(-1)^{n-1}(n-1)!}{(1+x)^n};$$
+                    </div>
+                    
+                    <div class="formula">
+                        $$(\sin x)^{(n)} = \sin\left(x + n\frac{\pi}{2}\right);$$
+                    </div>
+                    
+                    <div class="formula">
+                        $$(\cos x)^{(n)} = \cos\left(x + n\frac{\pi}{2}\right).$$
+                    </div>
+                </div>
+                
+                <button class="collapsible">例4.3 莱布尼茨公式应用</button>
+                <div class="collapsible-content">
+                    <div class="example-box">
+                        <h3>🔍 例4.3</h3>
+                        <p>设 $f(x) = (x^2 - 1)^n$，则 $f^{(n)}(1) = $ ______。</p>
+                    </div>
+                    
+                    <div class="solution-box">
+                        <h3>【解】应填 $3^n n!$。</h3>
+                        
+                        <p>$f(x) = (x^2-1)^n = (x-1)^n(x^2+x+1)^n$，由莱布尼茨公式，得</p>
+                        
+                        <div class="formula">
+                            $$f^{(n)}(x) = \sum_{k=0}^{n} C_n^k [(x-1)^n]^{(k)} [(x^2+x+1)^n]^{(n-k)},$$
+                        </div>
+                        
+                        <p>故 $f^{(n)}(1) = C_n^n [(x-1)^n]^{(n)} (x^2+x+1)^n |_{x=1} = 3^n n!$。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="method3">
+                <h2>3️⃣ 求导转化法 ($D_1$(常规操作) + $D_{23}$(化归经典形式))</h2>
+                <div class="method-box">
+                    <h3>核心思想</h3>
+                    <p>① 若非"亲戚"，也不能恒等变形，考虑求一阶、二阶导再恒等变形。如 $y = \arctan x$，</p>
+                    <p>$(\arctan x)' = \frac{1}{1+x^2}$，即 $y'(1+x^2) = 1$，转化到"二、莱布尼茨公式法"。</p>
+                    
+                    <p style="margin-top: 20px;">② 这里要记住"二、莱布尼茨公式法"中所讲的常用的5个公式，且要会简单的递推。</p>
+                </div>
+                
+                <button class="collapsible">例4.4 反三角函数高阶导数</button>
+                <div class="collapsible-content">
+                    <div class="example-box">
+                        <h3>🔍 例4.4</h3>
+                        <p>设 $y = \frac{x}{1+x^2}$，求 $y^{(n)}$ 满足的递推关系式或 $y^{(2n+1)}(0)$。</p>
+                    </div>
+                    
+                    <div class="solution-box">
+                        <h3>【解】</h3>
+                        <p>由 $y = \frac{x}{1+x^2}$，得 $(1+x^2)y = x$，所以</p>
+                        
+                        <div class="formula">
+                            $$(1+x^2)y^{(n)} + 2nxy^{(n-1)} + n(n-1)y^{(n-2)} = 0 \quad (n=2,3,\cdots),$$
+                        </div>
+                        
+                        <p>其中 $y' = \frac{1-x^2}{(1+x^2)^2}$，$y^{(0)} = y = \frac{x}{1+x^2}$。</p>
+                        
+                        <p>令 $x = 0$，得 $y^{(n)}(0) + n(n-1)y^{(n-2)}(0) = 0$。又 $y'(0) = 1$，$y(0) = 0$，故</p>
+                        
+                        <div class="formula">
+                            $$y^{(4)}(0) = -3 \times 2 \times 1 = -3!,$$
+                            $$y^{(5)}(0) = -5 \times 4 \times (-3!) = 5!,$$
+                            $$\cdots$$
+                            $$y^{(2n+1)}(0) = (-1)^n (2n+1)!.$$
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>📌 【注】</strong>
+                            <p>$y'(0) = -2 \times 1 \times 0 = 0$，</p>
+                            <p>$y^{(4)}(0) = -4 \times 3 \times 0 = 0$，</p>
+                            <p>$\cdots$</p>
+                            <p>$y^{(2n)}(0) = 0$。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="method4">
+                <h2>4️⃣ 特殊点的高阶导数 ($D_1$(常规操作))</h2>
+                <div class="method-box">
+                    <p><strong>(1)</strong> 分段函数的分段点。</p>
+                    <p><strong>(2)</strong> 带绝对值的函数。</p>
+                </div>
+                
+                <button class="collapsible">例4.5 分段函数在分段点的导数</button>
+                <div class="collapsible-content">
+                    <div class="example-box">
+                        <h3>🔍 例4.5</h3>
+                        <p>设函数 $y = f(x)$ 由 $\begin{cases} x = 2t + |t|, \\ y = |t| \tan t \end{cases}$ 所确定，则在 $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ 内 (    )。</p>
+                        
+                        <p style="margin-top: 15px;"><strong>选项：</strong></p>
+                        <p>(A) $f(x)$ 连续，$f'(0)$ 不存在</p>
+                        <p>(B) $f'(0)$ 存在，$f'(x)$ 在 $x=0$ 处不连续</p>
+                        <p>(C) $f'(x)$ 连续，$f''(0)$ 不存在</p>
+                        <p>(D) $f''(0)$ 存在，$f''(x)$ 在 $x=0$ 处不连续</p>
+                    </div>
+                    
+                    <div class="solution-box">
+                        <h3>【解】应选(C)。</h3>
+                        
+                        <p>当 $t \geq 0$ 时，$\begin{cases} x = 3t, \\ y = t \tan t; \end{cases}$ 当 $t < 0$ 时，$\begin{cases} x = t, \\ y = -t \tan t, \end{cases}$ 即</p>
+                        
+                        <div class="formula">
+                            $$y = f(x) = \begin{cases} \frac{x}{3} \tan\frac{x}{3}, & x \geq 0, \\ -x \tan x, & x < 0. \end{cases}$$
+                        </div>
+                        
+                        <p>故 $f(x)$ 在 $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ 内连续。</p>
+                        
+                        <p>又</p>
+                        
+                        <div class="formula">
+                            $$f'_+(0) = \lim_{x \to 0^+} \frac{f(

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第六章 定积分的应用 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 50px rgba(0,0,0,0.3);
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 3px solid #667eea;
+            position: sticky;
+            top: 140px;
+            z-index: 99;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #667eea;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        section:nth-child(odd) {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+        
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+        
+        h4 {
+            color: #5a67d8;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .formula-box {
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .formula-box .MathJax {
+            color: #1565c0;
+            font-size: 1.2em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .accordion {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .accordion-header {
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        
+        .accordion-header:hover {
+            background: #5568d3;
+        }
+        
+        .accordion-header::after {
+            content: '▼';
+            transition: transform 0.3s;
+        }
+        
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+            background: #f8f9fa;
+        }
+        
+        .accordion-content.active {
+            max-height: 3000px;
+            padding: 20px;
+        }
+        
+        .example-box {
+            background: white;
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        
+        .example-box h4 {
+            color: #4caf50;
+            margin-top: 0;
+        }
+        
+        .solution {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        
+        .interactive-demo {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            section {
+                padding: 20px;
+            }
+        }
+        
+        .quiz-container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        
+        .quiz-option {
+            background: #f5f5f5;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .quiz-option:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+        
+        .quiz-option.correct {
+            background: #c8e6c9;
+            border-color: #4caf50;
+        }
+        
+        .quiz-option.wrong {
+            background: #ffcdd2;
+            border-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第六章 定积分的应用</h1>
+            <p>Applications of Definite Integrals - 交互式学习教程</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#exam-requirements">考试要求</a></li>
+                <li><a href="#overview">内容概要</a></li>
+                <li><a href="#geometry">几何应用</a></li>
+                <li><a href="#physics">物理应用</a></li>
+                <li><a href="#examples">典型例题</a></li>
+                <li><a href="#quiz">互动测验</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <!-- 考试要求 -->
+            <section id="exam-requirements">
+                <h2>📋 大纲考试要求</h2>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>大纲考试内容</th>
+                            <th>数学一</th>
+                            <th>数学二</th>
+                            <th>数学三</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>利用定积分计算平面图形的面积、旋转体的体积和函数的平均值</td>
+                            <td>会计算</td>
+                            <td>会计算</td>
+                            <td>会计算</td>
+                        </tr>
+                        <tr>
+                            <td>用定积分表达和计算一些几何量与物理量（平面曲线的弧长、旋转体的侧面积、平行截面面积为已知的立体体积、功、引力、压力、质心、形心等）</td>
+                            <td>掌握</td>
+                            <td>掌握</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>利用定积分求解简单的经济应用问题</td>
+                            <td></td>
+                            <td></td>
+                            <td>会解</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="highlight-box">
+                    <strong>💡 重点提示：</strong>定积分可以表示一些几何量与物理量（如图形的面积、曲线的弧长及侧面积、已知的立体体积、变力做功、压力和函数平均值），这些应用有一个共同思想："<strong>微元法</strong>"——对微元积分就得到所求量。
+                </div>
+            </section>
+            
+            <!-- 内容概要 -->
+            <section id="overview">
+                <h2>📚 考试内容概要</h2>
+                
+                <p>定积分可表示一些几何量与物理量（平面图形的面积、平面曲线的弧长、旋转体的体积及侧面积、平行截面面积为已知的立体体积、变力做功、压力和函数平均值等），定积分的这些应用有个共同思想，即建立"<strong>微元</strong>"，然后对微元积分就得到所求量。</p>
+            </section>
+            
+            <!-- 几何应用 -->
+            <section id="geometry">
+                <h2>📐 一、几何应用</h2>
+                
+                <div class="accordion">
+                    <div class="accordion-header">1. 平面图形的面积</div>
+                    <div class="accordion-content">
+                        <h4>(1) 直角坐标系下的面积</h4>
+                        <p>若平面区域 $D$ 由曲线 $y = f(x)$, $y = g(x)$ （$f(x) \geq g(x)$）, $x = a$, $x = b$ （$a < b$）所围成，则平面区域 $D$ 的面积为：</p>
+                        <div class="formula-box">
+                            $$S = \int_a^b [f(x) - g(x)]dx$$
+                        </div>
+                        
+                        <h4>(2) 极坐标系下的面积</h4>
+                        <p>若平面区域 $D$ 由曲线 $r = r(\theta)$, $\theta = \alpha$, $\theta = \beta$ （$\alpha < \beta$）所围成，则其面积为：</p>
+                        <div class="formula-box">
+                            $$S = \frac{1}{2}\int_\alpha^\beta r^2(\theta)d\theta$$
+                        </div>
+                        
+                        <div class="interactive-demo">
+                            <h4>🎯 交互演示</h4>
+                            <p>点击按钮查看面积计算可视化：</p>
+                            <button class="btn" onclick="showAreaDemo()">显示面积示意图</button>
+                            <div id="area-demo" style="display:none; margin-top:15px; padding:15px; background:#e3f2fd; border-radius:5px;">
+                                <p><strong>直角坐标：</strong>想象将区域切成无数个宽度为 $dx$ 的竖条，每条高度为 $f(x) - g(x)$，累加所有竖条的面积。</p>
+                                <p><strong>极坐标：</strong>想象将区域切成无数个扇形，每个扇形半径为 $r(\theta)$，角度为 $d\theta$，面积为 $\frac{1}{2}r^2d\theta$。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">2. 旋转体体积</div>
+                    <div class="accordion-content">
+                        <p>若区域 $D$ 由曲线 $y = f(x)$ （$f(x) \geq 0$）和直线 $x = a$, $x = b$ （$0 \leq a < b$）及 $x$ 轴所围成：</p>
+                        
+                        <h4>(1) 绕 $x$ 轴旋转一周所得旋转体体积</h4>
+                        <div class="formula-box">
+                            $$V_x = \pi \int_a^b f^2(x)dx$$
+                        </div>
+                        
+                        <h4>(2) 绕 $y$ 轴旋转一周所得旋转体体积</h4>
+                        <div class="formula-box">
+                            $$V_y = 2\pi \int_a^b xf(x)dx$$
+                        </div>
+                        
+                        <div class="highlight-box">
+                            <strong>💡 记忆技巧：</strong>
+                            <ul style="margin-left:20px; margin-top:10px;">
+                                <li>绕 $x$ 轴：切成垂直于 $x$ 轴的圆盘，半径为 $f(x)$，体积元素为 $\pi[f(x)]^2dx$</li>
+                                <li>绕 $y$ 轴：使用柱壳法，半径为 $x$，高度为 $f(x)$，周长为 $2\pi x$</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">3. 曲线弧长（数学一、二要求）</div>
+                    <div class="accordion-content">
+                        <h4>(1) 直角坐标：$C$: $y = f(x)$, $a \leq x \leq b$</h4>
+                        <div class="formula-box">
+                            $$s = \int_a^b \sqrt{1 + [f'(x)]^2}dx$$
+                        </div>
+                        
+                        <h4>(2) 参数方程：$C$: $\begin{cases} x = x(t) \\ y = y(t) \end{cases}$, $\alpha \leq t \leq \beta$</h4>
+                        <div class="formula-box">
+                            $$s = \int_\alpha^\beta \sqrt{[x'(t)]^2 + [y'(t)]^2}dt$$
+                        </div>
+                        
+                        <h4>(3) 极坐标：$C$: $r = r(\theta)$, $\alpha \leq \theta \leq \beta$</h4>
+                        <div class="formula-box">
+                            $$s = \int_\alpha^\beta \sqrt{r^2 + [r'(\theta)]^2}d\theta$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">4. 旋转体侧面积（数学一、二要求）</div>
+                    <div class="accordion-content">
+                        <p>曲线 $y = f(x)$ （$f(x) \geq 0$）和直线 $x = a$, $x = b$ （$0 \leq a < b$）及 $x$ 轴所围成区域绕 $x$ 轴所得旋转体的侧面积为：</p>
+                        <div class="formula-box">
+                            $$S = 2\pi \int_a^b f(x)\sqrt{1 + [f'(x)]^2}dx$$
+                        </div>
+                        <p style="margin-top:15px;"><strong>理解：</strong>旋转体表面可看作无数个圆环，每个圆环半径为 $f(x)$，周长为 $2\pi f(x)$，宽度为弧长元素 $\sqrt{1 + [f'(x)]^2}dx$。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 物理应用 -->
+            <section id="physics">
+                <h2>⚙️ 二、物理应用（数学三不要求）</h2>
+                
+                <div class="accordion">
+                    <div class="accordion-header">1. 压力</div>
+                    <div class="accordion-content">
+                        <p>液体对垂直平板的压力计算基于压强公式 $p = \rho gh$，其中 $\rho$ 是液体密度，$g$ 是重力加速度，$h$ 是深度。</p>
+                        <div class="formula-box">
+                            $$F = \int \rho g h(y) \cdot w(y) dy$$
+                        </div>
+                        <p>其中 $h(y)$ 是深度函数，$w(y)$ 是该深度处的宽度。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">2. 变力做功</div>
+                    <div class="accordion-content">
+                        <p>当力 $F(x)$ 沿直线移动从 $a$ 到 $b$ 时所做的功为：</p>
+                        <div class="formula-box">
+                            $$W = \int_a^b F(x)dx$$
+                        </div>
+                        <p><strong>应用示例：</strong>弹簧做功（胡克定律 $F = kx$）、抽水做功（考虑重力和距离变化）等。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">3. 引力</div>
+                    <div class="accordion-content">
+                        <p>根据万有引力定律，计算质量分布对质点的引力时需要积分：</p>
+                        <div class="formula-box">
+                            $$F = \int \frac{Gm\,dm}{r^2}$$
+                        </div>
+                        <p>其中 $G$ 是引力常数，$m$ 是质点质量，$dm$ 是质量元素，$r$ 是距离。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 典型例题 -->
+            <section id="examples">
+                <h2>📝 常考题型与典型例题</h2>
+                
+                <div class="example-box">
+                    <h4>【例1】(2014, 数三) 求由曲线 $xy + 1 = 0$ 与直线 $y + x = 0$ 及 $y = 2$ 围成区域 $D$ 的面积。</h4>
+                    <div class="solution">
+                        <p><strong>解：</strong></p>
+                        <p>所求面积为：</p>
+                        <div class="formula-box">
+                            $$S = \int_1^2 \left(y - \frac{1}{y}\right)dy = \left[\frac{1}{2}y^2 - \ln y\right]_1^2 = 2 - \ln 2 - \frac{1}{2} = \frac{3}{2} - \ln 2$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>【例2】(2013, 数二) 设封闭曲线 $L$ 的极坐标方程为 $r = \cos 3\theta$ $\left(-\frac{\pi}{6} \leq \theta \leq \frac{\pi}{6}\right)$，则 $L$ 所围平面图形的面积是______。</h4>
+                    <div class="solution">
+                        <p><strong>解法1：</strong></p>
+                        <div class="formula-box">
+                            $$S = \frac{1}{2}\int_{-\frac{\pi}{6}}^{\frac{\pi}{6}} \cos^2 3\theta \, d\theta = \int_0^{\frac{\pi}{6}} \cos^2 3\theta \, d\theta$$
+                            $$= \int_0^{\frac{\pi}{6}} \frac{1 + \cos 6\theta}{2}d\theta = \frac{1}{2}\left[\theta + \frac{1}{6}\sin 6\theta\right]_0^{\frac{\pi}{6}} = \frac{\pi}{12}$$
+                        </div>
+                        
+                        <p><strong>解法2（换元）：</strong>令 $t = 3\theta$</p>
+                        <div class="formula-box">
+                            $$S = \frac{1}{2}\int_{-\frac{\pi}{2}}^{\frac{\pi}{2}} \cos^2 t \cdot \frac{dt}{3} = \frac{1}{3} \cdot \frac{1}{2} \cdot \frac{\pi}{2} = \frac{\pi}{12}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>【例3】(2015, 数二、三) 设 $A > 0$，$D$ 是由曲线段 $y = A\sin x$ $\left(0 \leq x \leq \frac{\pi}{2}\right)$ 及直线 $y = 0$，$x = \frac{\pi}{2}$ 所围成的平面区域，$V_1$，$V_2$ 分别表示 $D$ 绕 $x$ 轴与 $y$ 轴旋转所成旋转体的体积。若 $V_1 = V_2$，求 $A$ 的值。</h4>
+                    <div class="solution">
+                        <p><strong>解：</strong></p>
+                        <p>绕 $x$ 轴旋转的体积：</p>
+                        <div class="formula-box">
+                            $$V_1 = \pi \int_0^{\frac{\pi}{2}} A^2\sin^2 x\,dx = \pi A^2 \cdot \frac{1}{2} \cdot \frac{\pi}{2} = \frac{\pi^2 A^2}{4}$$
+                        </div>
+                        
+                        <p>绕 $y$ 轴旋转的体积（柱壳法）：</p>
+                        <div class="formula-box">
+                            $$V_2 = 2\pi \int_0^{\frac{\pi}{2}} x \cdot A\sin x\,dx = 2\pi A \int_0^{\frac{\pi}{2}} x\,d(\cos x)$$
+                            $$= 2\pi A\left[x\cos x\Big|_0^{\frac{\pi}{2}} - \int_0^{\frac{\pi}{2}} \cos x\,dx\right]$$
+                            $$= 2\pi A(0 - 1) = 2\pi A$$
+                        </div>
+                        
+                        <p>由 $V_1 = V_2$：</p>
+                        <div class="formula-box">
+                            $$\frac{\pi^2 A^2}{4} = 2\pi A \quad \Rightarrow \quad A = \frac{8}{\pi}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>【例6】(2011, 数二) 一容器的内侧是由图1中曲线绕 $y$ 轴一周而成的曲面</h4>
+                    <p>曲线由 $x^2 + y^2 = 2$ 在第一象限与 $x^2 + y^2 = 1$ （$y \leq \frac{1}{2}$）连接而成。</p>
+                    <p><strong>(1)</strong> 求容器的容积；</p>
+                    <p><strong>(2)</strong> 若将容器内盛满的水从容器顶部全部抽出，至少需要做多少功？</p>
+                    <p>（长度单位：m，重力加速度为 $g$ m/s²，水的密度为 $10^3$ kg/m³）</p>
+                    
+                    <div class="solution">
+                        <p><strong>解(1)：</strong>由对称性，所求容积为</p>
+                        <div class="formula-box">
+                            $$V = 2\pi \int_{-1}^{\frac{1}{2}} x^2\,dy = 2\pi \int_{-1}^{\frac{1}{2}} (1-y^2)dy = \frac{9\pi}{4}\text{ m}^3$$
+                        </div>
+                        
+                        <p><strong>解(2)：</strong>所求功为</p>
+                        <div class="formula-box">
+                            $$W = 10^3 \int_{-1}^{\frac{1}{2}} \pi(1-y^2)(2-y)g\,dy + 10^3 \int_{\frac{1}{2}}^2 \pi[2y-y^2](2-y)g\,dy$$
+                            $$= 10^3\pi g\left[\int_{-1}^{\frac{1}{2}}(2-y-2y^2+y^3)dy + \int_{\frac{1}{2}}^2(4y-4y^2+y^3)dy\right]$$
+                            $$= \frac{27 \times 10^3}{8}\pi g \text{ J}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="toggleAllExamples()" style="margin-top:20px;">展开/收起所有例题</button>
+            </section>
+            
+            <!-- 互动测验 -->
+            <section id="quiz">
+                <h2>🎓 互动测验</h2>
+                <p>测试您对定积分应用的理解！</p>
+                
+                <div class="quiz-container">
+                    <h4>问题1：计算由 $y = x^2$ 和 $y = x$ 围成的区域面积，正确的积分表达式是？</h4>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">A. $\int_0^1 (x^2 - x)dx$</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">B. $\int_0^1 (x - x^2)dx$</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">C. $\int_0^1 x^2\,dx$</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">D. $\int_0^1 x\,dx$</div>
+                    <div id="quiz1-result" style="margin-top:10px; font-weight:600;"></div>
+                </div>
+                
+                <div class="quiz-container">
+                    <h4>问题2：曲线 $y = f(x)$ 从 $a$ 到 $b$ 绕 $x$ 轴旋转的体积公式是？</h4>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">A. $\pi\int_a^b f^2(x)dx$</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">B. $2\pi\int_a^b xf(x)dx$</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">C. $\int_a^b f(x)dx$</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">D. $\pi\int_a^b f(x)dx$</div>
+                    <div id="quiz2-result" style="margin-top:10px; font-weight:600;"></div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top:20px;">
+                    <strong>💪 学习建议：</strong>
+                    <ul style="margin-left:20px; margin-top:10px;">
+                        <li>掌握微元法的思想：将整体分成无穷小部分，再积分求和</li>
+                        <li>熟记各类公式，理解其几何或物理意义</li>
+                        <li>多做练习，特别注意积分上下限和被积函数的确定</li>
+                        <li>画图辅助理解，特别是旋转体问题</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>&copy; 2025 定积分的应用 交互式教程</p>
+            <p>本教程基于高等数学教材制作，配有MathJax数学公式渲染</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+        
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+        
+        // Interactive demo
+        function showAreaDemo() {
+            const demo = document.getElementById('area-demo');
+            demo.style.display = demo.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Toggle all examples
+        function toggleAllExamples() {
+            document.querySelectorAll('.solution').forEach(solution => {
+                solution.style.display = solution.style.display === 'none' ? 'block' : 'none';
+            });
+        }
+        
+        // Quiz answer checking
+        let answered1 = false;
+        let answered2 = false;
+        
+        function checkAnswer(element, isCorrect) {
+            const parent = element.parentElement;
+            const resultId = parent.id ? parent.id : (parent.querySelector('[id]') ? parent.querySelector('[id]').id : null);
+            
+            // Prevent multiple answers
+            if (element.classList.contains('correct') || element.classList.contains('wrong')) {
+                return;
+            }
+            
+            // Mark all options in this quiz as answered
+            parent.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            if (isCorrect) {
+                element.classList.add('correct');
+                const resultDiv = parent.querySelector('[id$="-result"]');
+                if (resultDiv) {
+                    resultDiv.innerHTML = '✅ 正确！很棒！';
+                    resultDiv.style.color = '#4caf50';
+                }
+            } else {
+                element.classList.add('wrong');
+                const resultDiv = parent.querySelector('[id$="-result"]');
+                if (resultDiv) {
+                    resultDiv.innerHTML = '❌ 不正确，再想想看！';
+                    resultDiv.style.color = '#f44336';
+                }
+                // Re-enable after 2 seconds
+                setTimeout(() => {
+                    parent.querySelectorAll('.quiz-option').forEach(opt => {
+                        opt.style.pointerEvents = 'auto';
+                        opt.classList.remove('wrong');
+                    });
+                    if (parent.querySelector('[id$="-result"]')) {
+                        parent.querySelector('[id$="-result"]').innerHTML = '';
+                    }
+                }, 2000);
+            }
+        }
+        
+        // Page load animation
+        window.addEventListener('load', function() {
+            document.querySelectorAll('section').forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    section.style.transition = 'all 0.6s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

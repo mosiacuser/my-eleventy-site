@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第十二章 多元积分学及其应用 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": {
+                styles: {
+                    ".MathJax": {
+                        color: "#2563eb"
+                    }
+                }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        /* Navigation Bar */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        nav h1 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        nav a {
+            color: #764ba2;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            background: #f3f4f6;
+        }
+        
+        nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* Content Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            color: #764ba2;
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        h4 {
+            color: #667eea;
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem;
+        }
+        
+        /* Highlight Box */
+        .highlight {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-left: 5px solid #e17055;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        /* Formula Box */
+        .formula-box {
+            background: #f0f9ff;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        
+        /* Example Box */
+        .example {
+            background: #f0fdf4;
+            border-left: 5px solid #22c55e;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .example h4 {
+            color: #16a34a;
+        }
+        
+        /* Collapsible Sections */
+        details {
+            background: #fef3c7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            cursor: pointer;
+        }
+        
+        summary {
+            font-weight: 700;
+            color: #d97706;
+            font-size: 1.1rem;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        summary:hover {
+            color: #ea580c;
+        }
+        
+        details[open] summary {
+            margin-bottom: 1rem;
+        }
+        
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        tr:hover {
+            background: #f3f4f6;
+        }
+        
+        /* Button Styling */
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Interactive Quiz */
+        .quiz-box {
+            background: #ede9fe;
+            border: 2px solid #8b5cf6;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .quiz-question {
+            font-weight: 600;
+            color: #6d28d9;
+            margin-bottom: 1rem;
+        }
+        
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .quiz-option {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quiz-option:hover {
+            background: #ddd6fe;
+            transform: translateX(5px);
+        }
+        
+        .quiz-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .correct {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+            }
+            
+            .container {
+                padding: 0 0.5rem;
+            }
+            
+            .card {
+                padding: 1rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Code Blocks */
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background: #1f2937;
+            color: #10b981;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        /* List Styling */
+        ul, ol {
+            margin-left: 2rem;
+            margin-top: 0.5rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <h1>📚 第十二章：多元积分学及其应用</h1>
+        <ul>
+            <li><a href="#overview">考试概要</a></li>
+            <li><a href="#triple-integral">三重积分</a></li>
+            <li><a href="#line-integral">曲线积分</a></li>
+            <li><a href="#surface-integral">曲面积分</a></li>
+            <li><a href="#field-theory">场论初步</a></li>
+            <li><a href="#applications">应用</a></li>
+            <li><a href="#examples">典型例题</a></li>
+            <li><a href="#quiz">互动测验</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        
+        <!-- Exam Overview Section -->
+        <section id="overview" class="card">
+            <h2>📋 考试内容概要</h2>
+            
+            <div class="highlight">
+                <strong>本章重点：</strong>理解重积分、线积分和面积分的概念，掌握各类积分的计算方法，熟练应用格林公式、高斯公式和斯托克斯公式，了解场论初步知识。
+            </div>
+            
+            <h3>考试要求</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>知识点</th>
+                        <th>要求等级</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>三重积分、曲线积分、曲面积分的概念</td>
+                        <td><span style="color: #dc2626;">⭐⭐⭐ 理解</span></td>
+                    </tr>
+                    <tr>
+                        <td>重积分的计算（直角坐标、极坐标、球面坐标）</td>
+                        <td><span style="color: #dc2626;">⭐⭐⭐ 掌握</span></td>
+                    </tr>
+                    <tr>
+                        <td>曲线积分的计算方法（格林公式、路径无关条件）</td>
+                        <td><span style="color: #dc2626;">⭐⭐⭐ 掌握</span></td>
+                    </tr>
+                    <tr>
+                        <td>曲面积分的计算（高斯公式、斯托克斯公式）</td>
+                        <td><span style="color: #dc2626;">⭐⭐⭐ 掌握</span></td>
+                    </tr>
+                    <tr>
+                        <td>散度和旋度的概念</td>
+                        <td><span style="color: #f59e0b;">⭐⭐ 了解</span></td>
+                    </tr>
+                    <tr>
+                        <td>应用积分计算几何量和物理量</td>
+                        <td><span style="color: #dc2626;">⭐⭐⭐ 会计算</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Triple Integral Section -->
+        <section id="triple-integral" class="card">
+            <h2>🧊 第一节：三重积分</h2>
+            
+            <h3>1. 定义</h3>
+            <div class="formula-box">
+                $$\iiint_{\Omega} f(x,y,z)dv = \lim_{\lambda \to 0} \sum_{i=1}^{n} f(\xi_i, \eta_i, \zeta_i) \Delta v_i$$
+                <p style="margin-top: 1rem; color: #6b7280;">其中 $\Omega$ 是空间区域，$\lambda$ 是小区域的最大直径</p>
+            </div>
+            
+            <h3>2. 性质</h3>
+            <ul>
+                <li><strong>线性性：</strong>与二重积分类似</li>
+                <li><strong>区域可加性：</strong>若 $\Omega = \Omega_1 \cup \Omega_2$，则积分可分解</li>
+                <li><strong>对称性：</strong>利用奇偶性简化计算</li>
+            </ul>
+            
+            <h3>3. 计算方法</h3>
+            
+            <details>
+                <summary>📐 方法一：直角坐标系（先一后二）</summary>
+                <div class="formula-box">
+                    设平行于 $z$ 轴的直线与 $\Omega$ 的边界曲面 $S$ 最多两个交点，$\Omega$ 在 $xOy$ 面上的投影域为 $D_{xy}$：
+                    $$\iiint_{\Omega} f(x,y,z)dv = \iint_{D_{xy}} dx dy \int_{z_1(x,y)}^{z_2(x,y)} f(x,y,z)dz$$
+                </div>
+                <p><strong>适用场景：</strong>当积分区域在某个坐标面上的投影为简单区域时</p>
+            </details>
+            
+            <details>
+                <summary>📐 方法二：直角坐标系（先二后一）</summary>
+                <div class="formula-box">
+                    设空间区域 $\Omega = \{(x,y,z) | (x,y) \in D_z, c_1 \leq z \leq c_2\}$：
+                    $$\iiint_{\Omega} f(x,y,z)dv = \int_{c_1}^{c_2} dz \iint_{D_z} f(x,y,z)dxdy$$
+                </div>
+                <p><strong>适用场景：</strong>当积分区域是柱体或按 $z$ 分层较简单时</p>
+            </details>
+            
+            <details>
+                <summary>🎯 方法三：柱坐标系</summary>
+                <div class="formula-box">
+                    <p><strong>坐标变换关系：</strong></p>
+                    $$\begin{cases}
+                    x = r\cos\theta \\
+                    y = r\sin\theta \\
+                    z = z
+                    \end{cases}$$
+                    <p style="margin-top: 1rem;"><strong>体积微元：</strong>$dv = r \, dr \, d\theta \, dz$</p>
+                    $$\iiint_{\Omega} f(x,y,z)dv = \iiint_{\Omega} f(r\cos\theta, r\sin\theta, z) \cdot r \, dr \, d\theta \, dz$$
+                </div>
+                <p><strong>适用场景：</strong>积分区域或被积函数关于 $z$ 轴具有旋转对称性</p>
+            </details>
+            
+            <details>
+                <summary>🌐 方法四：球面坐标系</summary>
+                <div class="formula-box">
+                    <p><strong>坐标变换关系：</strong></p>
+                    $$\begin{cases}
+                    x = r\sin\varphi\cos\theta \\
+                    y = r\sin\varphi\sin\theta \\
+                    z = r\cos\varphi
+                    \end{cases}$$
+                    <p style="margin-top: 1rem;">其中 $0 \leq r < +\infty$，$0 \leq \varphi \leq \pi$，$0 \leq \theta < 2\pi$</p>
+                    <p><strong>体积微元：</strong>$dv = r^2 \sin\varphi \, dr \, d\varphi \, d\theta$</p>
+                    $$\iiint_{\Omega} f(x,y,z)dv = \iiint_{\Omega} f(r\sin\varphi\cos\theta, r\sin\varphi\sin\theta, r\cos\varphi) \cdot r^2\sin\varphi \, dr \, d\varphi \, d\theta$$
+                </div>
+                <p><strong>适用场景：</strong>积分区域为球体、球壳，或被积函数形如 $f(x^2+y^2+z^2)$ 时</p>
+            </details>
+            
+            <h3>4. 对称性与变量轮换</h3>
+            <div class="highlight">
+                <p><strong>利用奇偶性：</strong>若积分域 $\Omega$ 关于 $xOy$ 坐标面对称，$f(x,y,z)$ 关于 $z$ 有奇偶性，则：</p>
+                $$\iiint_{\Omega} f(x,y,z)dv = \begin{cases}
+                2\iiint_{\Omega_{z\geq0}} f(x,y,z)dv, & f(x,y,z) \text{ 关于 } z \text{ 为偶函数} \\
+                0, & f(x,y,z) \text{ 关于 } z \text{ 为奇函数}
+                \end{cases}$$
+                <p style="margin-top: 1rem;"><strong>变量轮换对称性：</strong>若积分域对 $x, y, z$ 具有轮换对称性（如球体），则：</p>
+                $$\iiint_{\Omega} x \, dv = \iiint_{\Omega} y \, dv = \iiint_{\Omega} z \, dv$$
+            </div>
+        </section>
+
+        <!-- Line Integral Section -->
+        <section id="line-integral" class="card">
+            <h2>📏 第二节：曲线积分</h2>
+            
+            <h3>一、对弧长的曲线积分（第一类曲线积分）</h3>
+            
+            <h4>1. 定义</h4>
+            <div class="formula-box">
+                $$\int_L f(x,y)ds = \lim_{\lambda \to 0} \sum_{i=1}^{n} f(\xi_i, \eta_i) \Delta s_i$$
+            </div>
+            
+            <h4>2. 性质</h4>
+            <ul>
+                <li><strong>与路径方向无关：</strong>$\int_{L_{AB}} f(x,y)ds = \int_{L_{BA}} f(x,y)ds$</li>
+            </ul>
+            
+            <h4>3. 计算方法（平面）</h4>
+            <details>
+                <summary>📐 参数方程法</summary>
+                <div class="formula-box">
+                    若 $L: \begin{cases} x = x(t) \\ y = y(t) \end{cases}, \, a \leq t \leq \beta$，则：
+                    $$\int_L f(x,y)ds = \int_a^\beta f[x(t), y(t)] \sqrt{x'^2(t) + y'^2(t)} \, dt$$
+                </div>
+            </details>
+            
+            <details>
+                <summary>📐 直角坐标法</summary>
+                <div class="formula-box">
+                    若 $L: y = y(x), \, a \leq x \leq b$，则：
+                    $$\int_L f(x,y)ds = \int_a^b f[x, y(x)] \sqrt{1 + y'^2(x)} \, dx$$
+                </div>
+            </details>
+            
+            <details>
+                <summary>📐 极坐标法</summary>
+                <div class="formula-box">
+                    若 $L: r = r(\theta), \, \alpha \leq \theta \leq \beta$，则：
+                    $$\int_L f(x,y)ds = \int_\alpha^\beta f(r\cos\theta, r\sin\theta) \sqrt{r^2 + r'^2} \, d\theta$$
+                </div>
+            </details>
+            
+            <h3>二、对坐标的曲线积分（第二类曲线积分）</h3>
+            
+            <h4>1. 定义</h4>
+            <div class="formula-box">
+                $$\int_L P(x,y)dx + Q(x,y)dy = \lim_{\lambda \to 0} \sum_{i=1}^{n} [P(\xi_i, \eta_i)\Delta x_i + Q(\xi_i, \eta_i)\Delta y_i]$$
+            </div>
+            
+            <h4>2. 性质</h4>
+            <ul>
+                <li><strong>与路径方向有关：</strong>$\int_{L_{AB}} Pdx + Qdy = -\int_{L_{BA}} Pdx + Qdy$</li>
+            </ul>
+            
+            <h4>3. 计算方法——直接法</h4>
+            <div class="formula-box">
+                设有向曲线 $L: \begin{cases} x = x(t) \\ y = y(t) \end{cases}, \, t \in [a,\beta]$，起点和终点分别对应 $t = a$ 和 $t = \beta$，则：
+                $$\int_L Pdx + Qdy = \int_a^\beta \{P[x(t),y(t)]x'(t) + Q[x(t),y(t)]y'(t)\} dt$$
+            </div>
+            
+            <h4>4. 格林公式（Green's Formula）</h4>
+            <div class="highlight">
+                设闭区域 $D$ 由分段光滑曲线 $L$ 围成，函数 $P(x,y)$，$Q(x,y)$ 在 $D$ 上具有一阶连续偏导数，则：
+                $$\oint_L Pdx + Qdy = \iint_D \left(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\right) d\sigma$$
+                其中 $L$ 为 $D$ 取正向的边界曲线
+            </div>
+            
+            <h4>5. 曲线积分与路径无关的条件</h4>
+            <p>设函数 $P(x,y)$，$Q(x,y)$ 在单连通域 $D$ 上具有一阶连续偏导数，则以下四个条件等价：</p>
+            <ol>
+                <li>曲线积分 $\int_L Pdx + Qdy$ 在 $D$ 内与路径无关</li>
+                <li>$\oint_L Pdx + Qdy = 0$，其中 $L$ 为 $D$ 中任一分段光滑闭曲线</li>
+                <li>$\frac{\partial P}{\partial y} = \frac{\partial Q}{\partial x}, \, \forall (x,y) \in D$</li>
+                <li>$Pdx + Qdy = dF(x,y)$（存在原函数）</li>
+            </ol>
+            
+            <h4>6. 空间曲线积分</h4>
+            <div class="formula-box">
+                对空间曲线 $L: \begin{cases} x = x(t) \\ y = y(t) \\ z = z(t) \end{cases}, \, t \in [a,\beta]$：
+                $$\int_L Pdx + Qdy + Rdz = \int_a^\beta \{Px'(t) + Qy'(t) + Rz'(t)\} dt$$
+            </div>
+        </section>
+
+        <!-- Surface Integral Section -->
+        <section id="surface-integral" class="card">
+            <h2>🎨 第三节：曲面积分</h2>
+            
+            <h3>一、对面积的曲面积分（第一类曲面积分）</h3>
+            
+            <h4>1. 定义</h4>
+            <div class="formula-box">
+                $$\iint_{\Sigma} f(x,y,z)dS = \lim_{\lambda \to 0} \sum_{i=1}^{n} f(\xi_i, \eta_i, \zeta_i) \Delta S_i$$
+            </div>
+            
+            <h4>2. 计算方法（直接法）</h4>
+            <div class="formula-box">
+                设曲面 $\Sigma: z = z(x,y), \, (x,y) \in D_{xy}$，则：
+                $$\iint_{\Sigma} f(x,y,z)dS = \iint_{D_{xy}} f[x,y,z(x,y)] \sqrt{1 + z_x'^2 + z_y'^2} \, dxdy$$
+            </div>
+            <p>若曲面方程由 $x = x(y,z)$ 或 $y = y(z,x)$ 给出，也可类似地投影到相应坐标面</p>
+            
+            <h3>二、对坐标的曲面积分（第二类曲面积分）</h3>
+            
+            <h4>1. 定义</h4>
+            <div class="formula-box">
+                $$\iint_{\Sigma} Pdydz + Qdzdx + Rdxdy$$
+            </div>
+            
+            <h4>2. 计算方法（直接法）</h4>
+            <details>
+                <summary>📐 投影到 $xOy$ 面</summary>
+                <div class="formula-box">
+                    设有向曲面 $\Sigma: z = z(x,y), \, (x,y) \in D_{xy}$，则：
+                    $$\iint_{\Sigma} R(x,y,z)dxdy = \pm \iint_{D_{xy}} R[x,y,z(x,y)] dxdy$$
+                    若曲面的法线方向与 $z$ 轴正向成锐角，取正号；否则取负号
+                </div>
+            </details>
+            
+            <h4>3. 高斯公式（Gauss's Theorem）</h4>
+            <div class="highlight">
+                设空间闭区域 $\Omega$ 由分片光滑闭曲面 $\Sigma$ 所围成，函数 $P, Q, R$ 在 $\Omega$ 上具有一阶连续偏导数，则：
+                $$\oiint_{\Sigma} Pdydz + Qdzdx + Rdxdy = \iiint_{\Omega} \left(\frac{\partial P}{\partial x} + \frac{\partial Q}{\partial y} + \frac{\partial R}{\partial z}\right) dv$$
+                其中 $\Sigma$ 是 $\Omega$ 的外侧（向外的法向量）
+            </div>
+            
+            <h4>4. 斯托克斯公式（Stokes' Theorem）</h4>
+            <div class="highlight">
+                设 $L$ 为空间分段光滑有向闭曲线，$\Sigma$ 是以 $L$ 为边界的分片光滑有向曲面，$L$ 的方向与 $\Sigma$ 的法向量符合右手法则，函数 $P, Q, R$ 在 $\Sigma$ 上具有一阶连续偏导数，则：
+                $$\oint_L Pdx + Qdy + Rdz = \iint_{\Sigma} \begin{vmatrix}
+                \cos\alpha & \cos\beta & \cos\gamma \\
+                \frac{\partial}{\partial x} & \frac{\partial}{\partial y} & \frac{\partial}{\partial z} \\
+                P & Q & R
+                \end{vmatrix} dS$$
+                或写成：
+                $$\oint_L Pdx + Qdy + Rdz = \iint_{\Sigma} \left[\left(\frac{\partial R}{\partial y} - \frac{\partial Q}{\partial z}\right)dydz + \left(\frac{\partial P}{\partial z} - \frac{\partial R}{\partial x}\right)dzdx + \left(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\right)dxdy\right]$$
+            </div>
+        </section>
+
+        <!-- Field Theory Section -->
+        <section id="field-theory" class="card">
+            <h2>⚡ 第五节：场论初步</h2>
+            
+            <h3>1. 方向导数</h3>
+            <h4>(1) 定义</h4>
+            <div class="formula-box">
+                $$\frac{\partial f}{\partial l}\bigg|_{(x_0,y_0)} = \lim_{t \to 0^+} \frac{f(x_0 + t\cos\alpha, y_0 + t\cos\beta) - f(x_0,y_0)}{t}$$
+                其中 $\mathbf{e}_l = (\cos\alpha, \cos\beta)$ 是方向向量
+            </div>
+            
+            <h4>(2) 计算公式</h4>
+            <div class="formula-box">
+                若函数 $f(x,y)$ 在点 $P_0(x_0,y_0)$ 处可微，则函数在该点沿任一方向 $l$ 的方向导数都存在，且有：
+                $$\frac{\partial f}{\partial l}\bigg|_{(x_0,y_0)} = f_x'(x_0,y_0)\cos\alpha + f_y'(x_0,y_0)\cos\beta$$
+            </div>
+            
+            <h3>2. 梯度（Gradient）</h3>
+            <div class="highlight">
+                设函数 $f(x,y)$ 在点 $P_0(x_0,y_0)$ 处具有一阶连续偏导数，则：
+                $$\text{grad} f(x_0,y_0) = f_x'(x_0,y_0)\mathbf{i} + f_y'(x_0,y_0)\mathbf{j}$$
+                <p style="margin-top: 1rem;"><strong>注意：</strong>梯度 $\text{grad} f(x_0,y_0)$ 是一个向量，它的方向是函数在该点方向导数最大的方向，它的模等于方向导数的最大值。</p>
+            </div>
+            
+            <h3>3. 散度（Divergence）</h3>
+            <div class="formula-box">
+                设有向量场 $\mathbf{A}(x,y,z) = (P,Q,R)$，其中 $P,Q,R$ 均具有一阶连续偏导数，则：
+                $$\text{div} \mathbf{A} = \frac{\partial P}{\partial x} + \frac{\partial Q}{\partial y} + \frac{\partial R}{\partial z}$$
+            </div>
+            
+            <h3>4. 旋度（Curl）</h3>
+            <div class="formula-box">
+                设有向量场 $\mathbf{A}(x,y,z) = (P,Q,R)$，其中 $P,Q,R$ 均具有一阶连续偏导数，则：
+                $$\text{rot} \mathbf{A} = \begin{vmatrix}
+                \mathbf{i} & \mathbf{j} & \mathbf{k} \\
+                \frac{\partial}{\partial x} & \frac{\partial}{\partial y} & \frac{\partial}{\partial z} \\
+                P & Q & R
+                \end{vmatrix}$$
+            </div>
+        </section>
+
+        <!-- Applications Section -->
+        <section id="applications" class="card">
+            <h2>🔧 第四节：多元积分的应用</h2>
+            
+            <h3>常用几何量和物理量计算</h3>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>应用类型</th>
+                        <th>平面区域</th>
+                        <th>空间区域</th>
+                        <th>曲线</th>
+                        <th>曲面</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>几何度量</strong></td>
+                        <td>面积 $S = \iint_D d\sigma$</td>
+                        <td>体积 $V = \iiint_{\Omega} dv$</td>
+                        <td>弧长 $L = \int_C ds$</td>
+                        <td>面积 $S = \iint_{\Sigma} dS$</td>
+                    </tr>
+                    <tr>
+                        <td><strong>质量</strong></td>
+                        <td>$m = \iint_D \rho(x,y)d\sigma$</td>
+                        <td>$m = \iiint_{\Omega} \rho(x,y,z)dv$</td>
+                        <td>$m = \int_C f(x,y)ds$</td>
+                        <td>$m = \iint_{\Sigma} \rho(x,y,z)dS$</td>
+                    </tr>
+                    <tr>
+                        <td><strong>质心</strong></td>
+                        <td>$\bar{x} = \frac{\iint_D x\rho d\sigma}{m}$</td>
+                        <td>$\bar{x} = \frac{\iiint_{\Omega} x\rho dv}{m}$</td>
+                        <td>$\bar{x} = \frac{\int_C x\rho ds}{m}$</td>
+                        <td>$\bar{x} = \frac{\iint_{\Sigma} x\rho dS}{m}$</td>
+                    </tr>
+                    <tr>
+                        <td><strong>转动惯量</strong></td>
+                        <td>$I_x = \iint_D y^2\rho d\sigma$</td>
+                        <td>$I_x = \iiint_{\Omega} (y^2+z^2)\rho dv$</td>
+                        <td>$I_x = \int_C (y^2+z^2)\rho ds$</td>
+                        <td>$I_x = \iint_{\Sigma} (y^2+z^2)\rho dS$</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>特殊应用</h3>
+            <h4>1. 变力做功</h4>
+            <div class="formula-box">
+                力 $\mathbf{F} = P\mathbf{i} + Q\mathbf{j} + R\mathbf{k}$，变力做功：
+                $$W = \int_{AB} Pdx + Qdy + Rdz$$
+            </div>
+            
+            <h4>2. 通量</h4>
+            <div class="formula-box">
+                向量场 $\mathbf{U}(x,y,z) = P\mathbf{i} + Q\mathbf{j} + R\mathbf{k}$，通量：
+                $$\Phi = \iint_{\Sigma} Pdydz + Qdzdx + Rdxdy$$
+            </div>
+        </section>
+
+        <!-- Examples Section -->
+        <section id="examples" class="card">
+            <h2>📝 典型例题</h2>
+            
+            <div class="example">
+                <h4>【例1】(1988) 三重积分的对称性</h4>
+                <p><strong>题目：</strong>设空间区域 $\Omega_1: x^2 + y^2 + z^2 \leq R^2, z \geq 0$ 及 $\Omega_2: x^2 + y^2 + z^2 \leq R^2$，$x \geq 0, y \geq 0, z \geq 0$，则下列等式中正确的是：</p>
+                <p>(A) $\iiint_{\Omega_1} xdv = 4\iiint_{\Omega_2} xdv$ &nbsp;&nbsp;&nbsp; (B) $\iiint_{\Omega_1} ydv = 4\iiint_{\Omega_2} ydv$</p>
+                <p>(C) $\iiint_{\Omega_1} zdv = 4\iiint_{\Omega_2} zdv$ &nbsp;&nbsp;&nbsp; (D) $\iiint_{\Omega_1} xyzdv = 4\iiint_{\Omega_2} xyzdv$</p>
+                
+                <details>
+                    <summary><strong>查看解答</strong></summary>
+                    <p style="margin-top: 1rem;"><strong>解：</strong>选 (C)</p>
+                    <p><strong>分析：</strong></p>
+                    <ul>
+                        <li>对于 (A)：$\iiint_{\Omega_1} xdv = 0$（因为 $\Omega_1$ 关于 $yOz$ 面对称，$x$ 为奇函数），故 (A) 错</li>
+                        <li>对于 (B)：同理，$\iiint_{\Omega_1} ydv = 0$，故 (B) 错</li>
+                        <li>对于 (C)：$zdv$ 为偶函数，且 $\Omega_1$ 是 $\Omega_2$ 的4倍（关于三个坐标面对称），故 (C) 正确</li>
+                        <li>对于 (D)：$\iiint_{\Omega_1} xyzdv = 0$（$xyz$ 关于任一坐标面都是奇函数），故 (D) 错</li>
+                    </ul>
+                    <div class="highlight">
+                        <strong>关键技巧：</strong>利用对称性和奇偶性简化计算
+                    </div>
+                </details>
+            </div>
+            
+            <div class="example">
+                <h4>【例2】(2009) 球面坐标计算</h4>
+                <p><strong>题目：</strong>设 $\Omega = \{(x,y,z) | x^2 + y^2 + z^2 \leq 1\}$，则 $\iiint_{\Omega} z^2 dxdydz = $ ______</p>
+                
+                <details>
+                    <summary><strong>查看解答</strong></summary>
+                    <p style="margin-top: 1rem;"><strong>解：</strong>$\frac{4\pi}{15}$</p>
+                    <p><strong>方法一：先二后一</strong></p>
+                    <div class="formula-box">
+                        $$\iiint_{\Omega} z^2 dv = \int_{-1}^{1} z^2 dz \iint_{x^2+y^2 \leq 1-z^2} dxdy = \int_{-1}^{1} z^2 \cdot \pi(1-z^2) dz = \frac{4\pi}{15}$$
+                    </div>
+                    <p><strong>方法二：球面坐标</strong></p>
+                    <div class="formula-box">
+                        $$\iiint_{\Omega} z^2 dv = \int_0^{2\pi} d\theta \int_0^{\pi} \int_0^1 (r\cos\varphi)^2 \cdot r^2\sin\varphi \, dr \, d\varphi = \frac{4\pi}{15}$$
+                    </div>
+                </details>
+            </div>
+            
+            <div class="example">
+                <h4>【例3】(2004) 格林公式应用</h4>
+                <p><strong>题目：</strong>设 $L$ 为正向圆周 $x^2 + y^2 = 2$ 在第一象限中的部分，则曲线积分 $\int_L xdy - 2ydx$ 的值为 ______</p>
+                
+                <details>
+                    <summary><strong>查看解答</strong></summary>
+                    <p style="margin-top: 1rem;"><strong>解：</strong>$\frac{3\pi}{2}$</p>
+                    <p><strong>方法：补线用格林公式</strong></p>
+                    <p>将 $L$ 补成封闭曲线，设 $L_1$ 为从 $(0,\sqrt{2})$ 沿 $y$ 轴到 $(0,0)$ 的线段，$L_2$ 为从 $(0,0)$ 沿 $x$ 轴到 $(\sqrt{2},0)$ 的线段。</p>
+                    <div class="formula-box">
+                        由格林公式：
+                        $$\oint_{L+L_1+L_2} xdy - 2ydx = \iint_D \left(\frac{\partial(-2y)}{\partial x} - \frac{\partial x}{\partial y}\right) d\sigma = \iint_D (-1)d\sigma = -\pi$$
+                        其中 $D$ 是 $L \cup L_1 \cup L_2$ 所围区域。
+                        
+                        计算 $L_1$ 和 $L_2$ 上的积分：
+                        $$\int_{L_1} xdy - 2ydx = 0, \quad \int_{L_2} xdy - 2ydx = 0$$
+                        
+                        因此：$\int_L xdy - 2ydx = -\pi - 0 - 0 = \frac{3\pi}{2}$
+                    </div>
+                </details>
+            </div>
+            
+            <button class="btn" onclick="alert('更多例题请参考教材习题集！')">查看更多例题</button>
+        </section>
+
+        <!-- Interactive Quiz Section -->
+        <section id="quiz" class="card">
+            <h2>🎯 互动测验</h2>
+            
+            <div class="quiz-box">
+                <div class="quiz-question">
+                    <strong>问题1：</strong>若积分区域 $\Omega$ 关于 $xOy$ 平面对称，被积函数 $f(x,y,z)$ 关于 $z$ 为奇函数，则 $\iiint_{\Omega} f(x,y,z)dv = $ ?
+                </div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(1, 'B')">A. $2\iiint_{\Omega_{z\geq0}} f(x,y,z)dv$</div>
+                    <div class="quiz-option" onclick="checkAnswer(1, 'B')">B. $0$</div>
+                    <div class="quiz-option" onclick="checkAnswer(1, 'B')">C. $\iiint_{\Omega_{z\geq0}} f(x,y,z)dv$</div>
+                    <div class="quiz-option" onclick="checkAnswer(1, 'B')">D. 无法确定</div>
+                </div>
+                <div id="result1" class="quiz-result"></div>
+            </div>
+            
+            <div class="quiz-box">
+                <div class="quiz-question">
+                    <strong>问题2：</strong>球面坐标系中，体积微元 $dv$ 的正确表达式是？
+                </div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(2, 'C')">A. $r \, dr \, d\theta \, dz$</div>
+                    <div class="quiz-option" onclick="checkAnswer(2, 'C')">B. $r^2 \, dr \, d\varphi \, d\theta$</div>
+                    <div class="quiz-option" onclick="checkAnswer(2, 'C')">C. $r^2 \sin\varphi \, dr \, d\varphi \, d\theta$</div>
+                    <div class="quiz-option" onclick="checkAnswer(2, 'C')">D. $r \sin\varphi \, dr \, d\varphi \, d\theta$</div>
+                </div>
+                <div id="result2" class="quiz-result"></div>
+            </div>
+            
+            <div class="quiz-box">
+                <div class="quiz-question">
+                    <strong>问题3：</strong>格林公式的条件中，曲线 $L$ 应取什么方向？
+                </div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(3, 'B')">A. 任意方向</div>
+                    <div class="quiz-option" onclick="checkAnswer(3, 'B')">B. 正向（逆时针）</div>
+                    <div class="quiz-option" onclick="checkAnswer(3, 'B')">C. 负向（顺时针）</div>
+                    <div class="quiz-option" onclick="checkAnswer(3, 'B')">D. 与方向无关</div>
+                </div>
+                <div id="result3" class="quiz-result"></div>
+            </div>
+            
+            <button class="btn" onclick="resetQuiz()">重置测验</button>
+        </section>
+
+        <!-- Footer -->
+        <section class="card" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h2 style="color: white; border-bottom: none;">📚 学习建议</h2>
+            <p>多元积分学是数学分析的重要章节，建议：</p>
+            <ul style="list-style: none; margin-left: 0;">
+                <li>✅ 熟练掌握各类坐标系的转换</li>
+                <li>✅ 理解积分的几何意义</li>
+                <li>✅ 多做历年真题，总结题型</li>
+                <li>✅ 重视对称性和轮换对称性的应用</li>
+                <li>✅ 掌握格林、高斯、斯托克斯公式的使用条件</li>
+            </ul>
+            <p style="margin-top: 2rem; font-size: 1.2rem;">🎉 祝您考研顺利！</p>
+        </section>
+    </div>
+
+    <script>
+        // Quiz functionality
+        const correctAnswers = {
+            1: 'B',
+            2: 'C',
+            3: 'B'
+        };
+        
+        function checkAnswer(questionNum, selectedAnswer) {
+            const resultDiv = document.getElementById(`result${questionNum}`);
+            resultDiv.style.display = 'block';
+            
+            if (selectedAnswer === correctAnswers[questionNum]) {
+                resultDiv.className = 'quiz-result correct';
+                resultDiv.innerHTML = '✅ 正确！太棒了！';
+            } else {
+                resultDiv.className = 'quiz-result incorrect';
+                resultDiv.innerHTML = `❌ 不正确。正确答案是 ${correctAnswers[questionNum]}`;
+            }
+        }
+        
+        function resetQuiz() {
+            for (let i = 1; i <= 3; i++) {
+                const resultDiv = document.getElementById(`result${i}`);
+                resultDiv.style.display = 'none';
+            }
+        }
+        
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+        
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease-in-out';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
+
+<!-- 
+使用说明：
+1. 将以上代码复制到文本编辑器中
+2. 保存为 .html 文件（如 multivariable_calculus.html）
+3. 双击文件在浏览器中打开即可查看
+4. 所有资源（MathJax、Google Fonts）通过CDN加载，无需额外下载
+5. 网页完全响应式，支持桌面和移动设备
+6. 所有LaTeX公式会自动渲染为漂亮的数学符号
+7. 点击"查看解答"按钮可展开例题详解
+8. 互动测验可测试您的学习成果
+
+技术特性：
+- MathJax 2.7.5 用于LaTeX公式渲染
+- CSS3 渐变和动画效果
+- JavaScript交互功能（折叠、测验、平滑滚动）
+- 响应式设计（媒体查询）
+- 完全自包含，无需外部文件
+-->

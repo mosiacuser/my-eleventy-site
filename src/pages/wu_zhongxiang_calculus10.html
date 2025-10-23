@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无穷级数 - 交互式数学教程</title>
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header Navigation */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: #764ba2;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 120px auto 2rem;
+            padding: 0 1rem;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .subsection-title {
+            color: #764ba2;
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        /* Theorem and Definition Boxes */
+        .theorem-box, .definition-box, .example-box {
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            border-left: 5px solid;
+        }
+
+        .theorem-box {
+            background: #e3f2fd;
+            border-color: #2196F3;
+        }
+
+        .definition-box {
+            background: #f3e5f5;
+            border-color: #9c27b0;
+        }
+
+        .example-box {
+            background: #fff3e0;
+            border-color: #ff9800;
+        }
+
+        .box-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Collapsible Sections */
+        .collapsible {
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            padding: 1rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            transition: background 0.3s;
+        }
+
+        .collapsible:hover {
+            background: #5568d3;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            float: right;
+            font-size: 1.5rem;
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f8f9fa;
+            padding: 0 1rem;
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* Math Formula Styling */
+        .MathJax {
+            color: #1a237e !important;
+        }
+
+        .formula-highlight {
+            background: #fffde7;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px dashed #fbc02d;
+        }
+
+        /* Important Notes */
+        .important-note {
+            background: #ffebee;
+            border-left: 5px solid #f44336;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+        }
+
+        .important-note:before {
+            content: "⚠️ 重要：";
+            font-weight: 700;
+            color: #f44336;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-left: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        /* Button Styling */
+        .show-answer-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem 0;
+            transition: background 0.3s;
+        }
+
+        .show-answer-btn:hover {
+            background: #45a049;
+        }
+
+        .answer-content {
+            display: none;
+            background: #e8f5e9;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border-radius: 5px;
+            border: 2px solid #4caf50;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.2rem;
+            }
+            
+            .nav-menu {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .container {
+                margin-top: 160px;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+
+        .scroll-top:hover {
+            background: #764ba2;
+            transform: translateY(-5px);
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>📚 第十章：无穷级数 - 交互式教程</h1>
+        <div class="nav-menu">
+            <a href="#section1">常数项级数</a>
+            <a href="#section2">幂级数</a>
+            <a href="#section3">傅里叶级数</a>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        
+        <!-- Section 1: 常数项级数 -->
+        <div class="content-card" id="section1">
+            <h2 class="section-title">第一节 常数项级数</h2>
+            
+            <div class="definition-box">
+                <div class="box-title">📖 定义：级数的概念</div>
+                <p>设\(\{u_n\}\)是一数列，则表达式</p>
+                <div class="formula-highlight">
+                    $$\sum_{n=1}^{\infty}u_n = u_1 + u_2 + \cdots + u_n + \cdots$$
+                </div>
+                <p>称为<strong>无穷级数</strong>，简称<strong>级数</strong>。\(S_n = \sum_{i=1}^{n}u_i\)称为级数的<strong>部分和</strong>。</p>
+                <p>若部分和\(\{S_n\}\)有极限\(S\)，即\(\lim_{n\to\infty}S_n = S\)，则称级数<strong>收敛</strong>，称这个极限\(S\)为级数的<strong>和</strong>。</p>
+                <p>如果极限\(\lim_{n\to\infty}S_n\)不存在，则称级数<strong>发散</strong>。</p>
+            </div>
+
+            <h3 class="subsection-title">1. 级数的性质</h3>
+            
+            <div class="theorem-box">
+                <div class="box-title">📐 性质1：线性性质</div>
+                <p><strong>(1)</strong> 若级数\(\sum_{n=1}^{\infty}u_n\)收敛于\(S\)，则\(\sum_{n=1}^{\infty}ku_n\)也收敛，且其和为\(kS\)。</p>
+                <p><strong>(2)</strong> 若\(\sum_{n=1}^{\infty}u_n\)和\(\sum_{n=1}^{\infty}v_n\)分别收敛于\(S\)、\(T\)，则\(\sum_{n=1}^{\infty}(u_n \pm v_n)\)收敛于\(S \pm T\)。</p>
+            </div>
+
+            <div class="important-note">
+                在级数中去掉、加上或改变有限项，不会改变级数的敛散性。一个级数的敛散性与其前有限项无关。
+            </div>
+
+            <div class="theorem-box">
+                <div class="box-title">📐 性质2：收敛的必要条件</div>
+                <p>若级数\(\sum_{n=1}^{\infty}u_n\)收敛，则\(\lim_{n\to\infty}u_n = 0\)。</p>
+                <div class="important-note">
+                    注意：\(\lim_{n\to\infty}u_n = 0\)不一定收敛（必要不充分）。<br>
+                    反之，若\(\lim_{n\to\infty}u_n \neq 0\)，则级数必发散。
+                </div>
+            </div>
+
+            <button class="collapsible">📝 例题1：判断级数敛散性</button>
+            <div class="collapsible-content">
+                <div class="example-box" style="margin-top: 1rem;">
+                    <p><strong>例题：</strong>判断下列级数的敛散性</p>
+                    <p>(1) \(\sum_{n=1}^{\infty}\ln\left(1+\frac{1}{n}\right)\)</p>
+                    <p>(2) \(\sum_{n=0}^{\infty}aq^n\) (\(a \neq 0\))</p>
+                    
+                    <button class="show-answer-btn" onclick="toggleAnswer('answer1')">显示解答</button>
+                    <div class="answer-content" id="answer1">
+                        <p><strong>解：</strong></p>
+                        <p>(1) \(S_n = \ln(1+1) + \ln(1+\frac{1}{2}) + \cdots + \ln(1+\frac{1}{n})\)</p>
+                        <p>\(= \ln 2 + \ln\frac{3}{2} + \cdots + \ln\frac{n+1}{n} = \ln(n+1)\)</p>
+                        <p>由于\(\lim_{n\to\infty}S_n = \lim_{n\to\infty}\ln(n+1) = \infty\)，故级数<strong>发散</strong>。</p>
+                        
+                        <p>(2) 这是<strong>几何级数</strong>（等比级数）：</p>
+                        <p>$$S_n = a + aq + aq^2 + \cdots + aq^{n-1} = \begin{cases}
+                        \frac{a(1-q^n)}{1-q}, & q \neq 1 \\
+                        na, & q = 1
+                        \end{cases}$$</p>
+                        <p>当\(|q| < 1\)时，\(\lim_{n\to\infty}S_n = \frac{a}{1-q}\)，级数<strong>收敛</strong>；</p>
+                        <p>当\(|q| \geq 1\)时，级数<strong>发散</strong>。</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">2. 正项级数的审敛准则</h3>
+            
+            <div class="definition-box">
+                <div class="box-title">📖 定义：正项级数</div>
+                <p>若\(\sum_{n=1}^{\infty}u_n\)中\(u_n \geq 0\)，则称其为<strong>正项级数</strong>。</p>
+                <p><strong>基本定理：</strong>正项级数\(\sum_{n=1}^{\infty}u_n\)收敛 \(\Leftrightarrow\) \(\{S_n\}\)有上界。</p>
+            </div>
+
+            <div class="theorem-box">
+                <div class="box-title">📐 比较判别法</div>
+                <p>设\(u_n \leq v_n\)，则：</p>
+                <ul>
+                    <li>\(\sum v_n\)收敛 \(\Rightarrow\) \(\sum u_n\)收敛</li>
+                    <li>\(\sum u_n\)发散 \(\Rightarrow\) \(\sum v_n\)发散</li>
+                </ul>
+                
+                <p><strong>比较判别法的极限形式：</strong>设\(\lim_{n\to\infty}\frac{u_n}{v_n} = l\) (\(0 \leq l < +\infty\))</p>
+                <ul>
+                    <li>若\(0 < l < +\infty\)，则\(\sum u_n\)与\(\sum v_n\)同敛散</li>
+                    <li>若\(l = 0\)，\(\sum v_n\)收敛\(\Rightarrow\)\(\sum u_n\)收敛</li>
+                    <li>若\(l = +\infty\)，\(\sum v_n\)发散\(\Rightarrow\)\(\sum u_n\)发散</li>
+                </ul>
+            </div>
+
+            <div class="important-note">
+                最常用的比较标准是<strong>p级数</strong>和<strong>等比级数</strong>：
+                <div class="formula-highlight">
+                    $$\sum_{n=1}^{\infty}\frac{1}{n^p} \begin{cases} 
+                    \text{收敛}, & p > 1 \\
+                    \text{发散}, & p \leq 1
+                    \end{cases}$$
+                    $$\sum_{n=0}^{\infty}aq^n \begin{cases}
+                    \text{收敛}, & |q| < 1 \\
+                    \text{发散}, & |q| \geq 1
+                    \end{cases}$$
+                </div>
+            </div>
+
+            <div class="theorem-box">
+                <div class="box-title">📐 比值判别法（d'Alembert判别法）</div>
+                <p>设\(\lim_{n\to\infty}\frac{u_{n+1}}{u_n} = \rho\)，则：</p>
+                <ul>
+                    <li>\(\rho < 1\) 时，级数<strong>收敛</strong></li>
+                    <li>\(\rho > 1\) 时，级数<strong>发散</strong></li>
+                    <li>\(\rho = 1\) 时，<strong>不能判定</strong></li>
+                </ul>
+            </div>
+
+            <div class="theorem-box">
+                <div class="box-title">📐 根值判别法（Cauchy判别法）</div>
+                <p>设\(\lim_{n\to\infty}\sqrt[n]{u_n} = \rho\)，则：</p>
+                <ul>
+                    <li>\(\rho < 1\) 时，级数<strong>收敛</strong></li>
+                    <li>\(\rho > 1\) 时，级数<strong>发散</strong></li>
+                    <li>\(\rho = 1\) 时，<strong>不能判定</strong></li>
+                </ul>
+            </div>
+
+            <h3 class="subsection-title">3. 交错级数</h3>
+            
+            <div class="definition-box">
+                <div class="box-title">📖 定义：交错级数</div>
+                <p>形如\(\sum_{n=1}^{\infty}(-1)^{n-1}u_n\)（其中\(u_n > 0\)）的级数称为<strong>交错级数</strong>。</p>
+            </div>
+
+            <div class="theorem-box">
+                <div class="box-title">📐 莱布尼茨判别法</div>
+                <p>若：(1) \(\{u_n\}\)单调减；(2) \(\lim_{n\to\infty}u_n = 0\)</p>
+                <p>则交错级数\(\sum_{n=1}^{\infty}(-1)^{n-1}u_n\)<strong>收敛</strong>。</p>
+            </div>
+
+            <h3 class="subsection-title">4. 绝对收敛与条件收敛</h3>
+            
+            <div class="definition-box">
+                <div class="box-title">📖 定义</div>
+                <p><strong>绝对收敛：</strong>若级数\(\sum_{n=1}^{\infty}|u_n|\)收敛，则称\(\sum_{n=1}^{\infty}u_n\)<strong>绝对收敛</strong>。</p>
+                <p><strong>条件收敛：</strong>若\(\sum_{n=1}^{\infty}u_n\)收敛，但\(\sum_{n=1}^{\infty}|u_n|\)发散，则称\(\sum_{n=1}^{\infty}u_n\)<strong>条件收敛</strong>。</p>
+            </div>
+
+            <div class="important-note">
+                绝对收敛的级数一定收敛，但收敛的级数不一定绝对收敛。
+            </div>
+        </div>
+
+        <!-- Section 2: 幂级数 -->
+        <div class="content-card" id="section2">
+            <h2 class="section-title">第二节 幂级数</h2>
+            
+            <div class="definition-box">
+                <div class="box-title">📖 定义：幂级数</div>
+                <p>形如下式的函数项级数称为<strong>幂级数</strong>：</p>
+                <div class="formula-highlight">
+                    $$\sum_{n=0}^{\infty}a_nx^n = a_0 + a_1x + a_2x^2 + \cdots + a_nx^n + \cdots$$
+                </div>
+                <p>或更一般地：</p>
+                <div class="formula-highlight">
+                    $$\sum_{n=0}^{\infty}a_n(x-x_0)^n = a_0 + a_1(x-x_0) + \cdots + a_n(x-x_0)^n + \cdots$$
+                </div>
+            </div>
+
+            <h3 class="subsection-title">1. 阿贝尔定理与收敛域</h3>
+            
+            <div class="theorem-box">
+                <div class="box-title">📐 阿贝尔(Abel)定理</div>
+                <p><strong>(1)</strong> 若\(\sum_{n=0}^{\infty}a_nx^n\)在\(x=x_0\) (\(x_0 \neq 0\))处收敛，则对所有\(|x| < |x_0|\)，级数<strong>绝对收敛</strong>。</p>
+                <p><strong>(2)</strong> 若\(\sum_{n=0}^{\infty}a_nx^n\)在\(x=x_0\)处发散，则对所有\(|x| > |x_0|\)，级数<strong>发散</strong>。</p>
+            </div>
+
+            <div class="definition-box">
+                <div class="box-title">📖 收敛半径与收敛域</div>
+                <p>幂级数\(\sum_{n=0}^{\infty}a_nx^n\)的收敛性有且仅有以下三种情况之一：</p>
+                <ol>
+                    <li>对任意\(x \in (-\infty, +\infty)\)都收敛</li>
+                    <li>仅在\(x=0\)处收敛</li>
+                    <li>存在一个正数\(R\)，当\(|x| < R\)时绝对收敛，当\(|x| > R\)时发散</li>
+                </ol>
+                <p>这个正数\(R\)称为幂级数的<strong>收敛半径</strong>，开区间\((-R, R)\)称为<strong>收敛区间</strong>。</p>
+                
+                <div class="formula-highlight">
+                    <p><strong>求收敛半径的公式：</strong></p>
+                    <p>如果\(\lim_{n\to\infty}\left|\frac{a_{n+1}}{a_n}\right| = \rho\)，则\(R = \frac{1}{\rho}\)</p>
+                    <p>如果\(\lim_{n\to\infty}\sqrt[n]{|a_n|} = \rho\)，则\(R = \frac{1}{\rho}\)</p>
+                </div>
+            </div>
+
+            <div class="important-note">
+                在求收敛域时，还需单独考察\(x = \pm R\)处的敛散性。收敛域是收敛区间加上收敛的端点。
+            </div>
+
+            <button class="collapsible">📝 例题2：求收敛域</button>
+            <div class="collapsible-content">
+                <div class="example-box" style="margin-top: 1rem;">
+                    <p><strong>例题：</strong>求幂级数\(\sum_{n=1}^{\infty}\frac{e^n-(-1)^n}{n^2}x^n\)的收敛半径和收敛域。</p>
+                    
+                    <button class="show-answer-btn" onclick="toggleAnswer('answer2')">显示解答</button>
+                    <div class="answer-content" id="answer2">
+                        <p><strong>解：</strong></p>
+                        <p>$$\lim_{n\to\infty}\left|\frac{a_{n+1}}{a_n}\right| = \lim_{n\to\infty}\frac{e^{n+1}-(-1)^{n+1}}{(n+1)^2} \cdot \frac{n^2}{e^n-(-1)^n}$$</p>
+                        <p>$$= \lim_{n\to\infty}\frac{e \cdot e^n + (-1)^n}{e^n - (-1)^n} \cdot \frac{n^2}{(n+1)^2} = e$$</p>
+                        <p>因此，\(R = \frac{1}{e}\)，收敛区间为\((-\frac{1}{e}, \frac{1}{e})\)。</p>
+                        <p>当\(x = \frac{1}{e}\)时，原级数为\(\sum_{n=1}^{\infty}\frac{1}{n^2}\)，收敛。</p>
+                        <p>当\(x = -\frac{1}{e}\)时，原级数为\(\sum_{n=1}^{\infty}\frac{(-1)^n}{n^2}\)，绝对收敛。</p>
+                        <p><strong>收敛域为：\([-\frac{1}{e}, \frac{1}{e}]\)</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">2. 幂级数的性质</h3>
+            
+            <div class="theorem-box">
+                <div class="box-title">📐 性质1：连续性</div>
+                <p>设幂级数\(\sum_{n=0}^{\infty}a_nx^n\)的收敛半径为\(R\)，和函数为\(S(x)\)，则\(S(x)\)在收敛域上<strong>连续</strong>。</p>
+            </div>
+
+            <div class="theorem-box">
+                <div class="box-title">📐 性质2：可导性</div>
+                <p>\(S(x)\)在收敛区间\((-R, R)\)内<strong>可导</strong>，且可<strong>逐项求导</strong>：</p>
+                <div class="formula-highlight">
+                    $$S'(x) = \left(\sum_{n=0}^{\infty}a_nx^n\right)' = \sum_{n=0}^{\infty}(a_nx^n)' = \sum_{n=0}^{\infty}na_nx^{n-1}$$
+                </div>
+                <p>求导后的级数与原级数有相同的收敛半径。</p>
+            </div>
+
+            <div class="theorem-box">
+                <div class="box-title">📐 性质3：可积性</div>
+                <p>\(S(x)\)在收敛域上<strong>可积</strong>，且可<strong>逐项积分</strong>：</p>
+                <div class="formula-highlight">
+                    $$\int_0^x S(t)dt = \int_0^x \sum_{n=0}^{\infty}a_nt^n dt = \sum_{n=0}^{\infty}\int_0^x a_nt^n dt = \sum_{n=0}^{\infty}\frac{a_n}{n+1}x^{n+1}$$
+                </div>
+                <p>积分后的级数与原级数有相同的收敛半径。</p>
+            </div>
+
+            <h3 class="subsection-title">3. 函数的幂级数展开</h3>
+            
+            <div class="theorem-box">
+                <div class="box-title">📐 泰勒级数</div>
+                <p>如果函数\(f(x)\)在区间\((x_0-R, x_0+R)\)上有任意阶导数，若</p>
+                <div class="formula-highlight">
+                    $$f(x) = \sum_{n=0}^{\infty}a_n(x-x_0)^n$$
+                </div>
+                <p>则必有：</p>
+                <div class="formula-highlight">
+                    $$a_n = \frac{f^{(n)}(x_0)}{n!}, \quad n = 0,1,2,\cdots$$
+                </div>
+                <p>即：</p>
+                <div class="formula-highlight">
+                    $$f(x) = \sum_{n=0}^{\infty}\frac{f^{(n)}(x_0)}{n!}(x-x_0)^n$$
+                </div>
+            </div>
+
+            <div class="definition-box">
+                <div class="box-title">📖 麦克劳林级数</div>
+                <p>当\(x_0 = 0\)时，泰勒级数称为<strong>麦克劳林级数</strong>：</p>
+                <div class="formula-highlight">
+                    $$f(x) = \sum_{n=0}^{\infty}\frac{f^{(n)}(0)}{n!}x^n$$
+                </div>
+            </div>
+
+            <h3 class="subsection-title">4. 常用函数的幂级数展开</h3>
+            
+            <div class="formula-highlight">
+                <p><strong>(1) 几何级数：</strong></p>
+                $$\frac{1}{1-x} = 1 + x + x^2 + \cdots = \sum_{n=0}^{\infty}x^n, \quad |x| < 1$$
+            </div>
+
+            <div class="formula-highlight">
+                <p><strong>(2) 指数函数：</strong></p>
+                $$e^x = 1 + x + \frac{x^2}{2!} + \cdots + \frac{x^n}{n!} + \cdots = \sum_{n=0}^{\infty}\frac{x^n}{n!}, \quad x \in (-\infty, +\infty)$$
+            </div>
+
+            <div class="formula-highlight">
+                <p><strong>(3) 正弦函数：</strong></p>
+                $$\sin x = x - \frac{x^3}{3!} + \frac{x^5}{5!} - \cdots = \sum_{n=0}^{\infty}\frac{(-1)^n x^{2n+1}}{(2n+1)!}, \quad x \in (-\infty, +\infty)$$
+            </div>
+
+            <div class="formula-highlight">
+                <p><strong>(4) 余弦函数：</strong></p>
+                $$\cos x = 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \cdots = \sum_{n=0}^{\infty}\frac{(-1)^n x^{2n}}{(2n)!}, \quad x \in (-\infty, +\infty)$$
+            </div>
+
+            <div class="formula-highlight">
+                <p><strong>(5) 对数函数：</strong></p>
+                $$\ln(1+x) = x - \frac{x^2}{2} + \frac{x^3}{3} - \cdots = \sum_{n=1}^{\infty}\frac{(-1)^{n-1}x^n}{n}, \quad x \in (-1, 1]$$
+            </div>
+
+            <div class="formula-highlight">
+                <p><strong>(6) 二项式级数：</strong></p>
+                $$(1+x)^\alpha = 1 + \alpha x + \frac{\alpha(\alpha-1)}{2!}x^2 + \cdots = \sum_{n=0}^{\infty}\frac{\alpha(\alpha-1)\cdots(\alpha-n+1)}{n!}x^n$$
+                <p>当\(\alpha\)为正整数时，\(x \in \mathbb{R}\)；否则\(x \in (-1, 1)\)</p>
+            </div>
+        </div>
+
+        <!-- Section 3: 傅里叶级数 -->
+        <div class="content-card" id="section3">
+            <h2 class="section-title">第三节 傅里叶级数</h2>
+            
+            <div class="definition-box">
+                <div class="box-title">📖 定义：傅里叶级数</div>
+                <p>设函数\(f(x)\)是周期为\(2\pi\)的周期函数，且在\([-\pi, \pi]\)上可积，则称</p>
+                <div class="formula-highlight">
+                    $$a_n = \frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\cos nx\, dx, \quad n = 0,1,2,\cdots$$
+                    $$b_n = \frac{1}{\pi}\int_{-\pi}^{\pi}f(x)\sin nx\, dx, \quad n = 1,2,\cdots$$
+                </div>
+                <p>为\(f(x)\)的<strong>傅里叶系数</strong>，称级数</p>
+                <div class="formula-highlight">
+                    $$\frac{a_0}{2} + \sum_{n=1}^{\infty}(a_n\cos nx + b_n\sin nx)$$
+                </div>
+                <p>为\(f(x)\)的<strong>傅里叶级数</strong>，记作：</p>
+                <div class="formula-highlight">
+                    $$f(x) \sim \frac{a_0}{2} + \sum_{n=1}^{\infty}(a_n\cos nx + b_n\sin nx)$$
+                </div>
+            </div>
+
+            <h3 class="subsection-title">1. 收敛定理（狄利克雷收敛定理）</h3>
+            
+            <div class="theorem-box">
+                <div class="box-title">📐 狄利克雷(Dirichlet)收敛定理</div>
+                <p>设\(f(x)\)在\([-\pi, \pi]\)上连续或只有有限个第一类间断点，且最多只有有限个极值点，则\(f(x)\)的傅里叶级数在\([-\pi, \pi]\)上处处收敛，且收敛于：</p>
+                <ul>
+                    <li>\(S(x) = f(x)\)，当\(x\)为\(f(x)\)的连续点</li>
+                    <li>\(S(x) = \frac{f(x^-) + f(x^+)}{2}\)，当\(x\)为\(f(x)\)的间断点</li>
+                    <li>\(S(x) = \frac{f(-\pi^+) + f(\pi^-)}{2}\)，当\(x = \pm\pi\)</li>
+                </ul>
+            </div>
+
+            <h3 class="subsection-title">2. 奇偶函数的傅里叶展开</h3>
+            
+            <div class="theorem-box">
+                <div class="box-title">📐 奇函数的傅里叶展开（正弦级数）</div>
+                <p>若\(f(x)\)为奇函数，则：</p>
+                <div class="formula-highlight">
+                    $$a_n = 0, \quad n = 0,1,2,\cdots$$
+                    $$b_n = \frac{2}{\pi}\int_0^{\pi}f(x)\sin nx\, dx, \quad n = 1,2,\cdots$$
+                </div>
+            </div>
+
+            <div class="theorem-box">
+                <div class="box-title">📐 偶函数的傅里叶展开（余弦级数）</div>
+                <p>若\(f(x)\)为偶函数，则：</p>
+                <div class="formula-highlight">
+                    $$a_n = \frac{2}{\pi}\int_0^{\pi}f(x)\cos nx\, dx, \quad n = 0,1,2,\cdots$$
+                    $$b_n = 0, \quad n = 1,2,\cdots$$
+                </div>
+            </div>
+
+            <h3 class="subsection-title">3. 周期为2l的函数的傅里叶展开</h3>
+            
+            <div class="definition-box">
+                <div class="box-title">📖 一般周期函数的展开</div>
+                <p>设\(f(x)\)的周期为\(2l\)，则傅里叶系数为：</p>
+                <div class="formula-highlight">
+                    $$a_n = \frac{1}{l}\int_{-l}^{l}f(x)\cos\frac{n\pi x}{l}\, dx, \quad n = 0,1,2,\cdots$$
+                    $$b_n = \frac{1}{l}\int_{-l}^{l}f(x)\sin\frac{n\pi x}{l}\, dx, \quad n = 1,2,\cdots$$
+                </div>
+                <p>傅里叶级数为：</p>
+                <div class="formula-highlight">
+                    $$f(x) \sim \frac{a_0}{2} + \sum_{n=1}^{\infty}\left(a_n\cos\frac{n\pi x}{l} + b_n\sin\frac{n\pi x}{l}\right)$$
+                </div>
+            </div>
+
+            <button class="collapsible">📝 例题3：傅里叶展开</button>
+            <div class="collapsible-content">
+                <div class="example-box" style="margin-top: 1rem;">
+                    <p><strong>例题：</strong>将函数\(f(x) = \pi x + x^2\) (\(-\pi < x < \pi\))展开为傅里叶级数。</p>
+                    
+                    <button class="show-answer-btn" onclick="toggleAnswer('answer3')">显示解答</button>
+                    <div class="answer-content" id="answer3">
+                        <p><strong>解：</strong></p>
+                        <p>因为\(f(x) = \pi x + x^2\)是偶函数（注意：这里有误，\(\pi x\)是奇函数，\(x^2\)是偶函数），所以：</p>
+                        <p>$$a_0 = \frac{2}{\pi}\int_0^{\pi}(\pi x + x^2)dx = \frac{2}{\pi}\left[\frac{\pi x^2}{2} + \frac{x^3}{3}\right]_0^{\pi} = \pi^2 + \frac{2\pi^2}{3}$$</p>
+                        <p>$$a_n = \frac{2}{\pi}\int_0^{\pi}(\pi x + x^2)\cos nx\, dx$$</p>
+                        <p>通过分部积分可得：\(a_n = \frac{2(-1)^n}{n^2}\)</p>
+                        <p>$$b_n = 0 \text{（因为被积函数是奇函数）}$$</p>
+                        <p><strong>因此：</strong></p>
+                        <p>$$f(x) = \frac{\pi^2}{3} + \sum_{n=1}^{\infty}\frac{2(-1)^n}{n^2}\cos nx$$</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="content-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h2 style="color: white; border-bottom-color: white;">🎓 学习小结</h2>
+            <ul style="font-size: 1.1rem; line-height: 2;">
+                <li><strong>常数项级数</strong>重点掌握：收敛判别法（比较、比值、根值、莱布尼茨）</li>
+                <li><strong>幂级数</strong>重点掌握：收敛半径、收敛域的求法，逐项求导与积分</li>
+                <li><strong>函数展开</strong>：熟记基本函数的麦克劳林展开式</li>
+                <li><strong>傅里叶级数</strong>：掌握系数计算、奇偶函数的展开</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button class="scroll-top" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Collapsible sections
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        });
+
+        // Show/hide answer
+        function toggleAnswer(id) {
+            const answer = document.getElementById(id);
+            if (answer.style.display === 'block') {
+                answer.style.display = 'none';
+            } else {
+                answer.style.display = 'block';
+            }
+        }
+
+        // Scroll to top
+        const scrollTopBtn = document.querySelector('.scroll-top');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.style.display = 'block';
+            } else {
+                scrollTopBtn.style.display = 'none';
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

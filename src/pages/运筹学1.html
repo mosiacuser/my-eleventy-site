@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线性规划与单纯形法 - 交互式学习</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .nav-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .card h3 {
+            color: #764ba2;
+            margin: 20px 0 10px;
+            font-size: 1.5em;
+        }
+
+        .example-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .formula {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 2px dashed #667eea;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .interactive-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .graph-canvas {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .controls input {
+            padding: 10px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .quiz-box {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .quiz-option {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .quiz-option:hover {
+            border-color: #667eea;
+            transform: translateX(10px);
+        }
+
+        .quiz-option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .quiz-option.wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .step-list {
+            counter-reset: step-counter;
+            list-style: none;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            border-radius: 15px;
+            position: relative;
+            padding-left: 60px;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .nav-btn {
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 线性规划与单纯形法</h1>
+            <p class="subtitle">运筹学教程 · 第一章 · 交互式学习</p>
+        </header>
+
+        <div class="nav-menu">
+            <button class="nav-btn active" onclick="showSection('intro')">🎯 引言</button>
+            <button class="nav-btn" onclick="showSection('model')">📐 数学模型</button>
+            <button class="nav-btn" onclick="showSection('graph')">📈 图解法</button>
+            <button class="nav-btn" onclick="showSection('simplex')">🔢 单纯形法</button>
+            <button class="nav-btn" onclick="showSection('examples')">💡 实例</button>
+            <button class="nav-btn" onclick="showSection('quiz')">✍️ 练习</button>
+        </div>
+
+        <!-- 引言部分 -->
+        <div id="intro" class="content-section active">
+            <div class="card">
+                <h2>🌟 什么是线性规划？</h2>
+                <p style="font-size: 1.1em; line-height: 1.8;">
+                    线性规划是运筹学中的一个重要分支，用于在一定约束条件下，寻找使目标函数达到<span class="highlight">最优</span>的决策方案。
+                </p>
+
+                <div class="example-box">
+                    <h3>🏭 典型应用场景</h3>
+                    <ul style="line-height: 2; font-size: 1.1em;">
+                        <li>✅ 生产计划安排</li>
+                        <li>✅ 资源分配优化</li>
+                        <li>✅ 运输问题</li>
+                        <li>✅ 投资组合</li>
+                        <li>✅ 人员调度</li>
+                    </ul>
+                </div>
+
+                <h3>📋 线性规划的三要素</h3>
+                <ol class="step-list">
+                    <li><strong>决策变量：</strong>需要决定的未知量（如生产多少件产品）</li>
+                    <li><strong>目标函数：</strong>要优化的指标（如利润最大、成本最小）</li>
+                    <li><strong>约束条件：</strong>决策变量需要满足的限制（如资源限制）</li>
+                </ol>
+
+                <div class="note">
+                    <strong>💡 提示：</strong>线性规划要求目标函数和约束条件都是线性的，即变量的一次函数。
+                </div>
+            </div>
+        </div>
+
+        <!-- 数学模型部分 -->
+        <div id="model" class="content-section">
+            <div class="card">
+                <h2>📐 线性规划的数学模型</h2>
+                
+                <h3>标准形式</h3>
+                <div class="formula">
+max z = c₁x₁ + c₂x₂ + ... + cₙxₙ
+
+s.t.  a₁₁x₁ + a₁₂x₂ + ... + a₁ₙxₙ = b₁
+      a₂₁x₁ + a₂₂x₂ + ... + a₂ₙxₙ = b₂
+      ...
+      aₘ₁x₁ + aₘ₂x₂ + ... + aₘₙxₙ = bₘ
+      
+      x₁, x₂, ..., xₙ ≥ 0
+                </div>
+
+                <div class="example-box">
+                    <h3>🏢 例子：美佳公司生产问题</h3>
+                    <p><strong>问题描述：</strong>公司生产家电I和II，每件占用设备时间和利润如下：</p>
+                    
+                    <div class="table-responsive">
+                        <table>
+                            <tr>
+                                <th>项目</th>
+                                <th>家电 I</th>
+                                <th>家电 II</th>
+                                <th>每天可用能力</th>
+                            </tr>
+                            <tr>
+                                <td>设备 A (h)</td>
+                                <td>0</td>
+                                <td>5</td>
+                                <td>15</td>
+                            </tr>
+                            <tr>
+                                <td>设备 B (h)</td>
+                                <td>6</td>
+                                <td>2</td>
+                                <td>24</td>
+                            </tr>
+                            <tr>
+                                <td>调试工序 (h)</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td>利润 (元)</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>-</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <p><strong>数学模型：</strong></p>
+                    <div class="formula">
+max z = 2x₁ + x₂
+
+s.t.  5x₂ ≤ 15
+      6x₁ + 2x₂ ≤ 24
+      x₁ + x₂ ≤ 5
+      x₁, x₂ ≥ 0
+                    </div>
+                </div>
+
+                <div class="success">
+                    <strong>✅ 建模技巧：</strong>先确定决策变量，再根据题意写出目标函数和约束条件。
+                </div>
+            </div>
+        </div>
+
+        <!-- 图解法部分 -->
+        <div id="graph" class="content-section">
+            <div class="card">
+                <h2>📈 图解法（仅适用于2个变量）</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 20px;">
+                    对于只有两个决策变量的线性规划问题，可以用图解法直观地找到最优解。
+                </p>
+
+                <div class="interactive-demo">
+                    <h3>🎮 交互式演示</h3>
+                    <div class="graph-canvas" id="graphCanvas">
+                        <svg width="100%" height="100%" viewBox="0 0 500 400">
+                            <!-- 坐标轴 -->
+                            <line x1="50" y1="350" x2="450" y2="350" stroke="#333" stroke-width="2"/>
+                            <line x1="50" y1="350" x2="50" y2="50" stroke="#333" stroke-width="2"/>
+                            
+                            <!-- 可行域 (多边形) -->
+                            <polygon points="50,350 50,200 150,150 250,100 250,350" 
+                                     fill="rgba(102, 126, 234, 0.3)" stroke="#667eea" stroke-width="2"/>
+                            
+                            <!-- 目标函数等值线 -->
+                            <line x1="100" y1="300" x2="300" y2="150" 
+                                  stroke="#764ba2" stroke-width="2" stroke-dasharray="5,5"/>
+                            <line x1="150" y1="320" x2="350" y2="170" 
+                                  stroke="#764ba2" stroke-width="2" stroke-dasharray="5,5"/>
+                            
+                            <!-- 最优点 -->
+                            <circle cx="250" cy="100" r="8" fill="#ff6b6b"/>
+                            <text x="260" y="95" font-size="14" fill="#ff6b6b" font-weight="bold">最优解</text>
+                            
+                            <!-- 坐标轴标签 -->
+                            <text x="430" y="370" font-size="14">x₁</text>
+                            <text x="30" y="60" font-size="14">x₂</text>
+                            
+                            <!-- 约束条件标注 -->
+                            <text x="260" y="350" font-size="12" fill="#667eea">6x₁+2x₂≤24</text>
+                            <text x="60" y="180" font-size="12" fill="#667eea">5x₂≤15</text>
+                        </svg>
+                    </div>
+                    <div class="note" style="margin-top: 15px;">
+                        <strong>📝 步骤：</strong>
+                        <ol style="margin-top: 10px; line-height: 2;">
+                            <li>画出所有约束条件的直线</li>
+                            <li>找出可行域（所有约束的交集）</li>
+                            <li>画出目标函数的等值线</li>
+                            <li>沿着优化方向移动等值线，找到最优点</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <h3>🎯 可能的求解结局</h3>
+                    <ul style="line-height: 2;">
+                        <li><strong>唯一最优解：</strong>目标函数在可行域的某个顶点达到最优</li>
+                        <li><strong>无穷多最优解：</strong>目标函数等值线与可行域某条边重合</li>
+                        <li><strong>无界解：</strong>可行域无界，目标函数可无限增大</li>
+                        <li><strong>无可行解：</strong>约束条件相互矛盾，不存在可行域</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 单纯形法部分 -->
+        <div id="simplex" class="content-section">
+            <div class="card">
+                <h2>🔢 单纯形法</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 20px;">
+                    单纯形法是求解线性规划问题的通用算法，适用于任意多个变量的情况。
+                </p>
+
+                <h3>🎯 核心思想</h3>
+                <div class="example-box">
+                    <p style="font-size: 1.1em; line-height: 1.8;">
+                        从可行域的一个<span class="highlight">顶点</span>出发，沿着可行域的边移动到相邻的顶点，
+                        使目标函数值<span class="highlight">不断增大</span>，直到找到最优解。
+                    </p>
+                </div>
+
+                <h3>📋 计算步骤</h3>
+                <ol class="step-list">
+                    <li><strong>化为标准形式：</strong>添加松弛变量，使不等式变为等式</li>
+                    <li><strong>找初始基可行解：</strong>令非基变量=0，求出基变量的值</li>
+                    <li><strong>最优性检验：</strong>计算检验数 σⱼ = cⱼ - zⱼ，若都≤0则最优</li>
+                    <li><strong>确定换入变量：</strong>选择 σⱼ > 0 中最大的对应变量</li>
+                    <li><strong>确定换出变量：</strong>用最小比值法确定主元素</li>
+                    <li><strong>迭代：</strong>进行行变换，得到新的基可行解</li>
+                    <li><strong>重复步骤3-6：</strong>直到找到最优解</li>
+                </ol>
+
+                <h3>📊 单纯形表</h3>
+                <div class="table-responsive">
+                    <table>
+                        <tr>
+                            <th>Cʙ</th>
+                            <th>基</th>
+                            <th>b</th>
+                            <th>x₁</th>
+                            <th>x₂</th>
+                            <th>x₃</th>
+                            <th>x₄</th>
+                            <th>x₅</th>
+                        </tr>
+                        <tr>
+                            <td>0</td>
+                            <td>x₃</td>
+                            <td>15</td>
+                            <td>0</td>
+                            <td>5</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>0</td>
+                            <td>x₄</td>
+                            <td>24</td>
+                            <td style="background: #ffe6e6;">[6]</td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>0</td>
+                            <td>x₅</td>
+                            <td>5</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">σⱼ</td>
+                            <td>0</td>
+                            <td style="background: #e6f7ff;">2</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="note">
+                    <strong>💡 说明：</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>蓝色标记：最大检验数，对应换入变量 x₁</li>
+                        <li>红色标记：主元素（最小比值法确定）</li>
+                        <li>主元素所在行的基变量 x₄ 是换出变量</li>
+                    </ul>
+                </div>
+
+                <div class="success">
+                    <strong>✅ 最优解：</strong>x₁ = 7/2, x₂ = 3/2, 最大利润 z = 17/2 = 8.5 元
+                </div>
+            </div>
+        </div>
+
+        <!-- 实例部分 -->
+        <div id="examples" class="content-section">
+            <div class="card">
+                <h2>💡 实际应用实例</h2>
+
+                <div class="example-box">
+                    <h3>🏭 实例1：混合配料问题</h3>
+                    <p><strong>问题：</strong>糖果厂用原料A、B、C加工三种糖果甲、乙、丙。已知：</p>
+                    <ul style="line-height: 2;">
+                        <li>各种糖果中原料含量要求</li>
+                        <li>原料成本和月限制用量</li>
+                        <li>加工费和售价</li>
+                    </ul>
+                    <p><strong>目标：</strong>确定每月生产各种糖果的数量，使利润最大。</p>
+                    <button class="btn" onclick="alert('这是一个典型的线性规划问题！\n决策变量：各种糖果的生产量\n目标函数：总利润最大化\n约束条件：原料供应限制、成分比例限制')">查看建模思路</button>
+                </div>
+
+                <div class="example-box">
+                    <h3>🚌 实例2：公交公司人员调度</h3>
+                    <p><strong>问题：</strong>海河市公交公司需安排司机，每天各时段所需人数不同，每人连续工作6小时。</p>
+                    <p><strong>目标：</strong></p>
+                    <ul style="line-height: 2;">
+                        <li>确定最少需要配备多少人员</li>
+                        <li>如何安排倒班和休息日才能公平合理</li>
+                    </ul>
+                    <button class="btn" onclick="alert('这个问题涉及到工作班次的轮换安排！\n需要考虑：\n1. 满足各时段人数需求\n2. 每人工作6小时\n3. 休息日的公平分配')">查看解决方案</button>
+                </div>
+
+                <div class="example-box">
+                    <h3>🏦 实例3：投资规划</h3>
+                    <p><strong>问题：</strong>宏银公司需为建设项目提供4年贷款，可通过购买不同期限债券或银行存款筹资。</p>
+                    <p><strong>目标：</strong>在满足每年贷款需求的前提下，使筹资总额最小。</p>
+                    <div class="note">
+                        <strong>关键点：</strong>需要考虑不同投资期限和收益率的组合优化。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 练习部分 -->
+        <div id="quiz" class="content-section">
+            <div class="card">
+                <h2>✍️ 互动练习</h2>
+
+                <div class="quiz-box">
+                    <h3>📝 问题1：基本概念</h3>
+                    <p style="font-size: 1.1em; margin-bottom: 15px;">
+                        线性规划问题的三个要素是什么？
+                    </p>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        A. 变量、函数、方程
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">
+                        B. 决策变量、目标函数、约束条件
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        C. 输入、输出、过程
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        D. 数据、算法、结果
+                    </div>
+                </div>
+
+                <div class="quiz-box">
+                    <h3>📝 问题2：单纯形法</h3>
+                    <p style="font-size: 1.1em; margin-bottom: 15px;">
+                        单纯形法中，当所有检验数 σⱼ ≤ 0 时，说明什么？
+                    </p>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        A. 无可行解
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">
+                        B. 已找到最优解
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        C. 有无界解
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        D. 需要继续迭代
+                    </div>
+                </div>
+
+                <div class="quiz-box">
+                    <h3>📝 问题3：图解法</h3>
+                    <p style="font-size: 1.1em; margin-bottom: 15px;">
+                        图解法适用于几个变量的线性规划问题？
+                    </p>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        A. 1个变量
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">
+                        B. 2个变量
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        C. 3个变量
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        D. 任意多个变量
+                    </div>
+                </div>
+
+                <div class="interactive-demo">
+                    <h3>🎯 实践练习</h3>
+                    <p>尝试建立以下问题的数学模型：</p>
+                    <div class="example-box">
+                        <p><strong>问题：</strong>某工厂生产甲、乙两种产品，每件产品需要A、B两种原料：</p>
+                        <ul>
+                            <li>甲产品：需要A原料2kg，B原料3kg，利润5元/件</li>
+                            <li>乙产品：需要A原料4kg，B原料2kg，利润6元/件</li>
+                            <li>每天A原料供应16kg，B原料供应12kg</li>
+                        </ul>
+                        <p>求：生产多少甲、乙产品使利润最大？</p>
+                    </div>
+                    <button class="btn" onclick="showModelAnswer()">查看答案</button>
+                    <div id="modelAnswer" style="display: none; margin-top: 15px;">
+                        <div class="success">
+                            <strong>数学模型：</strong>
+                            <div class="formula" style="margin-top: 10px;">
+设 x₁ = 甲产品数量，x₂ = 乙产品数量
+
+max z = 5x₁ + 6x₂
+
+s.t.  2x₁ + 4x₂ ≤ 16  (A原料限制)
+      3x₁ + 2x₂ ≤ 12  (B原料限制)
+      x₁, x₂ ≥ 0
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // 隐藏所有内容区域
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // 显示选中的区域
+            document.getElementById(sectionId).classList.add('active');
+
+            // 更新导航按钮状态
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 滚动到顶部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function checkAnswer(element, isCorrect) {
+            // 重置同一组的所有选项
+            const parent = element.parentElement;
+            const options = parent.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.classList.remove('correct', 'wrong');
+                opt.style.pointerEvents = 'none';
+            });
+
+            // 标记答案
+            if (isCorrect) {
+                element.classList.add('correct');
+                setTimeout(() => {
+                    alert('🎉 回答正确！');
+                }, 300);
+            } else {
+                element.classList.add('wrong');
+                setTimeout(() => {
+                    alert('❌ 回答错误，请再想想！');
+                    // 重新启用选项
+                    options.forEach(opt => {
+                        opt.style.pointerEvents = 'auto';
+                        opt.classList.remove('wrong');
+                    });
+                }, 300);
+            }
+        }
+
+        function showModelAnswer() {
+            const answer = document.getElementById('modelAnswer');
+            if (answer.style.display === 'none') {
+                answer.style.display = 'block';
+                event.target.textContent = '隐藏答案';
+            } else {
+                answer.style.display = 'none';
+                event.target.textContent = '查看答案';
+            }
+        }
+
+        // 页面加载动画
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

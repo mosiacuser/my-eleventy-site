@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第12讲 - 一元函数积分学的应用（三）</title>
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 40px rgba(0,0,0,0.3);
+            min-height: 100vh;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header .subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+            margin-top: 10px;
+        }
+        
+        nav {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            padding: 15px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        section h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3498db;
+            font-family: 'Noto Serif SC', serif;
+        }
+        
+        section h3 {
+            color: #2980b9;
+            font-size: 1.5em;
+            margin: 25px 0 15px;
+            font-weight: 600;
+        }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #e74c3c;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .example-box {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #27ae60;
+        }
+        
+        .example-title {
+            color: #16a085;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .example-title::before {
+            content: "📝 ";
+            font-size: 1.3em;
+            margin-right: 8px;
+        }
+        
+        .solution {
+            background: white;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #9b59b6;
+        }
+        
+        .solution-title {
+            color: #8e44ad;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .note-box {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #f39c12;
+        }
+        
+        .note-box::before {
+            content: "💡 注意：";
+            font-weight: bold;
+            color: #d68910;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .collapsible {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        
+        .collapsible:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .collapsible::after {
+            content: '+';
+            float: right;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+        
+        .collapsible.active::after {
+            content: '−';
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: white;
+            padding: 0 18px;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .method-diagram {
+            background: white;
+            padding: 30px;
+            margin: 25px 0;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .method-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .method-step {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 15px 25px;
+            border-radius: 25px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            max-width: 80%;
+        }
+        
+        .arrow {
+            color: #3498db;
+            font-size: 2em;
+        }
+        
+        .quiz-button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 20px 10px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .quiz-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        
+        footer {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            section {
+                padding: 20px;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第12讲</h1>
+            <div class="subtitle">一元函数积分学的应用（三）</div>
+            <div class="subtitle">物理应用与经济应用</div>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#physics">物理应用</a></li>
+                <li><a href="#economics">经济应用</a></li>
+                <li><a href="#work">变力做功</a></li>
+                <li><a href="#water">抽水做功</a></li>
+                <li><a href="#pressure">静水压力</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <!-- 第一部分：物理应用 -->
+            <section id="physics">
+                <h2>第一部分：求解物理应用题（仅数学一、数学二）</h2>
+                
+                <div class="method-diagram">
+                    <h3 style="color: #2c3e50; margin-bottom: 20px;">三问解题法</h3>
+                    <div class="method-flow">
+                        <div class="method-step">
+                            <strong>求解物理应用题（仅数学一、数学二）</strong><br>
+                            <strong>（O(Ⅱ)任目标))</strong>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                            <div class="method-step">变力沿直线做功<br>\(W = \int_a^b F(x)dx\)<br>(D₁(常规操作))</div>
+                            <div class="method-step">抽水做功<br>\(W = \rho g\int_a^b xA(x)dx\)<br>(D₁(常规操作))</div>
+                            <div class="method-step">引力<br>\(\int_d^b \frac{Gm\mu}{(a-x)^2}dx\)<br>(D₁(常规操作))</div>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                            <div class="method-step">变速直线运动的位移<br>\(s = \int_{t_1}^{t_2} v(t)dt\)<br>(D₁(常规操作))</div>
+                            <div class="method-step">静水压力<br>\(P = \rho g\int_a^b x[f(x)-h(x)]dx\)<br>(D₁(常规操作))</div>
+                            <div class="method-step">用微元法自行建立表达式<br>(D₁(常规操作)+D₂₂(转换等价表述))</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 变力沿直线做功 -->
+                <div id="work">
+                    <button class="collapsible">一、变力沿直线做功（D₁（常规操作））</button>
+                    <div class="collapsible-content">
+                        <div style="padding: 20px 0;">
+                            <p>设方向沿x轴正向的力函数为 \(F(x)\) (\(a \leq x \leq b\))，则物体沿x轴从A点a移动到点b时，变力 \(F(x)\) 所做的功（见图）为：</p>
+                            
+                            <div class="formula-box">
+                                $$W = \int_a^b F(x)dx$$
+                                <p style="margin-top: 10px;">功的元素：\(dW = F(x)dx\)</p>
+                            </div>
+                            
+                            <div class="example-box">
+                                <div class="example-title">例12.1</div>
+                                <p>如图所示，并联a米，每米绳子的重量是5 N，挂斗重400 N，污泥重1 500 N，将挂斗从井底提到井口所做的功为59 250 J，则 \(a =\) _______。</p>
+                                
+                                <div class="solution">
+                                    <div class="solution-title">【解】应填30。</div>
+                                    <p>$$W = \int_0^a [400 + 1500 + 5(a-x)]dx = 59\ 250\ (J)$$</p>
+                                    <p>解得 \(a = 30\) (因为a为井深，大于0，所以负值舍去)。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 变速直线运动的位移 -->
+                <div>
+                    <button class="collapsible">二、变速直线运动的位移（D₁（常规操作））</button>
+                    <div class="collapsible-content">
+                        <div style="padding: 20px 0;">
+                            <p>设一物体在 t 时刻的运动速度为 \(v(t)\)，则从 \(t_1\) 时刻到 \(t_2\) 时刻所经过的路程为：</p>
+                            
+                            <div class="formula-box">
+                                $$s = \int_{t_1}^{t_2} v(t)dt$$
+                            </div>
+                            
+                            <div class="example-box">
+                                <div class="example-title">例12.2</div>
+                                <p>设某物体运动的路程 s 和加速度 a 与时间 t 的关系分别为 \(s = s(t)\)，\(a = a(t)\)，已知该物体从 \(t=0\) 时刻至 \(t=1\) 时刻运动的路程是2，在 \(t=1\) 时刻的速度为2，则 \(\int_0^1 ta(t)dt =\) ( )。</p>
+                                <p>(A)0 &nbsp;&nbsp;&nbsp; (B)1 &nbsp;&nbsp;&nbsp; (C)2 &nbsp;&nbsp;&nbsp; (D)3</p>
+                                
+                                <div class="solution">
+                                    <div class="solution-title">【解】应选(A)。</div>
+                                    <p>因路程 s 与速度 v 关于时间 t 的关系满足 \(s'(t) = v(t)\)，速度 v 与加速度 a 关于时间 t 的关系满足 \(v'(t) = a(t)\)，则</p>
+                                    <p>$$\int_0^1 ta(t)dt = \int_0^1 t d[v(t)] = tv(t)\Big|_0^1 - \int_0^1 v(t)dt$$</p>
+                                    <p>$$= v(1) - [s(1) - s(0)] = 2 - 2 = 0$$</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 抽水做功 -->
+                <div id="water">
+                    <button class="collapsible">三、抽水做功（D₁（常规操作））</button>
+                    <div class="collapsible-content">
+                        <div style="padding: 20px 0;">
+                            <p>如图所示，将容器中的水全部抽出所做的功为：</p>
+                            
+                            <div class="formula-box">
+                                $$W = \rho g\int_a^b xA(x)dx$$
+                                <p style="margin-top: 10px;">其中 ρ 为水的密度，g 为重力加速度。</p>
+                                <p>功的元素 \(dW = \rho gxA(x)dx\) 为位于x处厚度为dx，水平截面面积为 \(A(x)\) 的一层水被抽出(微程为x)所做的功。</p>
+                            </div>
+                            
+                            <div class="note-box">
+                                求解这类问题的关键是确定x处的水平截面面积 \(A(x)\)，其余的量都是固定的。
+                            </div>
+                            
+                            <div class="example-box">
+                                <div class="example-title">例12.3</div>
+                                <p>半径为a的半球形水池蓄满了水，水的比重为1，现将水抽干，至少做功 \(\frac{\pi}{2}\)，则 \(a =\) _______。</p>
+                                
+                                <div class="solution">
+                                    <div class="solution-title">【解】应填 \(2^{\frac{1}{4}}\)。</div>
+                                    <p>如图所示，把水看作是一层一层抽出来的。</p>
+                                    <p>任取一个与池面距离为h的小薄层，厚度为dh，它的重量为 \(\pi(a^2 - h^2)dh\)，把这层水(微元)抽到池面所做的功是</p>
+                                    <p>$$dW = \pi(a^2 - h^2)hdh$$</p>
+                                    <p>所以抽干水所做的功至少为</p>
+                                    <p>$$W = \int_0^a \pi(a^2 - h^2)hdh = \pi\left(\frac{a^2}{2}h^2 - \frac{h^4}{4}\right)\Big|_0^a = \frac{\pi}{4}a^4 = \frac{\pi}{2}$$</p>
+                                    <p>故 \(a = 2^{\frac{1}{4}}\)。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 静水压力 -->
+                <div id="pressure">
+                    <button class="collapsible">四、静水压力（D₁（常规操作））</button>
+                    <div class="collapsible-content">
+                        <div style="padding: 20px 0;">
+                            <p>垂直浸没在水中的平板ABCD (见图) 的一侧受到的水压力为：</p>
+                            
+                            <div class="formula-box">
+                                $$P = \rho g\int_a^b x[f(x) - h(x)]dx$$
+                                <p style="margin-top: 10px;">其中 ρ 为水的密度，g 为重力加速度。</p>
+                                <p>压力元素：$$dP = \rho gx[f(x) - h(x)]dx$$</p>
+                                <p>即图中矩形条所受到的压力，x 表示水深，\(f(x) - h(x)\) 是矩形条的宽度，dx 是矩形条的高度。</p>
+                            </div>
+                            
+                            <div class="note-box">
+                                静水压力问题的特点：压强随水的深度的改变而改变，求解这类问题的关键是确定水深x处的平板的宽度 \(f(x) - h(x)\)。
+                            </div>
+                            
+                            <div class="example-box">
+                                <div class="example-title">例12.4</div>
+                                <p>如图所示，一闸门的上部是一个宽为2 m，高为H m的矩形，下部由 \(y = x^2\) 与 \(y = 1\) 围成。当闸门上边缘与水面在一个平面时，其上部所受水压力与下部所受水压力之比为 \(\frac{5}{4}\)，求上部的高度H。</p>
+                                
+                                <div class="solution">
+                                    <div class="solution-title">【解】闸门上部所受水压力为</div>
+                                    <p>$$P_1 = \int_1^{H+1} \rho g(H+1-y) \cdot 2dy = \rho gH^2$$</p>
+                                    <p>其中 ρ 为水的密度，g 为重力加速度。</p>
+                                    <p>闸门下部所受水压力为：</p>
+                                    <p>$$P_2 = \int_0^1 \rho g(H+1-y) \cdot 2\sqrt{y}dy = \frac{4}{3}\rho g\left(H + \frac{2}{5}\right)$$</p>
+                                    <p>由 \(\frac{P_1}{P_2} = \frac{5}{4}\)，得 \(3H^2 - 5H - 2 = 0\)，解得 \(H = -\frac{1}{3}\) (舍去)，\(H = 2\)。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 引力 -->
+                <div>
+                    <button class="collapsible">五、引力（D₁（常规操作））</button>
+                    <div class="collapsible-content">
+                        <div style="padding: 20px 0;">
+                            <p>设有一长度为 l，线密度为常数 μ 的细棒，在细棒右端距离为a处有一质量为m的质点M (见图)，已知引力常量为G，则质点M与细棒之间的引力的大小为：</p>
+                            
+                            <div class="formula-box">
+                                $$\int_d^b \frac{Gm\mu}{(a-x)^2}dx$$
+                            </div>
+                            
+                            <div class="example-box">
+                                <div class="example-title">例12.5</div>
+                                <p>设沿y轴上的区间 [0,1] 放置一长度为1且线密度为ρ的均匀细杆，在x轴上x = 1处有一单位质点，则该细杆对此质点x轴正向的分力为_______。</p>
+                                
+                                <div class="solution">
+                                    <div class="solution-title">【解】应填 \(-\frac{\sqrt{2}}{2}G\rho\)。</div>
+                                    <p>依题意画出直角坐标系如图所示。用割元法，取y轴上的 [y, y+dy] ⊂ [0,1]，此微段细杆对质点的引力大小为：</p>
+                                    <p>$$dF = G\frac{\rho dy}{1+y^2}$$</p>
+                                    <p>其在x轴正向的分力为</p>
+                                    <p>$$dF_x = \frac{-1}{\sqrt{1+y^2}}dF = -\frac{G\rho dy}{(1+y^2)^{\frac{3}{2}}}$$</p>
+                                    <p>于是该细杆对此质点沿x轴正向的分力为</p>
+                                    <p>$$F_x = \int_0^1 \left[-\frac{G\rho}{(1+y^2)^{\frac{3}{2}}}\right]dy \overset{\angle y=\tan t}{=} -G\rho\int_0^{\frac{\pi}{4}} \cos tdt = -\frac{\sqrt{2}}{2}G\rho$$</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 用微元法自行建立表达式 -->
+                <div>
+                    <button class="collapsible">六、用微元法自行建立表达式</button>
+                    <div class="collapsible-content">
+                        <div style="padding: 20px 0;">
+                            <h3>（D₁（常规操作）+D₂₂（转换等价表述））</h3>
+                            
+                            <div class="example-box">
+                                <div class="example-title">例12.6</div>
+                                <p>水从一根底半径为1 cm的圆柱形管道中流出，因为水有黏性，在流动过程中受到管道壁的阻滞，所以流动的速度是随着看到管道中心的距离而变化的，距管道中心越远，水流速度越小。在距离管道中心 r cm 处的水的流动速度为 \(10(1-r^2)\) cm/s。问水是以多大流量(以 cm³/s为单位)流过管道的？</p>
+                                
+                                <div class="solution">
+                                    <div class="solution-title">【解】</div>
+                                    <p>取 [r, r+dr] ⊂ [0,1]，此圆环中的水流速度为 \(10(1-r^2)\) cm/s。该圆环的载面积约等于 \(2\pi rdr\)。</p>
+                                    <p>于是单位时间内通过该圆环的水量为 \(dQ = 10(1-r^2) \cdot 2\pi rdr\)。单位时间内通过整个圆柱形管道的水量为</p>
+                                    <p>$$Q = \int_0^1 20\pi r(1-r^2)dr = \pi(10r^2 - 5r^4)\Big|_0^1 = 5\pi(\text{cm}^3)$$</p>
+                                    <p>于是，水流过管道的流量为 5π cm³/s。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第二部分：经济应用 -->
+            <section id="economics">
+                <h2>第二部分：求解经济应用题（仅数学三）</h2>
+                
+                <div class="method-diagram">
+                    <h3 style="color: #2c3e50; margin-bottom: 20px;">三问解题法</h3>
+                    <div class="method-flow">
+                        <div class="method-step" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                            <strong>求解经济应用题（仅数学三）</strong><br>
+                            <strong>（O(Ⅱ)任目标))</strong>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div class="method-step" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); color: white;">
+                            <strong>总成本函数：</strong><br>
+                            \(C(Q) = \int_0^Q C'(t)dt + C_0\);<br><br>
+                            <strong>总收益函数：</strong><br>
+                            \(R(Q) = \int_0^Q R'(t)dt\);<br><br>
+                            <strong>总利润函数：</strong><br>
+                            \(L(Q) = R(Q) - C(Q)\)<br>
+                            \(= \int_0^Q [R'(t) - C'(t)]dt - C_0\)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note-box">
+                    <p>已知一个总函数(如总成本函数、总收益函数等)，利用微分或求导算就可以求出其边际函数(边际成本、边际收益等)。反过来，如果已知边际函数，要确定其总函数就要利用积分运算。</p>
+                    <p>当固定成本为 C₀，边际成本为 C'(Q)，边际收益为 R'(Q)，且产销平衡，即产量、需求量与销量均为Q时：</p>
+                </div>
+                
+                <div class="formula-box">
+                    <h4 style="margin-bottom: 15px;">总成本函数</h4>
+                    $$C(Q) = \int_0^Q C'(t)dt + C_0$$
+                    
+                    <h4 style="margin: 20px 0 15px;">总收益函数</h4>
+                    $$R(Q) = \int_0^Q R'(t)dt$$
+                    
+                    <h4 style="margin: 20px 0 15px;">总利润函数</h4>
+                    $$L(Q) = R(Q) - C(Q) = \int_0^Q [R'(t) - C'(t)]dt - C_0$$
+                </div>
+                
+                <div class="example-box">
+                    <div class="example-title">例12.7</div>
+                    <p>某厂生产的产品的边际成本为产量 x 的函数 \(C'(x) = x^2 - 4x + 6\)，固定成本为 \(C_0 = 200\) 千元，且每单位产品的售价为 \(p = 146\) 千元，并假定生产的产品能全部售出。</p>
+                    <p>(1) 求总成本函数 C(x)；</p>
+                    <p>(2) 求产量从2个单位增加到4个单位时的成本变化量(计算结果保留两位小数)；</p>
+                    <p>(3) 当产量为多大时，总利润最大？并求最大利润(计算结果保留两位小数)。</p>
+                    
+                    <div class="solution">
+                        <div class="solution-title">【解】(1) 总成本函数：</div>
+                        <p>$$C(x) = \int_0^x C'(t)dt + C_0 = \int_0^x (t^2 - 4t + 6)dt + 200$$</p>
+                        <p>$$= \frac{x^3}{3} - 2x^2 + 6x + 200$$</p>
+                        
+                        <p style="margin-top: 20px;"><strong>(2)</strong> 设产量由2个单位增加到4个单位时的成本变化量为 ΔC，则</p>
+                        <p>$$\Delta C = \int_2^4 C'(x)dx = \int_2^4 (x^2 - 4x + 6)dx$$</p>
+                        <p>$$= \left(\frac{x^3}{3} - 2x^2 + 6x\right)\Big|_2^4$$</p>
+                        <p>$$= \frac{20}{3} \approx 6.67(\text{千元})$$</p>
+                        <p>或：$$\Delta C = C(4) - C(2) = \frac{20}{3} \approx 6.67(\text{千元})$$</p>
+                        
+                        <p style="margin-top: 20px;"><strong>(3)</strong> 总收益函数为：</p>
+                        <p>$$R(x) = p \cdot x = 146x$$</p>
+                        
+                        <p>总利润函数为：</p>
+                        <p>$$L(x) = R(x) - C(x)$$</p>
+                        <p>$$= 146x - \left(\frac{x^3}{3} - 2x^2 + 6x + 200\right)$$</p>
+                        <p>$$= -\frac{x^3}{3} + 2x^2 + 140x - 200$$</p>
+                        
+                        <p>故：$$L'(x) = -x^2 + 4x + 140$$</p>
+                        
+                        <p>令 \(L'(x) = 0\)，得 \(x_1 = 14\)，\(x_2 = -10\) (舍去)。</p>
+                        
+                        <p>由于 \(L'(x) = -2x + 4\)，所以 \(L'(14) = -24 < 0\)，因此，当 \(x = 14\) 时，总利润最大，最大利润为</p>
+                        <p>$$L_{\max} = L(14) = \frac{3712}{3} \approx 1237.33(\text{千元})$$</p>
+                        
+                        <p>即当产量为14个单位时，利润达到最大，最大利润是1237.33千元。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 互动测验区 -->
+            <section style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                <h2 style="border-bottom-color: #e74c3c;">📚 互动测验</h2>
+                <p style="font-size: 1.1em; margin-bottom: 20px;">点击按钮测试您对知识点的掌握程度！</p>
+                
+                <button class="quiz-button" onclick="showQuiz1()">测试：物理应用公式</button>
+                <button class="quiz-button" onclick="showQuiz2()">测试：经济应用公式</button>
+                
+                <div id="quiz-result" style="margin-top: 20px; padding: 20px; background: white; border-radius: 10px; display: none;"></div>
+            </section>
+        </div>
+        
+        <footer>
+            <p style="font-size: 1.2em; margin-bottom: 10px;">📘 高等数学18讲 - 第12讲</p>
+            <p>一元函数积分学的应用（三）物理应用与经济应用</p>
+            <p style="margin-top: 15px; opacity: 0.8;">© 2025 交互式教程 | 使用MathJax渲染数学公式</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 折叠功能
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        });
+        
+        // 测验功能
+        function showQuiz1() {
+            const quizDiv = document.getElementById('quiz-result');
+            quizDiv.style.display = 'block';
+            quizDiv.innerHTML = `
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">🎯 物理应用公式测试</h3>
+                <p><strong>问题：</strong>变力沿直线做功的公式是什么？</p>
+                <button onclick="checkAnswer1('a')" style="display: block; margin: 10px 0; padding: 10px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">A. W = ∫F(x)dx (正确)</button>
+                <button onclick="checkAnswer1('b')" style="display: block; margin: 10px 0; padding: 10px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">B. W = ρg∫xA(x)dx</button>
+                <button onclick="checkAnswer1('c')" style="display: block; margin: 10px 0; padding: 10px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">C. W = ∫v(t)dt</button>
+                <div id="answer1"></div>
+            `;
+        }
+        
+        function checkAnswer1(choice) {
+            const answerDiv = document.getElementById('answer1');
+            if (choice === 'a') {
+                answerDiv.innerHTML = '<p style="color: #27ae60; font-weight: bold; margin-top: 15px;">✅ 正确！变力沿直线做功的公式是 W = ∫F(x)dx</p>';
+            } else {
+                answerDiv.innerHTML = '<p style="color: #e74c3c; font-weight: bold; margin-top: 15px;">❌ 不正确，请再想想！提示：查看"变力沿直线做功"章节</p>';
+            }
+        }
+        
+        function showQuiz2() {
+            const quizDiv = document.getElementById('quiz-result');
+            quizDiv.style.display = 'block';
+            quizDiv.innerHTML = `
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">🎯 经济应用公式测试</h3>
+                <p><strong>问题：</strong>总利润函数L(Q)与总收益R(Q)、总成本C(Q)的关系是？</p>
+                <button onclick="checkAnswer2('a')" style="display: block; margin: 10px 0; padding: 10px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">A. L(Q) = R(Q) + C(Q)</button>
+                <button onclick="checkAnswer2('b')" style="display: block; margin: 10px 0; padding: 10px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">B. L(Q) = R(Q) - C(Q) (正确)</button>
+                <button onclick="checkAnswer2('c')" style="display: block; margin: 10px 0; padding: 10px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">C. L(Q) = C(Q) - R(Q)</button>
+                <div id="answer2"></div>
+            `;
+        }
+        
+        function checkAnswer2(choice) {
+            const answerDiv = document.getElementById('answer2');
+            if (choice === 'b') {
+                answerDiv.innerHTML = '<p style="color: #27ae60; font-weight: bold; margin-top: 15px;">✅ 正确！总利润 = 总收益 - 总成本</p>';
+            } else {
+                answerDiv.innerHTML = '<p style="color: #e74c3c; font-weight: bold; margin-top: 15px;">❌ 不正确，请再想想！提示：利润是收益减去成本</p>';
+            }
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

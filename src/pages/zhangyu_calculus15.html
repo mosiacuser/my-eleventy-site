@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第15讲：微分方程 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": { 
+                scale: 95,
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        /* Navigation Bar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            color: #667eea;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: #555;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #667eea;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        /* Content */
+        .content {
+            padding: 2rem;
+        }
+        
+        /* Section */
+        .section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .section h3 {
+            color: #764ba2;
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem 0;
+            border-bottom: 2px solid #764ba2;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* Accordion */
+        .accordion {
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .accordion:hover {
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .accordion-header:hover {
+            opacity: 0.9;
+        }
+        
+        .accordion-icon {
+            transition: transform 0.3s;
+            font-size: 1.5rem;
+        }
+        
+        .accordion-icon.active {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 1.5rem;
+        }
+        
+        .accordion-content.active {
+            max-height: 3000px;
+            padding: 1.5rem;
+        }
+        
+        /* Math Formula */
+        .formula {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid #667eea;
+            overflow-x: auto;
+        }
+        
+        .formula.important {
+            background: linear-gradient(135deg, #fff5cd 0%, #ffe4a1 100%);
+            border-left: 4px solid #ffc107;
+        }
+        
+        /* Example Box */
+        .example {
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            border-left: 5px solid #00acc1;
+        }
+        
+        .example h4 {
+            color: #00838f;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        /* Solution Box */
+        .solution {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 5px solid #9c27b0;
+        }
+        
+        .solution h4 {
+            color: #7b1fa2;
+            margin-bottom: 1rem;
+        }
+        
+        /* Note Box */
+        .note {
+            background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            border-left: 5px solid #fbc02d;
+        }
+        
+        .note::before {
+            content: "💡 提示：";
+            font-weight: bold;
+            color: #f57f17;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Interactive Button */
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        /* Flowchart */
+        .flowchart {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .flowchart-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1rem auto;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .flowchart-arrow {
+            font-size: 2rem;
+            color: #667eea;
+            margin: 0.5rem 0;
+        }
+        
+        .flowchart-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .flowchart-branch {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            width: 0%;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .section {
+                padding: 1rem;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <h1>📚 微分方程教程</h1>
+        <ul class="nav-links">
+            <li><a href="#part1">第一部分</a></li>
+            <li><a href="#part2">第二部分</a></li>
+            <li><a href="#examples">示例练习</a></li>
+        </ul>
+    </nav>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>第 15 讲 微分方程</h1>
+            <p>系统学习微分方程的求解方法与应用</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Part 1 -->
+            <div id="part1" class="section fade-in">
+                <h2>🎯 第一部分：求解微分方程并研究解的性质</h2>
+                
+                <div class="flowchart">
+                    <h3 style="color: #667eea; margin-bottom: 2rem;">三问解题法</h3>
+                    <div class="flowchart-box">
+                        <strong>求解微分方程并研究解的性质<br>(O(Ⅱ佳目标))</strong>
+                    </div>
+                    <div class="flowchart-arrow">↓</div>
+                    <div class="flowchart-branches">
+                        <div class="flowchart-branch">
+                            <strong>一阶微分方程的求解</strong><br>
+                            $(D_1($常规操作$)+D_{23}($化归经典形式$))$
+                        </div>
+                        <div class="flowchart-branch">
+                            <strong>二阶可降阶微分方程的求解</strong><br>
+                            (仅数学一、数学二)
+                        </div>
+                        <div class="flowchart-branch">
+                            <strong>高阶常系数线性微分方程的求解</strong><br>
+                            $(D_1($常规操作$)+D_{23}($化归经典形式$))$
+                        </div>
+                        <div class="flowchart-branch">
+                            <strong>用换元法求解微分方程</strong><br>
+                            $(D_1($常规操作$)+D_{23}($化归经典形式$))$
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 一阶微分方程 -->
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        一、一阶微分方程的求解
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <h3>$(D_1($常规操作$) + D_{23}($化归经典形式$))$</h3>
+                        
+                        <p>若出现 "$y$" 或 "$dy = \cdots dx$"，则为以下几种类型：</p>
+                        
+                        <h4 style="color: #667eea; margin-top: 2rem;">(1) 可分离变量型（或可换元化为它）</h4>
+                        
+                        <div class="formula">
+                            <p><strong>①能写成</strong> $y' = f(x) \cdot g(y)$</p>
+                            <p>分离变量写成 $$\frac{dy}{g(y)} = f(x)dx$$，两边同时积分 $$\int \frac{dy}{g(y)} = \int f(x)dx$$</p>
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>②能写成</strong> $y' = f(ax + by + c)$</p>
+                            <p>令 $u = ax + by + c$，则 $u' = a + bf'(u)$，分离变量写成 $$\frac{du}{a + bf'(u)} = dx$$，两边同时积分 $$\int \frac{du}{a + bf'(u)} = \int dx$$</p>
+                        </div>
+                        
+                        <h4 style="color: #667eea; margin-top: 2rem;">(2) 齐次型（或可换元化为它）</h4>
+                        
+                        <div class="formula">
+                            <p><strong>①能写成</strong> $y' = f\left(\frac{y}{x}\right)$</p>
+                            <p>令 $\frac{y}{x} = u$，换元后分离变量，即 $y = ux$，$$\frac{dy}{dx} = u + x\frac{du}{dx}$$，原方程化为 $$\frac{du}{dx} + u = f(u)$$，$$\frac{du}{f(u) - u} = \frac{dx}{x}$$，两边同时积分 $$\int \frac{du}{f(u) - u} = \int \frac{dx}{x}$$</p>
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>②能写成</strong> $\frac{1}{y'} = f\left(\frac{x}{y}\right)$</p>
+                            <p>令 $\frac{x}{y} = u$，换元后分离变量，即 $x = uy$，$$\frac{dx}{dy} = u + y\frac{du}{dy}$$，原方程化为 $$\frac{du}{dy} + u = f(u)$$，$$\frac{du}{f(u) - u} = \frac{dy}{y}$$，两边同时积分 $$\int \frac{du}{f(u) - u} = \int \frac{dy}{y}$$</p>
+                        </div>
+                        
+                        <h4 style="color: #667eea; margin-top: 2rem;">(3) 一阶线性型（或可换元化为它）</h4>
+                        
+                        <div class="formula important">
+                            <p>能写成 $y' + p(x)y = q(x)$，则</p>
+                            $$y = e^{-\int p(x)dx}\left[\int q(x)e^{\int p(x)dx}dx + C\right]$$
+                        </div>
+                        
+                        <div class="note">
+                            由于 $\int p(x)dx$ 与 $\int q(x)e^{\int p(x)dx}dx$ 均应理解为某一个含有常数的原函数，故公式法亦可写成<br>
+                            $$y = e^{-\int_0^x p(t)dt}\left[\int_0^{x_0} q(t)e^{\int_0^t p(s)ds}dt + C\right]$$<br>
+                            这里 $x_0$ 在题设未提出定值要求时，可按方便原则来取。此写法在研究解的性质时颇有用。
+                        </div>
+                        
+                        <h4 style="color: #667eea; margin-top: 2rem;">(4) 伯努利方程（仅数学一）</h4>
+                        
+                        <div class="formula">
+                            <p>能写成 $y' + p(x)y = q(x)y^n (n \neq 0, 1)$</p>
+                            <p>①先变形为 $y^{-n}y' + p(x)y^{1-n} = q(x)$；</p>
+                            <p>②令 $z = y^{1-n}$，得 $\frac{dz}{dx} = (1-n)y^{-n}\frac{dy}{dx}$，则 $$\frac{1}{1-n}\frac{dz}{dx} + p(x)z = q(x)$$；</p>
+                            <p>③解此一阶线性微分方程即可。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 二阶可降阶微分方程 -->
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        二、二阶可降阶微分方程的求解（仅数学一、数学二）
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <h3>$(D_1($常规操作$) + D_{23}($化归经典形式$))$</h3>
+                        
+                        <p>若出现 "$y$"，则为以下几种类型：</p>
+                        
+                        <h4 style="color: #764ba2;">(1) 能写成 $y'' = f(x, y')$ 或 $y'' = f(y')$</h4>
+                        
+                        <div class="formula">
+                            <p>①缺 $y$，令 $y' = p$，$y'' = p'$，则原方程变为一阶方程 $$\frac{dp}{dx} = f(x, p)$$ 或 $$\frac{dp}{dx} = f(p)$$；</p>
+                            <p>②若求得其通解为 $p = \varphi(x, C_1)$，即 $y' = \varphi(x, C_1)$，则原方程的通解为</p>
+                            $$y = \int \varphi(x, C_1)dx + C_2$$
+                        </div>
+                        
+                        <div class="note">
+                            在求可分离变量的微分方程 $u' + 2xu^2 = 0$ 时，答易丢掉解 $u = 0$，从而不到原定解问题的解。
+                        </div>
+                        
+                        <h4 style="color: #764ba2;">(2) 能写成 $y'' = f(y, y')$</h4>
+                        
+                        <div class="formula">
+                            <p>①缺 $x$，令 $y' = p$，$y'' = \frac{dp}{dx} = \frac{dp}{dy}\frac{dy}{dx} = \frac{dp}{dy}p$，则原方程变为一阶方程 $$p\frac{dp}{dy} = f(y, p)$$；</p>
+                            <p>②若求得其通解为 $p = \varphi(y, C_1)$，即由 $p = \frac{dy}{dx}$，得 $\frac{dy}{\varphi(y, C_1)} = dx$，两边积分得</p>
+                            $$\int \frac{dy}{\varphi(y, C_1)} = x + C_2$$，即可求得原方程的通解。
+                        </div>
+                        
+                        <div class="note">
+                            有时构成全微分形式，亦可求解。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 高阶常系数线性微分方程 -->
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        三、高阶常系数线性微分方程的求解
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <h3>$(D_1($常规操作$) + D_{23}($化归经典形式$))$</h3>
+                        
+                        <h4 style="color: #667eea;">(1) 能写成 $y'' + py' + qy = f(x)$</h4>
+                        
+                        <div class="formula">
+                            <p>写 $\lambda^2 + p\lambda + q = 0$ ⇒ 求 $\lambda_1, \lambda_2$ ⇒ 写齐次方程的通解，<br>
+                            设特解 $y^*$ ⇒ 代回方程，求待定系数 ⇒ 特解 ⇒ 写出通解。</p>
+                        </div>
+                        
+                        <h4 style="color: #667eea;">(2) 能写成 $y'' + py' + qy = f_1(x) + f_2(x)$</h4>
+                        
+                        <div class="formula">
+                            <p>写 $\lambda^2 + p\lambda + q = 0$ ⇒ 齐次方程的通解，<br>
+                            拆自由项：$\begin{cases}y'' + py' + qy = f_1(x), \text{写特解 } y_1^* \\ y'' + py' + qy = f_2(x), \text{写特解 } y_2^*\end{cases}$ ⇒ $y_1^* + y_2^*$为特解 ⇒ 写出通解。</p>
+                        </div>
+                        
+                        <div class="note">
+                            特解求法有二：一是待定系数法；二是微分算子法。
+                        </div>
+                        
+                        <h4 style="color: #667eea;">(3) 能写成 $x^2y'' + pxy' + qy = f(x)$（欧拉方程）（仅数学一）</h4>
+                        
+                        <div class="formula">
+                            <p>①当 $x > 0$ 时，令 $x = e^t$，则 $t = \ln x$，$$\frac{dt}{dx} = \frac{1}{x}$$，于是</p>
+                            $$\frac{dy}{dx} = \frac{dy}{dt}\frac{dt}{dx} = \frac{1}{x}\frac{dy}{dt} = \frac{1}{x}\frac{d}{dt}\left(\frac{1}{dt}\frac{dy}{dt}\right) = \frac{1}{x^2}\frac{d}{dt}\left(\frac{dy}{dt}\right) = \frac{1}{x^2}\frac{d^2y}{dt^2}$$
+                            
+                            <p>方程化为 $$\frac{d^2y}{dt^2} + (p-1)\frac{dy}{dt} + qy = f(e^t)$$，</p>
+                            <p>即可求解（最后结果别忘了用 $t = \ln x$ 回代成 $x$ 的函数）。</p>
+                            
+                            <p>②当 $x < 0$ 时，令 $x = -e^t$，同理。</p>
+                        </div>
+                        
+                        <h4 style="color: #667eea;">(4) $n$ 阶常系数齐次线性微分方程的解</h4>
+                        
+                        <div class="formula">
+                            <p>①若 $\lambda$ 为单实根，则写 $Ce^{\lambda x}$；</p>
+                            <p>②若 $\lambda$ 为 $k$ 重实根，则写 $(C_1 + C_2x + C_3x^2 + \cdots + C_kx^{k-1})e^{\lambda x}$；</p>
+                            <p>③若 $\lambda$ 为单复根 $\alpha \pm \beta i$，则写 $e^{\alpha x}(C_1\cos\beta x + C_2\sin\beta x)$；</p>
+                            <p>④若 $\lambda$ 为二重复根 $\alpha \pm \beta i$，则写 $e^{\alpha x}(C_1\cos\beta x + C_2\sin\beta x + C_3x\cos\beta x + C_4x\sin\beta x)$。</p>
+                        </div>
+                        
+                        <div class="note">
+                            <p>(1) 如果解中含特解 $e^{t x}$，则 $\lambda$ 至少为单实根；</p>
+                            <p>(2) 如果解中含特解 $x^{k-1}e^{\lambda x}$，则 $\lambda$ 至少为 $k$ 重实根；</p>
+                            <p>(3) 如果解中含特解 $e^{\alpha x}\cos\beta x$ 或 $e^{\alpha x}\sin\beta x$，则 $\alpha \pm \beta i$ 至少为单复根；</p>
+                            <p>(4) 如果解中含特解 $e^{\alpha x}x\cos\beta x$ 或 $e^{\alpha x}x\sin\beta x$，则 $\alpha \pm \beta i$ 至少为二重复根。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 用换元法求解 -->
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        四、用换元法求解微分方程
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <h3>$(D_1($常规操作$) + D_{23}($化归经典形式$))$</h3>
+                        
+                        <div class="formula">
+                            <p><strong>(1) 微分方程中出现以下某达式：</strong></p>
+                            <p>①$f(x \pm y)$，令 $x \pm y = t$；</p>
+                            <p>②$f(xy)$，令 $xy = t$；</p>
+                            <p>③$f\left(\frac{y}{x}\right)$，令 $\frac{y}{x} = t$；</p>
+                            <p>④$f(x^2 \pm y^2)$，令 $x^2 \pm y^2 = t$。</p>
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(2) 求导公式选用来换元。</strong></p>
+                            <p>见到$[g(x)]'g'(x)$，想到 $[g(x)]'$，令 $u = [g(x)]$；</p>
+                            <p>见到$f'(x)g(x) + f(x)g'(x)$，想到 $[f(x)g(x)]'$，令 $u = f(x) \cdot g(x)$。</p>
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(3) 用自变量、因变量或 $x, y$ 地位互换来换元。</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Part 2 -->
+            <div id="part2" class="section fade-in">
+                <h2>🎯 第二部分：建立微分方程并求解</h2>
+                
+                <div class="flowchart">
+                    <h3 style="color: #667eea; margin-bottom: 2rem;">三问解题法</h3>
+                    <div class="flowchart-box">
+                        <strong>建立微分方程并求解<br>(O(Ⅱ佳目标))</strong>
+                    </div>
+                    <div class="flowchart-arrow">↓</div>
+                    <div class="flowchart-box" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); color: #333;">
+                        <strong>寻找信息点 A 与信息点 B，根据题设关系，建立方程</strong><br>
+                        $(D_1($常规操作$)+D_3($移化接术$))$
+                    </div>
+                    <div class="flowchart-arrow">↓</div>
+                    <div class="flowchart-branches">
+                        <div class="flowchart-branch">
+                            用极限、导数、积分表达式建方程
+                        </div>
+                        <div class="flowchart-branch">
+                            用几何量表达式建方程
+                        </div>
+                        <div class="flowchart-branch">
+                            用变化率建方程
+                        </div>
+                        <div class="flowchart-branch">
+                            一阶常系数线性差分方程（仅数学三）
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        一、用极限、导数、积分表达式建方程
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <h3>$(D_1($常规操作$) + D_{22}($转换等价表述$) + D_3($移化接术$))$</h3>
+                        
+                        <div class="formula">
+                            <p><strong>(1)</strong> 信息点 $A, B$ 为极限、导数、积分表达式且为等量关系时，令 $A = B$，建立方程。</p>
+                            <p><strong>(2)</strong> 信息点为 $f(x), g(x)$ 及 $f'(x), g'(x)$ 的等量关系组，用求导、消元建方程。如：</p>
+                            $$\begin{cases}f'(x) + xf'(-x) = x \\ f'(-x) - xf'(x) = -x\end{cases} \Rightarrow f'(x) = \frac{x + x^2}{1 + x} \Rightarrow f(x) = x + \frac{1}{2}\ln(1 + x^2) - \arctan x + C$$
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(3)</strong> 信息点为关于 $x, y$ 的恒等式，如 $f(xy) = yf(x) + xf'(y)$，代入特殊点，并写 $f'(x)$ 定义。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        二、用几何量表达式建方程
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <h3>$(D_1($常规操作$) + D_3($移化接术$))$</h3>
+                        
+                        <p>信息点 $A, B$ 为几何量表达式且为等量关系时，令 $A = B$，建立方程。</p>
+                        
+                        <div class="formula">
+                            <p><strong>(1) 用曲线的切线斜率。</strong></p>
+                            $$k = f'(x_0) = \tan\alpha$$
+                            <p style="margin-top: 0.5rem; color: #666;">$\alpha$ 为曲线在点 $(x_0, y_0)$ 处的切线的倾角。</p>
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(2) 用两曲线 $f(x)$ 与 $g(x)$ 的公切线斜率。</strong></p>
+                            $$f'(x_0) = g'(x_0)$$
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(3) 用截距。</strong></p>
+                            $$Y - y = y'(X - x) \begin{cases}\text{令 } Y = 0, \text{则} X = x - \frac{y}{y'}(x\text{轴上的截距}) \\ \text{令 } X = 0, \text{则} Y = y - xy'(y\text{轴上的截距})\end{cases}$$
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(4) 用面积。</strong></p>
+                            $$\int_a^b f(x)dx$$
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(5) 用体积。</strong></p>
+                            $$V_x = \int_a^b \pi f^2(x)dx, \quad V_y = \int_a^b 2\pi x|f(x)|dx$$
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(6) 用平均值。</strong></p>
+                            $$\bar{f} = \frac{1}{b-a}\int_a^b f(x)dx = f(\xi)$$
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(7) 用弧长。（仅数学一、数学二）</strong></p>
+                            $$s = \int_a^b \sqrt{1 + (y_x')^2}dx$$
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(8) 用侧面积。（仅数学一、数学二）</strong></p>
+                            $$S = \int_a^b 2\pi|y(x)|\sqrt{1 + (y_x')^2}dx$$
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(9) 用曲率。（仅数学一、数学二）</strong></p>
+                            $$k = \frac{|y''|}{\left[1 + (y')^2\right]^{\frac{3}{2}}}$$
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(10) 用形心。（仅数学一、数学二）</strong></p>
+                            $$\bar{x} = \frac{\iint_D x d\sigma}{\iint_D d\sigma}, \quad \bar{y} = \frac{\iint_D y d\sigma}{\iint_D d\sigma}$$
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        三、用变化率建方程
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <h3>$(D_1($常规操作$) + D_3($移化接术$))$</h3>
+                        
+                        <div class="formula important">
+                            <p><strong>(1) 信息点 $A$ 的变化率与 $B$ 成比例，令 $\frac{dA}{dt} = \pm kB$。</strong></p>
+                            <p>数学一、数学二的物理背景：位移、速度、加速度，$F = ma$。</p>
+                            <p>数学三的经济背景：边际 $\frac{dy}{dx}$，弹性 $\frac{dy}{dx}\cdot\frac{x}{y}$，以上注意微分（增量）表达。</p>
+                        </div>
+                        
+                        <div class="note">
+                            此题中，加速度 $a = \frac{d^2x}{dt^2} = \frac{dv}{dt} = \frac{dv}{dx}\cdot\frac{dx}{dt} = v\frac{dv}{dx}$
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(2)</strong> 见到 "$P$ 点 $Q$ 的运动方向始终指向 $O$ 点"，立即寻找 $①$ 信息点：$P$ 点处的切线斜率，$②$ 信息点 $B$：$PQ$ 连线与 $x$ 平轴夹角的正切值，令 $①=②$（注意正负）。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        四、一阶常系数线性差分方程（仅数学三）
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <h3>$(D_1($常规操作$))$</h3>
+                        
+                        <h4 style="color: #667eea;">1. 函数差分的定义</h4>
+                        <div class="formula">
+                            <p>函数 $y_t = f(t), t = 0, \pm 1, \pm 2, \cdots$，函数 $f(t)$ 在 $t$ 时刻的一阶差分定义为</p>
+                            $$\Delta y_t = y_{t+1} - y_t = f(t+1) - f(t)$$
+                            <p>函数 $f(t)$ 在 $t$ 时刻的二阶差分定义为</p>
+                            $$\Delta^2 y_t = \Delta(\Delta y_t) = \Delta y_{t+1} - \Delta y_t = y_{t+2} - 2y_{t+1} + y_t$$
+                        </div>
+                        
+                        <h4 style="color: #667eea;">2. 一阶常系数线性差分方程及其求解</h4>
+                        
+                        <div class="formula">
+                            <p><strong>(1) 一阶常系数线性差分方程。</strong></p>
+                            <p>一阶常系数线性差分方程的一般形式为</p>
+                            $$y_{t+1} + ay_t = f(t) \quad ①$$
+                            <p>式中 $f(t)$ 为已知函数，$a$ 为非零常数。</p>
+                            <p>当 $f(t) = 0$ 时，方程①变为</p>
+                            $$y_{t+1} + ay_t = 0 \quad ②$$
+                        </div>
+                        
+                        <div class="note">
+                            循数列 $y_t = \lambda^t$，前<br>
+                            $\lambda^{t+1} + a\lambda^t = \lambda^t(\lambda + a) = 0$
+                        </div>
+                        
+                        <p>我们称 $f(t) \neq 0$ 时的①为一阶常系数非齐次线性差分方程，②为其对应的一阶常系数齐次线性差分方程。</p>
+                        
+                        <div class="formula">
+                            <p><strong>(2) 齐次差分方程的通解。</strong></p>
+                            <p>通过迭代，并由数学归纳法可得②的通解为</p>
+                            $$y_C(t) = C \cdot (-a)^t$$
+                            <p>式中 $C$ 为任意常数。</p>
+                        </div>
+                        
+                        <div class="formula">
+                            <p><strong>(3) 非齐次差分方程的解。</strong></p>
+                            <p><strong>定理1</strong> 若 $y_t^*$ 是非齐次差分方程①的一个特解，$y_C(t)$ 是齐次差分方程②的通解，则非齐次差分方程①的通解为</p>
+                            $$y_t = y_C(t) + y_t^*$$
+                            
+                            <p><strong>定理2</strong> 若 $\bar{y}_t$ 与 $\tilde{y}_t$ 分别是差分方程</p>
+                            $$y_{t+1} + ay_t = f_1(t)$$
+                            <p>和</p>
+                            $$y_{t+1} + ay_t = f_2(t)$$
+                            <p>的解，则</p>
+                            $$y_t = \bar{y}_t + \tilde{y}_t$$
+                            <p>是差分方程</p>
+                            $$y_{t+1} + ay_t = f_1(t) + f_2(t)$$
+                            <p>的解。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Examples Section -->
+            <div id="examples" class="section fade-in">
+                <h2>📝 示例练习</h2>
+                
+                <div class="example">
+                    <h4>例15.1 微分方程 $x + xy' = y - xy'$ 的通解为_______。</h4>
+                    
+                    <div class="solution">
+                        <h4>【解】</h4>
+                        <p>应填 $\arctan\frac{y}{x} + \frac{1}{2}\ln(x^2 + y^2) = C$，式中 $C$ 为任意常数。</p>
+                        
+                        <p>由题中所给的微分方程，可得 $$y' = \frac{y-x}{y+x} = \frac{\frac{y}{x}-1}{\frac{y}{x}+1}$$，令 $\frac{y}{x} = u$，则 $\frac{dy}{dx} = u + x\frac{du}{dx}$，代入上述方程并分离变量</p>
+                        
+                        <div class="formula">
+                            $$\frac{1+u}{1+u^2}du = -\frac{1}{x}dx$$
+                        </div>
+                        
+                        <p>两边积分得</p>
+                        
+                        <div class="formula">
+                            $$\arctan u + \frac{1}{2}\ln(1+u^2) = -\ln|x| + C$$
+                        </div>
+                        
+                        <p>则微分方程的通解为 $\arctan\frac{y}{x} + \frac{1}{2}\ln(x^2 + y^2) = C$，式中 $C$ 为任意常数。</p>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <h4>例15.2 微分方程 $\frac{dy}{dx} = \frac{2x - 5y + 3}{2x + 4y - 6}$ 满足 $y(0) = 2$ 的特解为_______。</h4>
+                    
+                    <div class="solution">
+                        <h4>【解】</h4>
+                        <p>应填 $(y + 2x - 3)^2(4y - x - 3) = 5$。</p>
+                        
+                        <p>由 $\begin{cases}2x - 5y + 3 = 0 \\ 2x + 4y - 6 = 0\end{cases}$ 解得 $x_0 = 1, y_0 = 1$。令 $\begin{cases}x = X + x_0 \\ y = Y + y_0\end{cases}$，则原方程化为</p>
+                        
+                        <div class="formula">
+                            $$\frac{dY}{dX} = \frac{2X - 5Y}{2X + 4Y} = \frac{2 - 5\frac{Y}{X}}{2 + 4\frac{Y}{X}}$$
+                        </div>
+                        
+                        <p>令 $U = \frac{Y}{X}$，则 $U + X\frac{dU}{dX} = \frac{2 - 5U}{2 + 4U}$，整理得</p>
+                        
+                        <div class="formula">
+                            $$X\frac{dU}{dX} = \frac{2 - 7U - 4U^2}{2 + 4U}$$
+                        </div>
+                        
+                        <p>当 $U \neq -2$ 且 $U \neq \frac{1}{4}$ 时，有</p>
+                        
+                        <div class="formula">
+                            $$\left(\frac{2}{3U+2} + \frac{4}{3\cdot 4U-1}\right)dU = -\frac{1}{X}dX$$
+                        </div>
+                        
+                        <p>积分得</p>
+                        
+                        <div class="formula">
+                            $$\ln\sqrt{(U+2)^2(4U-1)} = \ln\frac{C}{X}$$
+                        </div>
+                        
+                        <p>将 $U = \frac{Y}{X}$ 代入并整理，得 $(Y + 2X)^2(4Y - X) = C_1$，所以原方程的通解为 $(y + 2x - 3)^2(4y - x - 3) = C_1$。</p>
+                        
+                        <p>又 $y(0) = 2$，得 $C_1 = 5$，故微分方程满足 $y(0) = 2$ 的特解为 $(y + 2x - 3)^2(4y - x - 3) = 5$。</p>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="showProgress()">查看学习进度</button>
+                
+                <div class="progress-container" style="display: none;" id="progressBar">
+                    <div class="progress-bar" id="progress">0%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Accordion Toggle Function
+        function toggleAccordion(element) {
+            const content = element.nextElementSibling;
+            const icon = element.querySelector('.accordion-icon');
+            
+            content.classList.toggle('active');
+            icon.classList.toggle('active');
+        }
+
+        // Progress Bar Function
+        function showProgress() {
+            const progressContainer = document.getElementById('progressBar');
+            const progressBar = document.getElementById('progress');
+            
+            progressContainer.style.display = 'block';
+            
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                } else {
+                    width += 2;
+                    progressBar.style.width = width + '%';
+                    progressBar.textContent = width + '%';
+                }
+            }, 20);
+        }
+
+        // Smooth Scroll for Navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add fade-in animation on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        });
+
+        document.querySelectorAll('.section').forEach((section) => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

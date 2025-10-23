@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>张宇高等数学18讲 - 第1讲：函数极限与连续 - 交互式教程</title>
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": { linebreaks: { automatic: true } }
+        });
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --accent-color: #f59e0b;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --text-color: #1f2937;
+            --light-bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --code-bg: #1e293b;
+            --highlight-yellow: #fef3c7;
+            --success-green: #10b981;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-color);
+            background: var(--light-bg);
+            line-height: 1.8;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-gradient);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        /* Navigation */
+        nav {
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 100px;
+            z-index: 99;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        nav a {
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 200px;
+            width: 250px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-height: calc(100vh - 220px);
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .sidebar a:hover {
+            background: var(--light-bg);
+            color: var(--primary-color);
+            padding-left: 1rem;
+        }
+
+        /* Content Area */
+        .content {
+            margin-left: 280px;
+            margin-right: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .card h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .card h3 {
+            color: var(--secondary-color);
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .card h4 {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            margin: 1rem 0 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Flowchart Box */
+        .flowchart {
+            background: linear-gradient(135deg, #e0f2fe 0%, #ddd6fe 100%);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .flowchart::before {
+            content: "📊 方法框架";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.2rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .flowchart-box {
+            background: white;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .flowchart-arrow {
+            text-align: center;
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+        }
+
+        /* Collapsible Sections */
+        .collapsible {
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            padding: 1rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .collapsible:hover {
+            background: var(--secondary-color);
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: var(--light-bg);
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        .collapsible-content-inner {
+            padding: 1.5rem;
+        }
+
+        /* Example Boxes */
+        .example {
+            background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%);
+            border-left: 5px solid var(--accent-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .example::before {
+            content: "📝 例题 ";
+            font-weight: bold;
+            color: var(--accent-color);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Solution Boxes */
+        .solution {
+            background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);
+            border-left: 5px solid var(--success-green);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .solution::before {
+            content: "✅ 解答 ";
+            font-weight: bold;
+            color: var(--success-green);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Note Boxes */
+        .note {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 5px solid var(--primary-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .note::before {
+            content: "💡 注意 ";
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Math formulas */
+        .mjx-chtml {
+            color: var(--secondary-color) !important;
+        }
+
+        /* Code blocks */
+        .formula-block {
+            background: var(--code-bg);
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        /* Highlight */
+        .highlight {
+            background: var(--highlight-yellow);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-left: 2rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Interactive Quiz Button */
+        .quiz-btn {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #f97316 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+
+        .quiz-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--accent-color);
+            width: 0%;
+            z-index: 1000;
+            transition: width 0.3s;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .content {
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 1rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            header p {
+                font-size: 1rem;
+            }
+
+            .collapsible {
+                font-size: 1rem;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-gradient);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--light-bg);
+        }
+
+        tr:hover {
+            background: var(--light-bg);
+        }
+
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            display: none;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .scroll-top:hover {
+            background: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+
+        .scroll-top.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Header -->
+    <header>
+        <h1>📚 张宇高等数学18讲</h1>
+        <p>第1讲：函数极限与连续 - 交互式教程</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#overview">📋 概述</a></li>
+            <li><a href="#section1">🎯 判定类型</a></li>
+            <li><a href="#section2">🔄 连续与间断</a></li>
+            <li><a href="#section3">🔬 微观性态</a></li>
+            <li><a href="#practice">✏️ 练习</a></li>
+        </ul>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h3>📑 目录导航</h3>
+        <ul>
+            <li><a href="#overview">方法框架</a></li>
+            <li><a href="#section1">一、判定类型，做好计算</a></li>
+            <li><a href="#section1-1">1. 未定式整体判定</a></li>
+            <li><a href="#section1-2">2. 未定式局部判定</a></li>
+            <li><a href="#section1-3">3. 常用无穷小量</a></li>
+            <li><a href="#section1-4">4. 常用无穷大量</a></li>
+            <li><a href="#section1-5">5. 涉及∞的计算</a></li>
+            <li><a href="#section2">二、判定连续与间断</a></li>
+            <li><a href="#section2-1">1. 常见备选点</a></li>
+            <li><a href="#section2-2">2. 计算</a></li>
+            <li><a href="#section3">三、研究微观性态</a></li>
+            <li><a href="#section3-1">1. 定义法</a></li>
+            <li><a href="#section3-2">2. 局部保号性</a></li>
+            <li><a href="#section3-3">3. 夹逼准则</a></li>
+            <li><a href="#section3-4">4. 单调有界准则</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="content">
+            <!-- Overview Section -->
+            <section id="overview" class="card">
+                <h2>📊 三向解题法 - 方法框架</h2>
+                
+                <div class="flowchart">
+                    <div class="flowchart-box" style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; font-size: 1.2rem;">
+                        研究 $\lim_{x \to a} f(x)$ <br>(O(叮住目标))
+                    </div>
+                    <div class="flowchart-arrow">↓</div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;">
+                        <div class="flowchart-box">
+                            1. 判定类型，做好计算<br>
+                            <small>(O₁(叮住目标1))</small>
+                        </div>
+                        <div class="flowchart-box">
+                            2. 判定连续与间断<br>
+                            <small>(O₂(叮住目标2))</small>
+                        </div>
+                        <div class="flowchart-box">
+                            3. 研究 $x \to a$ 时 $f(x)$ 的微观性态<br>
+                            <small>(O₃(叮住目标3))</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="note">
+                    <strong>核心思想：</strong> 面对函数极限问题，首先要明确目标，然后根据不同情况选择合适的方法。三个主要方向分别对应三类常见问题。
+                </div>
+            </section>
+
+            <!-- Section 1: 判定类型，做好计算 -->
+            <section id="section1" class="card">
+                <h2>一、判定类型，做好计算 (O₁)</h2>
+                
+                <button class="collapsible">1. 未定式整体判定 (D₁ + D₂₃ 化归经典形式)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner" id="section1-1">
+                        <h3>未定式整体判定</h3>
+                        <p>一般地，见到 $\frac{?}{?}$、$\frac{0}{?}$、$\frac{?}{0}$、$\frac{?}{\infty}$、$?×\infty$、$\infty×?$、$\infty - ?$、$\infty^0$、$0^0$、$?^\infty$ 的计算题，考生易判断出其分别为 $\frac{0}{0}$、$\frac{0}{0}$。</p>
+                        
+                        <p>$\frac{\infty}{\infty}$、$\frac{\infty}{\infty}$、$0×\infty$、$\infty×0$、$\infty - \infty$、$\infty^0$、$0^0$、$1^\infty$、而不必再去判断"?"是什么。究其原因，主要是计算题的未定式就这7种。若题设不是此7种，那自然就不是未定式计算了。</p>
+
+                        <div class="note">
+                            <strong>关于 $u^v$ 的未定式整体判定，有以下两点需注意：</strong>
+                            <ul>
+                                <li>$u \to 1$, 虽有 $u^v$ 型，必然是指数在作怪 $1^v$</li>
+                                <li>虽然 $v \to \infty$</li>
+                            </ul>
+                            
+                            <p>① 牢记规则：$\lim_{x \to a} f(x) = a > 0$，$\lim_{x \to a} g(x) = b \Rightarrow \lim_{x \to a} [f(x)]^{g(x)} = a^b$</p>
+                            
+                            <p>② 掌会变形，如：$\displaystyle \lim_{n \to \infty} \left(\frac{n+1}{n}\right)^{(-1)^n} = \lim_{n \to \infty} \left[\left(\frac{n+1}{n}\right)^n\right]^{\frac{(-1)^n}{n}} = e^0 = 1$</p>
+                            
+                            <p class="highlight">D₂₃ 化归经典形式。老是忘记换形式。即清去 $(-1)^n$ 的影响物，即清去 $\sin x$ 等。关键是用"无穷小量 × 有界变量 = 无穷小量"来找换。制造"无穷小量"。年题提度 $-\frac{1}{n}$。</p>
+                        </div>
+
+                        <div class="example">
+                            <strong>例1.1</strong> $\displaystyle \lim_{x \to 0^+} \frac{x^x - 1}{\ln x \cdot \ln(1-x)}$
+                            
+                            <div class="solution">
+                                应填 $-1$.
+                                
+                                <p>原式 = $\displaystyle \lim_{x \to 0^+} \frac{e^{x\ln x} - 1}{-x \ln x} = \lim_{x \to 0^+} \frac{x \ln x}{-x \ln x} = -1$</p>
+                            </div>
+                        </div>
+
+                        <div class="example">
+                            <strong>例1.2</strong> 计算 $\displaystyle \lim_{x \to 0} \left[\frac{1 + \int_0^x \frac{\sin t}{t} dt}{x} - \frac{1}{\ln(1+x)}\right]$
+                            
+                            <div class="solution">
+                                由于 $\displaystyle \lim_{x \to 0} \int_0^x \frac{\sin t}{t} dt = \lim_{x \to 0} \frac{\sin x}{x} = 1$，
+                                
+                                <p>故原式 = $\displaystyle 1 + \lim_{x \to 0} \left[\frac{1}{x} - \frac{1}{\ln(1+x)}\right] = 1 + \lim_{x \to 0} \frac{\ln(1+x) - x}{x \ln(1+x)} = 1 - \frac{1}{2} = \frac{1}{2}$</p>
+                            </div>
+                        </div>
+
+                        <div class="note">
+                            <strong>注：</strong>要考虑先化简，再计算。
+                        </div>
+                    </div>
+                </div>
+
+                <button class="collapsible">2. 未定式局部判定 (D₁ + D₂₃ 化归经典形式)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner" id="section1-2">
+                        <h3>未定式局部判定</h3>
+                        
+                        <p>如：</p>
+                        <div class="formula-block">
+$$\lim_{x \to \infty} \frac{1+x}{1+nx^{2n}} = \begin{cases}
+0, & x = \pm 1, \\
+1+x, & |x| < 1, \\
+0, & |x| > 1.
+\end{cases}$$
+                        </div>
+
+                        <p>这里的关键是对 $nx^{2n}$ 这局部表达式的未定式判定。常见的局部表达式及其极限值结果如下：</p>
+
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1.5rem 0;">
+                            <div class="flowchart-box">
+                                ① $\displaystyle \lim_{n \to \infty} |x|^n = \begin{cases}
+                                \infty, & |x| > 1, \\
+                                1, & |x| = 1, \\
+                                0, & |x| < 1.
+                                \end{cases}$
+                            </div>
+                            <div class="flowchart-box">
+                                ② $\displaystyle \lim_{x \to 0^+} x^a = \begin{cases}
+                                0, & a > 0, \\
+                                1, & a = 0, \\
+                                +\infty, & a < 0.
+                                \end{cases}$
+                            </div>
+                            <div class="flowchart-box">
+                                ③ $\displaystyle \lim_{n \to \infty} nx^{2n} = \begin{cases}
+                                +\infty, & |x| > 1, \\
+                                +\infty, & |x| = 1, \\
+                                0, & |x| < 1.
+                                \end{cases}$
+                            </div>
+                            <div class="flowchart-box">
+                                ④ $\displaystyle \lim_{n \to \infty} e^{nx} = \begin{cases}
+                                +\infty, & x > 0, \\
+                                1, & x = 0, \\
+                                0, & x < 0.
+                                \end{cases}$
+                            </div>
+                            <div class="flowchart-box">
+                                ⑤ $\displaystyle \lim_{x \to \infty} n^x = \begin{cases}
+                                +\infty, & x > 0, \\
+                                1, & x = 0, \\
+                                0, & x < 0.
+                                \end{cases}$
+                            </div>
+                        </div>
+
+                        <div class="note">
+                            抓住这些关键点，即可解决如 $\lim_{n \to \infty} f(n, x)$ 的问题。值得一提的是，有时 $n \to \infty$ 写成 $t \to \infty$，有时 $x$ 写成 $t$，要能够识别这些形式上的改变。
+                        </div>
+
+                        <div class="example">
+                            <strong>例1.3</strong> $\displaystyle f(x) = \begin{cases}
+                            \displaystyle \lim_{t \to x} \left(\frac{x-1}{t-1}\right)^{t/(x-1)}, & x \neq 1, \\
+                            0, & x = 1
+                            \end{cases}$ 的第二类间断点的个数为（ ）
+                            
+                            <p>(A) 0 &nbsp;&nbsp; (B) 1 &nbsp;&nbsp; (C) 3 &nbsp;&nbsp; (D) ∞</p>
+                            
+                            <div class="solution">
+                                应选(B)。
+                                
+                                <p>当 $x \neq 1$ 时，</p>
+                                $$\lim_{t \to x} \left(\frac{x-1}{t-1}\right)^{t/(x-1)} = e^{\lim_{t \to x} \frac{t}{x-1} \cdot \left(\frac{x-1}{t-1} - 1\right)} = e^{\lim_{t \to x} \frac{t}{x-1} \cdot \frac{x-t}{t-1}} = e^{\frac{x}{x-1}}$$
+                                
+                                <p>而 $\displaystyle \lim_{x \to 1^+} e^{\frac{x}{x-1}} = +\infty$，故 $x = 1$ 为第二类(无穷)间断点，选(B)。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="collapsible">3. 常用的无穷小量阶的比较 (D₁ 常规操作)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner" id="section1-3">
+                        <h3>常用的无穷小量阶的比较</h3>
+                        
+                        <h4>(1) 普通函数型</h4>
+                        <p>当 $x \to 0$ 时：</p>
+                        <div class="formula-block">
+$$\sin x \sim x, \quad \tan x \sim x, \quad \arcsin x \sim x, \quad \arctan x \sim x, \quad e^x - 1 \sim x, \quad \ln(1+x) \sim x$$
+
+$$\ln(x + \sqrt{1+x^2}) \sim x, \quad a^x - 1 = e^{x\ln a} - 1 \sim x\ln a \quad (a > 0 \text{ 且 } a \neq 1), \quad 1 - \cos x \sim \frac{1}{2}x^2$$
+
+$$1 - \cos^n x \sim \frac{n}{2}x^2 \quad (\alpha \neq 0), \quad (1+x)^n - 1 \sim nx \quad (\alpha \neq 0), \quad (1+x)^n - 1 = e^{n\ln(1+x)} - 1 \sim x^2$$
+                        </div>
+
+                        <h4>(2) 类型不同的差函数型</h4>
+                        <p>当 $x \to 0$ 时：</p>
+                        <div class="formula-block">
+$$x - \sin x \sim \frac{1}{6}x^3, \quad x - \arcsin x \sim -\frac{1}{6}x^3, \quad x - \tan x \sim -\frac{1}{3}x^3, \quad x - \arctan x \sim \frac{1}{3}x^3$$
+
+$$x - \ln(1+x) \sim \frac{1}{2}x^2, \quad e^x - 1 - x \sim \frac{1}{2}x^2$$
+                        </div>
+
+                        <div class="note">
+                            亦可广义化：$x \to$ 狗。<br>
+                            注意可用恒等变形创造出差函数：
+                            <ul>
+                                <li>① $x - \ln(1 + \tan x) = x - \tan x + \tan x - \ln(1 + \tan x)$</li>
+                                <li>② $\sin x + \ln(1 - \sin x) = -[-\sin x - \ln(1 - \sin x)]$</li>
+                                <li>③ $f(x) - \tan x = f(x) - x + x - \tan x$</li>
+                            </ul>
+                        </div>
+
+                        <h4>(3) 复合函数型</h4>
+                        <p>当 $x \to 0$ 时，$f(x) \sim ax^m$，$g(x) \sim bx^n$，$ab \neq 0$，$m, n$ 为正整数，则 $f[g(x)] \sim ab^m x^{mn}$。</p>
+
+                        <div class="note">
+                            <strong>注：</strong>对于命题(3)，若 $m, n$ 为正实数，则要求 $x \to 0^+$，此时，该命题亦成立。<br>
+                            事实上，(3) 是为后面的 (5) 服务的。
+                        </div>
+
+                        <div class="example">
+                            <strong>例1.4</strong> 当 $x \to 0$ 时，$\cos\left(e^{\frac{x^2}{2}} - 1\right) - 1 \sim cx^k$，则 $ck = $______
+                            
+                            <div class="solution">
+                                应填 $-\frac{1}{2}$。
+                                
+                                <p>当 $x \to 0$ 时，</p>
+                                $$f(x) = \cos x - 1 \sim -\frac{1}{2}x^2, \quad g(x) = e^{\frac{x^2}{2}} - 1 \sim \frac{1}{2}x^2$$
+                                
+                                <p>故 $f[g(x)] \sim -\left(\frac{1}{2}\right)\left(\frac{1}{2}\right)^2 x^{2×2} = -\frac{1}{8}x^4$，于是 $c = -\frac{1}{8}$，$k = 4$，则 $ck = -\frac{1}{2}$。</p>
+                            </div>
+                        </div>
+
+                        <h4>(4) 变上限积分型</h4>
+                        <p>① 变上限积分一型 ($f \to 0$)。</p>
+                        <p>当 $x \to 0$ 时，$f(x) \sim ax^m$，$a \neq 0$，$m$ 为正整数，则 $\displaystyle \int_0^x f(t)dt \sim \int_0^x at^m dt$。</p>
+
+                        <div class="note">
+                            <strong>注：</strong>(1) 如：当 $x \to 0$ 时，$\displaystyle \int_0^x (e^t - 1)dt \sim \int_0^x t^3 dt = \frac{1}{4}t^4\Big|_0^x = \frac{1}{4}x^4$。
+                            
+                            <p>(2) 对于命题 (4) ①，若 $m, n$ 为正实数，则要求 $x \to 0^+$，此时，该命题亦成立。</p>
+                            
+                            <p>如：当 $x \to 0^+$ 时，$\displaystyle \int_0^x \ln(1 + \sqrt{t^3})dt \sim \int_0^x t^{\frac{3}{2}}dt = \frac{2}{5}t^{\frac{5}{2}}\Big|_0^x = \frac{2}{5}x^{\frac{5}{2}}$。</p>
+                        </div>
+
+                        <p>② 变上限积分二型 ($f \not\to 0$)。</p>
+                        <p>若 $\lim_{x \to 0} f(x) = A \neq 0$，$\lim_{x \to 0} h(x) = 0$，且在 $x \to 0$ 时，$h(x) \neq 0$，则当 $x \to 0$ 时，</p>
+                        $$\int_0^{h(x)} f(t)dt \sim Ah(x)$$
+
+                        <div class="note">
+                            <strong>注：</strong>如：$F(x) = \displaystyle \int_0^{5x} \frac{\sin t}{t}dt$，$G(x) = \displaystyle \int_0^{\sin x} (1+t)^{\frac{1}{t}}dt$，则当 $x \to 0$ 时，
+                            
+                            $$F(x) \sim \int_0^{5x} 1dt = 5x, \quad G(x) \sim \int_0^{\sin x} edt = e\sin x \sim ex$$
+                            
+                            <p>它们是同阶非等价无穷小。</p>
+                        </div>
+
+                        <h4>(5) 复合函数与变上限积分型</h4>
+                        <p>当 $x \to 0$ 时，$f(x) \sim ax^m$，$g(x) \sim bx^n$，$ab \neq 0$，$m, n$ 为正整数，则 $\displaystyle \int_0^{g(x)} f(t)dt \sim \int_0^{bx^n} at^m dt$。</p>
+
+                        <div class="note">
+                            <strong>注：</strong>(1) 如：当 $x \to 0$ 时，$\displaystyle \int_0^{2-2\cos x} (e^t - 1)dt \sim \int_0^{x^2} t^3 dt = \frac{1}{3}t^3\Big|_0^{x^2} = \frac{1}{3}x^8$ (此例中 $g(x) = x^2$，属于(5)的特殊情形)。
+                            
+                            <p>(2) 对于命题 (5)，若 $m, n$ 为正实数，则要求 $x \to 0^+$，此时，该命题亦成立。</p>
+                            
+                            <p>如：当 $x \to 0^+$ 时，$\displaystyle \int_0^{1-\cos x} \sqrt{\sin t^3}dt \sim \int_0^{\frac{x^2}{2}} t^{\frac{3}{2}}dt = \frac{2}{5}t^{\frac{5}{2}}\Big|_0^{\frac{x^2}{2}} = \frac{2}{5}\left(\frac{1}{2}\right)^{\frac{5}{2}}x^5 = \frac{\sqrt{2}}{20}x^5$。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="collapsible">4. 常用的无穷大量阶的比较 (D₁ 常规操作)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner" id="section1-4">
+                        <h3>常用的无穷大量阶的比较</h3>
+                        
+                        <p>由于 $\begin{cases} \text{当 } x \to +\infty \text{ 时}, \ln^p x \ll x^q \ll a^x \ll x^x \\ \text{当 } n \to \infty \text{ 时}, \ln^p n \ll n^q \ll a^n \ll n! \ll n^n \end{cases}$ $(p, q > 0, a > 1)$，则</p>
+
+                        <div class="formula-block">
+$$\lim_{n \to \infty} \frac{\ln^p n}{n^q} = 0, \quad \lim_{n \to \infty} \frac{n^q}{a^n} = 0$$
+
+$$\lim_{n \to \infty} \frac{a^n}{n!} = 0, \quad \lim_{n \to \infty} \frac{n!}{n^n} = 0$$
+                        </div>
+
+                        <div class="example">
+                            <strong>例1.6</strong> 已知函数 $\displaystyle f(x) = \frac{\int_0^x \ln(1+t^2)dt}{x^a}$ 在 $(0, +\infty)$ 上有界，则 $\alpha$ 的取值范围是（ ）
+                            
+                            <p>(A) $-1 < \alpha < 3$ &nbsp;&nbsp; (B) $1 < \alpha \leq 3$ &nbsp;&nbsp; (C) $0 < \alpha \leq 3$ &nbsp;&nbsp; (D) $\alpha > 3$</p>
+                            
+                            <div class="solution">
+                                应选(B)。
+                                
+                                <p>因为</p>
+                                $$\lim_{x \to +\infty} f(x) = \lim_{x \to +\infty} \frac{\int_0^x \ln(1+t^2)dt}{x^a}$$
+                                
+                                <p>且已知函数 $f(x)$ 在 $(0, +\infty)$ 上有界，则有 $\lim_{x \to +\infty} f(x)$ 存在。因为 $\displaystyle \lim_{x \to +\infty} \int_0^x \ln(1+t^2)dt = +\infty$，故当 $x \to +\infty$ 时，$x^a \to +\infty$，即 $\alpha > 0$，于是</p>
+                                
+                                $$\lim_{x \to +\infty} \frac{\int_0^x \ln(1+t^2)dt}{x^a} = \lim_{x \to +\infty} \frac{\ln(1+x^2)}{\alpha x^{\alpha-1}}$$
+                                
+                                <p>要使以上极限存在，则有 $\alpha > 1$。又因为</p>
+                                
+                                $$\lim_{x \to 0^+} f(x) = \lim_{x \to 0^+} \frac{\int_0^x \ln(1+t^2)dt}{x^a} = \lim_{x \to 0^+} \frac{\int_0^x t^2 dt}{x^a}$$
+                                
+                                $$= \lim_{x \to 0^+} \frac{\frac{1}{3}x^3}{x^a} = \frac{1}{3}\lim_{x \to 0^+} x^{3-a}$$
+                                
+                                <p>且已知函数 $f(x)$ 在 $(0, +\infty)$ 上有界，得 $\alpha \leq 3$。</p>
+                                
+                                <p>综上所述，$1 < \alpha \leq 3$。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="collapsible">5. 涉及 ∞ 的计算问题 (D₁ + D₂₃ 化归经典形式)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner" id="section1-5">
+                        <h3>涉及 ∞ 的计算问题</h3>
+                        
+                        <p>关于 $\infty - \infty$，亦有如下4点要注意：</p>
+
+                        <div class="note">
+                            <p>① 设函数 $f(x)$ 在 $x$ 充分大时有定义，则要限 $\lim_{x \to \infty} f(x)$ 存在的充要条件是极限 $\lim_{x \to +\infty} f(x)$ 和极限 $\lim_{x \to -\infty} f(x)$ 均存在且相等，即 $\lim_{x \to \infty} f(x) = a \Leftrightarrow \lim_{x \to +\infty} f(x) = \lim_{x \to -\infty} f(x) = a$。</p>
+
+                            <p>② 在 lim 局部中，见到函数的差 $[f_1(x)]^{g(x)} - [f_2(x)]^{g(x)}$ 或 $[f(x)]^{g_1(x)} - [f(x)]^{g_2(x)}$，对数函数之差 $\ln f_1(x) - \ln f_2(x)$ 或反三角函数、反三角函数之差，考虑用拉格朗日中值定理处理。</p>
+                        </div>
+
+                        <div class="example">
+                            <strong>例1.7</strong> $\displaystyle \lim_{n \to \infty} n^2(\sqrt[n]{2} - \sqrt[n]{2}) = $______
+                            
+                            <div class="solution">
+                                应填 $\ln 2$。
+                                
+                                <p>对函数 $2^x$ 在区间 $\left[\frac{1}{n+1}, \frac{1}{n}\right]$ 上应用拉格朗日中值定理，有</p>
+                                
+                                $$\sqrt[n]{2} - \sqrt[n+1]{2} = 2^{\xi} \ln 2 \left(\frac{1}{n} - \frac{1}{n+1}\right), \quad \xi \in \left(\frac{1}{n+1}, \frac{1}{n}\right)$$
+                                
+                                <p>故</p>
+                                <p>D₂₃(化归经典形式)</p>
+                                
+                                $$\text{原式} = \lim_{n \to \infty} \left(2^{\xi} \ln 2 \cdot \frac{n}{n+1}\right) = \ln 2 \lim_{n \to \infty} 2^{\xi} = \ln 2$$
+                            </div>
+                        </div>
+
+                        <div class="note">
+                            <strong>注：</strong>遇到类型相同的差函数，如 $\arctan(x+1) - \arctan x$，$\sin\sqrt{x+1} - \sin\sqrt{x}$，$\cos(\sin x) - \cos(\tan x)$，均可考虑用拉格朗日中值定理处理。
+                        </div>
+
+                        <p>③ 在 lim 局部中，见到函数的差 $[f_1(x)]^{g(x)} - [f_2(x)]^{g(x)}$ 或 $[f(x)]^{g_1(x)} - [f(x)]^{g_2(x)+g_1(x)}$，考虑如下解法：</p>
+
+                        <div class="example">
+                            <strong>例1.8</strong> $\displaystyle \lim_{x \to \infty} x^2\left(3^{\frac{1}{x}} - 3^{\frac{1}{x+1}}\right) = $______
+                            
+                            <div class="solution">
+                                应填 $\ln 3$。
+                                
+                                <p>D₂₃(化归经典形式)</p>
+                                $$\lim_{x \to \infty} x^2\left(3^{\frac{1}{x}} - 3^{\frac{1}{x+1}}\right) = \lim_{x \to \infty} x^2 \cdot 3^{\frac{1}{x+1}}\left(3^{\frac{1}{x} - \frac{1}{x+1}} - 1\right)$$
+                                
+                                $$= \lim_{x \to \infty} x^2 \cdot 3^{\frac{1}{x+1}} \cdot e^{\frac{\ln 3}{x(x+1)}} - 1$$
+                                
+                                $$= \lim_{x \to \infty} x^2 \cdot 3^{\frac{1}{x+1}} \cdot \frac{\ln 3}{x(x+1)} = \ln 3$$
+                            </div>
+                        </div>
+
+                        <p>④ 见到计算 $\lim_{x \to \infty}[f(x) - ax]$，多是将 $f(x)$ 与 $ax$ 通过恒等变形"合在一起"，成为乘除的形式。</p>
+
+                        <div class="example">
+                            <strong>例1.9</strong> $\displaystyle \lim_{x \to \infty} x\ln\left(e + \frac{1}{x-1}\right) - x = $______
+                            
+                            <div class="solution">
+                                应填 $\frac{1}{e}$。
+                                
+                                $$\lim_{x \to \infty} x\ln\left(e + \frac{1}{x-1}\right) - x$$
+                                
+                                <p>D₂₃(化归经典形式)</p>
+                                
+                                $$= \lim_{x \to \infty} x\left[\ln\left(e + \frac{1}{x-1}\right) - 1\right] = \lim_{x \to \infty} x\left[\ln\left(e + \frac{1}{x-1}\right) - \ln e\right]$$
+                                
+                                $$= \lim_{x \to \infty} x\ln\left[1 + \frac{1}{e(x-1)}\right] = \lim_{x \to \infty} \frac{x}{e(x-1)} = \frac{1}{e}$$
+                            </div>
+                        </div>
+
+                        <div class="example">
+                            <strong>例1.10</strong> $\displaystyle \lim_{x \to +\infty} \left[\frac{x^{1+x}}{(1+x)^x} - \frac{x}{e}\right] = $______
+                            
+                            <div class="solution">
+                                应填 $\frac{1}{2e}$。
+                                
+                                <p>D₂₃(化归经典形式)</p>
+                                
+                                $$\text{原式} = \lim_{x \to +\infty} \frac{x}{e}\left[e\left(\frac{x}{1+x}\right)^x - 1\right] = \lim_{x \to +\infty} \frac{x}{e}\left(e^{x\ln\frac{x}{1+x} + 1} - 1\right)$$
+                                
+                                $$= \lim_{x \to +\infty} \frac{x}{e}\left(x\ln\frac{x}{x+1} + 1\right) = \lim_{x \to +\infty} \frac{1}{e} \cdot \frac{1 - \ln(1+t) + t}{t^2} = \lim_{t \to 0^+} \frac{1}{e} \cdot \frac{1 - \ln(1+t) + t}{t^2} = \frac{1}{2e}$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: 判定连续与间断 -->
+            <section id="section2" class="card">
+                <h2>二、判定连续与间断 (O₂)</h2>
+
+                <button class="collapsible">1. 常见备选点判定 (D₁ 常规操作)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner" id="section2-1">
+                        <h3>常见备选点判定</h3>
+                        
+                        <p>常见的无定义点或可能的间断点有：</p>
+                        
+                        <ol>
+                            <li>$e^{\frac{1}{x}} \Rightarrow x = 0$ 为无定义点。</li>
+                            <li>$\displaystyle \frac{1}{\int_0^x t|\sin t|dt} \Rightarrow x = \pm 1$ 为无定义点。</li>
+                            <li>$\displaystyle \frac{1}{\sin x} \Rightarrow x = k\pi (k = 0, \pm 1, \cdots)$ 为无定义点。</li>
+                            <li>$\displaystyle \frac{1}{\arctan x} \Rightarrow x = 0$ 为无定义点。</li>
+                            <li>$\displaystyle \frac{1}{\tan\left(x - \frac{\pi}{4}\right)}, 0 < x < 2\pi \Rightarrow x = \frac{\pi}{4}, \frac{3\pi}{4}, \frac{5\pi}{4}, \frac{7\pi}{4}$ 为无定义点。</li>
+                            <li>$\displaystyle \frac{1}{|x|(x^2 - 1)} \Rightarrow x = 0, \pm 1$ 为无定义点。</li>
+                            <li>$[x] \Rightarrow x = n \; (n = 0, \pm 1, \pm 2, \cdots)$ 为分段点。</li>
+                        </ol>
+
+                        <div class="note">
+                            <strong>注：</strong>$\lim_{x \to n^+}[x] = n$, $\lim_{x \to n^-}[x] = n - 1$。
+                        </div>
+
+                        <p>⑧ $|x|^{(1+x)(x-2)} \Rightarrow x = 0, 1, 2$ 为无定义点。</p>
+                    </div>
+                </div>
+
+                <button class="collapsible">2. 计算 (D₁ 常规操作)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner" id="section2-2">
+                        <h3>计算三项</h3>
+                        
+                        <p>计算：</p>
+                        <ul>
+                            <li>① $\lim_{x \to x_0} f(x)$</li>
+                            <li>② $\lim_{x \to x_0} f(x)$</li>
+                            <li>③ $f(x_0)$</li>
+                        </ul>
+
+                        <div class="example">
+                            <strong>例1.11</strong> 函数 $\displaystyle f(x) = |x|^{(1-2x)(x-2)}$ 的第一类间断点的个数是（ ）
+                            
+                            <p>(A) 3 &nbsp;&nbsp; (B) 2 &nbsp;&nbsp; (C) 1 &nbsp;&nbsp; (D) 0</p>
+                            
+                            <div class="solution">
+                                应选(C)。
+                                
+                                <p>无定义点(间断点)为 $x = 0$, $x = 1$, $x = 2$。</p>
+                                
+                                <p>对于 $x = 0$，$\displaystyle \lim_{x \to 0^+} |x|^{(1-2x)(x-2)} = e^{\lim_{x \to 0^+} \frac{\ln|x|}{(1-2x)(x-2)}} = e^{+\infty} = +\infty$，故 $x = 0$ 是第二类间断点。</p>
+                                
+                                <p>对于 $x = 1$，$\displaystyle \lim_{x \to 1^+} |x|^{(1-2x)(x-2)} = e^{\lim_{x \to 1^+} \frac{\ln|x|}{(1-2x)(x-2)}} = e^{\frac{x-1}{ln(1-2x)(x-2)}} = e$，故 $x = 1$ 是第一类(可去)间断点。</p>
+                                
+                                <p>对于 $x = 2$，$\displaystyle \lim_{x \to 2} |x|^{(1-2x)(x-2)} = e^{\lim_{x \to 2} \frac{\ln|x|}{(1-2x)(x-2)}} = e^{+\infty} = +\infty$，故 $x = 2$ 是第二类间断点。</p>
+                                
+                                <p>综上，第一类间断点的个数是1，选(C)。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="collapsible">3. 按定义作出结论 (D₂₃ 转换等价表述)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h3>按定义作出结论</h3>
+                        
+                        <p>根据极限和连续性的定义，作出以下结论：</p>
+                        
+                        <ul>
+                            <li>① 跳跃间断点：$\displaystyle \lim_{x \to x_0^-} f(x) = a$, $\lim_{x \to x_0^+} f(x) = b$, 且 $a \neq b$</li>
+                            <li>② 可去间断点：$\displaystyle \lim_{x \to x_0^-} f(x) = \lim_{x \to x_0^+} f(x) = a \neq f(x_0)$</li>
+                            <li>③ 无穷间断点：$\displaystyle \lim_{x \to x_0} f(x) = \infty$ 或 $\lim_{x \to x_0^+} f(x) = \infty$</li>
+                            <li>④ 振荡间断点：$\displaystyle \lim_{x \to x_0} f(x) = \lim_{x \to x_0^+} f(x)$ 振荡不存在</li>
+                        </ul>
+
+                        <p>D₂₃(转换等价表述)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: 研究微观性态 -->
+            <section id="section3" class="card">
+                <h2>三、研究 $x \to a$ 时 $f(x)$ 的微观性态 (O₃)</h2>
+                
+                <p class="highlight">本质是很像函数一个量是从不多的又相差不多的。没关各用处，是为可视超过像会议的正确。</p>
+
+                <button class="collapsible">1. 定义法 (D₂₃ 转换等价表述)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner" id="section3-1">
+                        <h3>定义法</h3>
+                        
+                        <p>$\displaystyle \lim_{x \to x_0} f(x) = A \Leftrightarrow \forall \varepsilon > 0, \exists \delta > 0$, 当 $0 < |x - x_0| < \delta$ 时，有 $|f(x) - A| < \varepsilon$。</p>
+
+                        <div class="example">
+                            <strong>例1.12</strong> 设 $f(x)$ 具有一阶连续导数，且 $\displaystyle \lim_{x \to +\infty}[x - f(x)] = 0$, $f(1) < 1$，证明：
+                            
+                            <p>(1) 存在 $\xi > 1$，使得 $|\xi - f(\xi)| < 1 - f(1)$；</p>
+                            <p>(2) 存在 $\eta > 1$，使得 $f'(\eta) > 1$。</p>
+                            
+                            <div class="solution">
+                                <p>(1) 由 $\displaystyle \lim_{x \to +\infty}[x - f(x)] = 0$，得对于任意的 $\varepsilon > 0$，存在 $X > 1$，当 $x > X$ 时，有 $|\xi - f(\xi)| < \varepsilon$，</p>
+                                
+                                <p>取 $\varepsilon = 1 - f(1) > 0$，得证。</p>
+                                
+                                <p>(2) 由 $|\xi - f(\xi)| \geq \xi - f(\xi)$，结合(1)，有 $\xi - f(\xi) \leq |\xi - f(\xi)| < 1 - f(1)$，该项得 $\xi - 1 < f(\xi) - f(1)$。</p>
+                                
+                                <p>由拉格朗日中值定理，存在 $\eta \in (1, \xi)$，使 $\displaystyle f'(\eta) = \frac{f(\xi) - f(1)}{\xi - 1} > 1$，得证。</p>
+                            </div>
+                        </div>
+
+                        <div class="note">
+                            <p>lim f>0 ⇒ f>0</p>
+                            <p>lim f<0 ⇒ f<0</p>
+                            <p>(极限保号不等)</p>
+                            <p>f≥0⇒ lim f≥0</p>
+                            <p>f≤0⇒ lim f≤0</p>
+                            <p>(极限保号不等)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="collapsible">2. 局部保号性 (D₂₃ 转换等价表述)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner" id="section3-2">
+                        <h3>局部保号性</h3>
+                        
+                        <p>(1) 如果 $f(x) \to A(x \to x_0)$ 且 $A > 0$ (或 $A < 0$)，那么存在常数 $\delta > 0$，使得当 $0 < |x - x_0| < \delta$ 时，有 $f(x) > 0$ (或 $f(x) < 0$)。</p>
+
+                        <p>(2) 如果在 $x_0$ 的某去心邻域内 $f(x) \geq 0$ (或 $f(x) \leq 0$) 且 $\displaystyle \lim_{x \to x_0} f(x) = A$，则 $A \geq 0$ (或 $A \leq 0$)。</p>
+
+                        <div class="note">
+                            <strong>注：</strong>证 (1) $\displaystyle \lim_{x \to x_0} f(x) = A$ ( $A > 0$ ) $\Leftrightarrow$ 对任意 $\varepsilon > 0$，存在 $\delta > 0$，使得当 $0 < |x - x_0| < \delta$ 时，有 $|f(x) - A| < \varepsilon$。
+                            
+                            <p>取 $\varepsilon = \frac{A}{2} > 0$，即有 $|f(x) - A| < \frac{A}{2}$，所以 $f(x) > \frac{A}{2} > 0$，证毕。</p>
+                            
+                            <p>(2) 反证法(此处只证 $A \geq 0$ 的情况)。</p>
+                            
+                            <p>P₁(反证思路)</p>
+                            
+                            <p>假设 $A < 0$，则由 (1) 可知，在 $x_0$ 的某去心邻域内有 $f(x) < 0$，与 (2) 中条件" $f(x) \geq 0$ "矛盾，故可得 $A \geq 0$，证毕。</p>
+                        </div>
+
+                        <div class="example">
+                            <strong>例1.13</strong> 设 $f(x)$ 单调减少，$\displaystyle \lim_{x \to +\infty} f(x) = 0$，证明 $f(x) \geq 0$。
+                            
+                            <div class="solution">
+                                由 $f(x)$ 单调减少，如对任意 $t > 0$，有 $f(x) \geq f(x+t)$，则
+                                
+                                $$f(x) = \lim_{t \to +\infty} f(x) \geq \lim_{t \to +\infty} f(x+t) \stackrel{u = x+t}{=} \lim_{u \to +\infty} f(u) = 0$$
+                            </div>
+                        </div>
+
+                        <div class="note">
+                            <strong>注：</strong>同理，设 $\{x_n\}$ 单调减少，$\displaystyle \lim_{n \to \infty} x_n = 0$，则 $x_n \geq 0$。
+                            
+                            <p><strong>证：</strong>由 $\{x_n\}$ 单调减少，如对任意整数 $m > 0$，有 $x_n \geq x_{n+m}$，则</p>
+                            
+                            $$x_n = \lim_{m \to \infty} x_n \geq \lim_{m \to \infty} x_{n+m} \stackrel{k = n+m}{=} \lim_{k \to \infty} x_k = 0$$
+                        </div>
+                    </div>
+                </div>
+
+                <button class="collapsible">3. 夹逼准则 (D₁ + D₂₃ + D₂₃ 化归经典形式)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner" id="section3-3">
+                        <h3>夹逼准则</h3>
+                        
+                        <p>如果函数 $f(x)$, $g(x)$ 及 $h(x)$ 满足下列条件：</p>
+                        
+                        <ul>
+                            <li>(1) $h(x) \leq f(x) \leq g(x)$；</li>
+                            <li>(2) $\displaystyle \lim g(x) = A$，$\lim h(x) = A$。</li>
+                        </ul>
+                        
+                        <p>则 $\lim f(x)$ 存在，且 $\lim f(x) = A$。</p>
+
+                        <div class="example">
+                            <strong>例1.14</strong> 设 $x \geq 0$，记 $x$ 到 $2k$ 的最小距离为 $f(x)$，$k = 0, 1, 2, \cdots$。
+                            
+                            <p>(1) 证明 $f(x)$ 以 $2$ 为周期，写出其在 $[0,2]$ 上的表达式并画出 $f(x)$ 的图像；</p>
+                            
+                            <p>(2) 求 $\displaystyle \lim_{x \to +\infty} \frac{\int_0^x f(t)dt}{x}$。</p>
+                            
+                            <div class="solution">
+                                <p>(1)【证】首先要理解题意，$f(x) = \min\{|x - 2k|\}(k = 0, 1, 2, \cdots)$，这是指 $f(x)$ 是以2为周期的函数($\geq 0$)到 $0, 2, 4, \cdots$ 这些数的最小距离，比如在区间 $[0, 2]$ 上，若 $0 \leq x < 1$，则 $x$ 距离 $0$ 更近，$f(x) = x$；若 $1 \leq x \leq 2$，则 $x$ 距离 $2$ 更近，$f(x) = 2 - x$。</p>
+                                
+                                <p>故 $f(x)$ 是以 $2$ 为周期的函数，其在 $[0, 2]$ 上的表达式为</p>
+                                
+                                $$f(x) = \min\{|x - 2k|\} = \begin{cases} x, & 0 \leq x < 1, \\ 2-x, & 1 \leq x \leq 2 \end{cases}$$
+                                
+                                <p>故 $f(x)$ 的图像如图所示。</p>
+                                
+                                <p>(2)【解】当 $2n \leq x < 2n + 2$ 时，</p>
+                                
+                                $$n = \int_0^{2n} f(t)dt \leq \int_0^x f(t)dt < \int_0^{2n+2} f(t)dt = n+1$$
+                                
+                                <p>故</p>
+                                
+                                $$\frac{n}{2n+2} = \frac{1}{2n+2}\int_0^{2n} f(t)dt \leq \frac{1}{x}\int_0^x f(t)dt < \frac{1}{2n}\int_0^{2n+2} f(t)dt = \frac{n+1}{2n}$$
+                                
+                                <p>当 $x \to +\infty$ 时，$n \to \infty$，由夹逼准则，有 $\displaystyle \lim_{x \to +\infty} \frac{1}{x}\int_0^x f(t)dt = \frac{1}{2}$。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="collapsible">4. 单调有界准则 (D₁ + D₂₃ 化归经典形式)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner" id="section3-4">
+                        <h3>单调有界准则</h3>
+                        
+                        <p>如果存在正数 $\delta$，使得函数 $f(x)$ 在 $(x_0, x_0 + \delta)$ 内单调有界，那么极限 $\displaystyle \lim_{x \to x_0^+} f(x)$ 存在；如果存在正数 $\delta$，使得函数 $f(x)$ 在 $(x_0 - \delta, x_0)$ 内单调有界，那么极限 $\displaystyle \lim_{x \to x_0^-} f(x)$ 存在。</p>
+                        
+                        <p>至于 $x \to -\infty$，$x \to +\infty$ 的情况，考生不难得出结论。</p>
+
+                        <div class="example">
+                            <strong>例1.15</strong> 已知函数 $f(x)$ 的定义域是 $[0, +\infty)$，且满足 $f(0) = 1$，$\displaystyle f'(x) = \frac{1}{f^2(x) + x^2}$，求证：$\displaystyle \lim_{x \to +\infty} f(x)$ 存在，且 $\displaystyle \lim_{x \to +\infty} f(x) \leq 1 + \frac{\pi}{2}$。
+                            
+                            <div class="solution">
+                                <strong>证：</strong>显然 $f'(x) > 0$，从而 $f(x)$ 单调递增，由 $f(0) = 1$ 得 $f(x) \geq 1$，再由 $\displaystyle f'(x) = \frac{1}{f^2(x) + x^2} \leq \frac{1}{1+x^2}$ 得
+                                
+                                <p>D₂₃(化归经典形式)</p>
+                                
+                                $$f(x) = f(0) + \int_0^x f'(t)dt \leq 1 + \int_0^{\infty} \frac{1}{1+x^2}dx = 1 + \frac{\pi}{2}$$
+                                
+                                <p>从而 $f(x)$ 有上界，故 $\displaystyle \lim_{x \to +\infty} f(x)$ 存在。由 $\displaystyle f(x) \leq 1 + \frac{\pi}{2}$ 得 $\displaystyle \lim_{x \to +\infty} f(x) \leq 1 + \frac{\pi}{2}$，得证。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Practice Section -->
+            <section id="practice" class="card">
+                <h2>✏️ 互动练习</h2>
+                
+                <div class="example">
+                    <strong>练习题1：</strong>计算极限 $\displaystyle \lim_{x \to 0} \frac{\sin 3x}{x}$
+                    
+                    <button class="quiz-btn" onclick="toggleAnswer('answer1')">点击查看答案</button>
+                    
+                    <div id="answer1" style="display:none; margin-top: 1rem;">
+                        <div class="solution">
+                            <p>解：$\displaystyle \lim_{x \to 0} \frac{\sin 3x}{x} = \lim_{x \to 0} \frac{\sin 3x}{3x} \cdot 3 = 1 \cdot 3 = 3$</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example" style="margin-top: 2rem;">
+                    <strong>练习题2：</strong>判断函数 $\displaystyle f(x) = \frac{1}{x-1}$ 在 $x = 1$ 处的间断点类型
+                    
+                    <button class="quiz-btn" onclick="toggleAnswer('answer2')">点击查看答案</button>
+                    
+                    <div id="answer2" style="display:none; margin-top: 1rem;">
+                        <div class="solution">
+                            <p>解：$\displaystyle \lim_{x \to 1^-} f(x) = -\infty$，$\displaystyle \lim_{x \to 1^+} f(x) = +\infty$</p>
+                            <p>因此 $x = 1$ 是<span class="highlight">第二类无穷间断点</span>。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="note" style="margin-top: 2rem;">
+                    <strong>学习建议：</strong>
+                    <ul>
+                        <li>每天坚持练习2-3道极限计算题</li>
+                        <li>熟记常用的等价无穷小替换公式</li>
+                        <li>掌握洛必达法则的使用条件和技巧</li>
+                        <li>多做综合题，培养解题思路</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scrollTopBtn" onclick="scrollToTop()">↑</button>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 张宇高等数学18讲 - 交互式教程</p>
+        <p>本教程基于原PDF内容创建，使用MathJax渲染数学公式</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+            <strong>使用说明：</strong>将本文件保存为 .html 格式，使用现代浏览器（Chrome、Firefox、Edge等）打开即可查看完整内容。
+        </p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Collapsible sections
+        const collapsibles = document.getElementsByClassName("collapsible");
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+
+        // Progress bar
+        window.onscroll = function() {
+            updateProgressBar();
+            toggleScrollTopButton();
+        };
+
+        function updateProgressBar() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+        }
+
+        // Scroll to top button
+        function toggleScrollTopButton() {
+            const scrollTopBtn = document.getElementById("scrollTopBtn");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollTopBtn.classList.add("show");
+            } else {
+                scrollTopBtn.classList.remove("show");
+            }
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Toggle answer for practice questions
+        function toggleAnswer(id) {
+            const answer = document.getElementById(id);
+            if (answer.style.display === "none") {
+                answer.style.display = "block";
+            } else {
+                answer.style.display = "none";
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

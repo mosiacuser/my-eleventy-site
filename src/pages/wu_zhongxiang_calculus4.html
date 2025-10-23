@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第四章：不定积分 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": { 
+                fonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 50px rgba(0,0,0,0.3);
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        /* Navigation */
+        nav {
+            background: #2c3e50;
+            padding: 15px 30px;
+            position: sticky;
+            top: 140px;
+            z-index: 99;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        nav a {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background: #3498db;
+            transform: translateY(-2px);
+        }
+        
+        /* Main Content */
+        main {
+            padding: 40px 30px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 4px solid #3498db;
+        }
+        
+        h3 {
+            color: #34495e;
+            font-size: 1.5em;
+            margin: 30px 0 15px;
+            padding-left: 15px;
+            border-left: 5px solid #e74c3c;
+        }
+        
+        h4 {
+            color: #16a085;
+            font-size: 1.2em;
+            margin: 20px 0 10px;
+        }
+        
+        /* Table */
+        .exam-requirements {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .exam-requirements th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .exam-requirements td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        .exam-requirements tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        /* Formula boxes */
+        .formula-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 5px solid #2196f3;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .formula-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .formula-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #3498db;
+            transition: all 0.3s;
+        }
+        
+        .formula-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(52,152,219,0.3);
+        }
+        
+        /* Example boxes */
+        .example {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #ff9800;
+        }
+        
+        .example-header {
+            font-weight: bold;
+            color: #e65100;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .example-header::before {
+            content: "📝";
+            font-size: 1.3em;
+        }
+        
+        .example-content {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed #ffb74d;
+        }
+        
+        .solution {
+            background: white;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 2px solid #66bb6a;
+        }
+        
+        .solution-header {
+            color: #2e7d32;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        /* Highlight boxes */
+        .highlight {
+            background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 5px solid #fbc02d;
+            font-weight: 500;
+        }
+        
+        .note {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 5px solid #e53935;
+        }
+        
+        .note::before {
+            content: "⚠️ 注意：";
+            font-weight: bold;
+            color: #c62828;
+        }
+        
+        /* Toggle button */
+        .toggle-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* MathJax styling */
+        .MathJax {
+            color: #1565c0 !important;
+        }
+        
+        /* Collapsible sections */
+        details {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border: 2px solid #9c27b0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        summary {
+            font-weight: bold;
+            color: #7b1fa2;
+            cursor: pointer;
+            padding: 10px;
+            background: #f3e5f5;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-size: 1.1em;
+        }
+        
+        summary:hover {
+            background: #e1bee7;
+        }
+        
+        details[open] summary {
+            margin-bottom: 15px;
+        }
+        
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .formula-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            main {
+                padding: 20px 15px;
+            }
+            
+            section {
+                padding: 20px 15px;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        section {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📐 第四章：不定积分</h1>
+            <p>高等数学基础篇 - 交互式学习教程</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#outline">考试大纲</a></li>
+                <li><a href="#concepts">基本概念</a></li>
+                <li><a href="#formulas">积分公式</a></li>
+                <li><a href="#methods">积分方法</a></li>
+                <li><a href="#examples">典型例题</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <!-- Section 1: Exam Outline -->
+            <section id="outline">
+                <h2>📋 考试大纲要求</h2>
+                <table class="exam-requirements">
+                    <thead>
+                        <tr>
+                            <th>大纲考试内容</th>
+                            <th>数学一</th>
+                            <th>数学二</th>
+                            <th>数学三</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>原函数与不定积分的概念</td>
+                            <td>理解</td>
+                            <td>理解</td>
+                            <td>理解</td>
+                        </tr>
+                        <tr>
+                            <td>不定积分的基本性质和基本积分公式<br>换元积分法与分部积分法</td>
+                            <td>掌握</td>
+                            <td>掌握</td>
+                            <td>掌握</td>
+                        </tr>
+                        <tr>
+                            <td>有理函数、三角函数有理式和简单无理函数的积分</td>
+                            <td>会求</td>
+                            <td>会求</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- Section 2: Basic Concepts -->
+            <section id="concepts">
+                <h2>🎯 基本概念与性质</h2>
+                
+                <details open>
+                    <summary>1. 原函数的定义</summary>
+                    <div class="formula-box">
+                        <p><strong>定义：</strong>设 $f(x)$ 在某区间 $(a,b)$ 内有定义。若存在函数 $F(x)$，使其在该区间内任一点都有：</p>
+                        <p style="text-align: center; margin: 20px 0;">$$F'(x) = f(x)$$</p>
+                        <p>则称 $F(x)$ 为 $f(x)$ 在该区间上的<strong>原函数</strong>。</p>
+                    </div>
+                    
+                    <div class="highlight">
+                        💡 若 $F(x)$ 为 $f(x)$ 的一个原函数，则 $F(x) + C$（$C$ 为任意常数）也为 $f(x)$ 的原函数。
+                    </div>
+                    
+                    <div class="highlight">
+                        💡 若 $F(x)$、$G(x)$ 都是 $f(x)$ 在某区间上的原函数，则 $F(x) - G(x) = C$（$C$ 为定常数）。
+                    </div>
+                </details>
+                
+                <details>
+                    <summary>2. 不定积分的定义</summary>
+                    <div class="formula-box">
+                        <p><strong>定义：</strong>$f(x)$ 的原函数的全体称为 $f(x)$ 的<strong>不定积分</strong>，记为：</p>
+                        <p style="text-align: center; margin: 20px 0;">$$\int f(x)dx$$</p>
+                        <p>如果 $F(x)$ 为 $f(x)$ 的一个原函数，则有：</p>
+                        <p style="text-align: center; margin: 20px 0;">$$\int f(x)dx = F(x) + C$$</p>
+                        <p>其中 $C$ 为任意常数。</p>
+                    </div>
+                </details>
+                
+                <details>
+                    <summary>3. 原函数存在定理</summary>
+                    <div class="formula-box">
+                        <p><strong>定理1：</strong>若 $f(x)$ 在区间 $I$ 上<strong>连续</strong>，则 $f(x)$ 在 $I$ 上一定存在原函数。</p>
+                    </div>
+                    
+                    <div class="formula-box">
+                        <p><strong>定理2：</strong>若 $f(x)$ 在区间 $I$ 上有<strong>第一类间断点</strong>，则 $f(x)$ 在区间 $I$ 上没有原函数。</p>
+                    </div>
+                    
+                    <div class="note">
+                        若函数有第二类间断点，但仍可能有原函数。例如：
+                        $$h(x) = \begin{cases} 2x\sin\frac{1}{x} - \cos\frac{1}{x}, & x \neq 0 \\ 0, & x = 0 \end{cases}$$
+                        在 $x=0$ 处不连续（第二类间断点），但 $h(x)$ 有原函数 $F(x)$。
+                    </div>
+                </details>
+                
+                <details>
+                    <summary>4. 不定积分的性质</summary>
+                    <div class="formula-grid">
+                        <div class="formula-item">
+                            $$\left(\int f(x)dx\right)' = f(x)$$
+                        </div>
+                        <div class="formula-item">
+                            $$d\left(\int f(x)dx\right) = f(x)dx$$
+                        </div>
+                        <div class="formula-item">
+                            $$\int f'(x)dx = f(x) + C$$
+                        </div>
+                        <div class="formula-item">
+                            $$\int df(x) = f(x) + C$$
+                        </div>
+                        <div class="formula-item">
+                            $$\int [f(x) \pm g(x)]dx = \int f(x)dx \pm \int g(x)dx$$
+                        </div>
+                        <div class="formula-item">
+                            $$\int kf(x)dx = k\int f(x)dx \quad (k\text{为常数})$$
+                        </div>
+                    </div>
+                </details>
+            </section>
+            
+            <!-- Section 3: Basic Formulas -->
+            <section id="formulas">
+                <h2>📚 基本积分公式表</h2>
+                <p style="margin-bottom: 20px;">以下是20个基本积分公式，务必熟记：</p>
+                
+                <div class="formula-grid">
+                    <div class="formula-item">
+                        (1) $\int 0dx = C$
+                    </div>
+                    <div class="formula-item">
+                        (2) $\int x^adx = \frac{1}{a+1}x^{a+1} + C \quad (a \neq -1)$
+                    </div>
+                    <div class="formula-item">
+                        (3) $\int \frac{1}{x}dx = \ln|x| + C$
+                    </div>
+                    <div class="formula-item">
+                        (4) $\int a^xdx = \frac{a^x}{\ln a} + C \quad (a>0, a\neq 1)$
+                    </div>
+                    <div class="formula-item">
+                        (5) $\int e^xdx = e^x + C$
+                    </div>
+                    <div class="formula-item">
+                        (6) $\int \sin xdx = -\cos x + C$
+                    </div>
+                    <div class="formula-item">
+                        (7) $\int \cos xdx = \sin x + C$
+                    </div>
+                    <div class="formula-item">
+                        (8) $\int \sec^2 xdx = \tan x + C$
+                    </div>
+                    <div class="formula-item">
+                        (9) $\int \csc^2 xdx = -\cot x + C$
+                    </div>
+                    <div class="formula-item">
+                        (10) $\int \sec x\tan xdx = \sec x + C$
+                    </div>
+                    <div class="formula-item">
+                        (11) $\int \csc x\cot xdx = -\csc x + C$
+                    </div>
+                    <div class="formula-item">
+                        (12) $\int \frac{1}{\sqrt{1-x^2}}dx = \arcsin x + C$
+                    </div>
+                    <div class="formula-item">
+                        (13) $\int \frac{1}{1+x^2}dx = \arctan x + C$
+                    </div>
+                    <div class="formula-item">
+                        (14) $\int \frac{1}{\sqrt{a^2-x^2}}dx = \arcsin\frac{x}{a} + C$
+                    </div>
+                    <div class="formula-item">
+                        (15) $\int \frac{1}{a^2+x^2}dx = \frac{1}{a}\arctan\frac{x}{a} + C$
+                    </div>
+                    <div class="formula-item">
+                        (16) $\int \frac{1}{x^2-a^2}dx = \frac{1}{2a}\ln\left|\frac{x-a}{x+a}\right| + C$
+                    </div>
+                    <div class="formula-item">
+                        (17) $\int \frac{1}{\sqrt{x^2+a^2}}dx = \ln(x + \sqrt{x^2+a^2}) + C$
+                    </div>
+                    <div class="formula-item">
+                        (18) $\int \frac{1}{\sqrt{x^2-a^2}}dx = \ln|x + \sqrt{x^2-a^2}| + C$
+                    </div>
+                    <div class="formula-item">
+                        (19) $\int \sec xdx = \ln|\sec x + \tan x| + C$
+                    </div>
+                    <div class="formula-item">
+                        (20) $\int \csc xdx = -\ln|\csc x + \cot x| + C$
+                    </div>
+                </div>
+                
+                <button class="toggle-btn" onclick="testFormulas()">🧪 测试公式记忆</button>
+                <div id="test-result" style="margin-top: 15px;"></div>
+            </section>
+            
+            <!-- Section 4: Methods -->
+            <section id="methods">
+                <h2>🔧 三种主要积分方法</h2>
+                
+                <details>
+                    <summary>方法一：第一换元积分法（凑微分法）</summary>
+                    
+                    <div class="formula-box">
+                        <p><strong>定理：</strong>设 $\int f(u)du = F(u) + C$，$u = \varphi(x)$ 存在连续导数，则：</p>
+                        <p style="text-align: center; margin: 20px 0;">
+                            $$\int f[\varphi(x)]\varphi'(x)dx = \int f[\varphi(x)]d\varphi(x) = F[\varphi(x)] + C$$
+                        </p>
+                    </div>
+                    
+                    <h4>常见的凑微分形式：</h4>
+                    <div class="formula-grid">
+                        <div class="formula-item">
+                            $\int f(ax+b)dx = \frac{1}{a}\int f(ax+b)d(ax+b)$
+                        </div>
+                        <div class="formula-item">
+                            $\int x^mf(ax^{m+1}+b)dx = \frac{1}{(m+1)a}\int f(ax^{m+1}+b)d(ax^{m+1}+b)$
+                        </div>
+                        <div class="formula-item">
+                            $\int f(\sqrt{x})\frac{1}{\sqrt{x}}dx = 2\int f(\sqrt{x})d(\sqrt{x})$
+                        </div>
+                        <div class="formula-item">
+                            $\int f(e^x)e^xdx = \int f(e^x)d(e^x)$
+                        </div>
+                        <div class="formula-item">
+                            $\int f(\ln x)\frac{1}{x}dx = \int f(\ln x)d(\ln x)$
+                        </div>
+                        <div class="formula-item">
+                            $\int f(\sin x)\cos xdx = \int f(\sin x)d(\sin x)$
+                        </div>
+                        <div class="formula-item">
+                            $\int f(\cos x)\sin xdx = -\int f(\cos x)d(\cos x)$
+                        </div>
+                        <div class="formula-item">
+                            $\int f(\tan x)\frac{1}{\cos^2 x}dx = \int f(\tan x)d(\tan x)$
+                        </div>
+                    </div>
+                </details>
+                
+                <details>
+                    <summary>方法二：第二换元积分法</summary>
+                    
+                    <div class="formula-box">
+                        <p><strong>定理：</strong>设 $x = \varphi(t)$ 是单调的、可导的函数，并且 $\varphi'(t) \neq 0$。又：</p>
+                        <p style="text-align: center; margin: 20px 0;">
+                            $$\int f[\varphi(t)]\varphi'(t)dt = F(t) + C$$
+                        </p>
+                        <p>则：</p>
+                        <p style="text-align: center; margin: 20px 0;">
+                            $$\int f(x)dx = \int f[\varphi(t)]\varphi'(t)dt = F(t) + C = F[\varphi^{-1}(x)] + C$$
+                        </p>
+                        <p>其中 $\varphi^{-1}(x)$ 是 $x = \varphi(t)$ 的反函数。</p>
+                    </div>
+                    
+                    <h4>常用的三种变量代换：</h4>
+                    <div class="formula-box">
+                        <p>(1) 被积函数含有 $\sqrt{a^2-x^2}$，令 $x = a\sin t$ （或 $x = a\cos t$）</p>
+                        <p>(2) 被积函数含有 $\sqrt{x^2+a^2}$，令 $x = a\tan t$</p>
+                        <p>(3) 被积函数含有 $\sqrt{x^2-a^2}$，令 $x = a\sec t$</p>
+                    </div>
+                </details>
+                
+                <details>
+                    <summary>方法三：分部积分法</summary>
+                    
+                    <div class="formula-box">
+                        <p><strong>分部积分公式：</strong></p>
+                        <p style="text-align: center; margin: 20px 0;">
+                            $$\int udv = uv - \int vdu$$
+                        </p>
+                    </div>
+                    
+                    <h4>分部积分法适用的函数类型：</h4>
+                    <p>分部积分法比较适用于两类不同函数相乘。设 $P_n(x)$ 为 $x$ 的 $n$ 次多项式：</p>
+                    <div class="formula-box">
+                        <p>• $\int P_n(x)e^{ax}dx$</p>
+                        <p>• $\int P_n(x)\sin axdx$，$\int P_n(x)\cos axdx$</p>
+                        <p>• $\int e^{ax}\sin \beta xdx$，$\int e^{ax}\cos \beta xdx$</p>
+                        <p>• $\int P_n(x)\ln xdx$</p>
+                        <p>• $\int P_n(x)\arctan xdx$，$\int P_n(x)\arcsin xdx$</p>
+                    </div>
+                    
+                    <div class="note">
+                        分部积分法在使用时的关键是 $u$、$v$ 的选取。换句话说就是把"谁"凑到微分号 $d$ 里去。
+                    </div>
+                </details>
+            </section>
+            
+            <!-- Section 5: Examples -->
+            <section id="examples">
+                <h2>💡 典型例题精讲</h2>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample('ex1')">
+                        例1：计算 $\displaystyle\int \sec^4 xdx$
+                        <span style="margin-left: auto; font-size: 0.8em;">▼ 点击展开/收起</span>
+                    </div>
+                    <div id="ex1" class="example-content">
+                        <div class="solution">
+                            <div class="solution-header">📝 解答：</div>
+                            <p>$$\int \sec^4 xdx = \int \sec^2 xd(\tan x) = \int (\tan^2 x + 1)d(\tan x)$$</p>
+                            <p>$$= \frac{1}{3}\tan^3 x + \tan x + C$$</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample('ex2')">
+                        例2：计算 $\displaystyle\int \frac{(x+1)^3}{x^2}dx$
+                        <span style="margin-left: auto; font-size: 0.8em;">▼ 点击展开/收起</span>
+                    </div>
+                    <div id="ex2" class="example-content">
+                        <div class="solution">
+                            <div class="solution-header">📝 解答：</div>
+                            <p>$$\int \frac{(x+1)^3}{x^2}dx = \int \frac{x^3+3x^2+3x+1}{x^2}dx = \int \left(x+3+\frac{3}{x}+\frac{1}{x^2}\right)dx$$</p>
+                            <p>$$= \frac{1}{2}x^2 + 3x + 3\ln|x| - \frac{1}{x} + C$$</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample('ex3')">
+                        例3：计算 $\displaystyle\int \frac{1-\sin x}{1+\sin x}dx$
+                        <span style="margin-left: auto; font-size: 0.8em;">▼ 点击展开/收起</span>
+                    </div>
+                    <div id="ex3" class="example-content">
+                        <div class="solution">
+                            <div class="solution-header">📝 解答：</div>
+                            <p>$$\int \frac{1-\sin x}{1+\sin x}dx = \int \frac{(1-\sin x)^2}{\cos^2 x}dx = \int (\sec^2 x - 2\sec x\tan x + \tan^2 x)dx$$</p>
+                            <p>$$= \tan x - 2\sec x + \tan x - x + C$$</p>
+                            <p>$$= 2\tan x - 2\sec x - x + C$$</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample('ex4')">
+                        例4：计算 $\displaystyle\int \frac{dx}{(2-x)\sqrt{1-x}}$
+                        <span style="margin-left: auto; font-size: 0.8em;">▼ 点击展开/收起</span>
+                    </div>
+                    <div id="ex4" class="example-content">
+                        <div class="solution">
+                            <div class="solution-header">📝 解答（方法1）：</div>
+                            <p>令 $\sqrt{1-x} = t$，则 $x = 1-t^2$，$dx = -2tdt$</p>
+                            <p>$$\text{原式} = \int \frac{-2t}{(1+t^2)t}dt = -2\int \frac{1}{1+t^2}dt = -2\arctan t + C$$</p>
+                            <p>$$= -2\arctan\sqrt{1-x} + C$$</p>
+                        </div>
+                        <div class="solution" style="margin-top: 15px;">
+                            <div class="solution-header">📝 解答（方法2）：</div>
+                            <p>$$\text{原式} = -2\int \frac{d\sqrt{1-x}}{2-x} = -2\int \frac{d\sqrt{1-x}}{1+({\sqrt{1-x}})^2}$$</p>
+                            <p>$$= -2\arctan\sqrt{1-x} + C$$</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample('ex5')">
+                        例5：计算 $\displaystyle\int x^2\sin xdx$
+                        <span style="margin-left: auto; font-size: 0.8em;">▼ 点击展开/收起</span>
+                    </div>
+                    <div id="ex5" class="example-content">
+                        <div class="solution">
+                            <div class="solution-header">📝 解答：</div>
+                            <p>使用分部积分法：</p>
+                            <p>$$\int x^2\sin xdx = -x^2\cos x + 2\int x\cos xdx$$</p>
+                            <p>$$= -x^2\cos x + 2(x\sin x + \cos x) + C$$</p>
+                            <p>$$= -x^2\cos x + 2x\sin x + 2\cos x + C$$</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="toggle-btn" onclick="showAllExamples()">📖 展开所有例题</button>
+                <button class="toggle-btn" onclick="hideAllExamples()">📕 收起所有例题</button>
+            </section>
+            
+            <!-- Practice Section -->
+            <section style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">
+                <h2>🎓 学习建议</h2>
+                <div class="highlight" style="background: white; border-left-color: #4caf50;">
+                    <h3 style="color: #2e7d32; border: none; padding: 0; margin-bottom: 15px;">✅ 掌握要点：</h3>
+                    <ul style="margin-left: 30px;">
+                        <li>熟记20个基本积分公式</li>
+                        <li>理解三种积分方法的适用场景</li>
+                        <li>多做练习，培养"凑微分"的直觉</li>
+                        <li>注意特殊函数（如 $\sec x$、$\csc x$）的积分技巧</li>
+                        <li>分部积分时注意 $u$ 和 $dv$ 的选取顺序</li>
+                    </ul>
+                </div>
+                
+                <div class="note" style="background: #fff3e0; border-left-color: #ff6f00;">
+                    <strong>易错提醒：</strong>
+                    <ul style="margin-left: 30px; margin-top: 10px;">
+                        <li>不定积分后别忘记加常数 $C$</li>
+                        <li>注意对数函数的定义域（加绝对值符号）</li>
+                        <li>三角代换时注意角度范围</li>
+                        <li>分部积分可能需要多次使用</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>📚 高等数学 · 基础篇 · 不定积分</p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
+                本教程基于考研数学大纲编写 | 交互式学习设计
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        // Toggle example visibility
+        function toggleExample(id) {
+            const element = document.getElementById(id);
+            if (element.style.display === 'none') {
+                element.style.display = 'block';
+            } else {
+                element.style.display = 'none';
+            }
+        }
+        
+        // Show all examples
+        function showAllExamples() {
+            const examples = document.querySelectorAll('.example-content');
+            examples.forEach(ex => ex.style.display = 'block');
+        }
+        
+        // Hide all examples
+        function hideAllExamples() {
+            const examples = document.querySelectorAll('.example-content');
+            examples.forEach(ex => ex.style.display = 'none');
+        }
+        
+        // Formula memory test
+        function testFormulas() {
+            const formulas = [
+                { question: "∫x^a dx = ?", answer: "1/(a+1) · x^(a+1) + C (a≠-1)" },
+                { question: "∫e^x dx = ?", answer: "e^x + C" },
+                { question: "∫sin x dx = ?", answer: "-cos x + C" },
+                { question: "∫1/(1+x²) dx = ?", answer: "arctan x + C" },
+                { question: "∫sec² x dx = ?", answer: "tan x + C" }
+            ];
+            
+            const random = formulas[Math.floor(Math.random() * formulas.length)];
+            const userAnswer = prompt("测试题：" + random.question);
+            
+            const resultDiv = document.getElementById('test-result');
+            if (userAnswer && userAnswer.trim().toLowerCase().includes(random.answer.split('+')[0].trim().toLowerCase())) {
+                resultDiv.innerHTML = '<div style="background: #c8e6c9; padding: 15px; border-radius: 8px; color: #2e7d32; font-weight: bold;">✅ 正确！答案是：' + random.answer + '</div>';
+            } else {
+                resultDiv.innerHTML = '<div style="background: #ffcdd2; padding: 15px; border-radius: 8px; color: #c62828; font-weight: bold;">❌ 答案是：' + random.answer + '<br>继续加油！</div>';
+            }
+        }
+        
+        // Smooth scroll for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+        
+        // Initialize - hide all examples by default except first one
+        document.addEventListener('DOMContentLoaded', function() {
+            hideAllExamples();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第14讲 二重积分 - 交互式教程</title>
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar h2 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #ecf0f1;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .nav-item {
+            padding: 12px 15px;
+            margin: 8px 0;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.1);
+            font-size: 0.95em;
+        }
+        
+        .nav-item:hover {
+            background: #3498db;
+            transform: translateX(5px);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 40px 50px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header .subtitle {
+            font-size: 1.3em;
+            color: #ecf0f1;
+        }
+        
+        /* Section Styles */
+        section {
+            margin-bottom: 50px;
+            scroll-margin-top: 20px;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        h3 {
+            color: #34495e;
+            font-size: 1.5em;
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        /* Diagram Box */
+        .diagram-box {
+            background: #f8f9fa;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Formula Box */
+        .formula-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 5px solid #2196f3;
+            padding: 20px 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(33, 150, 243, 0.2);
+        }
+        
+        /* Example Box (Collapsible) */
+        .example {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            margin: 25px 0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .example-header {
+            background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        
+        .example-header:hover {
+            background: linear-gradient(135deg, #ffeb3b 0%, #ffc107 100%);
+        }
+        
+        .example-content {
+            padding: 20px 25px;
+            display: none;
+        }
+        
+        .example-content.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Note Box */
+        .note {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .note strong {
+            color: #0c5460;
+        }
+        
+        /* Solution Box */
+        .solution {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        /* Math Display */
+        .MathJax {
+            color: #1565c0 !important;
+        }
+        
+        /* List Styles */
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin: 10px 0;
+        }
+        
+        /* Toggle Button */
+        .toggle-icon {
+            transition: transform 0.3s;
+        }
+        
+        .toggle-icon.active {
+            transform: rotate(180deg);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                padding: 30px 20px;
+            }
+        }
+        
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #3498db;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .scroll-top:hover {
+            background: #2980b9;
+            transform: translateY(-5px);
+        }
+        
+        .scroll-top.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <h2>📚 目录导航</h2>
+            <div class="nav-item" onclick="scrollToSection('overview')">📋 三问解题法概览</div>
+            <div class="nav-item" onclick="scrollToSection('section1')">1️⃣ 和式极限</div>
+            <div class="nav-item" onclick="scrollToSection('section2')">2️⃣ 交换积分次序</div>
+            <div class="nav-item" onclick="scrollToSection('section3')">3️⃣ 积分保号性</div>
+            <div class="nav-item" onclick="scrollToSection('section4')">4️⃣ 对称性的使用</div>
+            <div class="nav-item" onclick="scrollToSection('section5')">5️⃣ 常用结论</div>
+            <div class="nav-item" onclick="scrollToSection('section6')">6️⃣ 计算方法</div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h1>第14讲 二重积分</h1>
+                <div class="subtitle">三问解题法</div>
+            </div>
+            
+            <!-- Overview Section -->
+            <section id="overview">
+                <h2>📋 三问解题法概览</h2>
+                <div class="diagram-box">
+                    <p><strong>计算二重积分的核心思路：</strong></p>
+                    <ol>
+                        <li><strong>和式极限</strong> - 转换等价表达 (D<sub>22</sub>)</li>
+                        <li><strong>积分保号性的使用</strong> - 常规操作 + 转换等价表达 (D<sub>1</sub> + D<sub>22</sub>)</li>
+                        <li><strong>交换积分次序问题</strong> - 常规操作 (D<sub>1</sub>)</li>
+                        <li><strong>对称性的使用</strong> - 常规操作 + 善于发现对称 (D<sub>1</sub> + D<sub>44</sub>)</li>
+                        <li><strong>二重积分常用结论</strong> - 常规操作 (D<sub>1</sub>)</li>
+                        <li><strong>二重积分的计算法</strong> - 常规操作 (D<sub>1</sub>)</li>
+                    </ol>
+                </div>
+            </section>
+            
+            <!-- Section 1: 和式极限 -->
+            <section id="section1">
+                <h2>一、和式极限（转换等价表达）</h2>
+                
+                <div class="formula-box">
+                    <p><strong>核心公式：</strong></p>
+                    $$\iint_D f(x,y)d\sigma = \lim_{n\to\infty} \sum_{i=1}^n \sum_{j=1}^n f\left(a+\frac{b-a}{n}i, c+\frac{d-c}{n}j\right)\frac{b-a}{n}\frac{d-c}{n}$$
+                    <p>其中 \(D = \{(x,y)|a \leq x \leq b, c \leq y \leq d\}\)</p>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        <span>📝 例14.1</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="example-content">
+                        <p><strong>题目：</strong>求 \(\displaystyle\lim_{n\to\infty} \sum_{i=1}^n \sum_{j=1}^n \frac{i}{(n+i)(n^2+j^2)}\)</p>
+                        
+                        <div class="solution">
+                            <p><strong>【解】</strong>应填 \((1-\ln 2)\dfrac{\pi}{4}\)</p>
+                            
+                            <p>原式可以转换为：</p>
+                            $$\begin{align}
+                            &= \lim_{n\to\infty} \sum_{i=1}^n \sum_{j=1}^n \frac{\frac{i}{n}}{(1+\frac{i}{n})(n^2+j^2)} \cdot \frac{1}{n^2}\\
+                            &= \iint_D \frac{x}{(1+x)(1+y^2)} dx dy\\
+                            &= \int_0^1 \frac{x dx}{1+x} \int_0^1 \frac{dy}{1+y^2}\\
+                            &= \int_0^1 \left(1-\frac{1}{1+x}\right)dx \int_0^1 \frac{dy}{1+y^2}\\
+                            &= [x-\ln(1+x)]_0^1 \cdot [\arctan y]_0^1\\
+                            &= (1-\ln 2) \cdot \frac{\pi}{4}
+                            \end{align}$$
+                            
+                            <p>其中 \(D = \{(x,y)|0 \leq x \leq 1, 0 \leq y \leq 1\}\)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 2: 交换积分次序 -->
+            <section id="section2">
+                <h2>二、交换积分次序问题（常规操作）</h2>
+                
+                <div class="note">
+                    <strong>⚠️ 重要提示：</strong>当一个累次积分的题是在我们面前时，要注意观察，题目所给积分次序的第一个积分是不是以下情况：
+                    <ul>
+                        <li>可积不可求积型</li>
+                        <li>计算困难型</li>
+                    </ul>
+                    <p>若是，则换积分次序成为必然。实际上，在考试中出现累次积分，基本上以断定是要交换积分次序的。</p>
+                </div>
+                
+                <div class="formula-box">
+                    <p><strong>这些强调一下可积不可求积型的一般形式：</strong></p>
+                    $$\int \frac{\sin x}{x}dx, \quad \int \frac{\cos x}{x}dx, \quad \int \frac{\ln(1+x)}{x}dx, \quad \int \frac{1}{\ln x}dx, \quad \int \sin x^2 dx$$
+                    $$\int \cos x^2 dx, \quad \int \sin \frac{1}{x}dx, \quad \int \cos \frac{1}{x}dx, \quad \int \frac{\tan x}{x}dx, \quad \int \frac{e^x}{x}dx, \quad \int \tan x^2 dx, \quad \int e^{ax^2+bx+c}dx(a \neq 0)$$
+                    <p>上述积分均没有初等函数的原函数，见到它们，一般都要交换积分次序。</p>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        <span>📝 例14.2</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="example-content">
+                        <p><strong>题目：</strong>\(\displaystyle\int_0^{\frac{\pi}{2}} dy \int_y^{\frac{\pi}{2}} \frac{\cos x}{x}dx = \underline{\qquad}\)</p>
+                        
+                        <div class="solution">
+                            <p><strong>【解】</strong>应填 \(\dfrac{1}{2}\)</p>
+                            
+                            <p>交换积分次序，得：</p>
+                            $$\text{原式} = \int_0^{\frac{\pi}{2}} dx \int_0^x \frac{\cos x}{x}dy = \int_0^{\frac{\pi}{2}} \cos x dx = \sin x \Big|_0^{\frac{\pi}{2}} = \frac{1}{2}$$
+                            
+                            <div class="note">
+                                <strong>【注】</strong>由于 \(\displaystyle\int \frac{\cos x}{x}dx\) 不是初等函数，因此需要交换积分次序进行求解。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        <span>📝 例14.3</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="example-content">
+                        <p><strong>题目：</strong>\(\displaystyle\int_0^2 dy \int_y^2 \frac{y}{\sqrt{1+x^3}}dx = \underline{\qquad}\)</p>
+                        
+                        <div class="solution">
+                            <p><strong>【解】</strong>应填 \(\dfrac{2}{3}\)</p>
+                            
+                            $$\begin{align}
+                            \text{原式} &= \int_0^2 dx \int_0^x \frac{y}{\sqrt{1+x^3}}dy = \int_0^2 \frac{1}{2}x^2 \cdot \frac{1}{\sqrt{1+x^3}}dx\\
+                            &= \int_0^2 \frac{1}{6}(1+x^3)^{-\frac{1}{2}}d(x^3+1)\\
+                            &= \frac{1}{6} \cdot 2(1+x^3)^{\frac{1}{2}}\Big|_0^2 = 1 - \frac{1}{3} = \frac{2}{3}
+                            \end{align}$$
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 3: 积分保号性 -->
+            <section id="section3">
+                <h2>三、积分保号性的使用</h2>
+                <h3>（常规操作 + 转换等价表达）</h3>
+                
+                <div class="formula-box">
+                    <p><strong>积分保号性：</strong></p>
+                    <ol>
+                        <li>若连续函数 \(f(x,y) \geq 0\) 且不恒为零，则 \(\displaystyle\iint_D f(x,y)d\sigma > 0\)（这涉及积分保号性）</li>
+                        <li>若连续函数 \(f(x,y)\) 满足：对任意有界闭区域 \(D\)，均有 \(\displaystyle\iint_D f(x,y)d\sigma = 0\)，则 \(f(x,y) = 0, (x,y) \in D\)（这涉及积分保号性）</li>
+                    </ol>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        <span>📝 例14.4</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="example-content">
+                        <p><strong>题目：</strong>确定积分区域 \(D\)，使得二重积分 \(I = \displaystyle\iint_D \left(1-x^2-\frac{y^2}{2}\right)dxdy\) 达到最大值。</p>
+                        
+                        <div class="solution">
+                            <p><strong>【解】</strong>根据二重积分的比较定理和积分区域的可加性，只要积分区域 \(D\) 包含了使被积函数 \(f(x,y) = 1-x^2-\frac{y^2}{2} \geq 0\) 的所有点，而没有包含 \(f(x,y) = 1-x^2-\frac{y^2}{2} < 0\) 的点，那么二重积分 \(I = \displaystyle\iint_D \left(1-x^2-\frac{y^2}{2}\right)dxdy\) 就会达到最大值，所以积分区域应取为：</p>
+                            
+                            $$D = \left\{(x,y)\left| x^2 + \frac{y^2}{2} \leq 1\right.\right\}$$
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 4: 对称性 -->
+            <section id="section4">
+                <h2>四、对称性的使用</h2>
+                <h3>（常规操作 + 善于发现对称）</h3>
+                
+                <h3>1. 普通对称性</h3>
+                
+                <div class="formula-box">
+                    <p><strong>(1) 若 \(D\) 关于 \(y\) 轴对称，则</strong></p>
+                    $$\iint_D f(x,y)d\sigma = \begin{cases}
+                    2\displaystyle\iint_{D_1} f(x,y)d\sigma, & f(x,y) = f(-x,y)\\
+                    0, & f(x,y) = -f(-x,y)
+                    \end{cases}$$
+                    <p>其中 \(D_1\) 是 \(D\) 在 \(y\) 轴右侧的部分。</p>
+                    
+                    <div class="note">
+                        <strong>【注】</strong>若 \(D\) 关于 \(x = a(a \neq 0)\) 对称，则
+                        $$\iint_D f(x,y)d\sigma = \begin{cases}
+                        2\displaystyle\iint_{D_1} f(x,y)d\sigma, & f(x,y) = f(2a-x,y)\\
+                        0, & f(x,y) = -f(2a-x,y)
+                        \end{cases}$$
+                        <p>其中 \(D_1\) 是 \(D\) 在 \(x = a\) 右侧的部分。</p>
+                        <p>也 \(\displaystyle\iint_D (x-a)d\sigma = 0\)，因 \(f(x,y) = x-a\)，故 \(f(2a-x,y) = a-x\)</p>
+                    </div>
+                </div>
+                
+                <div class="formula-box">
+                    <p><strong>(2) 若 \(D\) 关于 \(x\) 轴对称，则</strong></p>
+                    $$\iint_D f(x,y)d\sigma = \begin{cases}
+                    2\displaystyle\iint_{D_1} f(x,y)d\sigma, & f(x,y) = f(x,-y)\\
+                    0, & f(x,y) = -f(x,-y)
+                    \end{cases}$$
+                    <p>其中 \(D_1\) 是 \(D\) 在 \(x\) 轴上侧的部分。</p>
+                    
+                    <div class="note">
+                        <strong>【注】</strong>若 \(D\) 关于 \(y = a(a \neq 0)\) 对称，则
+                        $$\iint_D f(x,y)d\sigma = \begin{cases}
+                        2\displaystyle\iint_{D_1} f(x,y)d\sigma, & f(x,y) = f(x,2a-y)\\
+                        0, & f(x,y) = -f(x,2a-y)
+                        \end{cases}$$
+                        <p>其中 \(D_1\) 是 \(D\) 在 \(y = a\) 上侧的部分。</p>
+                    </div>
+                </div>
+                
+                <div class="formula-box">
+                    <p><strong>(3) 若 \(D\) 关于原点对称，则</strong></p>
+                    $$\iint_D f(x,y)d\sigma = \begin{cases}
+                    2\displaystyle\iint_{D_1} f(x,y)d\sigma, & f(x,y) = f(-x,-y)\\
+                    0, & f(x,y) = -f(-x,-y)
+                    \end{cases}$$
+                    <p>其中 \(D_1\) 是 \(D\) 关于原点对称的半个部分。</p>
+                </div>
+                
+                <div class="formula-box">
+                    <p><strong>(4) 若 \(D\) 关于 \(y = x\) 对称，则</strong></p>
+                    $$\iint_D f(x,y)d\sigma = \begin{cases}
+                    2\displaystyle\iint_{D_1} f(x,y)d\sigma, & f(x,y) = f(y,x)\\
+                    0, & f(x,y) = -f(y,x)
+                    \end{cases}$$
+                    <p>其中 \(D_1\) 是 \(D\) 关于 \(y = x\) 对称的半个部分。</p>
+                </div>
+                
+                <h3>2. 轮换对称性</h3>
+                
+                <div class="formula-box">
+                    <p>在直角坐标系下，若把 \(x\) 与 \(y\) 对调后，区域 \(D\) 不变（或区域 \(D\) 关于 \(y = x\) 对称），则</p>
+                    $$\iint_D f(x,y)d\sigma = \iint_D f(y,x)d\sigma$$
+                    <p>这就是<strong>轮换对称性</strong>。</p>
+                    
+                    <div class="note">
+                        <strong>【注】</strong>
+                        <p>(1) 在直角坐标系中，若 \(f(x,y) + f(y,x) = a\)，则</p>
+                        $$I = \frac{1}{2}\iint_D [f(x,y) + f(y,x)]dxdy = \frac{1}{2}\iint_D a dxdy = \frac{a}{2}S_D$$
+                        
+                        <p>(2) 要注意区分普通对称性中的"(4)"与这里轮换对称性的区别与联系。虽然它们都是 \(D\) 关于 \(y = x\) 对称，但普通对称性考察的是函数 \(f(x,y)\) 与 \(f(y,x)\) 是否相等或互为负数，轮换对称性考察的是 \(f(x,y) + f(y,x)\) 是否简单。事实上，当 \(f(x,y) = -f(y,x)\) 时，它们是一回事。</p>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        <span>📝 例14.5</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="example-content">
+                        <p><strong>题目：</strong>设 \(f(x,y)\) 在 \(D = \{(x,y)|x^2+y^2 \leq 1\}\) 上连续，\(f(x,y) = e^{x^2+y^2} - \displaystyle\iint_D \frac{(2x^2+1)f(x,y)}{x^2+y^2+1}dxdy\)，求 \(\displaystyle\iint_D f(x,y)d\sigma\)。</p>
+                        
+                        <div class="solution">
+                            <p><strong>【解】</strong>令 \(a = \displaystyle\iint_D \frac{(2x^2+1)f(x,y)}{x^2+y^2+1}dxdy\)，则 \(f(x,y) = e^{x^2+y^2} - a = f(y,x)\)</p>
+                            
+                            <p>由轮换对称性，得</p>
+                            $$\begin{align}
+                            a &= \iint_D \frac{(2x^2+1)f(x,y)}{x^2+y^2+1}dxdy\\
+                            &= \frac{1}{2}\iint_D 2f(x,y)dxdy = \iint_D f(x,y)dxdy
+                            \end{align}$$
+                            
+                            <p>于是</p>
+                            $$a = \iint_D (e^{x^2+y^2} - a)d\sigma$$
+                            $$= \int_0^{2\pi} d\theta \int_0^1 (e^r - a)rdr = (e-a-1)\pi$$
+                            
+                            <p>解得 \(a = \dfrac{(e-1)\pi}{\pi+1}\)，故 \(\displaystyle\iint_D f(x,y)d\sigma = \frac{(e-1)\pi}{\pi+1}\)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 5: 常用结论 -->
+            <section id="section5">
+                <h2>五、二重积分常用结论（常规操作）</h2>
+                
+                <div class="formula-box">
+                    <p><strong>相关计算结论（形式化简体系）：</strong></p>
+                    
+                    <p>1. \(\displaystyle\iint_{D:x^2+y^2\leq 1} (x^2+y^2)d\sigma = \frac{\pi}{2}\)；
+                       \(\displaystyle\iint_{D:x^2+y^2\leq 1} \sqrt{x^2+y^2}d\sigma = \frac{2\pi}{3}\)</p>
+                    
+                    <p>2. \(\displaystyle\iint_{D:x^2+y^2\leq 1} \sqrt{1-(x^2+y^2)}d\sigma = \frac{2\pi}{3}\)；
+                       \(\displaystyle\iint_{D:x^2+y^2\leq 1} (1-\sqrt{x^2+y^2})d\sigma = \frac{\pi}{3}\)</p>
+                    
+                    <p>3. \(\displaystyle\iint_{D:x^2+y^2\leq 1} \left(\frac{x^2}{a^2}+\frac{y^2}{b^2}\right)d\sigma = \frac{\pi}{4}\left(\frac{1}{a^2}+\frac{1}{b^2}\right)\)</p>
+                </div>
+            </section>
+            
+            <!-- Section 6: 计算方法 -->
+            <section id="section6">
+                <h2>六、二重积分的计算法（常规操作）</h2>
+                
+                <h3>1. 二重积分的直角坐标系积分法</h3>
+                
+                <div class="note">
+                    在直角坐标系下，按照积分次序的不同，一般将二重积分的计算分为两种情况：
+                </div>
+                
+                <div class="formula-box">
+                    <p><strong>① 先对 \(y\) 积分，后对 \(x\) 积分：</strong></p>
+                    $$\iint_D f(x,y)d\sigma = \int_a^b dx \int_{\varphi_1(x)}^{\varphi_2(x)} f(x,y)dy$$
+                    <p>其中 \(D\) 如图(a)所示，为 \(X\) 型区域，\(\varphi_1(x) \leq y \leq \varphi_2(x)\)，\(a \leq x \leq b\)</p>
+                    
+                    <p><strong>② 先对 \(x\) 积分，后对 \(y\) 积分：</strong></p>
+                    $$\iint_D f(x,y)d\sigma = \int_c^d dy \int_{\psi_1(y)}^{\psi_2(y)} f(x,y)dx$$
+                    <p>其中 \(D\) 如图(b)所示，为 \(Y\) 型区域，\(\psi_1(y) \leq x \leq \psi_2(y)\)，\(c \leq y \leq d\)</p>
+                    
+                    <div class="note">
+                        <strong>【注】</strong>下限须小于上限。
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        <span>📝 例14.6</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="example-content">
+                        <p><strong>题目：</strong>设 \(D = \left\{(r,\theta)\left|0 \leq \theta \leq \frac{\pi}{4}, 0 \leq r \leq \sec\theta\right.\right\}\)，则 \(\displaystyle\iint_D \sqrt{1-(x-y)^2}d\sigma = \underline{\qquad}\)</p>
+                        
+                        <div class="solution">
+                            <p><strong>【解】</strong>应填 \(\dfrac{\pi}{4} - \dfrac{1}{3}\)</p>
+                            
+                            <p>化 \(D\)（见图）为直角坐标系下的表达式，即</p>
+                            $$D = \{(x,y)|0 \leq y \leq x \leq 1\}$$
+                            
+                            <p>故原式 \(= \displaystyle\int_0^1 dx \int_0^x \sqrt{1-(x-y)^2}dy\)，其中</p>
+                            
+                            $$\begin{align}
+                            &\int_0^x \sqrt{1-(x-y)^2}dy \stackrel{x-y=t}{=} \int_x^0 \sqrt{1-t^2}(-dt) = \int_0^x \sqrt{1-t^2}dt\\
+                            &\text{由 } \int \sqrt{a^2-x^2}dx = \frac{a^2}{2}\arcsin\frac{x}{a} + \frac{x}{2}\sqrt{a^2-x^2} + C\text{，有}\\
+                            &\int_0^x \sqrt{1-t^2}dt = \frac{1}{2}\arcsin t + \frac{t}{2}\sqrt{1-t^2}\Big|_0^x
+                            \end{align}$$
+                            
+                            <p>故</p>
+                            $$\begin{align}
+                            \text{原式} &= \int_0^1 \left(\frac{1}{2}\arcsin x + \frac{x}{2}\sqrt{1-x^2}\right)dx\\
+                            &= \frac{1}{2}\int_0^1 \arcsin x dx + \frac{1}{2}\int_0^1 x\sqrt{1-x^2}dx\\
+                            &= \frac{1}{2}\left(x \cdot \arcsin x\Big|_0^1 - \int_0^1 \frac{x}{\sqrt{1-x^2}}dx\right) + \left(-\frac{1}{2}\right) \cdot \frac{1}{2} \cdot \frac{2}{3}(1-x^2)^{\frac{3}{2}}\Big|_0^1\\
+                            &= \frac{1}{2}\left(\frac{\pi}{2} + \sqrt{1-x^2}\Big|_0^1\right) + \frac{1}{6} = \frac{1}{2}\left(\frac{\pi}{2} - 1\right) + \frac{1}{6} = \frac{\pi}{4} - \frac{1}{3}
+                            \end{align}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>2. 二重积分的极坐标系积分法</h3>
+                
+                <div class="note">
+                    在极坐标系下，按照积分区域与极点位置关系的不同，一般将二重积分的计算分为三种情况，如图所示。
+                </div>
+                
+                <div class="formula-box">
+                    <p><strong>三种情况：</strong></p>
+                    
+                    <p><strong>① </strong>\(\displaystyle\iint_D f(x,y)d\sigma = \int_{\alpha}^{\beta} d\theta \int_{r_1(\theta)}^{r_2(\theta)} f(r\cos\theta, r\sin\theta)rdr\)（极点 \(O\) 在区域 \(D\) 外部，如图(a)所示）</p>
+                    
+                    <p><strong>② </strong>\(\displaystyle\iint_D f(x,y)d\sigma = \int_{\alpha}^{\beta} d\theta \int_0^{r(\theta)} f(r\cos\theta, r\sin\theta)rdr\)（极点 \(O\) 在区域 \(D\) 边界上，如图(b)所示）</p>
+                    
+                    <p><strong>③ </strong>\(\displaystyle\iint_D f(x,y)d\sigma = \int_0^{2\pi} d\theta \int_0^{r(\theta)} f(r\cos\theta, r\sin\theta)rdr\)（极点 \(O\) 在区域 \(D\) 内部，如图(c)所示）</p>
+                    
+                    <div class="note">
+                        <strong>【注】</strong>极坐标系与直角坐标系互选择的一般原则：
+                        <ul>
+                            <li>一般来说，给出一个二重积分</li>
+                            <li>① 看被积函数是否为 \(f(x^2+y^2)\)，\(f\left(\frac{y}{x}\right)\)，\(f\left(\frac{x}{y}\right)\) 等形式；</li>
+                            <li>② 看积分区域是否为圆或圆的一部分。</li>
+                            <li>如果①、②至少满足其中之一，那么优先选用极坐标系，否则，就优先考虑直角坐标系。</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        <span>📝 例14.7</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="example-content">
+                        <p><strong>题目：</strong>设平面有界区域 \(D\) 位于第一象限，由曲线 \(x^2+y^2-xy = 1\)，\(x^2+y^2-xy = 2\) 与直线 \(y = \sqrt{3}x\)，\(y = 0\) 围成，计算 \(\displaystyle\iint_D \frac{1}{3x^2+y^2}dxdy\)。</p>
+                        
+                        <div class="solution">
+                            <p><strong>【解】</strong></p>
+                            $$\iint_D \frac{1}{3x^2+y^2}dxdy = \int_0^{\frac{\pi}{3}} d\theta \int_{\frac{\sqrt{3}}{\sqrt{1-\cos\theta\sin\theta}}}^{\frac{\sqrt{2}}{\sqrt{1-\cos\theta\sin\theta}}} \frac{1}{r^2(3\cos^2\theta+\sin^2\theta)}rdr$$
+                            
+                            $$= \frac{\ln 2}{2}\int_0^{\frac{\pi}{3}} \frac{1}{3\cos^2\theta+\sin^2\theta}d\theta = \frac{\ln 2}{2}\int_0^{\frac{\pi}{3}} \frac{1}{3+\tan^2\theta}d(\tan\theta)$$
+                            
+                            $$= \frac{\ln 2}{2}\left(\frac{1}{\sqrt{3}}\arctan\frac{\tan\theta}{\sqrt{3}}\right)\Big|_0^{\frac{\pi}{3}} = \frac{\sqrt{3}\ln 2}{24}\pi$$
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>3. 二重积分的换元法（选学）</h3>
+                
+                <div class="note">
+                    二重积分亦有和定积分一脉相承的换元法，有时很有用，现介绍于此，供参考。若能够用上，可直接使用，不必证明。
+                </div>
+                
+                <div class="formula-box">
+                    <p>先回顾一元函数积分换元法，见"(1)"，再看二重积分换元法，见"(2)"。</p>
+                    
+                    <p><strong>(1) 一元函数换元：</strong></p>
+                    $$\int_a^b f(x)dx \stackrel{x=\varphi(t)}{=} \int_{\alpha}^{\beta} f[\varphi(t)]\varphi'(t)dt$$
+                    
+                    <p>步骤：</p>
+                    <ul>
+                        <li>① \(f(x) \to f[\varphi(t)]\)</li>
+                        <li>② \(\int_a^b \to \int_{\alpha}^{\beta}\)</li>
+                        <li>③ \(dx \to \varphi'(t)dt\)（一维上的"测度"关系）</li>
+                    </ul>
+                    <p>注意：\(x = \varphi(t)\) 单调，存在一阶连续导数。</p>
+                    
+                    <p><strong>(2) 二重积分换元：</strong></p>
+                    $$\iint_{D_{xy}} f(x,y)dxdy \stackrel{\begin{cases}x=x(u,v)\\y=y(u,v)\end{cases}}{=} \iint_{D_{uv}} f[x(u,v), y(u,v)]\left|\frac{\partial(x,y)}{\partial(u,v)}\right|dudv$$
+                    
+                    <p>步骤：</p>
+                    <ul>
+                        <li>① \(f(x,y) \to f[x(u,v), y(u,v)]\)</li>
+                        <li>② \(\iint_{D_{xy}} \to \iint_{D_{uv}}\)</li>
+                        <li>③ \(dxdy \to \left|\frac{\partial(x,y)}{\partial(u,v)}\right|dudv\)（二维上的"测度"关系）</li>
+                    </ul>
+                    
+                    <p>注意：\(\begin{cases}x=x(u,v)\\y=y(u,v)\end{cases}\) 是 \(xOy\) 面到 \(uOv\) 面的一对一映射，\(x = x(u,v)\)，\(y = y(u,v)\) 存在一阶连续偏导</p>
+                    
+                    <p>数，\(\dfrac{\partial(x,y)}{\partial(u,v)} = \begin{vmatrix}\frac{\partial x}{\partial u} & \frac{\partial x}{\partial v}\\ \frac{\partial y}{\partial u} & \frac{\partial y}{\partial v}\end{vmatrix} \neq 0\)</p>
+                    
+                    <p>另外，令 \(\begin{cases}x=r\cos\theta\\y=r\sin\theta\end{cases}\)，则</p>
+                    
+                    $$\iint_{D_{xy}} f(x,y)dxdy = \iint_{D_{r\theta}} f(r\cos\theta, r\sin\theta)\begin{vmatrix}\frac{\partial x}{\partial r} & \frac{\partial x}{\partial\theta}\\ \frac{\partial y}{\partial r} & \frac{\partial y}{\partial\theta}\end{vmatrix}drd\theta$$
+                    
+                    $$= \iint_{D_{r\theta}} f(r\cos\theta, r\sin\theta)\begin{vmatrix}\cos\theta & -r\sin\theta\\ \sin\theta & r\cos\theta\end{vmatrix}drd\theta = \iint_{D_{r\theta}} f(r\cos\theta, r\sin\theta)rdrd\theta$$
+                    
+                    <p>这就是直角坐标系到极坐标系的换元过程。</p>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        <span>📝 例14.8</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="example-content">
+                        <p><strong>题目：</strong>设 \(D = \{(x,y)|(x-1)^2+(y-1)^2 \leq 2, y \geq x\}\)，计算二重积分 \(\displaystyle\iint_D (x-y)dxdy\)。</p>
+                        
+                        <div class="solution">
+                            <p><strong>【解法一】</strong>由 \((x-1)^2+(y-1)^2 \leq 2\)，得 \(r \leq 2(\sin\theta+\cos\theta)\)，所以</p>
+                            
+                            $$\begin{align}
+                            &\iint_D (x-y)dxdy = \int_{\frac{\pi}{4}}^{\frac{3\pi}{4}} d\theta \int_0^{2(\sin\theta+\cos\theta)} (r\cos\theta-r\sin\theta)rdr\\
+                            &= \int_{\frac{\pi}{4}}^{\frac{3\pi}{4}} \left[\frac{1}{3}(\cos\theta-\sin\theta)r^3\right]_0^{2(\sin\theta+\cos\theta)}d\theta\\
+                            &= \int_{\frac{\pi}{4}}^{\frac{3\pi}{4}} \frac{8}{3}(\cos\theta-\sin\theta)(\sin\theta+\cos\theta)^3 d\theta\\
+                            &= \frac{8}{3} \cdot \frac{1}{4}(\sin\theta+\cos\theta)^4\Big|_{\frac{\pi}{4}}^{\frac{3\pi}{4}} = -\frac{8}{3}
+                            \end{align}$$
+                            
+                            <p><strong>【解法二】</strong>作变量代换(平移) \(\begin{cases}u=x-1\\v=y-1\end{cases}\)，则</p>
+                            
+                            $$D_{uv} = \{(u,v)|u^2+v^2 \leq 2, v \geq u\}\text{（见图）}$$
+                            
+                            $$\frac{\partial(x,y)}{\partial(u,v)} = 1$$
+                            
+                            <p>所以</p>
+                            $$\iint_D (x-y)dxdy = \iint_{D_{uv}} (u-v)dudv = \int_{\frac{\pi}{4}}^{\frac{5\pi}{4}} d\theta \int_0^{\sqrt{2}} r(\cos\theta-\sin\theta)rdr = -\frac{8}{3}$$
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Footer -->
+            <div style="text-align: center; padding: 40px 20px; background: #f8f9fa; border-radius: 10px; margin-top: 50px;">
+                <p style="color: #666; font-size: 0.95em;">📚 本教程基于第14讲二重积分内容整理</p>
+                <p style="color: #999; font-size: 0.85em; margin-top: 10px;">使用MathJax渲染数学公式 | 交互式学习体验</p>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Scroll to Top Button -->
+    <div class="scroll-top" onclick="scrollToTop()">
+        <span style="font-size: 24px;">↑</span>
+    </div>
+    
+    <script>
+        // Toggle example content
+        function toggleExample(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            
+            content.classList.toggle('active');
+            icon.classList.toggle('active');
+        }
+        
+        // Smooth scroll to section
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Show/hide scroll to top button
+        const mainContent = document.querySelector('.main-content');
+        const scrollTopBtn = document.querySelector('.scroll-top');
+        
+        mainContent.addEventListener('scroll', function() {
+            if (mainContent.scrollTop > 300) {
+                scrollTopBtn.classList.add('show');
+            } else {
+                scrollTopBtn.classList.remove('show');
+            }
+        });
+        
+        // Add animation to nav items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(i => i.style.background = 'rgba(255,255,255,0.1)');
+                this.style.background = '#3498db';
+                setTimeout(() => {
+                    this.style.background = 'rgba(255,255,255,0.1)';
+                }, 300);
+            });
+        });
+        
+        // MathJax configuration
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": {
+                linebreaks: { automatic: true }
+            },
+            SVG: {
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+</body>
+</html>

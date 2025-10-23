@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第2讲 数列极限 - 交互式教程</title>
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2193b0, #6dd5ed);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 15s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.5em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        nav {
+            background: #34495e;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background: #3498db;
+            transform: translateY(-2px);
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(to right, #f8f9fa, #ffffff);
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        section:hover {
+            transform: translateX(5px);
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        h3 {
+            color: #34495e;
+            font-size: 1.5em;
+            margin: 25px 0 15px;
+        }
+        
+        .theorem {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .example {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .solution {
+            background: #d1ecf1;
+            border-left: 5px solid #0dcaf0;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .note {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .collapsible {
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            border-radius: 5px;
+            margin: 10px 0;
+            width: 100%;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .collapsible:hover {
+            background: #2980b9;
+            transform: scale(1.02);
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #ecf0f1;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .collapsible-content-inner {
+            padding: 20px;
+        }
+        
+        .mjx-chtml {
+            color: #2c3e50 !important;
+            font-size: 1.1em !important;
+        }
+        
+        .flowchart {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .box {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+            display: inline-block;
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .interactive-quiz {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
+        }
+        
+        .quiz-button {
+            background: white;
+            color: #f5576c;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1em;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .quiz-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .content { padding: 20px; }
+            section { padding: 20px; }
+            nav ul { flex-direction: column; }
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第2讲 数列极限</h1>
+            <div class="subtitle">三问解题法</div>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#overview">概述</a></li>
+                <li><a href="#method1">方法一</a></li>
+                <li><a href="#method2">方法二</a></li>
+                <li><a href="#method3">方法三</a></li>
+                <li><a href="#method4">方法四</a></li>
+                <li><a href="#method5">方法五</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <section id="overview">
+                <h2>📚 核心思路概述</h2>
+                <p>判断数列 \(\{x_n\}\) 是否收敛（即 \(\lim_{n\to\infty} x_n\) 是否存在）有以下五种主要方法：</p>
+                
+                <div class="flowchart">
+                    <div class="box">1️⃣ 见到 \(f(x, x_n)\)，且其是含 \(x_n, x_{n+1}\) 的等式关系</div>
+                    <div class="box">2️⃣ 见到 \(f(x, x_{n+1})\)，且其是含 \(x_n, x_{n+1}\) 的不等式关系</div>
+                    <div class="box">3️⃣ 初值 \(x_1\) 对 \(x_{n+1} = f(x_n)\) 的敛散性的影响</div>
+                    <div class="box">4️⃣ 双通项 \(a_n, b_n\) 问题</div>
+                    <div class="box">5️⃣ 复合函数的极限</div>
+                </div>
+            </section>
+            
+            <section id="method1">
+                <h2>方法一：等式关系 + 常规操作 + 化归经典形式</h2>
+                
+                <div class="theorem">
+                    <h3>📐 压缩映射原理</h3>
+                    <p><strong>原理一：</strong> 对数列 \(\{x_n\}\)，若存在常数 \(k\) (\(0 < k < 1\))，使得 \(|x_{n+1}-a| \leq k|x_n-a|\), \(n=1,2,\cdots\)，则 \(\{x_n\}\) 收敛于 \(a\)。</p>
+                    
+                    <p><strong>证明：</strong> \(0 \leq |x_{n+1}-a| \leq k|x_n-a| \leq k^2|x_{n-1}-a| \leq \cdots \leq k^n|x_1-a|\)</p>
+                    <p>由于 \(\lim_{n\to\infty} k^n = 0\)，根据夹逼准则，有 \(\lim_{n\to\infty}|x_{n+1}-a|=0\)，即 \(\{x_n\}\) 收敛于 \(a\)。</p>
+                    
+                    <p><strong>原理二：</strong> 对数列 \(\{x_n\}\)，若 \(x_{n+1} = f(x_n)\), \(n=1,2,\cdots\), \(f(x)\) 可导，\(a\) 是 \(f(x)=x\) 的唯一解，且对任意 \(x\in\mathbb{R}\)，有 \(|f'(x)| \leq k < 1\)，则 \(\{x_n\}\) 收敛于 \(a\)。</p>
+                </div>
+                
+                <button class="collapsible">例2.1 - 点击展开详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <h3>🔢 例2.1</h3>
+                            <p>若 \(x_1=1\), \(x_{n+1}=\sqrt{4+3x_n}\), \(n=1,2,\cdots\)，证明数列 \(\{x_n\}\) 收敛，并求 \(\lim_{n\to\infty} x_n\)。</p>
+                        </div>
+                        
+                        <div class="solution">
+                            <h3>💡 解答</h3>
+                            <p>令 \(f(x) = \sqrt{4+3x}\) (\(x>0\))，则 \(f(4)=4\)，且</p>
+                            <p>\[|f'(x)| = \frac{3}{2\sqrt{4+3x}} \leq \frac{3}{2\sqrt{4}} = \frac{3}{4} < 1\]</p>
+                            <p>又有</p>
+                            <p>\[|x_{n+1}-4| = |f(x_n)-f(4)| = |f'(\xi)||x_n-4| \leq \frac{3}{4}|x_n-4|\]</p>
+                            <p>其中 \(\xi\) 介于 \(x_n\) 与 4 之间，从而有</p>
+                            <p>\[0 < |x_{n+1}-4| \leq \frac{3}{4}|x_n-4| \leq \left(\frac{3}{4}\right)^2|x_{n-1}-4| \leq \cdots \leq \left(\frac{3}{4}\right)^n|x_1-4|\]</p>
+                            <p>而当 \(n\to\infty\) 时，\(\left(\frac{3}{4}\right)^n \to 0\)，故数列 \(\{x_n\}\) 收敛，且 \(\lim_{n\to\infty} x_n = 4\)。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">例2.2 - 点击展开详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <h3>🔢 例2.2</h3>
+                            <p>若 \(x_{n+1}=\frac{\pi}{2}+\frac{1}{2}\cos x_n\) (\(n=1,2,\cdots\)), \(x_1=\pi\)，证明数列 \(\{x_n\}\) 收敛，并求 \(\lim_{n\to\infty} x_n\)。</p>
+                        </div>
+                        
+                        <div class="solution">
+                            <h3>💡 解答</h3>
+                            <p>令 \(f(x)=\frac{\pi}{2}+\frac{1}{2}\cos x\)，则 \(f\left(\frac{\pi}{2}\right)=\frac{\pi}{2}\)，\(|f'(x)|=\left|-\frac{1}{2}\sin x\right| \leq \frac{1}{2} < 1\)，则有</p>
+                            <p>\[\left|x_{n+1}-\frac{\pi}{2}\right| = \left|f(x_n)-f\left(\frac{\pi}{2}\right)\right| \leq \frac{1}{2}\left|x_n-\frac{\pi}{2}\right|\]</p>
+                            <p>从而有</p>
+                            <p>\[\left|x_{n+1}-\frac{\pi}{2}\right| \leq \frac{1}{2}\left|x_n-\frac{\pi}{2}\right| \leq \cdots \leq \left(\frac{1}{2}\right)^n\left|x_1-\frac{\pi}{2}\right|\]</p>
+                            <p>又当 \(n\to\infty\) 时，\(\left(\frac{1}{2}\right)^n \to 0\)，故数列 \(\{x_n\}\) 收敛，且 \(\lim_{n\to\infty} x_n = \frac{\pi}{2}\)。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="method2">
+                <h2>方法二：不等式关系（常规操作）</h2>
+                
+                <p>比较 \(x_n, x_{n+1}\) 的大小，定单调，根据正定单调有界准则。</p>
+                
+                <button class="collapsible">例2.3 - 点击展开详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <h3>🔢 例2.3</h3>
+                            <p>若 \(0 < x_n < 1\), \(x_{n+1}=1-\sqrt{1-x_n}\) (\(n=1,2,\cdots\))，求：</p>
+                            <p>(1) \(\lim_{n\to\infty} x_n\)；</p>
+                            <p>(2) \(\lim_{n\to\infty} \frac{x_{n+1}}{x_n}\)。</p>
+                        </div>
+                        
+                        <div class="solution">
+                            <h3>💡 解答</h3>
+                            <p>(1) 由 \(x_{n+1}=1-\sqrt{1-x_n}=\frac{x_n}{1+\sqrt{1-x_n}} < x_n\), \(0 < x_n < 1\)，知数列 \(\{x_n\}\) 单调减少且有下界，故数列 \(\{x_n\}\) 收敛。</p>
+                            <p>设 \(\lim_{n\to\infty} x_n = a\)，则有 \(a=1-\sqrt{1-a}\)，解得 \(a=0\) (\(a=1\) 舍去)，故 \(\lim_{n\to\infty} x_n = 0\)。</p>
+                            <p>(2) 由 (1) 可知，\(\lim_{n\to\infty} \frac{x_{n+1}}{x_n} = \lim_{n\to\infty} \frac{1-\sqrt{1-x_n}}{x_n} = \lim_{n\to\infty} \frac{1}{1+\sqrt{1-x_n}} = \frac{1}{2}\)。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">例2.4 - 点击展开详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <h3>🔢 例2.4</h3>
+                            <p>设 \(x_{n+1}=\frac{x_n^2}{2(x_n-1)}\) (\(n=1,2,\cdots\)), \(x_1>1\)，证明数列 \(\{x_n\}\) 收敛，并求 \(\lim_{n\to\infty} x_n\)。</p>
+                        </div>
+                        
+                        <div class="solution">
+                            <h3>💡 解答</h3>
+                            <p>\[x_{n+1}=\frac{1}{2}\left(x_n-1+\frac{1}{x_n-1}\right)+1 \geq 2, x_{n+1}-x_n=\frac{x_n(2-x_n)}{2(x_n-1)} \leq 0\]</p>
+                            <p>故由单调有界准则知，数列 \(\{x_n\}\) 收敛。</p>
+                            <p>设 \(\lim_{n\to\infty} x_n = A\)，则有 \(A=\frac{A^2}{2(A-1)}\)，解得 \(A=2\) 或 \(A=0\) (舍去)，故 \(\lim_{n\to\infty} x_n = 2\)。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="method3">
+                <h2>方法三：初值对敛散性的影响（常规操作）</h2>
+                
+                <p>对于 \(x_{n+1} = f(x_n)\)，若初值 \(x_1\) 仅给定取值范围，可能需要分情况讨论。</p>
+                
+                <button class="collapsible">例2.5 - 点击展开详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <h3>🔢 例2.5</h3>
+                            <p>设 \(x_{n+1}=\sqrt{x_n(2-x_n)}\) (\(n=1,2,\cdots\)), \(0 < x_1 < 2\)，证明数列 \(\{x_n\}\) 的极限存在，并求此极限。</p>
+                        </div>
+                        
+                        <div class="solution">
+                            <h3>💡 解答</h3>
+                            <p>首先证明数列 \(\{x_n\}\) 有界。因为 \(0 < x_1 < 2\)，所以 \(x_1, 2-x_1\) 均为正数，从而</p>
+                            <p>\[0 < x_2 = \sqrt{x_1(2-x_1)} \leq \frac{x_1+2-x_1}{2} = 1\]</p>
+                            <p>设 \(0 < x_k \leq 1 (k>1)\)，则 \(0 < x_{k+1} = \sqrt{x_k(2-x_k)} \leq \frac{1}{2}(x_k+2-x_k)=1\)，由数学归纳法知，对任意正整数 \(n>1\)，都有 \(0 < x_n \leq 1\)，即数列 \(\{x_n\}\) 有界。</p>
+                            <p>再证明数列 \(\{x_n\}\) 单调。当 \(n>1\) 时，</p>
+                            <p>\[\frac{x_{n+1}}{x_n} = \sqrt{\frac{2}{x_n}-1} \geq 1\]</p>
+                            <p>即 \(x_{n+1} \geq x_n (n>1)\)，所以数列 \(\{x_n\}\) (\(n>1\)) 单调增加。</p>
+                            <p>根据单调有界准则知 \(\lim_{n\to\infty} x_n\) 存在，设其为 \(a\)，则</p>
+                            <p>\[a = \lim_{n\to\infty} x_n = \lim_{n\to\infty} \sqrt{x_{n-1}(2-x_{n-1})} = \sqrt{a(2-a)}\]</p>
+                            <p>解得 \(a=1\) 或 \(a=0\) (舍去)，故 \(\lim_{n\to\infty} x_n = 1\)。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">例2.6 - 点击展开详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <h3>🔢 例2.6</h3>
+                            <p>(1) 证明对任意正整数 \(n\)，都有 \(\frac{1}{n+1} < \ln\left(1+\frac{1}{n}\right) < \frac{1}{n}\) 成立；</p>
+                            <p>(2) 设 \(a_n=1+\frac{1}{2}+\cdots+\frac{1}{n}-\ln n\) (\(n=1,2,\cdots\))，证明数列 \(\{a_n\}\) 收敛。</p>
+                        </div>
+                        
+                        <div class="solution">
+                            <h3>💡 解答</h3>
+                            <p>(1) 令 \(f(x)=\ln x\) (\(x>0\))。对任意正整数 \(n\)，对 \(f(x)\) 在 \([n,n+1]\) 上使用拉格朗日中值定理，得</p>
+                            <p>\[\ln\left(1+\frac{1}{n}\right) = \ln(1+n)-\ln n = \frac{1}{\xi}\]</p>
+                            <p>其中 \(n < \xi < n+1\)，所以 \(\frac{1}{n+1} < \ln\left(1+\frac{1}{n}\right) < \frac{1}{n}\)。</p>
+                            <p>(2) 由 (1) 知，当 \(n\geq 1\) 时，有</p>
+                            <p>\[a_{n+1}-a_n = \frac{1}{n+1}-\ln\left(1+\frac{1}{n}\right) < 0\]</p>
+                            <p>\[a_n = 1+\frac{1}{2}+\cdots+\frac{1}{n}-\ln n > \ln(1+1)+\ln\left(1+\frac{1}{2}\right)+\cdots+\ln\left(1+\frac{1}{n}\right)-\ln n = \ln(1+n)-\ln n > 0\]</p>
+                            <p>故数列 \(\{a_n\}\) 单调减少且有下界，所以数列 \(\{a_n\}\) 收敛。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="method4">
+                <h2>方法四：双通项 \(a_n, b_n\) 问题</h2>
+                
+                <div class="theorem">
+                    <p><strong>策略：</strong></p>
+                    <p>(1) 将 \(a_n, b_n\) 满足的式子联立，消去 \(a_n\) 或 \(b_n\) 其中一个，转化为单通项问题，且常用①恒等变形；②无穷小比较；③常见放缩；④函数单调，来作细节处理。</p>
+                    <p>(2) 令 \(c_n=\frac{a_n}{b_n}\)，转求 \(\lim_{n\to\infty} c_n\)，且常用①单调有界准则；②夹逼准则；③极限保号性，来作细节处理。</p>
+                </div>
+                
+                <button class="collapsible">例2.9 - 点击展开详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <h3>🔢 例2.9</h3>
+                            <p>设数列 \(\{a_n\}\), \(\{b_n\}\) 满足 \(a_n+b_n=\frac{\pi}{2}\), \(a_{n+1}=a_n+\cos a_n\)，其中 \(n=1,2,\cdots\), \(a_1=1\)，当 \(n\to\infty\) 时，\(b_n\) 与 \(b_{n-1}\) 为同阶无穷小量，则 \(a=\)（&nbsp;&nbsp;&nbsp;&nbsp;）。</p>
+                            <p>(A) 1&nbsp;&nbsp;&nbsp;&nbsp;(B) 2&nbsp;&nbsp;&nbsp;&nbsp;(C) 3&nbsp;&nbsp;&nbsp;&nbsp;(D) 5</p>
+                        </div>
+                        
+                        <div class="solution">
+                            <h3>💡 解答</h3>
+                            <p>应选 (C)。</p>
+                            <p>\[b_n = \frac{\pi}{2}-a_n = \frac{\pi}{2}-a_{n-1}-\cos a_{n-1}\]</p>
+                            <p>\[= \frac{\pi}{2}-a_{n-1}-\sin\left(\frac{\pi}{2}-a_{n-1}\right)\]</p>
+                            <p>\[= b_{n-1}-\sin b_{n-1}(n\geq 2)\]</p>
+                            <p>由 \(a_1=1\)，则 \(b_1=\frac{\pi}{2}-1\in(0,1), b_2=b_1-\sin b_1 < b_1\)，即 \(0 < b_2 < b_1 < 1\)。</p>
+                            <p>假设当 \(n=k(k\geq 2)\) 时，\(0 < b_k < b_{k-1} < 1\) 成立，则当 \(n=k+1\) 时，</p>
+                            <p>\[0 < b_{k+1} = b_k-\sin b_k < b_k < 1\]</p>
+                            <p>故 \(\{b_n\}\) 单调有界，则由单调有界准则，知 \(\{b_n\}\) 收敛。令 \(\lim_{n\to\infty} b_n = A\)，在等式 \(b_n=b_{n-1}-\sin b_{n-1}\) 两端取极限，得 \(A=A-\sin A\)，故 \(A=0\)，即 \(\lim_{n\to\infty} b_n = 0\)。</p>
+                            <p>故当 \(n\to\infty\) 时，\(b_n\to 0\) 时，\(b_n=b_{n-1}-\sin b_{n-1}\sim \frac{1}{6}b_{n-1}^3\)，因此 \(a=3\)。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="method5">
+                <h2>方法五：复合函数的极限</h2>
+                
+                <div class="theorem">
+                    <h3>定理一（因变量极限定理）</h3>
+                    <p>设 \(y=f[g(x)]\), \(u=g(x)\), \(y=f(u)\)。若：</p>
+                    <p>① \(\lim_{x\to x_0} g(x) = u_0\)</p>
+                    <p>② \(\lim_{u\to u_0} f(u) = a\)</p>
+                    <p>③ 当 \(x\neq x_0\) 时，\(g(x)\neq u_0\)</p>
+                    <p>则 \(\lim_{x\to x_0} f[g(x)] = a\)。</p>
+                    
+                    <div class="note">
+                        <strong>注意：</strong> 关键是当 \(x\neq 0\) 时，\(g(x)\) 也有零点，故复合函数的极限定理一的这算并不一定成立。
+                    </div>
+                </div>
+                
+                <div class="theorem">
+                    <h3>定理二（中间变量极限定理）</h3>
+                    <p>设 \(u_n\in\) 有限区间 \(I\)，若 \(f(x)\) 在 \(I\) 上严格单调，且 \(\lim_{n\to\infty} f(u_n)\) 存在，则 \(\lim_{n\to\infty} u_n\) 存在。</p>
+                </div>
+                
+                <button class="collapsible">例2.12 - 点击展开详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <h3>🔢 例2.12</h3>
+                            <p>已知数列 \(\{x_n\}\)，其中 \(-\frac{\pi}{2}\leq x_n\leq\frac{\pi}{2}\)，则（&nbsp;&nbsp;&nbsp;&nbsp;）。</p>
+                            <p>(A) 若 \(\lim_{n\to\infty}\cos\sin x_n\) 存在，则 \(\lim_{n\to\infty} x_n\) 存在</p>
+                            <p>(B) 若 \(\lim_{n\to\infty}\sin\cos x_n\) 存在，则 \(\lim_{n\to\infty} x_n\) 存在</p>
+                            <p>(C) 若 \(\lim_{n\to\infty}\cos\sin x_n\) 存在，则 \(\lim_{n\to\infty}\sin x_n\) 存在，但 \(\lim_{n\to\infty} x_n\) 不一定存在</p>
+                            <p>(D) 若 \(\lim_{n\to\infty}\sin\cos x_n\) 存在，则 \(\lim_{n\to\infty}\cos x_n\) 存在，但 \(\lim_{n\to\infty} x_n\) 不一定存在</p>
+                        </div>
+                        
+                        <div class="solution">
+                            <h3>💡 解答</h3>
+                            <p>应选 (D)。</p>
+                            <p>根据定理二，由于 \(\sin x\) 在 \(\left[-\frac{\pi}{2},\frac{\pi}{2}\right]\) 上单调，因此，由 \(\lim_{n\to\infty}\cos\sin x_n\) 存在可得 \(\lim_{n\to\infty}\sin x_n\) 存在，但 \(\cos x\) 在 \(\left[-\frac{\pi}{2},\frac{\pi}{2}\right]\) 上不单调，因此，由 \(\lim_{n\to\infty}\cos\sin x_n\) 存在无法得到 \(\lim_{n\to\infty}\cos x_n\) 存在，进而无法得到 \(\lim_{n\to\infty} x_n\) 存在。故 (A) 正确，(B) 错误。</p>
+                            <p>由于 \(\cos x\) 在 \(\left[-\frac{\pi}{2},\frac{\pi}{2}\right]\) 上不单调，因此，由 \(\lim_{n\to\infty}\cos\sin x_n\) 存在无法得到 \(\lim_{n\to\infty}\sin x_n\) 存在，但可知 (D) 正确，(C) 错误。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <div class="interactive-quiz">
+                <h2>🎯 互动测验</h2>
+                <p>测试你对数列极限的理解！</p>
+                <button class="quiz-button" onclick="showQuiz()">开始测验</button>
+                <div id="quiz-result" style="margin-top: 20px; font-size: 1.2em;"></div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>📖 高等数学·第18讲 - 交互式教程</p>
+            <p>© 2025 数学学习平台</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Collapsible sections
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+        
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+        
+        // Interactive quiz
+        function showQuiz() {
+            const questions = [
+                "判断数列收敛性有哪几种主要方法？",
+                "压缩映射原理的关键条件是什么？",
+                "什么时候使用单调有界准则？"
+            ];
+            const randomQ = questions[Math.floor(Math.random() * questions.length)];
+            document.getElementById('quiz-result').innerHTML = 
+                `<strong>思考题：</strong>${randomQ}<br><br>` +
+                `<em>💡 提示：仔细阅读上面的内容，你会找到答案！</em>`;
+        }
+        
+        // Add animation on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+        
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'all 0.6s ease-out';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
+
+<!-- 
+使用说明：
+1. 将此代码复制到文本编辑器中
+2. 保存为 .html 文件（例如：数列极限教程.html）
+3. 在浏览器中打开即可使用
+4. 所有数学公式通过 MathJax 自动渲染
+5. 点击蓝色按钮展开详细解答
+6. 使用顶部导航快速跳转到不同章节
+7. 支持手机和平板设备访问
+-->

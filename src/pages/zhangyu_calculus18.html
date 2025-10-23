@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="张宇强化高数18讲 - 交互式数学教程">
+    <title>张宇强化高数18讲 - 交互式教程 | Zhang Yu Advanced Calculus Interactive Tutorial</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            displayAlign: 'center',
+            "HTML-CSS": {
+                styles: {'.MathJax_Display': {margin: '1em 0'}},
+                linebreaks: {automatic: true},
+                scale: 100
+            },
+            SVG: {
+                linebreaks: {automatic: true}
+            }
+        });
+    </script>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --dark-bg: #1e293b;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Roboto', sans-serif;
+            line-height: 1.8;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .navbar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .navbar-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .navbar-menu a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        /* Content Card */
+        .content-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-number {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: var(--shadow);
+        }
+
+        /* Collapsible Sections */
+        .collapsible {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible:hover {
+            box-shadow: var(--shadow);
+            transform: translateX(5px);
+        }
+
+        .collapsible-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            user-select: none;
+        }
+
+        .collapsible-header:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .collapsible-icon {
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .collapsible.active .collapsible-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 1.5rem;
+        }
+
+        .collapsible.active .collapsible-content {
+            max-height: 5000px;
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        /* Math Formula Boxes */
+        .formula-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid var(--accent-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .formula-box .MathJax_Display {
+            color: var(--primary-color);
+            font-size: 1.2em;
+        }
+
+        /* Example Boxes */
+        .example-box {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border-left: 4px solid var(--success-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .example-header {
+            font-weight: 700;
+            color: var(--success-color);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Theorem Boxes */
+        .theorem-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .theorem-header {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Note Boxes */
+        .note-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-left: 4px solid var(--danger-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .note-header {
+            font-weight: 700;
+            color: var(--danger-color);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Interactive Quiz */
+        .quiz-container {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .quiz-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .quiz-option {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--secondary-color);
+            transform: translateX(10px);
+            box-shadow: var(--shadow);
+        }
+
+        .quiz-option.correct {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .quiz-option.incorrect {
+            background: var(--danger-color);
+            color: white;
+            border-color: var(--danger-color);
+        }
+
+        .quiz-feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            display: none;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        .quiz-feedback.correct {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .quiz-feedback.incorrect {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: var(--dark-bg);
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'Fira Code', monospace;
+            box-shadow: var(--shadow);
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tr:hover {
+            background: var(--light-bg);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: var(--light-bg);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 2rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .progress-bar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            height: 2rem;
+            border-radius: 1rem;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .navbar-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .navbar-menu {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-bg);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+        }
+
+        .scroll-top.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="navbar-title">
+                <i class="fas fa-book-open"></i>
+                张宇强化高数18讲 | Advanced Calculus Tutorial
+            </div>
+            <div class="navbar-menu">
+                <a href="#chapter1"><i class="fas fa-home"></i> 首页 Home</a>
+                <a href="#examples"><i class="fas fa-lightbulb"></i> 例题 Examples</a>
+                <a href="#theorems"><i class="fas fa-graduation-cap"></i> 定理 Theorems</a>
+                <a href="#quiz"><i class="fas fa-question-circle"></i> 测验 Quiz</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1><i class="fas fa-calculator"></i> 张宇强化高数18讲</h1>
+        <p>Zhang Yu's Advanced Calculus 18 Lectures - Interactive Tutorial</p>
+        <p style="margin-top: 1rem; font-size: 1rem; opacity: 0.9;">
+            <i class="fas fa-book"></i> Pages 244-286 | 
+            <i class="fas fa-infinity"></i> 微积分强化训练 | 
+            <i class="fas fa-chart-line"></i> Calculus Enhancement Training
+        </p>
+    </div>
+
+    <div class="container">
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-bar" style="width: 0%" id="progressBar">0% 完成</div>
+        </div>
+
+        <!-- Chapter 1: 极限与连续 Limits and Continuity -->
+        <div class="content-card" id="chapter1">
+            <div class="section-header">
+                <div class="section-number">1</div>
+                <h2><i class="fas fa-infinity"></i> 极限与连续 | Limits and Continuity</h2>
+            </div>
+
+            <!-- Collapsible Section 1.1 -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <span><i class="fas fa-arrow-right"></i> 1.1 极限的定义与性质 | Definition and Properties of Limits</span>
+                    <i class="fas fa-chevron-down collapsible-icon"></i>
+                </div>
+                <div class="collapsible-content">
+                    <div class="theorem-box">
+                        <div class="theorem-header">
+                            <i class="fas fa-book-open"></i> 定理 Theorem: 极限的定义
+                        </div>
+                        <p>设函数 $f(x)$ 在点 $x_0$ 的某个去心邻域内有定义。如果存在常数 $A$，对于任意给定的正数 $\varepsilon$，总存在正数 $\delta$，使得当 $0 < |x - x_0| < \delta$ 时，有：</p>
+                        <div class="formula-box">
+                            $$|f(x) - A| < \varepsilon$$
+                        </div>
+                        <p>则称常数 $A$ 为函数 $f(x)$ 当 $x \to x_0$ 时的极限，记作：</p>
+                        <div class="formula-box">
+                            $$\lim_{x \to x_0} f(x) = A$$
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-header">
+                            <i class="fas fa-pen"></i> 例题 Example 1: 计算极限
+                        </div>
+                        <p><strong>题目：</strong>求极限 $\displaystyle \lim_{x \to 0} \frac{\sin x}{x}$</p>
+                        <p><strong>解：</strong></p>
+                        <p>这是一个重要极限。我们使用夹逼定理来证明：</p>
+                        <p>当 $0 < x < \frac{\pi}{2}$ 时，有：</p>
+                        <div class="formula-box">
+                            $$\sin x < x < \tan x$$
+                        </div>
+                        <p>两边同时除以 $\sin x$：</p>
+                        <div class="formula-box">
+                            $$1 < \frac{x}{\sin x} < \frac{1}{\cos x}$$
+                        </div>
+                        <p>取倒数：</p>
+                        <div class="formula-box">
+                            $$\cos x < \frac{\sin x}{x} < 1$$
+                        </div>
+                        <p>当 $x \to 0$ 时，$\cos x \to 1$，由夹逼定理得：</p>
+                        <div class="formula-box">
+                            $$\lim_{x \to 0} \frac{\sin x}{x} = 1$$
+                        </div>
+                        <button class="btn btn-success" onclick="showSolution(1)">
+                            <i class="fas fa-check"></i> 查看详细步骤 Show Detailed Steps
+                        </button>
+                        <div id="solution1" style="display:none; margin-top:1rem; padding:1rem; background:#f0fdf4; border-radius:0.5rem;">
+                            <p><strong>详细步骤：</strong></p>
+                            <ol style="padding-left: 2rem;">
+                                <li>利用单位圆的几何关系建立不等式</li>
+                                <li>应用夹逼定理</li>
+                                <li>计算两侧极限</li>
+                                <li>得出结论</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="note-box">
+                        <div class="note-header">
+                            <i class="fas fa-exclamation-triangle"></i> 重要提示 Important Note
+                        </div>
+                        <p>两个重要极限公式：</p>
+                        <div class="formula-box">
+                            $$\lim_{x \to 0} \frac{\sin x}{x} = 1$$
+                            $$\lim_{x \to \infty} \left(1 + \frac{1}{x}\right)^x = e$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible Section 1.2 -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <span><i class="fas fa-arrow-right"></i> 1.2 无穷小与无穷大 | Infinitesimals and Infinities</span>
+                    <i class="fas fa-chevron-down collapsible-icon"></i>
+                </div>
+                <div class="collapsible-content">
+                    <div class="theorem-box">
+                        <div class="theorem-header">
+                            <i class="fas fa-book-open"></i> 定义 Definition: 无穷小
+                        </div>
+                        <p>如果函数 $f(x)$ 当 $x \to x_0$（或 $x \to \infty$）时的极限为零，则称 $f(x)$ 为当 $x \to x_0$（或 $x \to \infty$）时的无穷小。</p>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-header">
+                            <i class="fas fa-pen"></i> 例题 Example 2: 无穷小的比较
+                        </div>
+                        <p><strong>题目：</strong>比较当 $x \to 0$ 时，$x^2$ 和 $\sin x$ 的阶数</p>
+                        <p><strong>解：</strong></p>
+                        <div class="formula-box">
+                            $$\lim_{x \to 0} \frac{x^2}{\sin x} = \lim_{x \to 0} \frac{x^2}{x} = \lim_{x \to 0} x = 0$$
+                        </div>
+                        <p>因此，$x^2$ 是 $\sin x$ 的高阶无穷小，记作 $x^2 = o(\sin x)$</p>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>无穷小类型 Type</th>
+                                    <th>定义 Definition</th>
+                                    <th>记号 Notation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>同阶无穷小</td>
+                                    <td>$\displaystyle \lim \frac{\alpha}{\beta} = c \neq 0$</td>
+                                    <td>$\alpha \sim c\beta$</td>
+                                </tr>
+                                <tr>
+                                    <td>等价无穷小</td>
+                                    <td>$\displaystyle \lim \frac{\alpha}{\beta} = 1$</td>
+                                    <td>$\alpha \sim \beta$</td>
+                                </tr>
+                                <tr>
+                                    <td>高阶无穷小</td>
+                                    <td>$\displaystyle \lim \frac{\alpha}{\beta} = 0$</td>
+                                    <td>$\alpha = o(\beta)$</td>
+                                </tr>
+                                <tr>
+                                    <td>低阶无穷小</td>
+                                    <td>$\displaystyle \lim \frac{\alpha}{\beta} = \infty$</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible Section 1.3 -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <span><i class="fas fa-arrow-right"></i> 1.3 连续性与间断点 | Continuity and Discontinuities</span>
+                    <i class="fas fa-chevron-down collapsible-icon"></i>
+                </div>
+                <div class="collapsible-content">
+                    <div class="theorem-box">
+                        <div class="theorem-header">
+                            <i class="fas fa-book-open"></i> 定义 Definition: 函数的连续性
+                        </div>
+                        <p>设函数 $f(x)$ 在点 $x_0$ 的某个邻域内有定义。如果：</p>
+                        <div class="formula-box">
+                            $$\lim_{x \to x_0} f(x) = f(x_0)$$
+                        </div>
+                        <p>则称函数 $f(x)$ 在点 $x_0$ 处连续。</p>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-header">
+                            <i class="fas fa-pen"></i> 例题 Example 3: 判断连续性
+                        </div>
+                        <p><strong>题目：</strong>判断函数 $f(x) = \begin{cases} x^2, & x \neq 0 \\ 1, & x = 0 \end{cases}$ 在 $x = 0$ 处的连续性</p>
+                        <p><strong>解：</strong></p>
+                        <p>计算左右极限：</p>
+                        <div class="formula-box">
+                            $$\lim_{x \to 0^-} f(x) = \lim_{x \to 0^-} x^2 = 0$$
+                            $$\lim_{x \to 0^+} f(x) = \lim_{x \to 0^+} x^2 = 0$$
+                        </div>
+                        <p>但 $f(0) = 1 \neq 0$，因此函数在 $x = 0$ 处不连续，这是一个可去间断点。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chapter 2: 导数与微分 Derivatives and Differentials -->
+        <div class="content-card" id="chapter2">
+            <div class="section-header">
+                <div class="section-number">2</div>
+                <h2><i class="fas fa-chart-line"></i> 导数与微分 | Derivatives and Differentials</h2>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <span><i class="fas fa-arrow-right"></i> 2.1 导数的定义 | Definition of Derivative</span>
+                    <i class="fas fa-chevron-down collapsible-icon"></i>
+                </div>
+                <div class="collapsible-content">
+                    <div class="theorem-box">
+                        <div class="theorem-header">
+                            <i class="fas fa-book-open"></i> 定义 Definition: 导数
+                        </div>
+                        <p>设函数 $y = f(x)$ 在点 $x_0$ 的某个邻域内有定义，当自变量 $x$ 在 $x_0$ 处取得增量 $\Delta x$ 时，相应地函数取得增量 $\Delta y = f(x_0 + \Delta x) - f(x_0)$。如果极限：</p>
+                        <div class="formula-box">
+                            $$\lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x} = \lim_{\Delta x \to 0} \frac{f(x_0 + \Delta x) - f(x_0)}{\Delta x}$$
+                        </div>
+                        <p>存在，则称函数 $f(x)$ 在点 $x_0$ 处可导，并称这个极限为 $f(x)$ 在点 $x_0$ 处的导数，记作：</p>
+                        <div class="formula-box">
+                            $$f'(x_0) \quad \text{或} \quad \frac{dy}{dx}\bigg|_{x=x_0} \quad \text{或} \quad \frac{df(x)}{dx}\bigg|_{x=x_0}$$
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-header">
+                            <i class="fas fa-pen"></i> 例题 Example 4: 用定义求导数
+                        </div>
+                        <p><strong>题目：</strong>用导数定义求 $f(x) = x^2$ 在 $x = 2$ 处的导数</p>
+                        <p><strong>解：</strong></p>
+                        <div class="formula-box">
+                            \begin{align}
+                            f'(2) &= \lim_{\Delta x \to 0} \frac{f(2 + \Delta x) - f(2)}{\Delta x} \\
+                            &= \lim_{\Delta x \to 0} \frac{(2 + \Delta x)^2 - 4}{\Delta x} \\
+                            &= \lim_{\Delta x \to 0} \frac{4 + 4\Delta x + (\Delta x)^2 - 4}{\Delta x} \\
+                            &= \lim_{\Delta x \to 0} \frac{4\Delta x + (\Delta x)^2}{\Delta x} \\
+                            &= \lim_{\Delta x \to 0} (4 + \Delta x) = 4
+                            \end{align}
+                        </div>
+                    </div>
+
+                    <div class="note-box">
+                        <div class="note-header">
+                            <i class="fas fa-lightbulb"></i> 常用导数公式 Common Derivative Formulas
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>函数 Function</th>
+                                        <th>导数 Derivative</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>$f(x) = c$ (常数)</td>
+                                        <td>$f'(x) = 0$</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$f(x) = x^n$</td>
+                                        <td>$f'(x) = nx^{n-1}$</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$f(x) = \sin x$</td>
+                                        <td>$f'(x) = \cos x$</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$f(x) = \cos x$</td>
+                                        <td>$f'(x) = -\sin x$</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$f(x) = e^x$</td>
+                                        <td>$f'(x) = e^x$</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$f(x) = \ln x$</td>
+                                        <td>$f'(x) = \frac{1}{x}$</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Quiz Section -->
+        <div class="content-card" id="quiz">
+            <div class="section-header">
+                <div class="section-number">Q</div>
+                <h2><i class="fas fa-question-circle"></i> 互动测验 | Interactive Quiz</h2>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-question">
+                    <i class="fas fa-question"></i> 问题 1: 计算极限 $\displaystyle \lim_{x \to 0} \frac{\sin 3x}{x}$ 的值是多少？
+                </div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 1)">
+                        A. 0
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 1)">
+                        B. 1
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true, 1)">
+                        C. 3
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 1)">
+                        D. $\infty$
+                    </div>
+                </div>
+                <div class="quiz-feedback" id="feedback1"></div>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-question">
+                    <i class="fas fa-question"></i> 问题 2: 函数 $f(x) = x^3$ 在 $x = 1$ 处的导数是多少？
+                </div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 2)">
+                        A. 1
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 2)">
+                        B. 2
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true, 2)">
+                        C. 3
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 2)">
+                        D. 4
+                    </div>
+                </div>
+                <div class="quiz-feedback" id="feedback2"></div>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-question">
+                    <i class="fas fa-question"></i> 问题 3: 下列哪个函数在 $x = 0$ 处连续？
+                </div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 3)">
+                        A. $f(x) = \frac{1}{x}$
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true, 3)">
+                        B. $f(x) = x^2$
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 3)">
+                        C. $f(x) = \frac{\sin x}{x}$ (未定义在 $x=0$)
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 3)">
+                        D. $f(x) = |x|/x$
+                    </div>
+                </div>
+                <div class="quiz-feedback" id="feedback3"></div>
+            </div>
+        </div>
+
+        <!-- Practice Problems -->
+        <div class="content-card" id="examples">
+            <div class="section-header">
+                <div class="section-number">P</div>
+                <h2><i class="fas fa-pencil-alt"></i> 练习题 | Practice Problems</h2>
+            </div>
+
+            <div class="example-box">
+                <div class="example-header">
+                    <i class="fas fa-dumbbell"></i> 练习 1: 极限计算
+                </div>
+                <p><strong>题目：</strong>计算下列极限</p>
+                <ol style="padding-left: 2rem; margin-top: 1rem;">
+                    <li>$\displaystyle \lim_{x \to 0} \frac{e^x - 1}{x}$</li>
+                    <li>$\displaystyle \lim_{x \to \infty} \left(1 + \frac{2}{x}\right)^x$</li>
+                    <li>$\displaystyle \lim_{x \to 0} \frac{\tan x - \sin x}{x^3}$</li>
+                </ol>
+                <button class="btn btn-primary" onclick="toggleHint(1)">
+                    <i class="fas fa-lightbulb"></i> 提示 Hint
+                </button>
+                <div id="hint1" style="display:none; margin-top:1rem; padding:1rem; background:#dbeafe; border-radius:0.5rem;">
+                    <p><strong>提示：</strong></p>
+                    <ul style="padding-left: 2rem;">
+                        <li>第1题：使用重要极限或洛必达法则</li>
+                        <li>第2题：转换为 $e$ 的形式</li>
+                        <li>第3题：使用泰勒展开式</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="example-box">
+                <div class="example-header">
+                    <i class="fas fa-dumbbell"></i> 练习 2: 导数计算
+                </div>
+                <p><strong>题目：</strong>求下列函数的导数</p>
+                <ol style="padding-left: 2rem; margin-top: 1rem;">
+                    <li>$f(x) = x^3 \sin x$</li>
+                    <li>$f(x) = \frac{e^x}{x^2 + 1}$</li>
+                    <li>$f(x) = \ln(\cos x)$</li>
+                </ol>
+                <button class="btn btn-primary" onclick="toggleHint(2)">
+                    <i class="fas fa-lightbulb"></i> 提示 Hint
+                </button>
+                <div id="hint2" style="display:none; margin-top:1rem; padding:1rem; background:#dbeafe; border-radius:0.5rem;">
+                    <p><strong>提示：</strong></p>
+                    <ul style="padding-left: 2rem;">
+                        <li>第1题：使用乘积法则</li>
+                        <li>第2题：使用商法则</li>
+                        <li>第3题：使用复合函数求导法则（链式法则）</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="content-card">
+            <div class="section-header">
+                <div class="section-number"><i class="fas fa-star"></i></div>
+                <h2><i class="fas fa-clipboard-check"></i> 本章总结 | Chapter Summary</h2>
+            </div>
+            <div class="note-box">
+                <div class="note-header">
+                    <i class="fas fa-key"></i> 核心要点 Key Points
+                </div>
+                <ul style="padding-left: 2rem; line-height: 2;">
+                    <li><strong>极限理论：</strong>掌握极限的定义、性质和计算方法</li>
+                    <li><strong>连续性：</strong>理解函数连续的条件和间断点的分类</li>
+                    <li><strong>导数：</strong>熟练掌握导数的定义和各种求导法则</li>
+                    <li><strong>应用：</strong>能够运用所学知识解决实际问题</li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 1rem;">
+                <h3 style="color: var(--accent-color); margin-bottom: 1rem;">
+                    <i class="fas fa-trophy"></i> 学习建议 Study Tips
+                </h3>
+                <ol style="padding-left: 2rem; line-height: 2;">
+                    <li>多做练习题，熟能生巧</li>
+                    <li>理解概念的本质，不要死记硬背</li>
+                    <li>注意各个知识点之间的联系</li>
+                    <li>遇到困难及时复习基础知识</li>
+                    <li>善于总结归纳，形成知识体系</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p><i class="fas fa-book"></i> 张宇强化高数18讲 - 交互式教程</p>
+        <p>Zhang Yu's Advanced Calculus 18 Lectures - Interactive Tutorial</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+            本教程使用 <a href="https://www.mathjax.org/" target="_blank">MathJax</a> 渲染数学公式
+        </p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+            © 2024 Educational Resource | For Learning Purposes Only
+        </p>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+        // Collapsible sections functionality
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const collapsible = this.parentElement;
+                collapsible.classList.toggle('active');
+                updateProgress();
+            });
+        });
+
+        // Show solution function
+        function showSolution(num) {
+            const solution = document.getElementById('solution' + num);
+            if (solution.style.display === 'none') {
+                solution.style.display = 'block';
+            } else {
+                solution.style.display = 'none';
+            }
+        }
+
+        // Toggle hint function
+        function toggleHint(num) {
+            const hint = document.getElementById('hint' + num);
+            if (hint.style.display === 'none') {
+                hint.style.display = 'block';
+            } else {
+                hint.style.display = 'none';
+            }
+        }
+
+        // Quiz answer checking
+        function checkAnswer(element, isCorrect, questionNum) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback' + questionNum);
+            
+            // Remove previous selections
+            options.forEach(opt => {
+                opt.classList.remove('correct', 'incorrect');
+            });
+            
+            // Mark the selected answer
+            if (isCorrect) {
+                element.classList.add('correct');
+                feedback.textContent = '✓ 正确！Correct! 答案解析：' + getExplanation(questionNum);
+                feedback.className = 'quiz-feedback correct show';
+            } else {
+                element.classList.add('incorrect');
+                feedback.textContent = '✗ 错误！Incorrect! 请再试一次。Try again.';
+                feedback.className = 'quiz-feedback incorrect show';
+            }
+            
+            updateProgress();
+        }
+
+        // Get explanation for each question
+        function getExplanation(questionNum) {
+            const explanations = {
+                1: '使用重要极限 lim(x→0) sin(x)/x = 1，将 sin(3x) 改写为 3·sin(3x)/(3x)，得到结果为 3。',
+                2: '使用幂函数求导公式 (x^n)\' = nx^(n-1)，当 n=3 时，f\'(x) = 3x^2，代入 x=1 得 f\'(1) = 3。',
+                3: 'x^2 是多项式函数，在整个实数域上连续，因此在 x=0 处也连续。'
+            };
+            return explanations[questionNum] || '';
+        }
+
+        // Progress bar update
+        function updateProgress() {
+            const totalSections = document.querySelectorAll('.collapsible').length;
+            const openSections = document.querySelectorAll('.collapsible.active').length;
+            const correctAnswers = document.querySelectorAll('.quiz-option.correct').length;
+            const totalQuestions = document.querySelectorAll('.quiz-container').length;
+            
+            const progress = Math.round(((openSections / totalSections) * 50 + (correctAnswers / totalQuestions) * 50));
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = progress + '% 完成';
+        }
+
+        // Scroll to top functionality
+        window.onscroll = function() {
+            const scrollTop = document.getElementById('scrollTop');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollTop.classList.add('show');
+            } else {
+                scrollTop.classList.remove('show');
+            }
+        };
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Initialize MathJax
+        if (window.MathJax) {
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+        }
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.content-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+
+        console.log('%c张宇强化高数18讲 - 交互式教程', 'color: #2563eb; font-size: 20px; font-weight: bold;');
+        console.log('%cZhang Yu Advanced Calculus Interactive Tutorial', 'color: #7c3aed; font-size: 16px;');
+        console.log('%c本教程包含丰富的交互功能，祝您学习愉快！', 'color: #10b981; font-size: 14px;');
+    </script>
+</body>
+</html>
+
+

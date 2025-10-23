@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>武忠祥高等数学基础篇 - 函数极限连续 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for mathematical formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #ecf0f1;
+            --dark-bg: #34495e;
+            --text-color: #2c3e50;
+            --code-bg: #2d2d2d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--dark-bg) 100%);
+            color: white;
+            padding: 30px 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar h2 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--secondary-color);
+            color: #fff;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar ul li {
+            margin: 10px 0;
+        }
+        
+        .sidebar ul li a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        
+        .sidebar ul li a:hover {
+            background: var(--secondary-color);
+            transform: translateX(5px);
+        }
+        
+        .sidebar ul li ul {
+            margin-left: 15px;
+            margin-top: 5px;
+        }
+        
+        .sidebar ul li ul li a {
+            font-size: 0.85em;
+            padding: 8px 12px;
+        }
+        
+        /* Main Content */
+        .content {
+            flex: 1;
+            padding: 50px;
+            background: white;
+            overflow-y: auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        /* Section Styles */
+        .section {
+            margin: 40px 0;
+            padding: 30px;
+            background: linear-gradient(to right, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            border-left: 5px solid var(--secondary-color);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        
+        .section h3 {
+            color: var(--secondary-color);
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+        
+        .section h4 {
+            color: var(--accent-color);
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        /* Collapsible Sections */
+        .collapsible {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #2980b9 100%);
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            font-weight: 500;
+            border-radius: 8px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .collapsible:hover {
+            background: linear-gradient(135deg, #2980b9 0%, var(--secondary-color) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: white;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .collapsible-content-inner {
+            padding: 25px;
+        }
+        
+        /* Formula Box */
+        .formula-box {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-left: 5px solid var(--warning-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(243, 156, 18, 0.2);
+        }
+        
+        .formula-box strong {
+            color: var(--accent-color);
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        /* Example Box */
+        .example-box {
+            background: linear-gradient(135deg, #dfe6e9 0%, #b2bec3 100%);
+            border-left: 5px solid var(--success-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(39, 174, 96, 0.2);
+        }
+        
+        .example-box h4 {
+            color: var(--success-color);
+            margin-bottom: 15px;
+        }
+        
+        /* Theorem Box */
+        .theorem-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 2px solid var(--secondary-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.2);
+        }
+        
+        .theorem-box h4 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        /* Note Box */
+        .note-box {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+            border-left: 5px solid var(--warning-color);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-style: italic;
+        }
+        
+        /* Code Block */
+        pre {
+            background: var(--code-bg);
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Roboto Mono', monospace;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+        
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: var(--accent-color);
+        }
+        
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #2980b9 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #e9ecef;
+        }
+        
+        /* Interactive Quiz */
+        .quiz-container {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            color: white;
+        }
+        
+        .quiz-question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        
+        .quiz-options {
+            list-style: none;
+        }
+        
+        .quiz-options li {
+            background: white;
+            color: var(--text-color);
+            padding: 12px 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-options li:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateX(10px);
+        }
+        
+        .quiz-feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .quiz-feedback.correct {
+            background: var(--success-color);
+            display: block;
+        }
+        
+        .quiz-feedback.incorrect {
+            background: var(--accent-color);
+            display: block;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 10px 5px;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #2980b9 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: var(--secondary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: fixed;
+                top: 0;
+                left: 0;
+                transform: translateX(-100%);
+                z-index: 999;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+        }
+        
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--secondary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.4);
+        }
+        
+        .scroll-top.visible {
+            opacity: 1;
+        }
+        
+        .scroll-top:hover {
+            background: #2980b9;
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ 菜单</div>
+    
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <h2>📚 目录导航</h2>
+            <ul>
+                <li><a href="#introduction">课程介绍</a></li>
+                <li><a href="#chapter1">第一章：函数极限连续</a>
+                    <ul>
+                        <li><a href="#section1-1">§1 函数</a></li>
+                        <li><a href="#section1-2">§2 极限</a></li>
+                        <li><a href="#section1-3">§3 函数的连续性</a></li>
+                    </ul>
+                </li>
+                <li><a href="#formulas">常用公式速查</a></li>
+                <li><a href="#quiz">互动测验</a></li>
+            </ul>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="content">
+            <div class="header">
+                <h1>🎓 武忠祥高等数学基础篇</h1>
+                <p>函数·极限·连续 交互式学习教程</p>
+            </div>
+            
+            <!-- Introduction -->
+            <section id="introduction" class="section">
+                <h2>📖 课程介绍</h2>
+                <p>本教程基于武忠祥老师的《高等数学基础篇》，专注于高等数学的核心基础——<strong>函数、极限与连续性</strong>。这是整个高等数学学习的基石，掌握好这部分内容对后续学习至关重要。</p>
+                
+                <div class="note-box">
+                    <strong>💡 学习建议：</strong> 建议按照章节顺序学习，每个知识点都配有详细例题和互动练习。点击章节标题可展开/折叠内容。
+                </div>
+                
+                <h3>教材特色</h3>
+                <ul>
+                    <li>✅ 系统完整的知识体系</li>
+                    <li>✅ 丰富的例题解析</li>
+                    <li>✅ 循序渐进的难度设计</li>
+                    <li>✅ 突出重点难点</li>
+                </ul>
+            </section>
+            
+            <!-- Chapter 1: Functions, Limits, and Continuity -->
+            <section id="chapter1" class="section">
+                <h2>第一章：函数 极限 连续</h2>
+                
+                <!-- Section 1.1: Functions -->
+                <button class="collapsible" id="section1-1">第一节：函数 📐</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h3>一、函数的概念及常见函数</h3>
+                        
+                        <div class="theorem-box">
+                            <h4>📌 函数定义</h4>
+                            <p>设 \(x\) 和 \(y\) 是两个变量，\(D\) 是一个给定的数集。如果对于 \(D\) 中每个数 \(x\)，按照某个对应法则 \(f\)，总有唯一确定的数值 \(y\) 和它对应，则称 \(y\) 是 \(x\) 的<strong>函数</strong>，记为：</p>
+                            <p style="text-align: center;">$$y = f(x), \quad x \in D$$</p>
+                            <p>其中：</p>
+                            <ul>
+                                <li>\(x\) 称为<strong>自变量</strong></li>
+                                <li>\(y\) 称为<strong>因变量</strong></li>
+                                <li>\(D\) 称为函数的<strong>定义域</strong>，记作 \(D_f = D\)</li>
+                                <li>函数值的全体构成的集合称为函数的<strong>值域</strong>，记作 \(R_f\) 或 \(f(D)\)</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>⚠️ 注意：</strong>函数有两个基本要素：定义域和对应法则。当两个函数的定义域和对应法则完全相同时，它们就是同一函数。
+                        </div>
+                        
+                        <h4>1. 符号函数（Sign Function）</h4>
+                        <div class="formula-box">
+                            <strong>定义：</strong>
+                            $$y = \text{sgn}\,x = \begin{cases} 
+                            -1, & x < 0 \\
+                            0, & x = 0 \\
+                            1, & x > 0
+                            \end{cases}$$
+                        </div>
+                        
+                        <h4>2. 取整函数（Floor Function）</h4>
+                        <div class="formula-box">
+                            <strong>定义：</strong>
+                            <p>设 \(x\) 为任意实数，不超过 \(x\) 的最大整数称为 \(x\) 的整数部分，记为 \([x]\) 或 \(\lfloor x \rfloor\)，称为取整函数。</p>
+                            <strong>基本性质：</strong>
+                            $$x - 1 < [x] \leq x < [x] + 1, \quad x \in \mathbb{R}$$
+                        </div>
+                        
+                        <h4>3. 复合函数（Composite Function）</h4>
+                        <div class="theorem-box">
+                            <h4>📌 复合函数定义</h4>
+                            <p>设 \(y = f(u)\) 的定义域为 \(D_f\)，\(u = g(x)\) 的定义域为 \(D_g\)，值域为 \(R_g\)，如果 \(D_g \cap D_f \neq \emptyset\)，则由 \(y = f[g(x)]\) 确定的函数称为复合函数。</p>
+                            <p>其定义域为：$$\{x \mid x \in D_g, g(x) \in D_f\}$$</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>💡 重要提示：</strong>不是任何两个函数都可以复合！例如，\(y = f(u) = \ln u\) （\(u > 0\)）与 \(u = g(x) = \sin x - 1\) （\(R_g = [-2, 0]\)）无法复合，因为 \(D_g \cap R_g = \emptyset\)。
+                        </div>
+                        
+                        <h4>4. 反函数（Inverse Function）</h4>
+                        <div class="theorem-box">
+                            <h4>📌 反函数定义</h4>
+                            <p>设函数 \(y = f(x)\) 的定义域为 \(D\)，值域为 \(R_y\)。如果对于 \(R_y\) 中每个 \(y\)，在 \(D\) 中都有唯一确定的 \(x\) 使得 \(y = f(x)\)，则由此定义的函数 \(x = \varphi(y)\) 称为 \(y = f(x)\) 的<strong>反函数</strong>。</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>📝 反函数性质：</strong>
+                            <ul>
+                                <li>不是每个函数都有反函数（例如 \(y = x^2\) 没有反函数）</li>
+                                <li>单调函数一定有反函数，但反之不然</li>
+                                <li>有时可用 \(y = f^{-1}(x)\) 表示反函数</li>
+                                <li>函数 \(y = f(x)\) 与其反函数 \(x = f^{-1}(y)\) 的图形关于直线 \(y = x\) 对称</li>
+                                <li>\(f[f^{-1}(x)] = x\)，\(f^{-1}[f(x)] = x\)</li>
+                            </ul>
+                        </div>
+                        
+                        <h4>5. 基本初等函数</h4>
+                        <p>幂函数、指数函数、对数函数、三角函数及反三角函数统称为<strong>基本初等函数</strong>。</p>
+                        
+                        <div class="example-box">
+                            <h4>📊 幂函数：\(y = x^\alpha\) （\(\alpha\) 为实数）</h4>
+                            <p><strong>常见幂函数：</strong></p>
+                            <ul>
+                                <li>\(y = x\), \(y = x^2\), \(y = x^3\)</li>
+                                <li>\(y = \sqrt{x}\), \(y = \sqrt[3]{x}\)</li>
+                                <li>\(y = \frac{1}{x}\)</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>📈 指数函数：\(y = a^x\) （\(a > 0, a \neq 1\)）</h4>
+                            <p><strong>性质：</strong></p>
+                            <ul>
+                                <li>定义域：\((-\infty, +\infty)\)</li>
+                                <li>值域：\((0, +\infty)\)</li>
+                                <li>当 \(a > 1\) 时，\(y = a^x\) 单调递增</li>
+                                <li>当 \(0 < a < 1\) 时，\(y = a^x\) 单调递减</li>
+                                <li>重要：$$\lim_{x \to -\infty} e^x = 0, \quad \lim_{x \to +\infty} e^x = +\infty$$</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>📉 对数函数：\(y = \log_a x\) （\(a > 0, a \neq 1\)）</h4>
+                            <p><strong>性质：</strong></p>
+                            <ul>
+                                <li>定义域：\((0, +\infty)\)</li>
+                                <li>值域：\((-\infty, +\infty)\)</li>
+                                <li>当 \(a > 1\) 时，\(y = \log_a x\) 单调递增</li>
+                                <li>当 \(0 < a < 1\) 时，\(y = \log_a x\) 单调递减</li>
+                                <li>重要：$$\lim_{x \to 0^+} \ln x = -\infty, \quad \lim_{x \to +\infty} \ln x = +\infty$$</li>
+                            </ul>
+                        </div>
+                        
+                        <h3>二、函数的性质</h3>
+                        
+                        <h4>1. 单调性</h4>
+                        <div class="theorem-box">
+                            <p>设 \(y = f(x)\) 在某区间 \(I\) 上有定义，如果对于区间 \(I\) 内的任意两点 \(x_1 < x_2\)，恒有：</p>
+                            <ul>
+                                <li>\(f(x_1) < f(x_2)\) 或 \(f(x_1) > f(x_2)\)，则称 \(y = f(x)\) 在该区间内<strong>单调递增</strong>（或<strong>单调递减</strong>）</li>
+                            </ul>
+                        </div>
+                        
+                        <h4>2. 奇偶性</h4>
+                        <div class="theorem-box">
+                            <p>设 \(y = f(x)\) 的定义域 \(D\) 关于原点对称，若对任意 \(x \in D\)，如果恒有：</p>
+                            <ul>
+                                <li>\(f(-x) = f(x)\)，则称 \(f(x)\) 为 \(D\) 上的<strong>偶函数</strong></li>
+                                <li>\(f(-x) = -f(x)\)，则称 \(f(x)\) 为 \(D\) 上的<strong>奇函数</strong></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>📝 奇偶函数性质：</strong>
+                            <ul>
+                                <li>奇函数的图形关于原点对称</li>
+                                <li>偶函数的图形关于 \(y\) 轴对称</li>
+                                <li>两个奇（偶）函数之和仍为奇（偶）函数</li>
+                                <li>两个奇（偶）函数之积为偶函数</li>
+                                <li>奇函数 × 偶函数 = 奇函数</li>
+                            </ul>
+                        </div>
+                        
+                        <h4>3. 周期性</h4>
+                        <div class="theorem-box">
+                            <p>设 \(y = f(x)\) 的定义域为 \(D\)，如果存在实数 \(T > 0\)，使得对于任意 \(x \in D\)，恒有 \(f(x + T) = f(x)\)，则称 \(f(x)\) 为以 \(T\) 为<strong>周期</strong>的<strong>周期函数</strong>。</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>💡 周期函数示例：</strong>
+                            <ul>
+                                <li>\(\sin x\) 和 \(\cos x\) 以 \(2\pi\) 为周期</li>
+                                <li>\(\sin 2x\), \(|\sin x|\) 以 \(\pi\) 为周期</li>
+                                <li>\(\tan x\), \(\cot x\) 以 \(\pi\) 为周期</li>
+                                <li>若 \(f(x)\) 以 \(T\) 为周期，则 \(f(ax + b)\) 以 \(\frac{T}{|a|}\) 为周期</li>
+                            </ul>
+                        </div>
+                        
+                        <h4>4. 有界性</h4>
+                        <div class="theorem-box">
+                            <p>设 \(y = f(x)\) 在集合 \(X\) 上有定义。若存在 \(M > 0\)，使得对任意 \(x \in X\)，恒有：</p>
+                            <p>$$|f(x)| \leq M$$</p>
+                            <p>则称 \(f(x)\) 在 \(X\) 上为<strong>有界函数</strong>。否则称 \(f(x)\) 在 \(X\) 上为<strong>无界函数</strong>。</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>📝 常见有界函数：</strong>
+                            <ul>
+                                <li>\(|\sin x| \leq 1\), \(|\cos x| \leq 1\)</li>
+                                <li>\(|\arcsin x| \leq \frac{\pi}{2}\), \(|\arctan x| < \frac{\pi}{2}\)</li>
+                                <li>\(|\arccos x| \leq \pi\)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 1.2: Limits -->
+                <button class="collapsible" id="section1-2">第二节：极限 📊</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h3>一、极限的概念</h3>
+                        
+                        <h4>1. 数列的极限</h4>
+                        <div class="theorem-box">
+                            <h4>📌 数列极限定义（\(\varepsilon-N\) 语言）</h4>
+                            <p>如果对于任意给定的 \(\varepsilon > 0\)，总存在正整数 \(N\)，当 \(n > N\) 时，恒有：</p>
+                            <p>$$|x_n - a| < \varepsilon$$</p>
+                            <p>成立，则称常数 \(a\) 为数列 \(\{x_n\}\) 当 \(n \to \infty\) 时的<strong>极限</strong>，记为：</p>
+                            <p>$$\lim_{n \to \infty} x_n = a$$</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>💡 几何意义：</strong>\(\varepsilon\) 刻画 \(x_n\) 与 \(a\) 的接近程度，\(N\) 是用来刻画极限过程的。对于任何邻域 \((a - \varepsilon, a + \varepsilon)\)，一定存在 \(N\)，当 \(n > N\) 时，第 \(N\) 项以后的所有项都落在开区间 \((a - \varepsilon, a + \varepsilon)\) 内，而有限项（最多有 \(N\) 项）在这区间之外。
+                        </div>
+                        
+                        <h4>2. 函数的极限</h4>
+                        
+                        <div class="theorem-box">
+                            <h4>📌 函数极限定义（\(x \to x_0\) 时）</h4>
+                            <p>设函数 \(f(x)\) 在点 \(x_0\) 的某去心邻域内有定义。如果对于任意给定的 \(\varepsilon > 0\)，总存在 \(\delta > 0\)，当 \(0 < |x - x_0| < \delta\) 时，恒有：</p>
+                            <p>$$|f(x) - A| < \varepsilon$$</p>
+                            <p>成立，则称常数 \(A\) 为函数 \(f(x)\) 当 \(x \to x_0\) 时的<strong>极限</strong>，记为：</p>
+                            <p>$$\lim_{x \to x_0} f(x) = A$$</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>📌 函数极限定义（\(x \to \infty\) 时）</h4>
+                            <p>若对于任意给定的 \(\varepsilon > 0\)，总存在 \(X > 0\)，当 \(|x| > X\) 时，恒有：</p>
+                            <p>$$|f(x) - A| < \varepsilon$$</p>
+                            <p>成立，则称常数 \(A\) 为函数 \(f(x)\) 当 \(x \to \infty\) 时的<strong>极限</strong>，记为：</p>
+                            <p>$$\lim_{x \to \infty} f(x) = A$$</p>
+                        </div>
+                        
+                        <h4>3. 左极限与右极限</h4>
+                        <div class="formula-box">
+                            <strong>左极限：</strong>
+                            $$\lim_{x \to x_0^-} f(x) = f(x_0 - 0) = A$$
+                            <strong>右极限：</strong>
+                            $$\lim_{x \to x_0^+} f(x) = f(x_0 + 0) = A$$
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>⭐ 重要定理</h4>
+                            <p>极限 \(\lim_{x \to x_0} f(x)\) 存在的充要条件是：极限 \(\lim_{x \to x_0^-} f(x)\) 和 \(\lim_{x \to x_0^+} f(x)\) 都存在且相等。</p>
+                        </div>
+                        
+                        <h3>二、极限的性质</h3>
+                        
+                        <h4>1. 唯一性</h4>
+                        <div class="theorem-box">
+                            <p>如果数列 \(\{x_n\}\) 收敛，则它的极限必定唯一。</p>
+                        </div>
+                        
+                        <h4>2. 保号性</h4>
+                        <div class="theorem-box">
+                            <p>设 \(\lim_{n \to \infty} x_n = a\)。</p>
+                            <ul>
+                                <li>如果 \(a > 0\)（或 \(a < 0\)），则存在 \(N > 0\)，当 \(n > N\) 时，\(x_n > 0\)（或 \(x_n < 0\)）</li>
+                                <li>如果存在 \(N > 0\)，当 \(n > N\) 时，\(x_n \geq 0\)（或 \(x_n \leq 0\)），则 \(a \geq 0\)（或 \(a \leq 0\)）</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>⚠️ 注意：</strong>结论 (1) 中是 "&gt;" 或 "&lt;"；结论 (2) 中是 "\(\geq\)" 或 "\(\leq\)"。
+                        </div>
+                        
+                        <h3>三、极限的存在准则</h3>
+                        
+                        <h4>1. 夹逼准则</h4>
+                        <div class="theorem-box">
+                            <h4>⭐ 夹逼准则（数列）</h4>
+                            <p>若存在 \(N\)，当 \(n > N\) 时，\(x_n \leq y_n \leq z_n\)，且 \(\lim_{n \to \infty} x_n = \lim_{n \to \infty} z_n = a\)，则 \(\lim_{n \to \infty} y_n = a\)。</p>
+                        </div>
+                        
+                        <h4>2. 单调有界准则</h4>
+                        <div class="theorem-box">
+                            <h4>⭐ 单调有界准则</h4>
+                            <p>单调有界数列必有极限，即单调增（减）且有上（下）界的数列必有极限。</p>
+                        </div>
+                        
+                        <h3>四、无穷小量</h3>
+                        
+                        <h4>1. 无穷小量的概念</h4>
+                        <div class="theorem-box">
+                            <p>若函数 \(f(x)\) 当 \(x \to x_0\) （或 \(x \to \infty\)）时趋向于零，则称 \(f(x)\) 为 \(x \to x_0\) （或 \(x \to \infty\)）时的<strong>无穷小量</strong>。</p>
+                        </div>
+                        
+                        <h4>2. 无穷小的比较</h4>
+                        <div class="formula-box">
+                            <p>设 \(\lim \alpha(x) = 0\)，\(\lim \beta(x) = 0\)，且 \(\beta(x) \neq 0\)。</p>
+                            <ul>
+                                <li><strong>高阶：</strong>如果 \(\lim \frac{\alpha(x)}{\beta(x)} = 0\)，记作 \(\alpha(x) = o(\beta(x))\)</li>
+                                <li><strong>低阶：</strong>如果 \(\lim \frac{\alpha(x)}{\beta(x)} = \infty\)</li>
+                                <li><strong>同阶：</strong>如果 \(\lim \frac{\alpha(x)}{\beta(x)} = C \neq 0\)</li>
+                                <li><strong>等价：</strong>如果 \(\lim \frac{\alpha(x)}{\beta(x)} = 1\)，记作 \(\alpha(x) \sim \beta(x)\)</li>
+                                <li><strong>k 阶：</strong>如果 \(\lim \frac{\alpha(x)}{[\beta(x)]^k} = C \neq 0\)，称 \(\alpha(x)\) 是 \(\beta(x)\) 的 \(k\) 阶无穷小</li>
+                            </ul>
+                        </div>
+                        
+                        <h4>3. 常用的等价无穷小（当 \(x \to 0\) 时）</h4>
+                        <div class="formula-box">
+                            <strong>⭐ 必记等价无穷小：</strong>
+                            $$\begin{align}
+                            x &\sim \sin x \sim \tan x \sim \arcsin x \sim \arctan x \sim \ln(1+x) \sim e^x - 1 \\
+                            (1+x)^\alpha - 1 &\sim \alpha x \quad (\alpha \neq 0) \\
+                            1 - \cos x &\sim \frac{1}{2}x^2 \\
+                            a^x - 1 &\sim x \ln a \\
+                            x - \sin x &\sim \frac{1}{6}x^3 \\
+                            \tan x - x &\sim \frac{1}{3}x^3 \\
+                            x - \ln(1+x) &\sim \frac{1}{2}x^2 \\
+                            \arcsin x - x &\sim \frac{1}{6}x^3 \\
+                            x - \arctan x &\sim \frac{1}{3}x^3
+                            \end{align}$$
+                        </div>
+                        
+                        <h3>五、无穷大量</h3>
+                        
+                        <div class="theorem-box">
+                            <p>若函数 \(f(x)\) 当 \(x \to x_0\) （或 \(x \to \infty\)）时趋向于无穷，则称 \(f(x)\) 为 \(x \to x_0\) （或 \(x \to \infty\)）时的<strong>无穷大量</strong>。</p>
+                        </div>
+                        
+                        <h4>常用的一些重要结论（当 \(x \to +\infty\) 时）</h4>
+                        <div class="formula-box">
+                            $$\ln^\beta x \ll x^\alpha \ll a^x$$
+                            <p>其中 \(\alpha > 0\), \(\beta > 0\), \(a > 1\)。</p>
+                            <p>口诀："对数 < 幂函数 < 指数函数"</p>
+                        </div>
+                        
+                        <h3>求极限的方法（8种）</h3>
+                        
+                        <h4>方法 1：利用基本极限求极限</h4>
+                        <div class="formula-box">
+                            <strong>⭐ 常用的基本极限：</strong>
+                            $$\begin{align}
+                            &\lim_{x \to 0} \frac{\sin x}{x} = 1 \\
+                            &\lim_{x \to 0} (1+x)^{\frac{1}{x}} = e \\
+                            &\lim_{n \to \infty} \left(1 + \frac{1}{x}\right)^x = e \\
+                            &\lim_{x \to 0} \frac{a^x - 1}{x} = \ln a \\
+                            &\lim_{n \to \infty} \sqrt[n]{n} = 1 \\
+                            &\lim_{n \to \infty} \sqrt[n]{a} = 1 \quad (a > 0)
+                            \end{align}$$
+                        </div>
+                        
+                        <h4>方法 2：利用等价无穷小代换求极限</h4>
+                        <div class="note-box">
+                            <strong>📝 代换原则：</strong>
+                            <ul>
+                                <li>乘除关系可以代换</li>
+                                <li>加减关系在一定条件下可以代换</li>
+                            </ul>
+                        </div>
+                        
+                        <h4>方法 3：利用有理运算法则求极限</h4>
+                        <div class="theorem-box">
+                            <p>若 \(\lim f(x) = A\)，\(\lim g(x) = B\)，则：</p>
+                            $$\begin{align}
+                            \lim [f(x) \pm g(x)] &= \lim f(x) \pm \lim g(x) = A \pm B \\
+                            \lim [f(x) \cdot g(x)] &= \lim f(x) \cdot \lim g(x) = AB \\
+                            \lim \frac{f(x)}{g(x)} &= \frac{\lim f(x)}{\lim g(x)} = \frac{A}{B} \quad (B \neq 0)
+                            \end{align}$$
+                        </div>
+                        
+                        <h4>方法 4：利用洛必达法则求极限</h4>
+                        <div class="theorem-box">
+                            <h4>⭐ 洛必达法则</h4>
+                            <p>若：</p>
+                            <ol>
+                                <li>\(\lim f(x) = \lim g(x) = 0\) （或 \(\infty\)）</li>
+                                <li>\(f(x)\) 和 \(g(x)\) 在 \(x_0\) 的某去心邻域内可导，且 \(g'(x) \neq 0\)</li>
+                                <li>\(\lim \frac{f'(x)}{g'(x)}\) 存在（或为 \(\infty\)）</li>
+                            </ol>
+                            <p>则：$$\lim \frac{f(x)}{g(x)} = \lim \frac{f'(x)}{g'(x)}$$</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>⚠️ 洛必达法则适用类型：</strong>
+                            <p>洛必达法则可用来求七种类型的未定式极限，即 \(\frac{0}{0}\)，\(\frac{\infty}{\infty}\)，\(\infty - \infty\)，\(0 \cdot \infty\)，\(1^\infty\)，\(\infty^0\)，\(0^0\)，其中前两种 \(\frac{0}{0}\)，\(\frac{\infty}{\infty}\) 可以直接用洛必达法则，后五种可化为前两种。</p>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>📝 例题：求 \(\lim_{x \to 0} \frac{\cos x - e^{-\frac{x^2}{2}}}{x^4}\)</h4>
+                            <p><strong>解法一：</strong>由泰勒公式知</p>
+                            $$\begin{align}
+                            \cos x &= 1 - \frac{x^2}{2!} + \frac{x^4}{4!} + o(x^4) \\
+                            e^{-\frac{x^2}{2}} &= 1 - \frac{x^2}{2} + \frac{1}{2!}\left(-\frac{x^2}{2}\right)^2 + o(x^4)
+                            \end{align}$$
+                            <p>则原式 = \(\lim_{x \to 0} \frac{-\frac{1}{12}x^4 + o(x^4)}{x^4} = -\frac{1}{12}\)</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 1.3: Continuity -->
+                <button class="collapsible" id="section1-3">第三节：函数的连续性 🔗</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h3>一、连续性的概念</h3>
+                        
+                        <div class="theorem-box">
+                            <h4>📌 连续性定义</h4>
+                            <p>设 \(y = f(x)\) 在点 \(x_0\) 的某邻域内有定义，若：</p>
+                            <p>$$\lim_{\Delta x \to 0} \Delta y = \lim_{\Delta x \to 0} [f(x_0 + \Delta x) - f(x_0)] = 0$$</p>
+                            <p>则称 \(y = f(x)\) 在点 \(x_0\) <strong>连续</strong>。</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>💡 连续的等价定义：</strong>
+                            <p>\(y = f(x)\) 在点 \(x_0\) 连续的充要条件是：</p>
+                            <ul>
+                                <li>\(f(x)\) 在 \(x_0\) 有定义</li>
+                                <li>\(\lim_{x \to x_0} f(x)\) 存在</li>
+                                <li>\(\lim_{x \to x_0} f(x) = f(x_0)\)</li>
+                            </ul>
+                        </div>
+                        
+                        <h4>左连续与右连续</h4>
+                        <div class="formula-box">
+                            <strong>左连续：</strong>
+                            $$\lim_{x \to x_0^-} f(x) = f(x_0 - 0) = f(x_0)$$
+                            <strong>右连续：</strong>
+                            $$\lim_{x \to x_0^+} f(x) = f(x_0 + 0) = f(x_0)$$
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>⭐ 重要定理</h4>
+                            <p>函数 \(f(x)\) 在点 \(x_0\) 处连续的充要条件是 \(f(x)\) 在点 \(x_0\) 处既左连续又右连续。</p>
+                        </div>
+                        
+                        <h3>二、间断点及其分类</h3>
+                        
+                        <div class="theorem-box">
+                            <h4>📌 间断点定义</h4>
+                            <p>若 \(f(x)\) 在 \(x_0\) 的某邻域内有定义，若在 \(x_0\) 处不连续，则称 \(x_0\) 为 \(f(x)\) 的<strong>间断点</strong>。</p>
+                        </div>
+                        
+                        <h4>间断点的分类</h4>
+                        <div class="formula-box">
+                            <strong>第一类间断点：</strong>左、右极限都存在的间断点
+                            <ul>
+                                <li><strong>可去间断点：</strong>左、右极限都存在且相等的间断点</li>
+                                <li><strong>跳跃间断点：</strong>左、右极限都存在但不相等的间断点</li>
+                            </ul>
+                            <strong>第二类间断点：</strong>左、右极限至少有一个不存在的间断点
+                            <ul>
+                                <li><strong>无穷间断点：</strong>\(\lim_{x \to x_0^-} f(x) = \infty\) 或 \(\lim_{x \to x_0^+} f(x) = \infty\)</li>
+                                <li><strong>振荡间断点：</strong>例如 \(y = \sin \frac{1}{x}\) 在 \(x = 0\) 处没定义且极限都不存在（在 \(x \to 0\) 时其函数值在 \(-1\) 与 \(1\) 之间多次振荡）</li>
+                            </ul>
+                        </div>
+                        
+                        <h3>三、连续性的运算与性质</h3>
+                        
+                        <div class="theorem-box">
+                            <p>若 \(f(x)\) 和 \(g(x)\) 在点 \(x_0\) 连续，则 \(f(x) \pm g(x)\)，\(f(x) \cdot g(x)\)，\(\frac{f(x)}{g(x)}\) （\(g(x_0) \neq 0\)）在点 \(x_0\) 也连续。</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <p>设函数 \(u = \varphi(x)\) 在点 \(x = x_0\) 连续，且 \(\varphi(x_0) = u_0\)，而函数 \(y = f(u)\) 在点 \(u = u_0\) 连续，则复合函数 \(y = f[\varphi(x)]\) 在点 \(x = x_0\) 连续。</p>
+                        </div>
+                        
+                        <h3>四、闭区间上连续函数的性质</h3>
+                        
+                        <div class="theorem-box">
+                            <h4>⭐ 最大值最小值定理</h4>
+                            <p>设 \(f(x)\) 在闭区间 \([a, b]\) 上连续，则 \(f(x)\) 在 \([a, b]\) 上必有最大值与最小值。</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>⭐ 有界性定理</h4>
+                            <p>设 \(f(x)\) 在闭区间 \([a, b]\) 上连续，则 \(f(x)\) 在 \([a, b]\) 上必有界。</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>⭐ 介值定理</h4>
+                            <p>设 \(f(x)\) 在 \([a, b]\) 上连续，且 \(f(a) \neq f(b)\)，则对于任意介于 \(f(a)\) 与 \(f(b)\) 之间的数 \(C\)，至少存在一点 \(\xi \in (a, b)\)，使 \(f(\xi) = C\)。</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>⭐ 零点定理</h4>
+                            <p>设 \(f(x)\) 在 \([a, b]\) 上连续，且 \(f(a) \cdot f(b) < 0\)，则至少存在一点 \(\xi \in (a, b)\)，使 \(f(\xi) = 0\)。</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>💡 应用：</strong>零点定理的一个重要应用就是证明方程的根的存在性。
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Common Formulas -->
+            <section id="formulas" class="section">
+                <h2>📋 常用公式速查表</h2>
+                
+                <h3>基本极限公式</h3>
+                <div class="formula-box">
+                    $$\begin{align}
+                    &\lim_{x \to 0} \frac{\sin x}{x} = 1 \\
+                    &\lim_{x \to 0} (1+x)^{\frac{1}{x}} = e \\
+                    &\lim_{x \to \infty} \left(1 + \frac{1}{x}\right)^x = e \\
+                    &\lim_{x \to 0} \frac{e^x - 1}{x} = 1 \\
+                    &\lim_{x \to 0} \frac{\ln(1+x)}{x} = 1 \\
+                    &\lim_{x \to 0} \frac{a^x - 1}{x} = \ln a
+                    \end{align}$$
+                </div>
+                
+                <h3>等价无穷小（\(x \to 0\)）</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>函数</th>
+                            <th>等价无穷小</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>\(\sin x\)</td>
+                            <td>\(x\)</td>
+                        </tr>
+                        <tr>
+                            <td>\(\tan x\)</td>
+                            <td>\(x\)</td>
+                        </tr>
+                        <tr>
+                            <td>\(\arcsin x\)</td>
+                            <td>\(x\)</td>
+                        </tr>
+                        <tr>
+                            <td>\(\arctan x\)</td>
+                            <td>\(x\)</td>
+                        </tr>
+                        <tr>
+                            <td>\(\ln(1+x)\)</td>
+                            <td>\(x\)</td>
+                        </tr>
+                        <tr>
+                            <td>\(e^x - 1\)</td>
+                            <td>\(x\)</td>
+                        </tr>
+                        <tr>
+                            <td>\(1 - \cos x\)</td>
+                            <td>\(\frac{1}{2}x^2\)</td>
+                        </tr>
+                        <tr>
+                            <td>\((1+x)^\alpha - 1\)</td>
+                            <td>\(\alpha x\)</td>
+                        </tr>
+                        <tr>
+                            <td>\(x - \sin x\)</td>
+                            <td>\(\frac{1}{6}x^3\)</td>
+                        </tr>
+                        <tr>
+                            <td>\(\tan x - x\)</td>
+                            <td>\(\frac{1}{3}x^3\)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>泰勒展开式（带皮亚诺余项）</h3>
+                <div class="formula-box">
+                    $$\begin{align}
+                    e^x &= 1 + x + \frac{x^2}{2!} + \cdots + \frac{x^n}{n!} + o(x^n) \\
+                    \sin x &= x - \frac{x^3}{3!} + \cdots + (-1)^{n-1} \frac{x^{2n-1}}{(2n-1)!} + o(x^{2n-1}) \\
+                    \cos x &= 1 - \frac{x^2}{2!} + \cdots + (-1)^n \frac{x^{2n}}{(2n)!} + o(x^{2n}) \\
+                    \ln(1+x) &= x - \frac{x^2}{2} + \cdots + (-1)^{n-1} \frac{x^n}{n} + o(x^n) \\
+                    (1+x)^\alpha &= 1 + \alpha x + \frac{\alpha(\alpha-1)}{2!}x^2 + \cdots + \frac{\alpha(\alpha-1)\cdots(\alpha-n+1)}{n!}x^n + o(x^n)
+                    \end{align}$$
+                </div>
+            </section>
+            
+            <!-- Interactive Quiz -->
+            <section id="quiz" class="section">
+                <h2>🎯 互动测验</h2>
+                <p>测试一下你的学习成果！</p>
+                
+                <div class="quiz-container">
+                    <div class="quiz-question">
+                        <strong>问题 1：</strong> 求极限 \(\lim_{x \to 0} \frac{\sin 3x}{x}\) 的值是多少？
+                    </div>
+                    <ul class="quiz-options">
+                        <li onclick="checkAnswer(this, false)">A. 1</li>
+                        <li onclick="checkAnswer(this, true)">B. 3</li>
+                        <li onclick="checkAnswer(this, false)">C. 0</li>
+                        <li onclick="checkAnswer(this, false)">D. 不存在</li>
+                    </ul>
+                    <div class="quiz-feedback"></div>
+                </div>
+                
+                <div class="quiz-container">
+                    <div class="quiz-question">
+                        <strong>问题 2：</strong> 下列哪个函数是奇函数？
+                    </div>
+                    <ul class="quiz-options">
+                        <li onclick="checkAnswer(this, false)">A. \(f(x) = x^2\)</li>
+                        <li onclick="checkAnswer(this, true)">B. \(f(x) = x^3\)</li>
+                        <li onclick="checkAnswer(this, false)">C. \(f(x) = e^x\)</li>
+                        <li onclick="checkAnswer(this, false)">D. \(f(x) = \cos x\)</li>
+                    </ul>
+                    <div class="quiz-feedback"></div>
+                </div>
+                
+                <div class="quiz-container">
+                    <div class="quiz-question">
+                        <strong>问题 3：</strong> 函数在某点连续的充要条件是什么？
+                    </div>
+                    <ul class="quiz-options">
+                        <li onclick="checkAnswer(this, false)">A. 函数在该点有定义</li>
+                        <li onclick="checkAnswer(this, false)">B. 极限存在</li>
+                        <li onclick="checkAnswer(this, true)">C. 极限存在且等于函数值</li>
+                        <li onclick="checkAnswer(this, false)">D. 左右极限相等</li>
+                    </ul>
+                    <div class="quiz-feedback"></div>
+                </div>
+                
+                <button class="btn" onclick="resetQuiz()">重置测验</button>
+            </section>
+            
+            <!-- Footer -->
+            <div style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white;">
+                <h3>📚 持续学习，不断进步！</h3>
+                <p>本教程基于武忠祥老师的《高等数学基础篇》制作</p>
+                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.8;">
+                    © 2024 高等数学交互式教程 | 仅供学习参考使用
+                </p>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Scroll to top button -->
+    <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">
+        ↑
+    </div>
+    
+    <script>
+        // Collapsible sections
+        const collapsibles = document.getElementsByClassName("collapsible");
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+        
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+        
+        // Quiz functionality
+        function checkAnswer(element, isCorrect) {
+            const feedback = element.parentElement.nextElementSibling;
+            const options = element.parentElement.getElementsByTagName('li');
+            
+            // Disable all options
+            for (let option of options) {
+                option.style.pointerEvents = 'none';
+            }
+            
+            if (isCorrect) {
+                feedback.className = 'quiz-feedback correct';
+                feedback.textContent = '✅ 回答正确！太棒了！';
+                element.style.background = '#27ae60';
+                element.style.color = 'white';
+            } else {
+                feedback.className = 'quiz-feedback incorrect';
+                feedback.textContent = '❌ 回答错误，再想想看！';
+                element.style.background = '#e74c3c';
+                element.style.color = 'white';
+            }
+        }
+        
+        function resetQuiz() {
+            const feedbacks = document.getElementsByClassName('quiz-feedback');
+            const allOptions = document.querySelectorAll('.quiz-options li');
+            
+            for (let feedback of feedbacks) {
+                feedback.style.display = 'none';
+                feedback.className = 'quiz-feedback';
+            }
+            
+            for (let option of allOptions) {
+                option.style.pointerEvents = 'auto';
+                option.style.background = 'white';
+                option.style.color = '#2c3e50';
+            }
+        }
+        
+        // Scroll to top
+        window.onscroll = function() {
+            const scrollTop = document.getElementById('scrollTop');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        };
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    // Close sidebar on mobile after clicking
+                    if (window.innerWidth <= 768) {
+                        document.getElementById('sidebar').classList.remove('active');
+                    }
+                }
+            });
+        });
+        
+        // MathJax configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+</body>
+</html>

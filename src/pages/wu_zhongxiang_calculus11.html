@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第十一章：向量代数与空间解析几何 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        /* Navigation */
+        nav {
+            background: #2c3e50;
+            padding: 15px;
+            position: sticky;
+            top: 140px;
+            z-index: 99;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        nav a:hover {
+            background: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Main Content */
+        main {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        h3 {
+            color: #34495e;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding: 10px;
+            background: linear-gradient(90deg, #3498db 0%, #2ecc71 100%);
+            color: white;
+            border-radius: 5px;
+        }
+        
+        h4 {
+            color: #16a085;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        /* Accordion/Collapsible */
+        .collapsible {
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            font-weight: 500;
+            border-radius: 5px;
+            margin: 10px 0;
+            transition: 0.3s;
+        }
+        
+        .collapsible:hover {
+            background: #2980b9;
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: white;
+            padding: 0 18px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .content.show {
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+        
+        /* Math formulas */
+        .math-formula {
+            background: #ecf0f1;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 5px solid #9b59b6;
+            font-family: 'Roboto Mono', monospace;
+            overflow-x: auto;
+        }
+        
+        /* Highlight box */
+        .highlight {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 5px solid #f39c12;
+        }
+        
+        .note {
+            background: linear-gradient(135deg, #a8e6cf 0%, #81c784 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 5px solid #27ae60;
+        }
+        
+        .example {
+            background: linear-gradient(135deg, #e1bee7 0%, #ba68c8 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 5px solid #8e44ad;
+            color: white;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        /* Lists */
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+            padding-left: 10px;
+        }
+        
+        /* Interactive button */
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* Code blocks */
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Roboto Mono', monospace;
+            overflow-x: auto;
+        }
+        
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8em; }
+            nav ul { flex-direction: column; }
+            main { padding: 20px; }
+            section { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第十一章</h1>
+            <p>向量代数与空间解析几何及多元微分学在几何上的应用</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#outline">大纲概要</a></li>
+                <li><a href="#vectors">向量代数</a></li>
+                <li><a href="#planes-lines">平面与直线</a></li>
+                <li><a href="#surfaces">曲面与曲线</a></li>
+                <li><a href="#applications">几何应用</a></li>
+                <li><a href="#examples">典型例题</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <!-- Outline Section -->
+            <section id="outline">
+                <h2>📋 大纲考试要求</h2>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>考试内容</th>
+                            <th>要求等级</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>空间直角坐标系 向量的概念及其表示</td>
+                            <td>理解</td>
+                        </tr>
+                        <tr>
+                            <td>单位向量、方向数与方向余弦、向量的坐标表达式</td>
+                            <td>理解</td>
+                        </tr>
+                        <tr>
+                            <td>向量的运算（线性运算、数量积、向量积、混合积）</td>
+                            <td>掌握</td>
+                        </tr>
+                        <tr>
+                            <td>用坐标表达式进行向量运算的方法</td>
+                            <td>掌握</td>
+                        </tr>
+                        <tr>
+                            <td>平面方程和直线方程及其求法 方向向量与梯度的计算方法</td>
+                            <td>掌握</td>
+                        </tr>
+                        <tr>
+                            <td>两个向量垂直、平行的条件 曲面方程和空间曲线方程的概念</td>
+                            <td>了解</td>
+                        </tr>
+                        <tr>
+                            <td>常用二次曲面的方程及其图形 空间曲线的参数方程和一般方程</td>
+                            <td>了解</td>
+                        </tr>
+                        <tr>
+                            <td>空间曲线在坐标平面上的投影</td>
+                            <td>了解</td>
+                        </tr>
+                        <tr>
+                            <td>空间曲线的切线和法平面及曲面的切平面和法线的概念</td>
+                            <td>了解</td>
+                        </tr>
+                        <tr>
+                            <td>平面与平面、平面与直线、直线与直线之间的夹角</td>
+                            <td>会求</td>
+                        </tr>
+                        <tr>
+                            <td>利用平面、直线的相互关系（平行、垂直、相交等）解决有关问题</td>
+                            <td>会求</td>
+                        </tr>
+                        <tr>
+                            <td>点到直线以及点到平面的距离 简单曲面的方程</td>
+                            <td>会求</td>
+                        </tr>
+                        <tr>
+                            <td>投影曲线的方程 空间曲线的切线和法平面及曲面的切平面和法线的方程</td>
+                            <td>会求</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- Vector Algebra Section -->
+            <section id="vectors">
+                <h2>📐 第一节：向量代数</h2>
+                
+                <button class="collapsible">1. 数量积（点积）</button>
+                <div class="content">
+                    <h4>(1) 几何表示</h4>
+                    <div class="math-formula">
+                        $$\vec{a} \cdot \vec{b} = |\vec{a}| |\vec{b}| \cos\alpha$$
+                        其中 \(\alpha\) 为 \(\vec{a}\) 和 \(\vec{b}\) 的夹角
+                    </div>
+                    
+                    <h4>(2) 代数表示</h4>
+                    <div class="math-formula">
+                        $$\vec{a} \cdot \vec{b} = a_x b_x + a_y b_y + a_z b_z$$
+                    </div>
+                    
+                    <h4>(3) 运算规律</h4>
+                    <ul>
+                        <li><strong>交换律：</strong> \(\vec{a} \cdot \vec{b} = \vec{b} \cdot \vec{a}\)</li>
+                        <li><strong>分配律：</strong> \(\vec{a} \cdot (\vec{b} + \vec{c}) = \vec{a} \cdot \vec{b} + \vec{a} \cdot \vec{c}\)</li>
+                    </ul>
+                    
+                    <h4>(4) 几何应用</h4>
+                    <div class="note">
+                        <strong>求模：</strong> \(|\vec{a}| = \sqrt{\vec{a} \cdot \vec{a}}\)
+                    </div>
+                    <div class="note">
+                        <strong>求夹角：</strong> \(\cos\alpha = \frac{\vec{a} \cdot \vec{b}}{|\vec{a}| |\vec{b}|}\)
+                    </div>
+                    <div class="highlight">
+                        <strong>判定两向量垂直：</strong> \(\vec{a} \perp \vec{b} \Leftrightarrow \vec{a} \cdot \vec{b} = 0\)
+                    </div>
+                </div>
+                
+                <button class="collapsible">2. 向量积（叉积）</button>
+                <div class="content">
+                    <h4>(1) 几何表示</h4>
+                    <div class="math-formula">
+                        $$\vec{a} \times \vec{b} \text{ 是一个向量}$$
+                        $$|\vec{a} \times \vec{b}| = |\vec{a}| |\vec{b}| \sin\alpha$$
+                        方向：右手法则
+                    </div>
+                    
+                    <h4>(2) 代数表示</h4>
+                    <div class="math-formula">
+                        $$\vec{a} \times \vec{b} = \begin{vmatrix} \vec{i} & \vec{j} & \vec{k} \\ a_x & a_y & a_z \\ b_x & b_y & b_z \end{vmatrix}$$
+                    </div>
+                    
+                    <h4>(3) 运算规律</h4>
+                    <ul>
+                        <li>\(\vec{a} \times \vec{b} = -(\vec{b} \times \vec{a})\)</li>
+                        <li>\(\vec{a} \times (\vec{b} + \vec{c}) = \vec{a} \times \vec{b} + \vec{a} \times \vec{c}\)</li>
+                    </ul>
+                    
+                    <h4>(4) 几何应用</h4>
+                    <div class="note">
+                        <strong>求同时垂直于 \(\vec{a}\) 和 \(\vec{b}\) 的向量：</strong> \(\vec{a} \times \vec{b}\)
+                    </div>
+                    <div class="note">
+                        <strong>求以 \(\vec{a}\) 和 \(\vec{b}\) 为邻边的平行四边形面积：</strong> \(S = |\vec{a} \times \vec{b}|\)
+                    </div>
+                    <div class="highlight">
+                        <strong>判定两向量平行：</strong> \(\vec{a} \parallel \vec{b} \Leftrightarrow \vec{a} \times \vec{b} = \vec{0}\)
+                    </div>
+                </div>
+                
+                <button class="collapsible">3. 混合积</button>
+                <div class="content">
+                    <h4>(1) 几何表示</h4>
+                    <div class="math-formula">
+                        $$(\vec{a}\vec{b}\vec{c}) = (\vec{a} \times \vec{b}) \cdot \vec{c}$$
+                    </div>
+                    
+                    <h4>(2) 代数表示</h4>
+                    <div class="math-formula">
+                        $$(\vec{a}\vec{b}\vec{c}) = \begin{vmatrix} a_x & a_y & a_z \\ b_x & b_y & b_z \\ c_x & c_y & c_z \end{vmatrix}$$
+                    </div>
+                    
+                    <h4>(3) 运算规律</h4>
+                    <ul>
+                        <li><strong>轮换对称：</strong> \((\vec{a}\vec{b}\vec{c}) = (\vec{b}\vec{c}\vec{a}) = (\vec{c}\vec{a}\vec{b})\)</li>
+                        <li><strong>交换变号：</strong> \((\vec{a}\vec{b}\vec{c}) = -(\vec{a}\vec{c}\vec{b})\)</li>
+                    </ul>
+                    
+                    <h4>(4) 几何应用</h4>
+                    <div class="note">
+                        <strong>求平行六面体体积：</strong> \(V = |(\vec{a}\vec{b}\vec{c})|\)
+                    </div>
+                    <div class="highlight">
+                        <strong>判定三向量共面：</strong> \(\vec{a}, \vec{b}, \vec{c}\) 共面 \(\Leftrightarrow (\vec{a}\vec{b}\vec{c}) = 0\)
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <h3>📝 典型例题</h3>
+                    <p><strong>例 (1995)：</strong>设 \((\vec{a} \times \vec{b}) \cdot \vec{c} = 2\)，则 \([(\vec{a} + \vec{b}) \times (\vec{b} + \vec{c})] \cdot (\vec{c} + \vec{a}) = ?\)</p>
+                    
+                    <button class="btn" onclick="toggleSolution('sol1')">显示解答</button>
+                    <div id="sol1" style="display:none; margin-top:15px;">
+                        <div class="math-formula">
+                            $$\begin{align}
+                            &[(\vec{a} + \vec{b}) \times (\vec{b} + \vec{c})] \cdot (\vec{c} + \vec{a}) \\
+                            &= [\vec{a} \times \vec{b} + \vec{a} \times \vec{c} + \vec{b} \times \vec{b} + \vec{b} \times \vec{c}] \cdot (\vec{c} + \vec{a}) \\
+                            &= (\vec{a} \times \vec{b}) \cdot \vec{c} + (\vec{a} \times \vec{b}) \cdot \vec{a} + (\vec{a} \times \vec{c}) \cdot \vec{c} + (\vec{a} \times \vec{c}) \cdot \vec{a} \\
+                            &\quad + (\vec{b} \times \vec{c}) \cdot \vec{c} + (\vec{b} \times \vec{c}) \cdot \vec{a} \\
+                            &= (\vec{a} \times \vec{b}) \cdot \vec{c} + (\vec{b} \times \vec{c}) \cdot \vec{a} \\
+                            &= 2(\vec{a} \times \vec{b}) \cdot \vec{c} = 4
+                            \end{align}$$
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Planes and Lines Section -->
+            <section id="planes-lines">
+                <h2>📏 第二节：空间平面与直线</h2>
+                
+                <button class="collapsible">1. 平面方程</button>
+                <div class="content">
+                    <h4>(1) 一般式</h4>
+                    <div class="math-formula">
+                        $$Ax + By + Cz + D = 0$$
+                        法向量：\(\vec{n} = \{A, B, C\}\)
+                    </div>
+                    
+                    <h4>(2) 点法式</h4>
+                    <div class="math-formula">
+                        $$A(x - x_0) + B(y - y_0) + C(z - z_0) = 0$$
+                    </div>
+                    
+                    <h4>(3) 截距式</h4>
+                    <div class="math-formula">
+                        $$\frac{x}{a} + \frac{y}{b} + \frac{z}{c} = 1$$
+                    </div>
+                </div>
+                
+                <button class="collapsible">2. 直线方程</button>
+                <div class="content">
+                    <h4>(1) 一般式</h4>
+                    <div class="math-formula">
+                        $$\begin{cases} A_1x + B_1y + C_1z + D_1 = 0 \\ A_2x + B_2y + C_2z + D_2 = 0 \end{cases}$$
+                    </div>
+                    
+                    <h4>(2) 对称式</h4>
+                    <div class="math-formula">
+                        $$\frac{x - x_0}{l} = \frac{y - y_0}{m} = \frac{z - z_0}{n}$$
+                        方向向量：\(\vec{s} = \{l, m, n\}\)
+                    </div>
+                    
+                    <h4>(3) 参数式</h4>
+                    <div class="math-formula">
+                        $$\begin{cases} x = x_0 + lt \\ y = y_0 + mt \\ z = z_0 + nt \end{cases}$$
+                    </div>
+                </div>
+                
+                <button class="collapsible">3. 平面与直线的位置关系</button>
+                <div class="content">
+                    <div class="highlight">
+                        <strong>关键：</strong>平面的法线向量与直线的方向向量的关系
+                    </div>
+                    <ul>
+                        <li><strong>平行：</strong> \(\vec{n} \cdot \vec{s} = 0\)</li>
+                        <li><strong>垂直：</strong> \(\vec{n} \parallel \vec{s}\)</li>
+                        <li><strong>夹角：</strong> \(\sin\theta = \frac{|\vec{n} \cdot \vec{s}|}{|\vec{n}| |\vec{s}|}\)</li>
+                    </ul>
+                </div>
+                
+                <button class="collapsible">4. 距离公式</button>
+                <div class="content">
+                    <h4>点到平面的距离</h4>
+                    <div class="math-formula">
+                        $$d = \frac{|Ax_0 + By_0 + Cz_0 + D|}{\sqrt{A^2 + B^2 + C^2}}$$
+                    </div>
+                    
+                    <h4>点到直线的距离</h4>
+                    <div class="math-formula">
+                        $$d = \frac{|(\vec{r_0} - \vec{r_1}) \times \vec{s}|}{|\vec{s}|}$$
+                        其中 \(\vec{s} = \{l, m, n\}\) 是直线的方向向量
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <h3>📝 例题精选</h3>
+                    <p><strong>例 (1990)：</strong>过点 \(M(1,2,-1)\) 且与直线 \(\begin{cases} x = -t + 2 \\ y = 3t - 4 \\ z = t - 1 \end{cases}\) 垂直的平面方程为？</p>
+                    
+                    <button class="btn" onclick="toggleSolution('sol2')">显示解答</button>
+                    <div id="sol2" style="display:none; margin-top:15px;">
+                        <p>因为所求平面与已知直线垂直，所以已知直线的方向向量就是所求平面的法向量</p>
+                        <div class="math-formula">
+                            $$\vec{n} = \{-1, 3, 1\}$$
+                        </div>
+                        <p>由点法式方程得：</p>
+                        <div class="math-formula">
+                            $$-1 \cdot (x - 1) + 3(y - 2) + 1 \cdot (z + 1) = 0$$
+                            $$即：x - 3y - z + 4 = 0$$
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Surfaces and Curves Section -->
+            <section id="surfaces">
+                <h2>🌐 第三节：曲面与空间曲线</h2>
+                
+                <button class="collapsible">1. 曲面方程</button>
+                <div class="content">
+                    <ul>
+                        <li><strong>一般式：</strong> \(F(x, y, z) = 0\) 或 \(z = f(x, y)\)</li>
+                        <li><strong>参数式：</strong> \(\begin{cases} x = x(u, v) \\ y = y(u, v) \\ z = z(u, v) \end{cases}\)</li>
+                    </ul>
+                </div>
+                
+                <button class="collapsible">2. 旋转面</button>
+                <div class="content">
+                    <div class="note">
+                        <strong>原理：</strong>一条平面曲线绕平面上一条直线旋转一周形成的轨迹
+                    </div>
+                    
+                    <h4>基本旋转面</h4>
+                    <div class="math-formula">
+                        设 \(L\) 是 \(yOz\) 平面上一条曲线，其方程为 \(\begin{cases} f(y, z) = 0 \\ x = 0 \end{cases}\)
+                    </div>
+                    
+                    <ul>
+                        <li><strong>绕 y 轴旋转：</strong> \(f(y, \pm\sqrt{x^2 + z^2}) = 0\)</li>
+                        <li><strong>绕 z 轴旋转：</strong> \(f(\pm\sqrt{x^2 + y^2}, z) = 0\)</li>
+                    </ul>
+                </div>
+                
+                <button class="collapsible">3. 二次曲面</button>
+                <div class="content">
+                    <h4>(1) 椭圆锥面</h4>
+                    <div class="math-formula">
+                        $$\frac{x^2}{a^2} + \frac{y^2}{b^2} = z^2$$
+                        特别地：圆锥面 \(x^2 + y^2 = z^2\)
+                    </div>
+                    
+                    <h4>(2) 椭球面</h4>
+                    <div class="math-formula">
+                        $$\frac{x^2}{a^2} + \frac{y^2}{b^2} + \frac{z^2}{c^2} = 1$$
+                        特别地：球面 \(x^2 + y^2 + z^2 = R^2\)
+                    </div>
+                    
+                    <h4>(3) 单叶双曲面</h4>
+                    <div class="math-formula">
+                        $$\frac{x^2}{a^2} + \frac{y^2}{b^2} - \frac{z^2}{c^2} = 1$$
+                    </div>
+                    
+                    <h4>(4) 双叶双曲面</h4>
+                    <div class="math-formula">
+                        $$\frac{x^2}{a^2} - \frac{y^2}{b^2} - \frac{z^2}{c^2} = 1$$
+                    </div>
+                    
+                    <h4>(5) 椭圆抛物面</h4>
+                    <div class="math-formula">
+                        $$\frac{x^2}{a^2} + \frac{y^2}{b^2} = z$$
+                        特别地：旋转抛物面 \(z = x^2 + y^2\)
+                    </div>
+                    
+                    <h4>(6) 双曲抛物面（马鞍面）</h4>
+                    <div class="math-formula">
+                        $$\frac{x^2}{a^2} - \frac{y^2}{b^2} = z$$
+                    </div>
+                </div>
+                
+                <button class="collapsible">4. 空间曲线的投影</button>
+                <div class="content">
+                    <div class="highlight">
+                        曲线 \(\Gamma: \begin{cases} F(x, y, z) = 0 \\ G(x, y, z) = 0 \end{cases}\) 消去 \(z\) 得到关于 \(xOy\) 面的投影柱面 \(H(x, y) = 0\)
+                    </div>
+                    
+                    <p>曲线 \(\Gamma\) 在 \(xOy\) 面上的投影曲线方程为：</p>
+                    <div class="math-formula">
+                        $$\begin{cases} H(x, y) = 0 \\ z = 0 \end{cases}$$
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Applications Section -->
+            <section id="applications">
+                <h2>🎯 第四节：多元微分学在几何上的应用</h2>
+                
+                <button class="collapsible">1. 曲面的切平面与法线</button>
+                <div class="content">
+                    <h4>(1) 曲面 \(F(x, y, z) = 0\)</h4>
+                    <div class="math-formula">
+                        法向量：\(\vec{n} = (F'_x, F'_y, F'_z)\)
+                    </div>
+                    
+                    <h4>(2) 曲面 \(z = f(x, y)\)</h4>
+                    <div class="math-formula">
+                        法向量：\(\vec{n} = (f'_x, f'_y, -1)\)
+                    </div>
+                    
+                    <div class="highlight">
+                        <strong>切平面方程：</strong>利用法向量和切点建立点法式方程
+                    </div>
+                    
+                    <div class="note">
+                        <strong>法线方程：</strong>利用法向量作为方向向量建立直线的对称式或参数式方程
+                    </div>
+                </div>
+                
+                <button class="collapsible">2. 曲线的切线与法平面</button>
+                <div class="content">
+                    <h4>(1) 参数方程形式</h4>
+                    <div class="math-formula">
+                        曲线：\(\begin{cases} x = x(t) \\ y = y(t) \\ z = z(t) \end{cases}\)
+                        
+                        切向量：\(\vec{\tau} = (x'(t_0), y'(t_0), z'(t_0))\)
+                    </div>
+                    
+                    <h4>(2) 一般方程形式</h4>
+                    <div class="math-formula">
+                        曲线：\(\begin{cases} F(x, y, z) = 0 \\ G(x, y, z) = 0 \end{cases}\)
+                        
+                        切向量：\(\vec{\tau} = \vec{n_1} \times \vec{n_2}\)
+                        
+                        其中 \(\vec{n_1} = (F'_x, F'_y, F'_z)\)，\(\vec{n_2} = (G'_x, G'_y, G'_z)\)
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Examples Section -->
+            <section id="examples">
+                <h2>💡 典型例题集锦</h2>
+                
+                <div class="example">
+                    <h3>例1：求旋转面方程</h3>
+                    <p>求以曲线 \(\begin{cases} x^2 + y^2 + 2z^2 = 1 \\ z = x^2 + y^2 \end{cases}\) 为准线，母线平行于 \(z\) 轴的柱面。</p>
+                    
+                    <button class="btn" onclick="toggleSolution('sol3')">显示解答</button>
+                    <div id="sol3" style="display:none; margin-top:15px;">
+                        <p>将 \(z = x^2 + y^2\) 代入 \(x^2 + y^2 + 2z^2 = 1\) 得：</p>
+                        <div class="math-formula">
+                            $$x^2 + y^2 + 2(x^2 + y^2)^2 = 1$$
+                            $$即：x^2 + y^2 = \frac{1}{2}$$
+                        </div>
+                        <p>这就是所要求的柱面方程。</p>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <h3>例2：求投影曲线</h3>
+                    <p>求曲线 \(L: \begin{cases} x^2 + y^2 + z^2 = a^2 \\ x^2 + y^2 = ax \end{cases}\) （\(a > 0\)）在 \(xOy\) 面和 \(xOz\) 面上的投影曲线方程。</p>
+                    
+                    <button class="btn" onclick="toggleSolution('sol4')">显示解答</button>
+                    <div id="sol4" style="display:none; margin-top:15px;">
+                        <p><strong>在 xOy 面上的投影：</strong></p>
+                        <div class="math-formula">
+                            $$\begin{cases} x^2 + y^2 = ax \\ z = 0 \end{cases}$$
+                        </div>
+                        
+                        <p><strong>在 xOz 面上的投影：</strong></p>
+                        <div class="math-formula">
+                            $$\begin{cases} z^2 + ax = a^2 \\ y = 0 \end{cases}$$
+                            即 \((0 \leq x \leq a)\)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <h3>例3：曲面的切平面</h3>
+                    <p>(2013) 曲面 \(x^2 + \cos(xy) + yz + x = 0\) 在点 \((0, 1, -1)\) 处的切平面方程为：</p>
+                    <p>(A) \(x - y + z = -2\) &nbsp;&nbsp; (B) \(x + y + z = 0\)</p>
+                    <p>(C) \(x - 2y + z = -3\) &nbsp;&nbsp; (D) \(x - y - z = 0\)</p>
+                    
+                    <button class="btn" onclick="toggleSolution('sol5')">显示解答</button>
+                    <div id="sol5" style="display:none; margin-top:15px;">
+                        <p>令 \(F(x, y, z) = x^2 + \cos(xy) + yz + x\)</p>
+                        <div class="math-formula">
+                            $$F'_x = 2x - y\sin(xy) + 1 \big|_{(0,1,-1)} = 1$$
+                            $$F'_y = -x\sin(xy) + z \big|_{(0,1,-1)} = -1$$
+                            $$F'_z = y \big|_{(0,1,-1)} = 1$$
+                        </div>
+                        <p>所以法向量 \(\vec{n} = \{1, -1, 1\}\)</p>
+                        <p>切平面方程：</p>
+                        <div class="math-formula">
+                            $$(x - 0) - (y - 1) + (z + 1) = 0$$
+                            $$即：x - y + z = -2$$
+                        </div>
+                        <p><strong>答案：(A)</strong></p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Interactive Quiz -->
+            <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <h2 style="color: white; border-bottom-color: white;">🎓 自我测试</h2>
+                <p>点击下方按钮测试你的理解程度：</p>
+                
+                <button class="btn" onclick="showQuiz()" style="background: white; color: #667eea;">开始测试</button>
+                
+                <div id="quiz" style="display:none; margin-top:20px;">
+                    <h3>问题：向量 \(\vec{a} = \{1, 2, 3\}\) 和 \(\vec{b} = \{4, 5, 6\}\) 的数量积是多少？</h3>
+                    <button class="btn" onclick="checkAnswer('a')" style="background: white; color: #667eea;">A) 30</button>
+                    <button class="btn" onclick="checkAnswer('b')" style="background: white; color: #667eea;">B) 32</button>
+                    <button class="btn" onclick="checkAnswer('c')" style="background: white; color: #667eea;">C) 28</button>
+                    <div id="answer" style="margin-top:15px; padding:15px; background: rgba(255,255,255,0.2); border-radius: 5px; display:none;"></div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2024 高等数学交互式教程 | 基于PDF教材制作</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">💡 提示：本页面使用MathJax渲染数学公式，可能需要几秒钟加载时间</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Collapsible sections
+        document.querySelectorAll('.collapsible').forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    content.classList.remove('show');
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    content.classList.add('show');
+                }
+            });
+        });
+        
+        // Toggle solution visibility
+        function toggleSolution(id) {
+            const element = document.getElementById(id);
+            if (element.style.display === 'none') {
+                element.style.display = 'block';
+                element.style.animation = 'fadeIn 0.5s';
+            } else {
+                element.style.display = 'none';
+            }
+        }
+        
+        // Quiz functionality
+        function showQuiz() {
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('quiz').style.animation = 'fadeIn 0.5s';
+        }
+        
+        function checkAnswer(choice) {
+            const answerDiv = document.getElementById('answer');
+            answerDiv.style.display = 'block';
+            
+            if (choice === 'b') {
+                answerDiv.innerHTML = '<strong>✓ 正确！</strong><br>\\(\\vec{a} \\cdot \\vec{b} = 1×4 + 2×5 + 3×6 = 4 + 10 + 18 = 32\\)';
+                answerDiv.style.background = 'rgba(46, 204, 113, 0.3)';
+            } else {
+                answerDiv.innerHTML = '<strong>✗ 不正确。</strong><br>正确答案是 32。请记住数量积公式：\\(\\vec{a} \\cdot \\vec{b} = a_x b_x + a_y b_y + a_z b_z\\)';
+                answerDiv.style.background = 'rgba(231, 76, 60, 0.3)';
+            }
+            
+            // Re-render MathJax for the answer
+            if (typeof MathJax !== 'undefined') {
+                MathJax.Hub.Queue(['Typeset', MathJax.Hub, answerDiv]);
+            }
+        }
+        
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+        
+        // Add scroll animation
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 100) {
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

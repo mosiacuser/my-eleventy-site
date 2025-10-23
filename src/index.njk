@@ -1,0 +1,19 @@
+---
+permalink: /index.html
+---
+<html>
+<head><title>我的站点</title></head>
+<body>
+  <h1>页面列表</h1>
+  <ul>
+  {% for page in collections.pages %}
+    <li><a href="{{ page.url }}">{{ page.data.title or page.fileSlug }}</a></li>  <!-- 使用MD front matter的title或文件名 -->
+  {% endfor %}
+  </ul>
+  <h2>静态资产示例</h2>
+  <a href="/assets/document.pdf">下载PDF</a><br>
+  <img src="/assets/image.jpg" alt="图片"><br>
+  <audio controls src="/assets/audio.mp3"></audio><br>
+  <video controls src="/assets/video.mp4"></video>
+</body>
+</html>

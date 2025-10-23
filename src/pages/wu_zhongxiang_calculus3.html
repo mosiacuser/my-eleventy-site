@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第三章 微分中值定理及导数应用 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": {
+                styles: {".MathJax": {color: "#1a5490"}}
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 50px rgba(0,0,0,0.3);
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 3px solid #667eea;
+            position: sticky;
+            top: 140px;
+            z-index: 99;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            color: #1e3c72;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: white;
+            border: 2px solid #667eea;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        section {
+            margin-bottom: 50px;
+            scroll-margin-top: 180px;
+        }
+
+        h2 {
+            color: #1e3c72;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #2a5298;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+
+        h4 {
+            color: #667eea;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+
+        .theorem-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 5px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .definition-box {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            border-left: 5px solid #9C27B0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .example-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-left: 5px solid #FF9800;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .note-box {
+            background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+            border-left: 5px solid #FFC107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-left: 5px solid #f44336;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .accordion {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .accordion-header::after {
+            content: '▼';
+            transition: transform 0.3s;
+        }
+
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+        }
+
+        .accordion-content.active {
+            max-height: 5000px;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d63384;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .interactive-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px dashed #667eea;
+        }
+
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            .nav-links {
+                flex-direction: column;
+            }
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #ffd89b 0%, #19547b 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第三章 微分中值定理及导数应用</h1>
+            <p class="subtitle">高等数学基础篇 - 交互式教程</p>
+        </header>
+
+        <nav>
+            <div class="nav-links">
+                <a href="#outline">考试大纲</a>
+                <a href="#mean-value">微分中值定理</a>
+                <a href="#applications">导数应用</a>
+                <a href="#monotonicity">函数单调性</a>
+                <a href="#extrema">极值问题</a>
+                <a href="#concavity">凹凸性与拐点</a>
+                <a href="#asymptotes">渐近线</a>
+                <a href="#economics">经济学应用</a>
+                <a href="#examples">典型例题</a>
+            </div>
+        </nav>
+
+        <div class="content">
+            <section id="outline">
+                <h2>📋 考试大纲要求</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>大纲考试内容</th>
+                            <th>数学一</th>
+                            <th>数学二</th>
+                            <th>数学三</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>罗尔(Rolle)定理、拉格朗日(Lagrange)中值定理</td>
+                            <td>理解并会用</td>
+                            <td>理解并会用</td>
+                            <td>理解并会用</td>
+                        </tr>
+                        <tr>
+                            <td>泰勒(Taylor)定理</td>
+                            <td>会用</td>
+                            <td>会用</td>
+                            <td>会用</td>
+                        </tr>
+                        <tr>
+                            <td>柯西(Cauchy)中值定理</td>
+                            <td>了解并会用</td>
+                            <td>了解并会用</td>
+                            <td>了解并会用</td>
+                        </tr>
+                        <tr>
+                            <td>函数图形的描述</td>
+                            <td>会求</td>
+                            <td>会求</td>
+                            <td>会求</td>
+                        </tr>
+                        <tr>
+                            <td>用导数判断函数图形的凹凸性</td>
+                            <td>会用</td>
+                            <td>会用</td>
+                            <td>会用</td>
+                        </tr>
+                        <tr>
+                            <td>用导数判断函数的单调性和极值及最小值的求法<br>函数的最大值和最小值的求法及其应用</td>
+                            <td>掌握</td>
+                            <td>掌握</td>
+                            <td>掌握</td>
+                        </tr>
+                        <tr>
+                            <td>函数的极值概念</td>
+                            <td>理解</td>
+                            <td>理解</td>
+                            <td>理解</td>
+                        </tr>
+                        <tr>
+                            <td>洛必达法则求未定式极限的方法</td>
+                            <td>掌握</td>
+                            <td>掌握</td>
+                            <td>掌握</td>
+                        </tr>
+                        <tr>
+                            <td>曲率、曲率圆和曲率半径的概念</td>
+                            <td>了解</td>
+                            <td>了解</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>曲率和曲率半径</td>
+                            <td>会计算</td>
+                            <td>会计算</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>函数图形的水平、铅直和斜渐近线</td>
+                            <td>会求</td>
+                            <td>会求</td>
+                            <td>会求</td>
+                        </tr>
+                        <tr>
+                            <td>导数的经济意义(含边际与弹性的概念)</td>
+                            <td></td>
+                            <td></td>
+                            <td>了解</td>
+                        </tr>
+                        <tr>
+                            <td>函数的图形</td>
+                            <td>会描绘</td>
+                            <td>会描绘</td>
+                            <td>会描绘</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="mean-value">
+                <h2>📐 一、微分中值定理</h2>
+
+                <div class="accordion">
+                    <div class="accordion-header">费马(Fermat)引理</div>
+                    <div class="accordion-content">
+                        <div class="theorem-box">
+                            <h4>费马引理</h4>
+                            <p>设函数 $f(x)$ 在点 $x_0$ 处可导，如果函数 $f(x)$ 在点 $x_0$ 处取得极值，那么 $f'(x_0) = 0$。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">罗尔(Rolle)定理</div>
+                    <div class="accordion-content">
+                        <div class="theorem-box">
+                            <h4>罗尔定理</h4>
+                            <p><strong>定理内容：</strong>如果函数 $f(x)$ 满足以下条件：</p>
+                            <ol>
+                                <li>在闭区间 $[a,b]$ 上连续</li>
+                                <li>在开区间 $(a,b)$ 内可导</li>
+                                <li>$f(a) = f(b)$</li>
+                            </ol>
+                            <p>则在 $(a,b)$ 内至少存在一点 $\xi$，使得 $f'(\xi) = 0$。</p>
+                        </div>
+                        <div class="note-box">
+                            <strong>几何意义：</strong>曲线上至少存在一点的切线平行于x轴。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">拉格朗日(Lagrange)中值定理</div>
+                    <div class="accordion-content">
+                        <div class="theorem-box">
+                            <h4>拉格朗日中值定理</h4>
+                            <p><strong>定理内容：</strong>如果函数 $f(x)$ 满足以下条件：</p>
+                            <ol>
+                                <li>在闭区间 $[a,b]$ 上连续</li>
+                                <li>在开区间 $(a,b)$ 内可导</li>
+                            </ol>
+                            <p>则在 $(a,b)$ 内至少存在一点 $\xi$，使得：</p>
+                            <p>$$f'(\xi) = \frac{f(b) - f(a)}{b - a}$$</p>
+                        </div>
+                        <div class="definition-box">
+                            <h4>推论</h4>
+                            <p>如果在 $(a,b)$ 内恒有 $f'(x) = 0$，则在 $[a,b]$ 上 $f(x)$ 为常数。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">柯西(Cauchy)中值定理</div>
+                    <div class="accordion-content">
+                        <div class="theorem-box">
+                            <h4>柯西中值定理</h4>
+                            <p><strong>定理内容：</strong>如果函数 $f(x)$，$F(x)$ 满足以下条件：</p>
+                            <ol>
+                                <li>在闭区间 $[a,b]$ 上连续</li>
+                                <li>在开区间 $(a,b)$ 内可导，且 $F'(x)$ 在 $(a,b)$ 内每一点处均不为零</li>
+                            </ol>
+                            <p>则在 $(a,b)$ 内至少存在一点 $\xi$，使得：</p>
+                            <p>$$\frac{f(b) - f(a)}{F(b) - F(a)} = \frac{f'(\xi)}{F'(\xi)}$$</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">泰勒(Taylor)定理</div>
+                    <div class="accordion-content">
+                        <div class="theorem-box">
+                            <h4>带皮亚诺余项的泰勒公式</h4>
+                            <p>如果函数 $f(x)$ 在点 $x_0$ 处有直至 $n$ 阶的导数，则有：</p>
+                            <p>$$f(x) = f(x_0) + f'(x_0)(x-x_0) + \frac{f''(x_0)}{2!}(x-x_0)^2 + \cdots + \frac{f^{(n)}(x_0)}{n!}(x-x_0)^n + R_n(x)$$</p>
+                            <p>其中 $R_n(x) = o[(x-x_0)^n]$ 为<span class="highlight">皮亚诺余项</span>。</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>带拉格朗日余项的泰勒公式</h4>
+                            <p>如果函数 $f(x)$ 在含有 $x_0$ 的开区间 $(a,b)$ 内有直至 $n+1$ 阶的导数，则当 $x \in (a,b)$ 时有：</p>
+                            <p>$$R_n(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_0)^{n+1}$$</p>
+                            <p>这里 $\xi$ 介于 $x_0$ 与 $x$ 之间，称为<span class="highlight">拉格朗日余项</span>。</p>
+                        </div>
+
+                        <div class="definition-box">
+                            <h4>常用的麦克劳林公式（$x_0 = 0$）</h4>
+                            <p><strong>1. 指数函数：</strong></p>
+                            <p>$$e^x = 1 + x + \frac{x^2}{2!} + \cdots + \frac{x^n}{n!} + \frac{e^\theta x}{(n+1)!}x^{n+1}, \quad (0 < \theta < 1)$$</p>
+                            
+                            <p><strong>2. 正弦函数：</strong></p>
+                            <p>$$\sin x = x - \frac{x^3}{3!} + \cdots + (-1)^n\frac{x^{2n-1}}{(2n-1)!} + (-1)^n\frac{\cos(\theta x)}{(2n+1)!}x^{2n+1}$$</p>
+                            
+                            <p><strong>3. 余弦函数：</strong></p>
+                            <p>$$\cos x = 1 - \frac{x^2}{2!} + \cdots + (-1)^n\frac{x^{2n}}{(2n)!} + (-1)^{n+1}\frac{\cos(\theta x)}{(2n+2)!}x^{2n+2}$$</p>
+                            
+                            <p><strong>4. 对数函数：</strong></p>
+                            <p>$$\ln(1+x) = x - \frac{x^2}{2} + \cdots + (-1)^n\frac{x^n}{n} + (-1)^n\frac{x^{n+1}}{(n+1)(1+\theta x)^{n+1}}$$</p>
+                            
+                            <p><strong>5. 幂函数：</strong></p>
+                            <p>$$(1+x)^\alpha = 1 + \alpha x + \frac{\alpha(\alpha-1)}{2!}x^2 + \cdots + \frac{\alpha(\alpha-1)\cdots(\alpha-n+1)}{n!}x^n + \frac{\alpha(\alpha-1)\cdots(\alpha-n+1)(\alpha-n)}{(n+1)!}(1+\theta x)^{\alpha-n-1}x^{n+1}$$</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="applications">
+                <h2>🔍 二、导数应用</h2>
+
+                <div id="monotonicity">
+                    <h3>1. 函数的单调性</h3>
+                    <div class="definition-box">
+                        <h4>定理</h4>
+                        <p>设函数 $y = f(x)$ 在 $[a,b]$ 上连续，在 $(a,b)$ 内可导。</p>
+                        <ol>
+                            <li>若在 $(a,b)$ 内 $f'(x) > 0$，则 $f(x)$ 在 $[a,b]$ 上单调递增</li>
+                            <li>若在 $(a,b)$ 内 $f'(x) < 0$，则 $f(x)$ 在 $[a,b]$ 上单调递减</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div id="extrema">
+                    <h3>2. 函数的极值</h3>
+                    <div class="definition-box">
+                        <h4>极值的定义</h4>
+                        <p>设 $y = f(x)$ 在点 $x_0$ 及其邻域内有定义。如果对于该邻域内任何 $x$ 恒有：</p>
+                        <ul>
+                            <li>$f(x_0) \geq f(x)$ 或 $f(x_0) > f(x)$，则称 $f(x_0)$ 为函数的<span class="highlight">极大值</span></li>
+                            <li>$f(x_0) \leq f(x)$ 或 $f(x_0) < f(x)$，则称 $f(x_0)$ 为函数的<span class="highlight">极小值</span></li>
+                        </ul>
+                        <p>极大值和极小值统称为<strong>极值</strong>。导数为零的点称为函数的<strong>驻点</strong>。</p>
+                    </div>
+
+                    <div class="theorem-box">
+                        <h4>极值的必要条件</h4>
+                        <p>若 $y = f(x)$ 在点 $x_0$ 处可导，如果 $x_0$ 是 $f(x)$ 的极值点，则必有 $f'(x_0) = 0$。</p>
+                    </div>
+
+                    <div class="theorem-box">
+                        <h4>极值的第一充分条件</h4>
+                        <p>设 $y = f(x)$ 在点 $x_0$ 的某邻域内可导，且 $f'(x_0) = 0$（或 $f(x)$ 在 $x_0$ 处连续）。</p>
+                        <ol>
+                            <li>若 $x < x_0$ 时 $f'(x) > 0$，$x > x_0$ 时 $f'(x) < 0$，则 $f(x_0)$ 为<strong>极大值</strong></li>
+                            <li>若 $x < x_0$ 时 $f'(x) < 0$，$x > x_0$ 时 $f'(x) > 0$，则 $f(x_0)$ 为<strong>极小值</strong></li>
+                            <li>若 $f'(x)$ 在 $x_0$ 两侧同号，则 $f(x_0)$ 不为极值</li>
+                        </ol>
+                    </div>
+
+                    <div class="theorem-box">
+                        <h4>极值的第二充分条件</h4>
+                        <p>设 $y = f(x)$ 在点 $x_0$ 处二阶可导，且 $f'(x_0) = 0$。</p>
+                        <ol>
+                            <li>若 $f''(x_0) < 0$，则 $f(x_0)$ 为<strong>极大值</strong></li>
+                            <li>若 $f''(x_0) > 0$，则 $f(x_0)$ 为<strong>极小值</strong></li>
+                            <li>若 $f''(x_0) = 0$，则此方法失效，需用第一充分条件判断</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div>
+                    <h3>3. 函数的最大值与最小值</h3>
+                    <div class="definition-box">
+                        <h4>最值问题求解步骤</h4>
+                        <p><strong>问题1：</strong>求连续函数 $f(x)$ 在 $[a,b]$ 上的最大最小值</p>
+                        <ol>
+                            <li>求出 $f(x)$ 在开区间 $(a,b)$ 的驻点和不可导点 $x_1, x_2, \ldots, x_n$</li>
+                            <li>计算 $f(x)$ 在点 $x_1, x_2, \ldots, x_n$ 和区间端点 $a, b$ 处的函数值</li>
+                            <li>比较以上各点函数值，其中最大者即为 $f(x)$ 在 $[a,b]$ 上的最大值，最小者即为最小值</li>
+                        </ol>
+                        <div class="note-box">
+                            <strong>注意：</strong>当连续函数 $f(x)$ 在 $[a,b]$ 内仅有唯一驻点 $x_0$，若 $x_0$ 为极大值或极小值点，则它也是 $f(x)$ 在 $[a,b]$ 上的最大值或最小值点。
+                        </div>
+                    </div>
+                </div>
+
+                <div id="concavity">
+                    <h3>4. 曲线的凹凸性</h3>
+                    <div class="definition-box">
+                        <h4>凹凸性定义</h4>
+                        <p>函数 $f(x)$ 在区间 $I$ 上连续，如果对 $I$ 上任意两点 $x_1, x_2$ 恒有：</p>
+                        <p>$$f\left(\frac{x_1 + x_2}{2}\right) < \frac{f(x_1) + f(x_2)}{2}$$</p>
+                        <p>则称 $f(x)$ 在 $I$ 上的图形是<span class="highlight">凹的</span>（或称上凸）。</p>
+                        <p>如果恒有：</p>
+                        <p>$$f\left(\frac{x_1 + x_2}{2}\right) > \frac{f(x_1) + f(x_2)}{2}$$</p>
+                        <p>则称 $f(x)$ 在 $I$ 上的图形是<span class="highlight">凸的</span>（或称下凸）。</p>
+                    </div>
+
+                    <div class="theorem-box">
+                        <h4>凹凸性判定定理</h4>
+                        <p>设 $y = f(x)$ 在 $[a,b]$ 上连续，在 $(a,b)$ 内二阶可导，则：</p>
+                        <ol>
+                            <li>若在 $(a,b)$ 内 $f''(x) > 0$，则 $f(x)$ 在 $[a,b]$ 上的图形是凹的</li>
+                            <li>若在 $(a,b)$ 内 $f''(x) < 0$，则 $f(x)$ 在 $[a,b]$ 上的图形是凸的</li>
+                        </ol>
+                    </div>
+
+                    <div class="definition-box">
+                        <h4>拐点</h4>
+                        <p>连续曲线上凹弧与凸弧的分界点称为曲线的<span class="highlight">拐点</span>。</p>
+                        <p><strong>拐点的必要条件：</strong>若 $(x_0, f(x_0))$ 为拐点，则必有 $f''(x_0) = 0$。</p>
+                        <p><strong>拐点的第一充分条件：</strong>设 $y = f(x)$ 在点 $x_0$ 的某邻域内二阶可导，且 $f''(x_0) = 0$（或 $f''(x)$ 在 $x_0$ 处连续）。若 $f''(x)$ 在 $x_0$ 左右两侧异号，则 $(x_0, f(x_0))$ 为 $y = f(x)$ 的拐点。</p>
+                    </div>
+                </div>
+
+                <div id="asymptotes">
+                    <h3>5. 曲线的渐近线</h3>
+                    <div class="definition-box">
+                        <h4>渐近线类型</h4>
+                        <p><strong>水平渐近线：</strong>若 $\lim_{x \to \infty} f(x) = A$（或 $\lim_{x \to -\infty} f(x) = A$ 或 $\lim_{x \to +\infty} f(x) = A$），则 $y = A$ 是曲线 $y = f(x)$ 的水平渐近线。</p>
+                        
+                        <p><strong>铅直渐近线：</strong>若 $\lim_{x \to x_0} f(x) = \infty$（或 $\lim_{x \to x_0^-} f(x) = \infty$ 或 $\lim_{x \to x_0^+} f(x) = \infty$），则 $x = x_0$ 是曲线 $y = f(x)$ 的铅直渐近线。</p>
+                        
+                        <p><strong>斜渐近线：</strong>若 $\lim_{x \to \infty} \frac{f(x)}{x} = a$ 且 $\lim_{x \to \infty} [f(x) - ax] = b$（或 $x \to -\infty$ 或 $x \to +\infty$），则 $y = ax + b$ 是曲线 $y = f(x)$ 的斜渐近线。</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h3>6. 函数的作图</h3>
+                    <div class="note-box">
+                        <p>利用函数的单调性、极值、曲线的凹凸性、拐点及渐近线可以做出函数曲线的草图。</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h3>7. 曲线的弧微分与曲率</h3>
+                    <div class="definition-box">
+                        <h4>弧微分</h4>
+                        <p>设 $y = f(x)$ 在 $(a,b)$ 内有连续导数，则有<span class="highlight">弧微分</span>：</p>
+                        <p>$$ds = \sqrt{1 + (y')^2}dx$$</p>
+                    </div>
+
+                    <div class="definition-box">
+                        <h4>曲率</h4>
+                        <p>设 $y = f(x)$ 有二阶导数，则有<span class="highlight">曲率</span>：</p>
+                        <p>$$K = \frac{|y''|}{(1 + (y')^2)^{3/2}}$$</p>
+                        <p>曲率半径 $\rho = \frac{1}{K}$。</p>
+                    </div>
+                </div>
+
+                <div id="economics">
+                    <h3>8. 导数在经济学中的应用</h3>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">经济学中常见的函数</div>
+                        <div class="accordion-content">
+                            <div class="definition-box">
+                                <p><strong>1. 需求函数：</strong>$x = \varphi(p)$，其中 $x$ 为某产品的需求量，$p$ 为价格。</p>
+                                <p>需求函数的反函数 $p = \varphi^{-1}(x)$ 称为<span class="highlight">价格函数</span>。</p>
+                                
+                                <p><strong>2. 供给函数：</strong>$x = \psi(p)$，其中 $x$ 为某产品的供给量，$p$ 为价格。</p>
+                                
+                                <p><strong>3. 成本函数：</strong>成本 $C = C(x)$ 是生产 $x$ 件产品的总投入，由固定成本 $C_1$ 和可变成本 $C_2(x)$ 组成：</p>
+                                <p>$$C = C(x) = C_1 + C_2(x)$$</p>
+                                <p>平均成本：$\overline{C} = \frac{C}{x} = \frac{C_1}{x} + \frac{C_2(x)}{x}$</p>
+                                
+                                <p><strong>4. 收益函数：</strong>$R = R(x)$ 是产品售出后所得的收入，售单价为 $p$：</p>
+                                <p>$$R = R(x) = px$$</p>
+                                
+                                <p><strong>5. 利润函数：</strong>$L = L(x)$ 是收益减去成本后的总收益：</p>
+                                <p>$$L = L(x) = R(x) - C(x)$$</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion">
+                        <div class="accordion-header">边际与弹性</div>
+                        <div class="accordion-content">
+                            <div class="definition-box">
+                                <h4>边际概念</h4>
+                                <p><strong>边际：</strong>对于可导的经济学函数 $y = f(x)$，$f'(x_0)$ 表示 $f(x)$ 在 $x = x_0$ 处的边际值。</p>
+                                
+                                <p><strong>常用的边际：</strong></p>
+                                <ul>
+                                    <li><strong>边际成本：</strong>$MC = C'(q)$</li>
+                                    <li><strong>边际收益：</strong>$MR = R'(q)$</li>
+                                    <li><strong>边际利润：</strong>$ML = L'(q)$</li>
+                                </ul>
+                            </div>
+
+                            <div class="definition-box">
+                                <h4>弹性概念</h4>
+                                <p><strong>弹性：</strong>对于函数 $y = f(x)$，称</p>
+                                <p>$$\eta = \lim_{\Delta x \to 0} \frac{\Delta y / y}{\Delta x / x} = \frac{dy}{dx} \cdot \frac{x}{y} = f'(x) \cdot \frac{x}{f(x)}$$</p>
+                                <p>为函数 $f(x)$ 在 $x$ 处的弹性，记为 $E_y$。</p>
+                                
+                                <p><strong>需求的价格弹性：</strong>设需求函数 $Q = \varphi(P)$（$P$ 为价格），则需求对价格的弹性为：</p>
+                                <p>$$\eta_d = -\frac{P}{Q}\varphi'(P)$$</p>
+                                <p>由于 $\varphi'(P) < 0$，所以 $\eta_d > 0$。</p>
+                                <p>经济学意义：当价格上升（或下降）1%时，则需求量将减少（或增加）$|\eta_d|$%。</p>
+                                
+                                <p><strong>供给的价格弹性：</strong>设供给函数 $Q = \psi(P)$（$P$ 为价格），则供给的弹性为：</p>
+                                <p>$$\eta_s = \frac{P}{Q}\psi'(P)$$</p>
+                                <p>由于供给函数 $\psi'(P) > 0$，所以 $\eta_s > 0$。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="examples">
+                <h2>💡 三、常考题型与典型例题</h2>
+
+                <div class="note-box">
+                    <h4>常考题型</h4>
+                    <ol>
+                        <li>求函数的极值和最值及确定曲线的凹向和拐点</li>
+                        <li>求渐近线</li>
+                        <li>方程的根</li>
+                        <li>不等式的证明</li>
+                        <li>中值定理证明题</li>
+                    </ol>
+                </div>
+
+                <div class="example-box">
+                    <h4>例题 1：极值与最值问题</h4>
+                    <p><strong>题目：</strong>在半径为 $R$ 的球中内接一直圆锥，求圆锥的最大体积。</p>
+                    <button class="btn" onclick="toggleSolution('sol1')">显示/隐藏答案</button>
+                    <div id="sol1" style="display:none; margin-top:15px;">
+                        <p><strong>解答：</strong>设圆锥的高为 $h$，底面半径为 $r$，则体积为：</p>
+                        <p>$$V = \frac{1}{3}\pi r^2 h$$</p>
+                        <p>由几何关系：$r^2 + (h-R)^2 = R^2$</p>
+                        <p>因此：$r^2 = 2Rh - h^2$</p>
+                        <p>代入体积公式：$V(h) = \frac{1}{3}\pi(2Rh - h^2)h = \frac{\pi}{3}(2Rh^2 - h^3)$</p>
+                        <p>求导：$V'(h) = \frac{\pi}{3}(4Rh - 3h^2)$</p>
+                        <p>令 $V'(h) = 0$，得 $h = \frac{4R}{3}$ 或 $h = 0$（舍去）</p>
+                        <p>经验证，$h = \frac{4R}{3}$ 为极大值点，故最大体积为：</p>
+                        <p>$$V_{\max} = \frac{32\pi R^3}{81}$$</p>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <h4>例题 2：渐近线问题</h4>
+                    <p><strong>题目：</strong>求曲线 $y = x\left(1 + \arcsin\frac{2}{x}\right)$ 的斜渐近线方程。</p>
+                    <button class="btn" onclick="toggleSolution('sol2')">显示/隐藏答案</button>
+                    <div id="sol2" style="display:none; margin-top:15px;">
+                        <p><strong>解答：</strong>设斜渐近线为 $y = ax + b$，则：</p>
+                        <p>$$a = \lim_{x \to \infty} \frac{y}{x} = \lim_{x \to \infty} \left(1 + \arcsin\frac{2}{x}\right) = 1$$</p>
+                        <p>$$b = \lim_{x \to \infty} (y - ax) = \lim_{x \to \infty} x \cdot \arcsin\frac{2}{x} = \lim_{x \to \infty} \frac{\arcsin\frac{2}{x}}{\frac{1}{x}}$$</p>
+                        <p>使用洛必达法则或等价无穷小（$\arcsin t \sim t$ 当 $t \to 0$）：</p>
+                        <p>$$b = \lim_{x \to \infty} \frac{\frac{2}{x}}{\frac{1}{x}} = 2$$</p>
+                        <p>因此，斜渐近线方程为：$y = x + 2$</p>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <h4>例题 3：不等式证明</h4>
+                    <p><strong>题目：</strong>证明：当 $x > 0$ 时，$\frac{x}{1+x} < \ln(1+x) < x$。</p>
+                    <button class="btn" onclick="toggleSolution('sol3')">显示/隐藏答案</button>
+                    <div id="sol3" style="display:none; margin-top:15px;">
+                        <p><strong>证明：</strong>由拉格朗日中值定理可知：</p>
+                        <p>$$\ln(1+x) = \ln(1+x) - \ln 1 = \frac{(1+\xi) - 1}{1+\xi} = \frac{x}{1+\xi}$$</p>
+                        <p>其中 $0 < \xi < x$，因此 $1 < 1+\xi < 1+x$。</p>
+                        <p>则：$$\frac{x}{1+x} < \frac{x}{1+\xi} < x$$</p>
+                        <p>即：$$\frac{x}{1+x} < \ln(1+x) < x$$</p>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <h4>例题 4：中值定理证明</h4>
+                    <p><strong>题目：</strong>设 $f(x)$ 在闭区间 $[a,b]$ 上连续，在 $(a,b)$ 上二阶可导，且 $f(a) = f(b)$，$f(a) = f(c)$（$a < c < b$）。证明：存在 $\xi \in (a,b)$，使得 $f''(\xi) = 0$。</p>
+                    <button class="btn" onclick="toggleSolution('sol4')">显示/隐藏答案</button>
+                    <div id="sol4" style="display:none; margin-top:15px;">
+                        <p><strong>证明：</strong>由题设条件及罗尔定理知，存在 $\xi_1 \in (a,c)$，$\xi_2 \in (c,b)$，使得：</p>
+                        <p>$$f'(\xi_1) = 0, \quad f'(\xi_2) = 0$$</p>
+                        <p>在区间 $[\xi_1, \xi_2]$ 上对 $f'(x)$ 应用罗尔定理，存在 $\xi \in (\xi_1, \xi_2) \subset (a,b)$，使得：</p>
+                        <p>$$f''(\xi) = 0$$</p>
+                        <p>原题得证。</p>
+                    </div>
+                </div>
+
+                <div class="interactive-panel">
+                    <h4>🎯 交互式练习</h4>
+                    <p>试着求解以下问题：</p>
+                    <p><strong>问题：</strong>设商品的需求函数为 $Q = 40 - 2p$（$p$ 为商品价格），求该商品的边际收益。</p>
+                    <input type="text" id="userAnswer" placeholder="输入你的答案（如：20-Q）" style="width:100%;padding:10px;margin:10px 0;border:2px solid #667eea;border-radius:5px;">
+                    <button class="btn" onclick="checkAnswer()">检查答案</button>
+                    <div id="feedback" style="margin-top:15px;"></div>
+                </div>
+            </section>
+
+            <div class="note-box" style="margin-top:40px;">
+                <h3>💾 如何使用此教程</h3>
+                <ol>
+                    <li>点击标题栏中的导航链接快速跳转到不同章节</li>
+                    <li>点击折叠面板（accordion）展开查看定理详细内容</li>
+                    <li>例题的答案默认隐藏，点击"显示/隐藏答案"按钮查看解答</li>
+                    <li>所有数学公式由MathJax渲染，支持复制和缩放</li>
+                    <li>尝试完成交互式练习题以检验学习效果</li>
+                </ol>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2024 高等数学交互式教程 | 基于PDF教材创建</p>
+            <p style="margin-top:10px;font-size:0.9em;">本教程使用MathJax渲染数学公式，建议使用现代浏览器查看</p>
+        </footer>
+    </div>
+
+    <script>
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+
+        // Toggle solution visibility
+        function toggleSolution(id) {
+            const element = document.getElementById(id);
+            if (element.style.display === 'none') {
+                element.style.display = 'block';
+            } else {
+                element.style.display = 'none';
+            }
+        }
+
+        // Check answer for interactive exercise
+        function checkAnswer() {
+            const userAnswer = document.getElementById('userAnswer').value.trim();
+            const feedback = document.getElementById('feedback');
+            
+            // Expected answer: 20 - Q (or variations)
+            const correctAnswers = ['20-Q', '20 - Q', 'MR=20-Q', 'MR = 20 - Q'];
+            
+            if (correctAnswers.some(ans => userAnswer.toUpperCase().replace(/\s/g, '') === ans.toUpperCase().replace(/\s/g, ''))) {
+                feedback.innerHTML = '<div style="color:#28a745;font-weight:600;">✓ 正确！边际收益 MR = 20 - Q。<br>解析：收益函数 R = pQ = (40-Q)/2 · Q = 20Q - Q²/2，因此 MR = dR/dQ = 20 - Q。</div>';
+            } else {
+                feedback.innerHTML = '<div style="color:#dc3545;font-weight:600;">✗ 不太对。提示：先求出收益函数 R = pQ，其中 p = (40-Q)/2，然后对 Q 求导。</div>';
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.5s, transform 0.5s';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

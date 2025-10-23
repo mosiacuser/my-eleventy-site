@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第6讲 一元函数微分学的应用(二) - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem 2rem;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: #764ba2;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Content Sections */
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        h4 {
+            color: #555;
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem;
+        }
+
+        /* Formula Boxes */
+        .formula-box {
+            background: linear-gradient(135deg, #e0f7fa 0%, #e1bee7 100%);
+            border-left: 5px solid #667eea;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .formula-box .MathJax {
+            color: #1a237e;
+        }
+
+        /* Example Boxes */
+        .example-box {
+            background: linear-gradient(135deg, #fff9c4 0%, #ffe0b2 100%);
+            border-left: 5px solid #ff9800;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+        }
+
+        .example-title {
+            color: #e65100;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Note Boxes */
+        .note-box {
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            border-left: 5px solid #4caf50;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+        }
+
+        .note-title {
+            color: #2e7d32;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Collapsible Sections */
+        .collapsible {
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            padding: 1rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            margin: 1rem 0;
+            transition: background 0.3s;
+        }
+
+        .collapsible:hover {
+            background: #764ba2;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .content-collapse {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f5f5f5;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .content-collapse-inner {
+            padding: 1.5rem;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Highlight */
+        .highlight {
+            background: #ffeb3b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        /* Flow Chart */
+        .flowchart {
+            background: #fff;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .flowchart-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e1bee7 100%);
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem;
+            display: inline-block;
+            min-width: 200px;
+        }
+
+        /* Button */
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 1rem 0;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Footer */
+        footer {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-content">
+            <div class="nav-title">📐 微积分交互教程</div>
+            <div class="nav-links">
+                <a href="#part1">第一部分</a>
+                <a href="#part2">第二部分</a>
+                <a href="#part3">第三部分</a>
+                <a href="#part4">第四部分</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>第6讲</h1>
+            <div class="subtitle">一元函数微分学的应用(二)</div>
+            <p style="color: #666; margin-top: 1rem;">中值定理、微分等式与微分不等式</p>
+        </header>
+
+        <!-- Introduction -->
+        <div class="section">
+            <h2>📚 学习导引</h2>
+            <p>本讲将深入探讨微分中值定理及其应用，包括：</p>
+            <ul>
+                <li><strong>用微分中值定理作证明</strong> - 掌握罗尔定理、拉格朗日中值定理等</li>
+                <li><strong>讨论函数零点</strong> - 分析方程根的个数</li>
+                <li><strong>证明不等式</strong> - 利用函数单调性和凹凸性</li>
+                <li><strong>求解含参问题</strong> - 处理带参数的等式与不等式</li>
+            </ul>
+            <div class="note-box">
+                <div class="note-title">💡 学习建议</div>
+                <p>微分中值定理是微积分的核心内容，需要：</p>
+                <ul>
+                    <li>深刻理解各定理的几何意义</li>
+                    <li>熟练掌握构造辅助函数的方法</li>
+                    <li>善于运用泰勒公式进行展开</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Part 1 -->
+        <div id="part1" class="section">
+            <h2>第一部分 用微分中值定理作证明</h2>
+            
+            <h3>🎯 三向解题法</h3>
+            <div class="flowchart">
+                <div class="flowchart-box">用微分中值定理作证明<br>(O(Ⅲ作目标))</div>
+                <p style="margin: 1rem 0;">⬇️</p>
+                <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem;">
+                    <div class="flowchart-box">寻找原函数</div>
+                    <div class="flowchart-box">证明 \(f'(\xi)=0\)</div>
+                    <div class="flowchart-box">证明含 \(f^{(n)}(x)\)</div>
+                    <div class="flowchart-box">用泰勒公式</div>
+                </div>
+            </div>
+
+            <!-- Section 1: Finding Original Function -->
+            <button class="collapsible">一、寻找原函数</button>
+            <div class="content-collapse">
+                <div class="content-collapse-inner">
+                    <p>找到"是谁"求导，得到欲证结论，也即 \([F(x)]'=0\)，从而应用罗尔定理，或研究 \(F(x)\) 的性态。</p>
+                    
+                    <h4>1. 一阶乘积求导公式的逆用（化归经典形式）</h4>
+                    <div class="formula-box">
+                        $$(uv)' = u'v + uv'$$
+                    </div>
+                    <p>常见形式包括：</p>
+                    <div class="formula-box">
+                        $$①[f(x)·x^n]' = x^{n-1}[xf'(x) + nf(x)]$$
+                        $$②[f(x)e^{ax}]' = e^{ax}[f'(x) + af(x)]$$
+                        $$③[f(x)e^x]' = e^x[f'(x) + f(x)]$$
+                        $$④[f(x)e^{p(x)}]' = e^{p(x)}[f'(x) + f(x)p'(x)]$$
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">📘 例6.1</div>
+                        <p>设函数 \(f(x)\) 在 \([0,1]\) 上连续，\((0,1)\) 内可导，\(f(0)=f(1)\)，\(\int_0^1 f(x)dx=0\)，证明：存在 \(\xi \in (0,1)\)，使得 \(f'(\xi)+f^2(\xi)=0\)。</p>
+                        
+                        <p><strong>【证】</strong>令 \(F(x)=f(x)e^{\int_0^x f(t)dt}\)，则</p>
+                        <div class="formula-box">
+                            $$F(0) = f(0)e^0 = f(0), \quad F(1) = f(1)e^{\int_0^1 f(t)dt} = f(1)$$
+                        </div>
+                        <p>即 \(F(0)=F(1)\)，由罗尔定理，存在 \(\xi \in (0,1)\)，使得 \(F'(\xi)=0\)，即</p>
+                        <div class="formula-box">
+                            $$e^{\int_0^\xi f(t)dt}[f'(\xi) + f^2(\xi)] = 0$$
+                        </div>
+                        <p>得证。</p>
+                    </div>
+
+                    <h4>2. 二阶乘积求导公式的逆用（化归经典形式）</h4>
+                    <div class="formula-box">
+                        $$(uv)'' = u''v + 2u'v' + uv''$$
+                    </div>
+                    <div class="formula-box">
+                        $$[f(x)·e^x]'' = e^x[f''(x) + 2f'(x) + f(x)]$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Proving f'(ξ)=0 -->
+            <button class="collapsible">二、证明 \(f'(\xi)=0\)</button>
+            <div class="content-collapse">
+                <div class="content-collapse-inner">
+                    <div class="flowchart">
+                        <div class="flowchart-box">常规操作 + 转换等价表达 + 化归经典形式</div>
+                        <p style="margin: 1rem 0;">⬇️</p>
+                        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem;">
+                            <div class="flowchart-box">证区间内部是值点<br>费马定理</div>
+                            <div class="flowchart-box">证区间端点值相等<br>罗尔定理</div>
+                            <div class="flowchart-box">证区间端点导数值异号<br>导数介值定理</div>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">📘 例6.7</div>
+                        <p>设函数 \(f(x)\) 在 \([0,1]\) 上二阶可导，\(f(0)=0\)，且 \(f(x)\) 在 \((0,1)\) 内取得最大值2，在 \((0,1)\) 内取得最小值，证明：</p>
+                        <p>(1) 存在 \(\xi \in (0,1)\)，使得 \(f'(\xi) > 2\)；</p>
+                        <p>(2) 存在 \(\eta \in (0,1)\)，使得 \(f''(\eta) < -4\)。</p>
+                        
+                        <p><strong>【证】</strong>(1) 设 \(f(x)\) 在 \(x_1 \in (0,1)\) 处取得最大值，即 \(f(x_1)=2\)。在 \([0,x_1]\) 上对 \(f(x)\) 应用拉格朗日中值定理，得</p>
+                        <div class="formula-box">
+                            $$f(x_1) - f(0) = f'(\xi)(x_1-0), \quad \xi \in (0,x_1) \subset (0,1)$$
+                        </div>
+                        <p>即 \(f'(\xi)·x_1 = 2\)。又 \(0 < x_1 < 1\)，则 \(\frac{1}{x_1} > 1\)，即 \(f'(\xi) = \frac{2}{x_1} > 2\)。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 2 -->
+        <div id="part2" class="section">
+            <h2>第二部分 讨论 \(f(x)=0\) 的根的个数</h2>
+            
+            <div class="flowchart">
+                <div class="flowchart-box">讨论 \(f(x)=0\) 的根的个数<br>(O(Ⅲ作目标))</div>
+                <p style="margin: 1rem 0;">⬇️</p>
+                <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+                    <div class="flowchart-box">反证思想</div>
+                    <div class="flowchart-box">罗尔定理的推论</div>
+                    <div class="flowchart-box">渐近性态</div>
+                </div>
+            </div>
+
+            <button class="collapsible">(1) 零点定理及其推广</button>
+            <div class="content-collapse">
+                <div class="content-collapse-inner">
+                    <p>设 \(f(x)\) 在 \([a,b]\) 上连续，且 \(f(a)f(b) < 0\)，则 \(f(x)=0\) 在 \((a,b)\) 内至少有一个根。</p>
+                    
+                    <div class="note-box">
+                        <div class="note-title">📌 推广</div>
+                        <p>推广的零点定理：若 \(f(x)\) 在 \((a,b)\) 内连续，\(\lim_{x \to a^+}f(x) = \alpha\)，\(\lim_{x \to b^-}f(x) = \beta\)，且 \(\alpha \beta < 0\)，则 \(f(x)=0\) 在 \((a,b)\) 内至少有一根。这里 \(a, b, \alpha, \beta\) 可以是有限数，也可以是无穷大。</p>
+                    </div>
+
+                    <div class="example-box">
+                        <div class="example-title">📘 例6.17</div>
+                        <p>设函数 \(f(x) = ax - b\ln x(a>0)\) 有2个零点，则 \(\frac{b}{a}\) 的取值范围是（　）。</p>
+                        <p>(A) \((0,e)\) 　(B) \((e,+\infty)\) 　(C) \(\left(0,\frac{1}{e}\right)\) 　(D) \(\left(\frac{1}{e},+\infty\right)\)</p>
+                        
+                        <p><strong>【解】</strong>应选(B)。</p>
+                        <p>由 \(f(x) = ax - b\ln x(a>0)\)，则 \(x>0\) 且 \(f'(x) = a - \frac{b}{x}\)。当 \(b \leq 0\) 时，\(f'(x) \geq 0\)，不满足条件，舍去；</p>
+                        <p>当 \(b>0\) 时，令 \(f'(x)=0\)，得 \(x=\frac{b}{a}\)。当 \(x \in \left(0,\frac{b}{a}\right)\) 时，\(f'(x) < 0\)；当 \(x \in \left(\frac{b}{a},+\infty\right)\) 时，\(f'(x) > 0\)。又</p>
+                        <div class="formula-box">
+                            $$\lim_{x \to 0^+}f(x) = +\infty, \quad \lim_{x \to +\infty}f(x) = +\infty$$
+                        </div>
+                        <p>则应有 \(f\left(\frac{b}{a}\right) = b - b\ln\frac{b}{a} = b\left(1-\ln\frac{b}{a}\right) < 0\)，得 \(\ln\frac{b}{a} > 1\)，即 \(\frac{b}{a} > e\)。故选(B)。</p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="collapsible">(2) 反证思想</button>
+            <div class="content-collapse">
+                <div class="content-collapse-inner">
+                    <p>若证 \(f(x)\) 存在零点，可设 \(f(x)\) 无零点，按条件推证出矛盾；若证 \(f(x)\) 无零点，可设 \(f(x)\) 存在零点，按条件推证出矛盾。</p>
+                </div>
+            </div>
+
+            <button class="collapsible">(3) 用导数工具研究函数性态（单调性为主）</button>
+            <div class="content-collapse">
+                <div class="content-collapse-inner">
+                    <p>通过研究函数的导数，判断函数的单调性、极值点等性态，从而确定零点个数。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 3 -->
+        <div id="part3" class="section">
+            <h2>第三部分 证明不等式</h2>
+            
+            <div class="flowchart">
+                <div class="flowchart-box">证明不等式<br>(O(Ⅲ作目标))</div>
+                <p style="margin: 1rem 0;">⬇️</p>
+                <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+                    <div class="flowchart-box">用单调性</div>
+                    <div class="flowchart-box">用凹凸性</div>
+                    <div class="flowchart-box">用柯西中值定理</div>
+                </div>
+            </div>
+
+            <h3>1. 用单调性</h3>
+            <div class="formula-box">
+                <p>(1) 若 \(\lim_{x \to a^+}F(x) \geq 0\)，且当 \(x \in (a,b)\) 时 \(F'(x) \geq 0\)，则在 \((a,b)\) 内 \(F(x) \geq 0\)。</p>
+                <p>(2) 若 \(\lim_{x \to b^-}F(x) \geq 0\)，且当 \(x \in (a,b)\) 时 \(F'(x) \leq 0\)，则在 \((a,b)\) 内 \(F(x) \geq 0\)。</p>
+            </div>
+
+            <div class="note-box">
+                <div class="note-title">💡 注意</div>
+                <p>(1) 若在 \(x=a\) 处 \(F(x)\) 右连续，则可用 \(F(a)\) 代替 \(\lim_{x \to a^+}F(x)\)。</p>
+                <p>(2) 若当 \(x \in (a,b)\) 时，\(F'(x) > 0\)，则在 \((a,b)\) 内 \(F(x) > 0\)。</p>
+            </div>
+
+            <h3>2. 用最值</h3>
+            <p>如果在 \((a,b)\) 内 \(F(x)\) 有最小值 \(m\)，则在 \((a,b)\) 内 \(F(x) \geq m\)，且除这些最小值点外，均有 \(F(x) > m\)。</p>
+
+            <h3>3. 用凹凸性</h3>
+            <p>如果对于任意的 \(x \in I\)，\(F''(x) > 0\)，则</p>
+            <div class="formula-box">
+                <p>① 对于任意的 \(x_1, x_2 \in I\)，有</p>
+                $$\frac{F(x_1)+F(x_2)}{2} \geq F\left(\frac{x_1+x_2}{2}\right)$$
+                
+                <p>② 对于任意的 \(x_1, x_2 \in I\)，任意的 \(\lambda_1, \lambda_2 \in (0,1)\)，且 \(\lambda_1 + \lambda_2 = 1\)，有</p>
+                $$\lambda_1 F(x_1) + \lambda_2 F(x_2) \geq F(\lambda_1 x_1 + \lambda_2 x_2)$$
+            </div>
+
+            <div class="example-box">
+                <div class="example-title">📘 例6.19</div>
+                <p>设函数 \(f(x)\) 在区间 \((a, b)\) 内可导，证明：导数 \(f'(x)\) 在 \((a,b)\) 内严格单调递增的充分必要条件是对 \((a, b)\) 内任意的 \(x_1, x_2, x_3\)，当 \(x_1 < x_2 < x_3\) 时，\(\frac{f(x_2)-f(x_1)}{x_2-x_1} < \frac{f(x_3)-f(x_2)}{x_3-x_2}\)。</p>
+            </div>
+        </div>
+
+        <!-- Part 4 -->
+        <div id="part4" class="section">
+            <h2>第四部分 求解含参等式或不等式问题</h2>
+            
+            <div class="flowchart">
+                <div class="flowchart-box">求解含参等式或不等式问题<br>(O(Ⅲ作目标))</div>
+                <p style="margin: 1rem 0;">⬇️</p>
+                <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+                    <div class="flowchart-box">导数中不含参数<br>研究函数性态</div>
+                    <div class="flowchart-box">导数中含参数<br>研究曲线交点</div>
+                </div>
+            </div>
+
+            <h3>(1) 导数中不含参数</h3>
+            <p>辅助函数 \(f'(x)\) 中不含参数，于是研究函数性态的过程中不讨论参数，结果中讨论参数，即根据参数的取值不同，研究曲线与x轴的位置关系。</p>
+
+            <h3>(2) 导数中含参数</h3>
+            <p>辅助函数 \(f'(x)\) 中含参数，于是研究函数性态的过程中讨论参数，即根据参数的取值不同，研究曲线不同的性态，从而确定其与x轴的交点个数。</p>
+
+            <div class="example-box">
+                <div class="example-title">📘 例6.20</div>
+                <p>已知常数 \(k \geq \ln 2 - 1\)，证明：\((x-1)(x-\ln^2 x + 2k\ln x - 1) \geq 0\)。</p>
+                
+                <p><strong>【证】</strong>设 \(f(x) = x - \ln^2 x + 2k\ln x - 1(x>0)\)，则</p>
+                <div class="formula-box">
+                    $$f'(x) = 1 - \frac{2\ln x}{x} + \frac{2k}{x} = \frac{1}{x}(x - 2\ln x + 2k)$$
+                </div>
+                <p>设 \(g(x) = x - 2\ln x + 2k\)，则 \(g'(x) = 1 - \frac{2}{x}\)。令 \(g'(x)=0\)，得 \(g(x)\) 的唯一驻点 \(x=2\)。</p>
+                <p>又 \(g''(x) = \frac{2}{x^2} > 0\)，故 \(x=2\) 为 \(g(x)\) 的唯一极小值点，于是 \(g(2)\) 为 \(g(x)\) 的最小值。</p>
+                <p>因为已知 \(k \geq \ln 2 - 1\)，所以 \(g(2) = 2 - 2\ln 2 + 2k \geq 0\)，从而 \(g(x) \geq 0\)。</p>
+                <p>综上可知 \(f'(x) \geq 0\)，所以 \(f(x)\) 单调递增。</p>
+            </div>
+        </div>
+
+        <!-- Interactive Quiz Section -->
+        <div class="section">
+            <h2>🎯 互动练习</h2>
+            <p>点击下方按钮，测试你对微分中值定理的理解：</p>
+            <button class="btn" onclick="showQuiz()">开始测试</button>
+            <div id="quiz-result" style="margin-top: 1rem; padding: 1rem; background: #e8f5e9; border-radius: 8px; display: none;"></div>
+        </div>
+
+        <!-- Taylor Series Section -->
+        <div class="section">
+            <h2>📊 泰勒展开式速查表</h2>
+            <button class="collapsible">常用泰勒展开式</button>
+            <div class="content-collapse">
+                <div class="content-collapse-inner">
+                    <h4>第一组</h4>
+                    <div class="formula-box">
+                        $$\sqrt{1\pm x} = 1 \pm \frac{1}{2}x - \frac{1}{8}x^2 + \cdots, \quad |x| < 1$$
+                        $$\frac{1}{\sqrt{1\pm x}} = 1 \mp \frac{1}{2}x + \frac{3}{8}x^2 + \cdots, \quad |x| < 1$$
+                        $$\frac{1}{1+x} = 1 - x + x^2 + \cdots = \sum_{n=0}^{\infty}(-1)^n x^n, \quad |x| < 1$$
+                        $$\frac{1}{1-x} = 1 + x + x^2 + \cdots = \sum_{n=0}^{\infty}x^n, \quad |x| < 1$$
+                    </div>
+                    
+                    <h4>第二组（指数和双曲函数）</h4>
+                    <div class="formula-box">
+                        $$e^x = \sum_{n=0}^{\infty}\frac{x^n}{n!}$$
+                        $$\frac{e^x - e^{-x}}{2} = \sum_{n=0}^{\infty}\frac{x^{2n+1}}{(2n+1)!}$$
+                        $$\frac{e^x + e^{-x}}{2} = \sum_{n=0}^{\infty}\frac{x^{2n}}{(2n)!}$$
+                    </div>
+
+                    <h4>第三组（三角函数）</h4>
+                    <div class="formula-box">
+                        $$\sin x = x - \frac{1}{6}x^3 + \cdots = \sum_{n=0}^{\infty}(-1)^n\frac{x^{2n+1}}{(2n+1)!}$$
+                        $$\cos x = 1 - \frac{1}{2}x^2 + \frac{1}{24}x^4 + \cdots = \sum_{n=0}^{\infty}(-1)^n\frac{x^{2n}}{(2n)!}$$
+                        $$\tan x = x + \frac{1}{3}x^3 + \frac{2}{15}x^5 + \cdots, \quad |x| < \frac{\pi}{2}$$
+                    </div>
+
+                    <h4>第四组（对数函数）</h4>
+                    <div class="formula-box">
+                        $$\ln(1+x) = x - \frac{1}{2}x^2 + \frac{1}{3}x^3 - \frac{1}{4}x^4 + \cdots = \sum_{n=1}^{\infty}(-1)^{n+1}\frac{x^n}{n}, \quad -1 < x \leq 1$$
+                        $$\ln\frac{1+x}{1-x} = 2\left(x + \frac{1}{3}x^3 + \frac{1}{5}x^5 + \cdots\right) = 2\sum_{n=0}^{\infty}\frac{x^{2n+1}}{2n+1}, \quad |x| < 1$$
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p style="color: #667eea; font-weight: 600; font-size: 1.2rem;">💡 学习提示</p>
+            <p style="margin: 1rem 0;">本教程采用交互式设计，点击折叠按钮可展开详细内容。</p>
+            <p style="color: #999; font-size: 0.9rem;">建议使用现代浏览器（Chrome, Firefox, Safari, Edge）获得最佳体验。</p>
+            <p style="margin-top: 1rem; color: #764ba2;">© 2025 高等数学交互教程 | 基于微分中值定理</p>
+        </footer>
+    </div>
+
+    <script>
+        // Collapsible functionality
+        const collapsibles = document.getElementsByClassName("collapsible");
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+
+        // Quiz functionality
+        function showQuiz() {
+            const quizResult = document.getElementById('quiz-result');
+            quizResult.style.display = 'block';
+            quizResult.innerHTML = `
+                <h3 style="color: #2e7d32; margin-bottom: 1rem;">🎓 快速测验</h3>
+                <p><strong>问题：</strong>罗尔定理要求函数满足哪三个条件？</p>
+                <ol>
+                    <li>在闭区间 [a,b] 上连续</li>
+                    <li>在开区间 (a,b) 内可导</li>
+                    <li>端点值相等，即 f(a) = f(b)</li>
+                </ol>
+                <p style="margin-top: 1rem;"><strong>结论：</strong>存在 ξ ∈ (a,b)，使得 f'(ξ) = 0</p>
+                <button class="btn" onclick="this.parentElement.style.display='none'">关闭</button>
+            `;
+        }
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add fade-in animation on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s, transform 0.6s';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

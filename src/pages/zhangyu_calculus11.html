@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第11讲：定积分的应用(二) - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": { 
+                scale: 100,
+                styles: {
+                    ".MathJax": {
+                        color: "#2c3e50 !important"
+                    }
+                }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+        
+        /* Header & Navigation */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1.5rem 0;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-links a:hover {
+            color: #667eea;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero .subtitle {
+            font-size: 1.3rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-image {
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 15px;
+        }
+        
+        /* Section Cards */
+        .section-card {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        
+        .section-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+        
+        .section-header.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+        
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            padding: 0 2rem;
+        }
+        
+        .section-content.active {
+            max-height: 5000px;
+            padding: 2rem;
+        }
+        
+        /* Subsections */
+        .subsection {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-left: 4px solid #667eea;
+            border-radius: 10px;
+        }
+        
+        .subsection h3 {
+            color: #667eea;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Formula Display */
+        .formula {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+            overflow-x: auto;
+        }
+        
+        /* Example Box */
+        .example {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .example-title {
+            color: #28a745;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Note Box */
+        .note {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .note-title {
+            color: #ff9800;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Interactive Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Flowchart */
+        .flowchart {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .flowchart-box {
+            display: inline-block;
+            padding: 1rem 2rem;
+            margin: 0.5rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        /* Quiz Section */
+        .quiz {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(255, 107, 107, 0.1) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+        
+        .quiz-question {
+            font-weight: 600;
+            color: #dc3545;
+            margin-bottom: 1rem;
+        }
+        
+        .quiz-option {
+            display: block;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .quiz-option:hover {
+            background: #f8f9fa;
+        }
+        
+        /* Footer */
+        footer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.2rem;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section-card {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">📚 高等数学18讲</div>
+            <ul class="nav-links">
+                <li><a onclick="scrollToSection('part1')">定积分等式</a></li>
+                <li><a onclick="scrollToSection('part2')">定积分不等式</a></li>
+                <li><a onclick="scrollToTop()">返回顶部</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>第11讲 一元函数积分学的应用(二)</h1>
+            <p class="subtitle">积分等式与积分不等式</p>
+            <div class="hero-image">
+                <div class="flowchart-box">掌握定积分的核心性质</div>
+                <div style="font-size: 2rem; margin: 1rem 0;">↓</div>
+                <div class="flowchart-box">应用于等式与不等式问题</div>
+                <div style="font-size: 2rem; margin: 1rem 0;">↓</div>
+                <div class="flowchart-box">提升解题能力</div>
+            </div>
+        </div>
+
+        <!-- Part 1: 定积分等式问题 -->
+        <div class="section-card" id="part1">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>第一部分 定积分等式问题</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <!-- Property 1 -->
+                <div class="subsection">
+                    <h3>一、与字母无关性（D₁（常规操作））</h3>
+                    <div class="formula">
+                        $$\int_a^b f(x)\,dx = \int_a^b f(y)\,dy$$
+                    </div>
+                    <p>定积分的值与积分变量的字母表示无关，这是定积分的基本性质。</p>
+                </div>
+
+                <!-- Property 2 -->
+                <div class="subsection">
+                    <h3>二、线性性（D₁（常规操作））</h3>
+                    <div class="formula">
+                        $$\int_a^b [k_1f_1(x) + k_2f_2(x)]\,dx = k_1\int_a^b f_1(x)\,dx + k_2\int_a^b f_2(x)\,dx$$
+                    </div>
+                    <p>积分的线性性质允许我们将复杂的积分拆分成简单部分的和。</p>
+                </div>
+
+                <!-- Property 3 -->
+                <div class="subsection">
+                    <h3>三、方向性（D₁（常规操作））</h3>
+                    <div class="formula">
+                        $$\int_a^b f(x)\,dx = -\int_b^a f(x)\,dx$$
+                    </div>
+                    <p>交换积分上下限，积分值变号。这一性质在区间变换中非常有用。</p>
+                </div>
+
+                <!-- Property 4 -->
+                <div class="subsection">
+                    <h3>四、可加（可拆）性（D₁（常规操作）+ D₂₃（化归经典形式））</h3>
+                    <div class="formula">
+                        $$\int_a^b f(x)\,dx = \int_a^c f(x)\,dx + \int_c^b f(x)\,dx$$
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">📝 例11.1</div>
+                        <p><strong>题目：</strong>求极限 $\displaystyle\lim_{h\to 0^+} \int_{-1}^1 \frac{h}{h^2+x^2}f(x)\,dx$，其中函数$f(x)$在$[-1,1]$上连续。</p>
+                        
+                        <p><strong>解：</strong></p>
+                        <div class="formula">
+                            $$= \lim_{h\to 0^+} f(\xi)\int_{-1}^1 \frac{h}{h^2+x^2}\,dx = \lim_{h\to 0^+} f(\xi) \cdot \pi f'(0) = \pi f'(0)$$
+                        </div>
+                        
+                        <div class="note">
+                            <div class="note-title">💡 关键步骤</div>
+                            <p>这里需要将积分区间拆分为 $[-1, -\sqrt{h}]$、$[-\sqrt{h}, \sqrt{h}]$ 和 $[\sqrt{h}, 1]$ 三部分，然后利用积分中值定理。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property 5 -->
+                <div class="subsection">
+                    <h3>五、"祖孙三代"的奇偶性（D₁（常规操作））</h3>
+                    <p>关于 $\int_a^x f(t)\,dt$、$f(x)$、$f'(x)$ 的奇偶性关系：</p>
+                    
+                    <div class="formula">
+                        <ol style="list-style-position: inside;">
+                            <li>若$f(x)$为可导的奇函数，则$f'(x)$为偶函数</li>
+                            <li>若$f(x)$为可导的偶函数，则$f'(x)$为奇函数</li>
+                            <li>若$f(x)$为可积的奇函数，则$\int_0^x f(t)\,dt$为偶函数</li>
+                            <li>若$f(x)$为可积的偶函数，则$\int_0^x f(t)\,dt$为奇函数</li>
+                        </ol>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">📝 例11.2</div>
+                        <p>已知函数$f(x) = e^{\sin x} + e^{-\sin x}$，则$f''(2\pi) = $ _____。</p>
+                        <p><strong>解：</strong>应填0。</p>
+                        <p>因为$f(x)$为偶函数，所以$f'(x)$为奇函数，故$f''(0) = 0$，又因为$f(x)$以$2\pi$为周期，所以 $f''(2\pi) = f''(0) = 0$。</p>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">📝 例11.3</div>
+                        <p>已知函数$f(x) = \int_0^x e^{\cos t}\,dt$，$g(x) = \int_0^x e^t\,dt$，则（ ）。</p>
+                        <p>(A) $f(x)$是奇函数，$g(x)$是偶函数</p>
+                        <p>(B) $f(x)$是偶函数，$g(x)$是奇函数</p>
+                        <p>(C) $f(x)$，$g(x)$均是奇函数</p>
+                        <p>(D) $f(x)$，$g(x)$均是周期函数</p>
+                        <p><strong>解：</strong>应选(C)。</p>
+                        <div class="note">
+                            <div class="note-title">💡 分析</div>
+                            <p>$e^{\cos t}$关于$t$是偶函数，则$\int_0^x e^{\cos t}\,dt$是奇函数。由于$g(x) = \int_0^x e^t\,dt$，则$g(-x) = \int_0^{-x} e^t\,dt = -\int_0^x e^{-t}\,dt = -g(x)$，故$g(x)$是奇函数。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property 6 -->
+                <div class="subsection">
+                    <h3>六、"祖孙三代"的周期性（D₁（常规操作））</h3>
+                    <p>若$f(x)$是可导的且以$T$为周期的周期函数，则$f'(x)$也是以$T$为周期的周期函数。</p>
+                    
+                    <div class="formula">
+                        $$\text{若}f(x)\text{是可积的且以}T\text{为周期的周期函数，则}\int_0^T f(t)\,dt = \int_a^{a+T} f(x)\,dx$$
+                    </div>
+                    
+                    <p>更一般地，有 $\displaystyle\int_a^{a+nT} f(x)\,dx = n\int_0^T f(x)\,dx$。</p>
+
+                    <div class="example">
+                        <div class="example-title">📝 例11.6</div>
+                        <p>(1) 设$I = \int_a^{\pi} |\sin nx|\,dx$，$n = 1,2,\cdots$，$a$为任意常数，则（ ）。</p>
+                        <p>(A) $I$只与$a$有关 &nbsp;&nbsp; (B) $I$只与$n$有关</p>
+                        <p>(C) $I$与$a$，$n$均有关 &nbsp;&nbsp; (D) $I$与$a$，$n$均无关</p>
+                        <p><strong>解：</strong>(1) 应选(D)。</p>
+                        <div class="formula">
+                            $$I = \int_a^{\pi+a} |\sin nx|\,dx = \int_0^{\pi} |\sin nx|\,dx \stackrel{nx=t}{=} \int_0^{n\pi} \left|\sin t\right|\frac{1}{n}\,dt = 2$$
+                        </div>
+                        <p>故$I$与$a$，$n$均无关。</p>
+                    </div>
+                </div>
+
+                <!-- Property 7 -->
+                <div class="subsection">
+                    <h3>七、区间再现下的积分公式（D₁（常规操作）+ D₂₃（化归经典形式））</h3>
+                    
+                    <div class="formula">
+                        <p>①  $\displaystyle\int_a^b f(x)\,dx = \int_a^b f(a+b-x)\,dx$</p>
+                        <p>②  $\displaystyle\int_a^b f(x)\,dx = \frac{1}{2}\int_a^b [f(x) + f(a+b-x)]\,dx$</p>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">📝 例11.7</div>
+                        <p>$\displaystyle I = \int_0^1 \frac{\ln(1+x)}{1+x^2}\,dx = $ _____。</p>
+                        <p><strong>解：</strong>应填 $\dfrac{\pi}{8}\ln 2$。</p>
+                        <p>令$x = \tan t$，则:</p>
+                        <div class="formula">
+                            $$I = \int_0^{\pi/4} \ln(1+\tan t)\,dt = \int_0^{\pi/4} \ln\left(1 + \frac{1-\tan u}{1+\tan u}\right)\,du = \int_0^{\pi/4} \ln\frac{2}{1+\tan u}\,du = \frac{\pi}{4}\ln 2 - I$$
+                        </div>
+                        <p>得 $I = \dfrac{\pi}{8}\ln 2$。</p>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="alert('恭喜！您已完成第一部分学习 🎉')">完成第一部分</button>
+            </div>
+        </div>
+
+        <!-- Part 2: 定积分不等式问题 -->
+        <div class="section-card" id="part2">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>第二部分 定积分不等式问题</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <!-- Comparison Theorem -->
+                <div class="subsection">
+                    <h3>一、比较定理（保号性）（D₁（常规操作）+ D₂₂（转换等价表达））</h3>
+                    <p>设$f(x)$，$g(x)$连续，则：</p>
+                    <div class="formula">
+                        $$f(x) \leq g(x) \Rightarrow \int_a^b f(x)\,dx \leq \int_a^b g(x)\,dx, \quad b > a$$
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">📝 例11.17</div>
+                        <p>设$f(x)$在$[0, 1]$上连续，$\displaystyle\int_0^1 2x^2f(x)\,dx \geq \int_0^1 f^2(x)\,dx + \frac{1}{5}$，则$f(x) = $ _____。</p>
+                        <p><strong>解：</strong>应填$x^2$。</p>
+                        <p>由题可知，</p>
+                        <div class="formula">
+                            $$\int_0^1 [f^2(x) - 2x^2f(x) + x^4]\,dx = \int_0^1 [f(x) - x^2]^2\,dx \leq 0$$
+                        </div>
+                        <p>又$[f(x) - x^2]^2 \geq 0$，由积分保号性，可得 $f(x) = x^2$。</p>
+                    </div>
+                </div>
+
+                <!-- Estimation Theorem -->
+                <div class="subsection">
+                    <h3>二、估值定理（D₁（常规操作））</h3>
+                    <p>设$f(x)$连续，则：</p>
+                    <div class="formula">
+                        $$m \leq f(x) \leq M \Rightarrow m(b-a) \leq \int_a^b f(x)\,dx \leq M(b-a), \quad b > a$$
+                    </div>
+                </div>
+
+                <!-- Absolute Value Inequality -->
+                <div class="subsection">
+                    <h3>三、绝对值不等式（D₁（常规操作）+ D₂₃（化归经典形式））</h3>
+                    <p>设$f(x)$连续，则：</p>
+                    <div class="formula">
+                        $$\left|\int_a^b f(x)\,dx\right| \leq \int_a^b |f(x)|\,dx, \quad b > a$$
+                    </div>
+
+                    <div class="note">
+                        <div class="note-title">💡 重要提示</div>
+                        <p>设$f(x)$在$[a, b]$上连续且$\displaystyle\left|\int_a^b f(x)\,dx\right| < \int_a^b |f(x)|\,dx$，则存在$c \in (a, b)$，使得$f(c) = 0$。</p>
+                        <p>这又给我们研究"$f(x)$的某个零点"提供了一种方向。</p>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">📝 例11.18</div>
+                        <p>设函数$f(x)$具有2阶导数，且$f'(0) = f'(1)$，$|f''(x)| \leq 1$。证明：</p>
+                        <p>(1) 当$x \in (0, 1)$时，$\displaystyle|f(x) - f(0)(1-x) - f(1)x| \leq \frac{x(1-x)}{2}$；</p>
+                        <p>(2) $\displaystyle\left|\int_0^1 f(x)\,dx - \frac{f(0) + f(1)}{2}\right| \leq \frac{1}{12}$。</p>
+                    </div>
+                </div>
+
+                <!-- Riemann Thought -->
+                <div class="subsection">
+                    <h3>四、黎曼思想（D₁（常规操作）+ D₂₃（化归经典形式））</h3>
+                    <p>一个大区间$[a, b]$解决不了的问题，拆成$[a, c]$，$[c, b]$等小区间去处理。这是微积分解题中逐循客观规律的典范思路，十分重要。</p>
+
+                    <div class="example">
+                        <div class="example-title">📝 例11.19</div>
+                        <p>设$f(x)$在$[0, 1]$上具有二阶连续导数，$f(0) = f(1) = 0$，$f''(x) < 0$。证明：对于任意$x \in (0, 1)$，</p>
+                        <div class="formula">
+                            $$\int_0^1 \left|\frac{f''(x)}{f(x)}\right|\,dx \geq 4$$
+                        </div>
+                        
+                        <div class="note">
+                            <div class="note-title">💡 解题思路</div>
+                            <p>令$f(x_0) = \max_{0\leq x\leq 1}\{f(x)\}$，则$\dfrac{1}{|f(x)|} \geq \dfrac{1}{|f(x_0)|}$，于是：</p>
+                            <div class="formula">
+                                $$\int_0^1 \left|\frac{f''(x)}{f(x)}\right|\,dx \geq \frac{1}{|f(x_0)|}\int_0^1 |f''(x)|\,dx$$
+                            </div>
+                            <p>利用$f(x_0) - f(0) = f'(\xi_1)x_0$和$f(1) - f(x_0) = f'(\xi_2)(1-x_0)$，以及$\xi_1 \in (0, x_0)$，$\xi_2 \in (x_0,1)$，可以得到最终结果。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="showCompletion()">完成所有学习</button>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>📚 高等数学18讲 - 第11讲：定积分的应用</p>
+        <p>💡 持续学习，精进数学技能</p>
+        <p style="margin-top: 1rem; color: #666;">使用说明：点击各部分标题展开/收起内容 | 数学公式由MathJax渲染</p>
+    </footer>
+
+    <script>
+        // Toggle section expand/collapse
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const isActive = content.classList.contains('active');
+            
+            // Close all sections
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.section-header').forEach(h => {
+                h.classList.remove('active');
+            });
+            
+            // Open clicked section if it was closed
+            if (!isActive) {
+                content.classList.add('active');
+                header.classList.add('active');
+            }
+        }
+
+        // Scroll to section
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            element.scrollIntoView({ behavior: 'smooth' });
+            
+            // Auto-expand the section
+            const header = element.querySelector('.section-header');
+            if (header && !header.classList.contains('active')) {
+                toggleSection(header);
+            }
+        }
+
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Show completion message
+        function showCompletion() {
+            alert('🎉 恭喜完成全部学习！\n\n您已掌握：\n✓ 定积分等式的7大性质\n✓ 定积分不等式的4种方法\n✓ 12个典型例题的解法\n\n继续加油！💪');
+        }
+
+        // Auto-expand first section on load
+        window.addEventListener('load', function() {
+            const firstHeader = document.querySelector('.section-header');
+            if (firstHeader) {
+                toggleSection(firstHeader);
+            }
+        });
+    </script>
+</body>
+</html>
