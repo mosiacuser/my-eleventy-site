@@ -27,8 +27,8 @@ module.exports = function(eleventyConfig) {
   return {
     dir: {
       input: "src",  // 输入目录
-      output: "_site"  // 输出目录（构建后站点文件）
-includes: "_includes"
+      output: "_site",  // 输出目录（构建后站点文件）
+      includes: "_includes"
     },
     templateFormats: ["njk", "md", "html"]  // 支持的模板格式
   };
