@@ -14,7 +14,7 @@ module.exports = function(eleventyConfig) {
   const pluginSitemap = require("@quasibit/eleventy-plugin-sitemap");
   eleventyConfig.addPlugin(pluginSitemap, {
     sitemapPath: "/sitemap.xml",  // 生成sitemap.xml
-    hostname: "https://mystudy.netlify.app"  // 替换为你的Netlify域名
+    hostname: "https://my-allstudy.netlify.app"  // 替换为你的Netlify域名
   });
 
   // Markdown配置（内置，无需额外安装，但可自定义）
@@ -28,6 +28,7 @@ module.exports = function(eleventyConfig) {
     dir: {
       input: "src",  // 输入目录
       output: "_site"  // 输出目录（构建后站点文件）
+includes: "_includes"
     },
     templateFormats: ["njk", "md", "html"]  // 支持的模板格式
   };
