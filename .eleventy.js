@@ -1,6 +1,7 @@
 module.exports = function(eleventyConfig) {
   // 复制静态资产：PDF、图片、MP3、MP4等
   eleventyConfig.addPassthroughCopy("src/assets/**");  // ** 表示递归复制所有文件
+  eleventyConfig.addPassthroughCopy("src/assets/css/**");
 
   // 复制HTML页面（如果不需处理，直接复制）
   eleventyConfig.addPassthroughCopy("src/pages/*.html");
@@ -23,6 +24,16 @@ module.exports = function(eleventyConfig) {
     breaks: true,  // 换行转换为<br>
     linkify: true  // 自动链接
   }));
+
+  // 添加 PostCSS 转换（Tailwind 处理）
+  const postcss = require("postcss");
+  eleventyConfig.addTransform("postcss", async function (content) {
+    if (this.outputPath && this.outputPath.endsWith(".css")) {
+      const result = await postcss([require("tailwindcss"), require("autoprefixer")]).process(content);
+      return result.css;
+    }
+    return content;
+  });
 
   return {
     dir: {
