@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第6讲 数理统计 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9f6 100%);
+            color: #343434;
+            line-height: 1.8;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        /* Navigation */
+        nav {
+            background: #a6d6c9;
+            padding: 1rem;
+            position: sticky;
+            top: 110px;
+            z-index: 90;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        nav a {
+            color: #343434;
+            text-decoration: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            background: white;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(242, 125, 0, 0.3);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* Section */
+        section {
+            background: white;
+            margin: 2rem 0;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-left: 5px solid #f27d00;
+        }
+        
+        section h2 {
+            color: #f27d00;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        section h3 {
+            color: #343434;
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            padding-left: 1rem;
+            border-left: 4px solid #f7d117;
+        }
+        
+        /* Accordion */
+        .accordion {
+            margin: 1rem 0;
+        }
+        
+        .accordion-item {
+            border: 2px solid #a6d6c9;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .accordion-item:hover {
+            box-shadow: 0 4px 12px rgba(166, 214, 201, 0.3);
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, #a6d6c9 0%, #c8e6dd 100%);
+            padding: 1.2rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #343434;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #8fc4b7 0%, #a6d6c9 100%);
+        }
+        
+        .accordion-header::after {
+            content: '▼';
+            transition: transform 0.3s;
+        }
+        
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 0 1.5rem;
+            background: #f9fffe;
+        }
+        
+        .accordion-content.active {
+            max-height: 3000px;
+            padding: 1.5rem;
+        }
+        
+        /* Math box */
+        .math-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffef7 100%);
+            border-left: 4px solid #f7d117;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(247, 209, 23, 0.2);
+        }
+        
+        .math-box h4 {
+            color: #f27d00;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        /* Example box */
+        .example-box {
+            background: linear-gradient(135deg, #fff0e6 0%, #fff8f0 100%);
+            border-left: 4px solid #f27d00;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(242, 125, 0, 0.2);
+        }
+        
+        .example-box h4 {
+            color: #f27d00;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        /* Note box */
+        .note-box {
+            background: linear-gradient(135deg, #e8f5f1 0%, #f2faf8 100%);
+            border-left: 4px solid #a6d6c9;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(166, 214, 201, 0.2);
+        }
+        
+        .note-box::before {
+            content: '📝 注意：';
+            font-weight: 700;
+            color: #f27d00;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Code block */
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background: #f5f5f5;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            color: #d63384;
+        }
+        
+        /* Button */
+        .btn {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(242, 125, 0, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(242, 125, 0, 0.4);
+        }
+        
+        /* Quiz */
+        .quiz-box {
+            background: white;
+            border: 2px solid #f7d117;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 12px rgba(247, 209, 23, 0.2);
+        }
+        
+        .quiz-option {
+            background: #f9f9f9;
+            padding: 1rem;
+            margin: 0.8rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .quiz-option:hover {
+            background: #a6d6c9;
+            border-color: #f27d00;
+            transform: translateX(5px);
+        }
+        
+        .quiz-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .quiz-result.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .quiz-result.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        /* Highlight */
+        .highlight {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffef7 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #f7d117;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: #343434;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+        
+        /* Display style for LaTeX formulas */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            section {
+                padding: 1.5rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📊 第6讲 数理统计</h1>
+    <p>交互式学习 · 概念清晰 · 易于理解</p>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="#section1">一、基本概念</a></li>
+        <li><a href="#section2">二、统计量</a></li>
+        <li><a href="#section3">三、抽样分布</a></li>
+        <li><a href="#section4">四、正态总体</a></li>
+        <li><a href="#section5">五、习题练习</a></li>
+        <li><a href="#section6">六、选学内容</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+<section id="section1">
+    <h2>一、总体、样本与统计量</h2>
+    
+    <div class="accordion">
+        <div class="accordion-item">
+            <div class="accordion-header">1. 基本概念</div>
+            <div class="accordion-content">
+                <div class="math-box">
+                    <h4>① 总体</h4>
+                    <p>研究对象的全体，它是一个随机变量，用 $X$ 表示。</p>
+                    
+                    <h4>② 个体</h4>
+                    <p>组成总体的每个基本元素。</p>
+                    
+                    <h4>③ 简单随机样本（样本）</h4>
+                    <p>来自总体 $X$ 的 $n$ 个相互独立且与总体 $X$ 有相同分布的随机变量 $X_1, X_2, \ldots, X_n$，称为来自总体 $X$、容量为 $n$ 的简单随机样本，简称样本。</p>
+                    
+                    <h4>④ 样本的观察值（样本值）</h4>
+                    <p>$X_1, X_2, \ldots, X_n$ 的 $n$ 个具体观察结果 $x_1, x_2, \ldots, x_n$，称为样本值。</p>
+                </div>
+                
+                <div class="note-box">
+                    样本 $X_1, X_2, \ldots, X_n$ 相互独立且与总体 $X$ 同分布，所以 $X$ 的分布函数为 $F(x)$，则 $X_1, X_2, \ldots, X_n$ 的联合分布函数为
+                    $$F^*(x_1, x_2, \ldots, x_n) = \prod_{i=1}^n F(x_i)$$
+                    若总体 $X$ 的概率密度为 $f(x)$，则 $X_1, X_2, \ldots, X_n$ 的联合概率密度为
+                    $$f^*(x_1, x_2, \ldots, x_n) = \prod_{i=1}^n f(x_i)$$
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="section2">
+    <h2>二、统计量</h2>
+    
+    <div class="accordion">
+        <div class="accordion-item">
+            <div class="accordion-header">1. 统计量的定义</div>
+            <div class="accordion-content">
+                <div class="math-box">
+                    <p>设 $X_1, X_2, \ldots, X_n$ 是来自总体 $X$ 的一个样本，$g(X_1, X_2, \ldots, X_n)$ 是 $X_1, X_2, \ldots, X_n$ 的函数，若 $g$ 中不含未知参数，则称 $g(X_1, X_2, \ldots, X_n)$ 是一个统计量。</p>
+                </div>
+                
+                <div class="note-box">
+                    统计量是样本的函数，是一个随机变量。统计量的分布称为抽样分布。
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item">
+            <div class="accordion-header">2. 常用统计量</div>
+            <div class="accordion-content">
+                <div class="math-box">
+                    <h4>① 样本均值</h4>
+                    $$\overline{X} = \frac{1}{n} \sum_{i=1}^n X_i$$
+                    
+                    <h4>② 样本方差</h4>
+                    $$S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \overline{X})^2 = \frac{1}{n-1} \left( \sum_{i=1}^n X_i^2 - n\overline{X}^2 \right)$$
+                    
+                    <h4>③ 样本标准差</h4>
+                    $$S = \sqrt{S^2} = \sqrt{\frac{1}{n-1} \sum_{i=1}^n (X_i - \overline{X})^2}$$
+                    
+                    <h4>④ 样本 $k$ 阶（原点）矩</h4>
+                    $$A_k = \frac{1}{n} \sum_{i=1}^n X_i^k, \quad k = 1, 2, \ldots$$
+                    
+                    <h4>⑤ 样本 $k$ 阶中心矩</h4>
+                    $$B_k = \frac{1}{n} \sum_{i=1}^n (X_i - \overline{X})^k, \quad k = 2, 3, \ldots$$
+                </div>
+                
+                <div class="example-box">
+                    <h4>重要关系式</h4>
+                    <p><strong>样本均值：</strong></p>
+                    $$\overline{X} = A_1$$
+                    
+                    <p><strong>样本方差：</strong></p>
+                    $$S^2 = \frac{n}{n-1} B_2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \overline{X})^2 = \frac{1}{n-1} \left( \sum_{i=1}^n X_i^2 - n\overline{X}^2 \right)$$
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item">
+            <div class="accordion-header">3. 统计量的数字特征</div>
+            <div class="accordion-content">
+                <div class="math-box">
+                    <p>设总体 $X$ 的期望为 $\mu$，方差为 $\sigma^2$，$X_1, X_2, \ldots, X_n$ 是来自总体 $X$ 的样本，则</p>
+                    
+                    <h4>① 样本均值的期望与方差</h4>
+                    $$E(\overline{X}) = E(X) = \mu$$
+                    $$D(\overline{X}) = \frac{D(X)}{n} = \frac{\sigma^2}{n}$$
+                    
+                    <h4>② 样本方差的期望</h4>
+                    $$E(S^2) = D(X) = \sigma^2$$
+                    
+                    <h4>③ 样本 $k$ 阶矩的期望</h4>
+                    $$E(A_k) = E(X^k) \quad (k \text{阶原点矩})$$
+                    $$E(B_k) = E[(X - \mu)^k] \quad (k \text{阶中心矩})$$
+                </div>
+                
+                <div class="note-box">
+                    <strong>证明思路：</strong>
+                    <p>由于 $X_1, X_2, \ldots, X_n$ 相互独立且与 $X$ 同分布，所以</p>
+                    $$E(\overline{X}) = E\left(\frac{1}{n} \sum_{i=1}^n X_i\right) = \frac{1}{n} \sum_{i=1}^n E(X_i) = \frac{1}{n} \cdot n\mu = \mu$$
+                    $$D(\overline{X}) = D\left(\frac{1}{n} \sum_{i=1}^n X_i\right) = \frac{1}{n^2} \sum_{i=1}^n D(X_i) = \frac{1}{n^2} \cdot n\sigma^2 = \frac{\sigma^2}{n}$$
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="section3">
+    <h2>三、三个重要分布（$\chi^2$ 分布、$t$ 分布、$F$ 分布）</h2>
+    
+    <div class="accordion">
+        <div class="accordion-item">
+            <div class="accordion-header">1. $\chi^2$ 分布（卡方分布）</div>
+            <div class="accordion-content">
+                <div class="math-box">
+                    <h4>① 概念</h4>
+                    <p>设 $X_1, X_2, \ldots, X_n$ 相互独立且都服从标准正态分布 $N(0, 1)$，则</p>
+                    $$\chi^2 = X_1^2 + X_2^2 + \cdots + X_n^2 = \sum_{i=1}^n X_i^2$$
+                    <p>服从自由度为 $n$ 的 $\chi^2$ 分布，记为 $\chi^2 \sim \chi^2(n)$。</p>
+                    
+                    <h4>② 概率密度函数</h4>
+                    <p>$\chi^2(n)$ 的概率密度为：</p>
+                    $$f(x) = \begin{cases} 
+                    \frac{1}{2^{n/2}\Gamma(n/2)} x^{n/2-1} e^{-x/2}, & x > 0 \\
+                    0, & x \leq 0
+                    \end{cases}$$
+                    <p>其图形如图 6-1 所示。</p>
+                    
+                    <h4>③ 数字特征</h4>
+                    <p>若 $\chi^2 \sim \chi^2(n)$，则</p>
+                    $$E(\chi^2) = n$$
+                    $$D(\chi^2) = 2n$$
+                    
+                    <h4>④ 上 $\alpha$ 分位数</h4>
+                    <p>对于给定的 $\alpha(0 < \alpha < 1)$，称满足</p>
+                    $$P\{\chi^2 > \chi^2_\alpha(n)\} = \int_{\chi^2_\alpha(n)}^{+\infty} f(x) dx = \alpha$$
+                    <p>的 $\chi^2_\alpha(n)$ 为 $\chi^2(n)$ 分布的上 $\alpha$ 分位数（见图 6-2）。</p>
+                    
+                    <h4>⑤ 性质</h4>
+                    <p><strong>a. 可加性</strong></p>
+                    <p>若 $\chi_1^2 \sim \chi^2(n_1)$，$\chi_2^2 \sim \chi^2(n_2)$，且 $\chi_1^2$ 与 $\chi_2^2$ 相互独立，则</p>
+                    $$\chi_1^2 + \chi_2^2 \sim \chi^2(n_1 + n_2)$$
+                </div>
+                
+                <div class="note-box">
+                    $\chi^2$ 分布的上 $\alpha$ 分位数 $\chi^2_\alpha(n)$ 可查表得到。
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item">
+            <div class="accordion-header">2. $t$ 分布（学生分布）</div>
+            <div class="accordion-content">
+                <div class="math-box">
+                    <h4>① 概念</h4>
+                    <p>设随机变量 $X \sim N(0, 1)$，$Y \sim \chi^2(n)$，且 $X$ 与 $Y$ 相互独立，则</p>
+                    $$t = \frac{X}{\sqrt{Y/n}}$$
+                    <p>服从自由度为 $n$ 的 $t$ 分布，记为 $t \sim t(n)$。$t$ 分布的概率密度 $f(x)$ 的图形如图 6-3 所示。</p>
+                    
+                    <h4>② 概率密度函数</h4>
+                    <p>$t(n)$ 的概率密度为：</p>
+                    $$f(x) = \frac{\Gamma\left(\frac{n+1}{2}\right)}{\sqrt{n\pi}\Gamma\left(\frac{n}{2}\right)} \left(1 + \frac{x^2}{n}\right)^{-\frac{n+1}{2}}, \quad -\infty < x < +\infty$$
+                    
+                    <h4>③ 上 $\alpha$ 分位数</h4>
+                    <p>对于给定的 $\alpha(0 < \alpha < 1)$，称满足</p>
+                    $$P\{t > t_\alpha(n)\} = \alpha$$
+                    <p>的 $t_\alpha(n)$ 为 $t(n)$ 分布的上 $\alpha$ 分位数。</p>
+                    
+                    <h4>④ 性质</h4>
+                    <p><strong>a.</strong> $t$ 分布的概率密度是偶函数，即 $f(-x) = f(x)$</p>
+                    
+                    <p><strong>b.</strong> 由 <strong>a.</strong> 得 $t_{1-\alpha}(n) = -t_\alpha(n)$，即</p>
+                    $$P\{t < -t_\alpha(n)\} = P\{t > t_\alpha(n)\} = \alpha$$
+                    <p>或</p>
+                    $$P\{|t| > t_\alpha(n)\} = 2\alpha$$
+                    $$P\{|t| < t_\alpha(n)\} = 1 - 2\alpha$$
+                    
+                    <p><strong>c.</strong> 当 $\alpha$ 值在表中没有时，可用此式求得上 $\alpha$ 分位数。</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item">
+            <div class="accordion-header">3. $F$ 分布</div>
+            <div class="accordion-content">
+                <div class="math-box">
+                    <h4>① 概念</h4>
+                    <p>设随机变量 $X \sim \chi^2(n_1)$，$Y \sim \chi^2(n_2)$，且 $X$ 与 $Y$ 相互独立，则</p>
+                    $$F = \frac{X/n_1}{Y/n_2}$$
+                    <p>服从自由度为 $(n_1, n_2)$ 的 $F$ 分布，记为 $F \sim F(n_1, n_2)$，其中 $n_1$ 称为第一自由度，$n_2$ 称为第二自由度。$F$ 分布的概率密度 $f(x)$ 的图形如图 6-4 所示。</p>
+                    
+                    <h4>② 上 $\alpha$ 分位数</h4>
+                    <p>对于给定的 $\alpha(0 < \alpha < 1)$，称满足</p>
+                    $$P\{F > F_\alpha(n_1, n_2)\} = \alpha$$
+                    <p>的 $F_\alpha(n_1, n_2)$ 为 $F(n_1, n_2)$ 分布的上 $\alpha$ 分位数（见图 6-5）。</p>
+                    
+                    <h4>③ 性质</h4>
+                    <p><strong>a.</strong> 若 $F \sim F(n_1, n_2)$，则 $\frac{1}{F} \sim F(n_2, n_1)$</p>
+                    
+                    <p><strong>b.</strong> $F_{1-\alpha}(n_1, n_2) = \frac{1}{F_\alpha(n_2, n_1)}$，常用来求 $F$ 分布表中未列出的上 $\alpha$ 分位数。</p>
+                    
+                    <p><strong>c.</strong> 若 $t \sim t(n)$，则 $t^2 \sim F(1, n)$</p>
+                    
+                    <p><strong>d.</strong> 若 $X \sim \chi^2(n)$，则 $\frac{X}{n} \sim \frac{\chi^2(n)}{n}$</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="section4">
+    <h2>四、正态总体条件下的常用结论（将 4 个结论当成 4 个例题）</h2>
+    
+    <p class="highlight">设 $X_1, X_2, \ldots, X_n$ 是来自正态总体 $N(\mu, \sigma^2)$ 的一个样本，$\overline{X}, S^2$ 分别是样本均值和样本方差，则</p>
+    
+    <div class="example-box">
+        <h4>结论 ①</h4>
+        $$\overline{X} \sim N\left(\mu, \frac{\sigma^2}{n}\right), \text{ 即 } \frac{\overline{X} - \mu}{\sigma/\sqrt{n}} \sim N(0, 1)$$
+        <p style="text-align: center; color: #666; margin-top: 1rem;">在正态总体下，$\overline{X}$ 的标准化 $\sim N(0,1)$<br>
+        （$\overline{X}$ 的标准差为 $\sigma/\sqrt{n}$）</p>
+    </div>
+    
+    <div class="example-box">
+        <h4>结论 ②</h4>
+        $$\frac{1}{\sigma^2}\sum_{i=1}^{n}(X_i - \mu)^2 \sim \chi^2(n)$$
+        <p style="text-align: center; color: #666; margin-top: 1rem;">
+        因为 $X_i \sim N(\mu, \sigma^2)$，所以 $\frac{X_i - \mu}{\sigma} \sim N(0, 1)$<br>
+        因此 $\left(\frac{X_i - \mu}{\sigma}\right)^2 \sim \chi^2(1)$
+        </p>
+        <p>容易验证，$\mu = E(X) = \int_{-\infty}^{+\infty} xf(x)dx$</p>
+    </div>
+    
+    <div class="example-box">
+        <h4>结论 ③ ⭐</h4>
+        $$\frac{(n-1)S^2}{\sigma^2} = \frac{\sum_{i=1}^{n}(X_i - \overline{X})^2}{\sigma^2} \sim \chi^2(n-1)$$
+        <p style="color: #666; margin-top: 1rem;">（当 $\mu$ 未知时，在结论②中用 $\overline{X}$ 替代 $\mu$）</p>
+        <p style="margin-top: 1rem;">由样本方差定义：</p>
+        $$S^2 = \frac{1}{n-1}\sum_{i=1}^{n}(X_i - \overline{X})^2 \Rightarrow \frac{(n-1)S^2}{\sigma^2} = \frac{\sum_{i=1}^{n}(X_i - \overline{X})^2}{\sigma^2} = \sum_{i=1}^{n}\left(\frac{X_i - \overline{X}}{\sigma}\right)^2$$
+    </div>
+    
+    <div class="example-box">
+        <h4>结论 ④ ⭐⭐</h4>
+        $$\overline{X} \text{ 与 } S^2 \text{ 相互独立}, \quad \frac{\sqrt{n}(\overline{X} - \mu)}{S} \sim t(n-1)$$
+        <p style="color: #666; margin-top: 1rem;">（当 $\sigma$ 未知时，在结论①中用 $S$ 替代 $\sigma$）</p>
+    </div>
+    
+    <div class="note-box">
+        ⭐ 正态总体下才有此结论，其有两点意思：
+        <br>(1) 随机变量 $\overline{X}$ 与 $S^2$ 相互独立。
+        <br>(2) 比值 $\frac{\sqrt{n}(\overline{X} - \mu)}{S}$ 服从 $t(n-1)$ 分布。
+    </div>
+</section>
+
+<section id="section5">
+    <h2>五、习题练习</h2>
+    
+    <div class="quiz-box">
+        <h3 style="color: #f27d00;">📝 测试题 1</h3>
+        <p><strong>设总体 $X$ 服从正态分布 $N(\mu, \sigma^2)$，其中 $\mu$ 已知，$\sigma^2$ 未知。$X_1, X_2, \ldots, X_n$ 是取自总体 $X$ 的简单随机样本，则下列样本函数中不是统计量的是（　）</strong></p>
+        
+        <div class="quiz-option" onclick="checkAnswer(1, 'A')">A. $\displaystyle\frac{1}{n}\sum_{i=1}^{n} X_i$</div>
+        <div class="quiz-option" onclick="checkAnswer(1, 'B')">B. $\max\{X_i\}$</div>
+        <div class="quiz-option" onclick="checkAnswer(1, 'C')">C. $\displaystyle\sum_{i=1}^{n}\left(\frac{X_i - \mu}{\sigma}\right)^2$</div>
+        <div class="quiz-option" onclick="checkAnswer(1, 'D')">D. $\displaystyle\frac{1}{n}\sum_{i=1}^{n}(X_i - \mu)^2$</div>
+        
+        <div id="result1" class="quiz-result"></div>
+        
+        <button class="btn" onclick="showExplanation(1)" style="margin-top: 1rem;">显示解析</button>
+        <div id="explanation1" style="display: none; margin-top: 1rem; padding: 1rem; background: #f0f9f6; border-radius: 8px;">
+            <p><strong>答案：C</strong></p>
+            <p><strong>解析：</strong>由统计量的定义，统计量是"不含任何未知参数"的样本函数。</p>
+            <p>在本题中，$\mu$ 已知，$\sigma^2$ 未知，即只有 $\sigma$ 是未知参数。</p>
+            <p>选项 (C) 中 $\displaystyle\sum_{i=1}^{n}\left(\frac{X_i - \mu}{\sigma}\right)^2$ 含有未知参数 $\sigma$，因此不是统计量。</p>
+            <p>其他选项都不含未知参数，都是统计量。故选 C。</p>
+        </div>
+    </div>
+    
+    <div class="quiz-box">
+        <h3 style="color: #f27d00;">📝 测试题 2</h3>
+        <p><strong>设 $X_1, X_2, X_3$ 为来自总体 $X$ 的简单随机样本，$D(X) = \sigma^2$，令</strong></p>
+        $$Y_1 = \frac{X_1 + X_2}{2}, \quad Y_2 = \frac{X_1 + X_3}{2}, \quad Y_3 = \frac{X_2 + X_3}{2}$$
+        <p><strong>则 $Y_1, Y_2, Y_3$ 中效率最高的是（　）</strong></p>
+        
+        <div class="quiz-option" onclick="checkAnswer(2, 'A')">A. $Y_1$</div>
+        <div class="quiz-option" onclick="checkAnswer(2, 'B')">B. $Y_2$</div>
+        <div class="quiz-option" onclick="checkAnswer(2, 'C')">C. $Y_3$</div>
+        <div class="quiz-option" onclick="checkAnswer(2, 'D')">D. 都一样</div>
+        
+        <div id="result2" class="quiz-result"></div>
+        
+        <button class="btn" onclick="showExplanation(2)" style="margin-top: 1rem;">显示解析</button>
+        <div id="explanation2" style="display: none; margin-top: 1rem; padding: 1rem; background: #f0f9f6; border-radius: 8px;">
+            <p><strong>答案：D</strong></p>
+            <p><strong>解析：</strong>计算三个统计量的方差：</p>
+            $$D(Y_1) = D\left(\frac{X_1 + X_2}{2}\right) = \frac{1}{4}[D(X_1) + D(X_2)] = \frac{1}{4}(2\sigma^2) = \frac{\sigma^2}{2}$$
+            $$D(Y_2) = D\left(\frac{X_1 + X_3}{2}\right) = \frac{1}{4}[D(X_1) + D(X_3)] = \frac{1}{4}(2\sigma^2) = \frac{\sigma^2}{2}$$
+            $$D(Y_3) = D\left(\frac{X_2 + X_3}{2}\right) = \frac{1}{4}[D(X_2) + D(X_3)] = \frac{1}{4}(2\sigma^2) = \frac{\sigma^2}{2}$$
+            <p>由于 $Y_1, Y_2, Y_3$ 的方差都相等，都是 $\frac{\sigma^2}{2}$，所以效率相同。故选 D。</p>
+        </div>
+    </div>
+</section>
+
+<section id="section6">
+    <h2>六、选学内容</h2>
+    
+    <h3>再谈事件的独立性</h3>
+    
+    <div class="accordion">
+        <div class="accordion-item">
+            <div class="accordion-header">重要结论</div>
+            <div class="accordion-content">
+                <div class="math-box">
+                    <p><strong>若 $A_1, A_2, \ldots, A_n$ 相互独立，则</strong></p>
+                    $$P(A_1A_2\cdots A_n) = P(A_1)P(A_2)\cdots P(A_n)$$
+                    
+                    <p><strong>若 $A_1, A_2, \ldots, A_n$ ($n > 3$) 相互独立，则</strong></p>
+                    $$P\left(\bigcup_{i=1}^{n} A_i\right) = 1 - P\left(\overline{\bigcup_{i=1}^{n} A_i}\right) = 1 - P\left(\bigcap_{i=1}^{n} \overline{A_i}\right) = 1 - \prod_{i=1}^{n}[1 - P(A_i)]$$
+                    
+                    <div class="note-box">
+                        $A$ 与 $B$ 相互独立 $\Leftrightarrow$ $\overline{A}$ 与 $B$ 相互独立 $\Leftrightarrow$ $A$ 与 $\overline{B}$ 相互独立 $\Leftrightarrow$ $\overline{A}$ 与 $\overline{B}$ 相互独立。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</div>
+
+<footer>
+    <p>© 2024 考研数学基础教程 | 数理统计交互式学习平台</p>
+    <p style="margin-top: 0.5rem; opacity: 0.8;">Built with ❤️ using HTML5, CSS3, JavaScript & MathJax</p>
+</footer>
+
+<script>
+// Accordion functionality
+document.querySelectorAll('.accordion-header').forEach(header => {
+    header.addEventListener('click', function() {
+        this.classList.toggle('active');
+        const content = this.nextElementSibling;
+        content.classList.toggle('active');
+    });
+});
+
+// Quiz answer checking
+const correctAnswers = {
+    1: 'C',
+    2: 'D'
+};
+
+function checkAnswer(questionNum, selectedAnswer) {
+    const resultDiv = document.getElementById('result' + questionNum);
+    resultDiv.style.display = 'block';
+    
+    if (selectedAnswer === correctAnswers[questionNum]) {
+        resultDiv.className = 'quiz-result correct';
+        resultDiv.textContent = '✅ 正确！做得很好！';
+    } else {
+        resultDiv.className = 'quiz-result incorrect';
+        resultDiv.textContent = '❌ 不正确，再想想看！正确答案是 ' + correctAnswers[questionNum];
+    }
+}
+
+function showExplanation(num) {
+    const explanation = document.getElementById('explanation' + num);
+    if (explanation.style.display === 'none') {
+        explanation.style.display = 'block';
+    } else {
+        explanation.style.display = 'none';
+    }
+}
+
+// Smooth scroll enhancement
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Add animation on scroll
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('section').forEach(section => {
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(20px)';
+    section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(section);
+});
+
+// Console message
+console.log('%c📊 欢迎来到数理统计交互式教程！', 'color: #f27d00; font-size: 20px; font-weight: bold;');
+console.log('%c使用技巧：点击每个模块查看详细内容，尝试完成测试题！', 'color: #a6d6c9; font-size: 14px;');
+</script>
+
+</body>
+</html>

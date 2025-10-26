@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第1讲 行列式 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": {
+                styles: {
+                    ".MathJax": {
+                        color: "#343434"
+                    }
+                }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f7f7f7 100%);
+            color: #343434;
+            line-height: 1.8;
+        }
+        
+        /* Navigation Bar */
+        .navbar {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .navbar p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 120px;
+            width: 250px;
+            height: calc(100vh - 120px);
+            background: white;
+            padding: 2rem 1rem;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            display: none;
+        }
+        
+        .sidebar.active {
+            display: block;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin: 0.5rem 0;
+        }
+        
+        .sidebar a {
+            color: #343434;
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover {
+            background: #a6d6c9;
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        /* Main Content */
+        .content {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-left: 0;
+        }
+        
+        @media (min-width: 1024px) {
+            .sidebar {
+                display: block;
+            }
+            .content {
+                margin-left: 270px;
+            }
+        }
+        
+        /* Headings */
+        h2 {
+            color: #f27d00;
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #f7d117;
+        }
+        
+        h3 {
+            color: #343434;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+            background: linear-gradient(90deg, #a6d6c9 0%, transparent 100%);
+            padding: 0.5rem 1rem;
+            border-left: 4px solid #f27d00;
+        }
+        
+        h4 {
+            color: #f27d00;
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+        
+        /* Paragraph */
+        p {
+            margin: 1rem 0;
+            text-align: justify;
+        }
+        
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+        }
+        
+        /* Code Blocks */
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #f27d00;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            font-family: 'Roboto Mono', monospace;
+            overflow-x: auto;
+        }
+        
+        /* Math Display */
+        .math-block {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            border: 2px solid #a6d6c9;
+            overflow-x: auto;
+        }
+        
+        /* Important Notes */
+        .note {
+            background: linear-gradient(135deg, #f7d117 0%, #ffd700 100%);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            border-left: 5px solid #f27d00;
+        }
+        
+        .note strong {
+            color: #f27d00;
+        }
+        
+        /* Tips */
+        .tip {
+            background: linear-gradient(135deg, #a6d6c9 0%, #d4f1e8 100%);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            border-left: 5px solid #343434;
+        }
+        
+        /* Warning */
+        .warning {
+            background: #ffebee;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            border-left: 5px solid #f27d00;
+        }
+        
+        /* Accordion */
+        .accordion {
+            background: #f9f9f9;
+            border: 2px solid #a6d6c9;
+            border-radius: 10px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, #a6d6c9 0%, #d4f1e8 100%);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #8cc4b3 0%, #a6d6c9 100%);
+        }
+        
+        .accordion-header::after {
+            content: '▼';
+            transition: transform 0.3s;
+        }
+        
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 1.5rem;
+        }
+        
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 1.5rem;
+        }
+        
+        /* Interactive Example */
+        .example {
+            background: white;
+            border: 2px solid #f7d117;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .example-title {
+            background: #f7d117;
+            color: #343434;
+            padding: 0.5rem 1rem;
+            margin: -1.5rem -1.5rem 1rem -1.5rem;
+            font-weight: 500;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        /* Button */
+        .btn {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(242, 125, 0, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(242, 125, 0, 0.4);
+        }
+        
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:hover {
+            background: #f9f9f9;
+        }
+        
+        /* Quiz Section */
+        .quiz {
+            background: linear-gradient(135deg, #f7d117 0%, #fff9e6 100%);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 15px;
+            border: 3px solid #f27d00;
+        }
+        
+        .quiz-question {
+            font-weight: 500;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .quiz-options {
+            margin: 1rem 0;
+        }
+        
+        .quiz-option {
+            display: block;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: white;
+            border: 2px solid #a6d6c9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quiz-option:hover {
+            background: #a6d6c9;
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .quiz-feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .quiz-feedback.correct {
+            background: #d4f1e8;
+            border: 2px solid #4caf50;
+            display: block;
+        }
+        
+        .quiz-feedback.incorrect {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            display: block;
+        }
+        
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: block;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #f27d00;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(242, 125, 0, 0.5);
+            z-index: 1001;
+        }
+        
+        @media (min-width: 1024px) {
+            .mobile-toggle {
+                display: none;
+            }
+        }
+        
+        /* Matrix Display */
+        .matrix {
+            display: inline-block;
+            vertical-align: middle;
+            padding: 0.5rem;
+        }
+        
+        /* Scroll to Top */
+        .scroll-top {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: #a6d6c9;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        
+        .scroll-top.visible {
+            display: flex;
+        }
+        
+        .scroll-top:hover {
+            background: #8cc4b3;
+            transform: translateY(-5px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .content {
+                padding: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            h3 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <h1>📐 第1讲 行列式</h1>
+        <p>考研数学基础30讲 · 线性代数分册</p>
+    </div>
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <h3 style="color: #f27d00; margin-bottom: 1rem;">📑 目录导航</h3>
+        <ul>
+            <li><a href="#structure">基础知识结构</a></li>
+            <li><a href="#definition">行列式的定义</a></li>
+            <li><a href="#properties">行列式的性质</a></li>
+            <li><a href="#important">几个重要的行列式</a></li>
+            <li><a href="#calculation">行列式的计算</a></li>
+            <li><a href="#cofactor">余子式和代数余子式</a></li>
+            <li><a href="#cramer">克拉默法则</a></li>
+            <li><a href="#examples">典型例题</a></li>
+            <li><a href="#exercises">基础习题</a></li>
+        </ul>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <div class="content">
+            <!-- 基础知识结构 -->
+            <section id="structure">
+                <h2>📊 基础知识结构</h2>
+                
+                <div class="note">
+                    <strong>💡 核心概念：</strong>行列式是线性代数中的基本概念，本质上是测度（体积、面积），用于衡量向量组成的几何图形的"大小"。
+                </div>
+                
+                <h3>知识框架</h3>
+                <div class="accordion">
+                    <div class="accordion-header">
+                        行列式的三种定义
+                    </div>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><strong>本质定义（第一种定义）</strong> - 柯西提出，基于几何意义</li>
+                            <li><strong>逆序数法定义（第二种定义）</strong> - 代数学知识，严格的数学定义</li>
+                            <li><strong>展开定理（第三种定义）</strong> - 降阶思想，实用的计算方法</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">
+                        几个重要的行列式 ("12+1"型)
+                    </div>
+                    <div class="accordion-content">
+                        <ul>
+                            <li>主对角线行列式</li>
+                            <li>副对角线行列式</li>
+                            <li>拉普拉斯展开式</li>
+                            <li>范德蒙德行列式</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">
+                        行列式的计算方法
+                    </div>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><strong>具体型：</strong>
+                                <ul>
+                                    <li>化为基本形 - "12+1"型</li>
+                                    <li>递推法 - 有区分度的题</li>
+                                    <li>行列式表示的函数和方程</li>
+                                </ul>
+                            </li>
+                            <li><strong>抽象型：</strong>
+                                <ul>
+                                    <li>用性质</li>
+                                    <li>用公式 $|AB| = |A||B|$</li>
+                                    <li>余子式和代数余子式的线性组合</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 行列式的定义 -->
+            <section id="definition">
+                <h2>📐 行列式的本质定义（第一种定义）</h2>
+                
+                <div class="tip">
+                    <strong>🎯 学习建议：</strong>大多数教材从纯代数角度定义行列式，较为抽象。我们先从几何意义理解，这样更直观易懂。
+                </div>
+                
+                <h3>从2阶行列式开始</h3>
+                
+                <p>考虑一个2阶行列式：</p>
+                
+                <div class="math-block">
+                    $$D_2 = \begin{vmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{vmatrix}$$
+                </div>
+                
+                <p>其中 $a_{ij}$ 的第一个下标 $i$ 表示元素所在的<strong>行数</strong>，第二个下标 $j$ 表示元素所在的<strong>列数</strong>。</p>
+                
+                <div class="example">
+                    <div class="example-title">💡 几何解释</div>
+                    <p>将行列式的每一行看作一个向量：</p>
+                    <ul>
+                        <li>第1行：$\boldsymbol{\alpha}_1 = [a_{11}, a_{12}]$</li>
+                        <li>第2行：$\boldsymbol{\alpha}_2 = [a_{21}, a_{22}]$</li>
+                    </ul>
+                    <p>以这两个向量为邻边作平行四边形，则行列式的值等于<strong>平行四边形的面积</strong>（有向面积）。</p>
+                    
+                    <div class="math-block">
+                        $$\begin{vmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{vmatrix} = a_{11}a_{22} - a_{12}a_{21} = S_{OABC}$$
+                    </div>
+                </div>
+                
+                <div class="note">
+                    <strong>⚡ 关键结论：</strong>2阶行列式是由两个2维向量组成的，其结果为这两个向量为邻边的平行四边形的<strong>有向面积</strong>。这就是行列式的<strong>本质属性</strong> - 测度（体积/面积）！
+                </div>
+                
+                <h3>推广到n阶行列式</h3>
+                
+                <div class="math-block">
+                    <p>对于n阶行列式 $D_n$：</p>
+                    $$D_n = \begin{vmatrix} 
+                    a_{11} & a_{12} & \cdots & a_{1n} \\
+                    a_{21} & a_{22} & \cdots & a_{2n} \\
+                    \vdots & \vdots & \ddots & \vdots \\
+                    a_{n1} & a_{n2} & \cdots & a_{nn}
+                    \end{vmatrix}$$
+                </div>
+                
+                <p>它由n个n维向量 $\boldsymbol{\alpha}_1, \boldsymbol{\alpha}_2, \ldots, \boldsymbol{\alpha}_n$ 组成，其值为以这n个向量为邻边的<strong>n维图形的体积</strong>。</p>
+                
+                <div class="accordion">
+                    <div class="accordion-header">
+                        示例：2阶行列式的计算
+                    </div>
+                    <div class="accordion-content">
+                        <div class="example">
+                            <p><strong>例1：</strong>计算 $\begin{vmatrix} 1 & 2 \\ 2 & 5 \end{vmatrix}$</p>
+                            <p><strong>解：</strong>$\begin{vmatrix} 1 & 2 \\ 2 & 5 \end{vmatrix} = 1 \times 5 - 2 \times 2 = 1$</p>
+                            <p>几何意义：向量[1, 2]和[2, 5]围成的平行四边形面积为1。</p>
+                        </div>
+                        
+                        <div class="example">
+                            <p><strong>例2：</strong>计算 $\begin{vmatrix} 1 & 2 \\ 2 & 3 \end{vmatrix}$</p>
+                            <p><strong>解：</strong>$\begin{vmatrix} 1 & 2 \\ 2 & 3 \end{vmatrix} = 1 \times 3 - 2 \times 2 = -1$</p>
+                            <p>注意：负值表示从第一个向量到第二个向量是<strong>顺时针</strong>旋转。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 行列式的性质 -->
+            <section id="properties">
+                <h2>⚙️ 行列式的性质</h2>
+                
+                <div class="warning">
+                    <strong>⚠️ 重要提醒：</strong>行列式的七大性质是计算的基础，必须熟练掌握！最重要的是三种变换的性质：<strong>互换、倍乘、倍加</strong>。
+                </div>
+                
+                <h3>性质1：行列互换，值不变</h3>
+                <div class="math-block">
+                    $$|A| = |A^T|$$
+                </div>
+                <p>意义：行上成立的性质，列上也成立。转置后图形的测度保持不变。</p>
+                
+                <h3>性质2：某行（列）全为零，行列式为零</h3>
+                <div class="math-block">
+                    $$\text{若存在零行或零列} \Rightarrow |A| = 0$$
+                </div>
+                <p>几何意义：至少有一个零行意味着n维空间降一维，高维测度为0。</p>
+                
+                <h3>性质3：某行（列）有公因子k，可提出</h3>
+                <div class="math-block">
+                    $$\begin{vmatrix} 
+                    a_{11} & a_{12} & \cdots & a_{1n} \\
+                    \vdots & \vdots & & \vdots \\
+                    ka_{i1} & ka_{i2} & \cdots & ka_{in} \\
+                    \vdots & \vdots & & \vdots \\
+                    a_{n1} & a_{n2} & \cdots & a_{nn}
+                    \end{vmatrix} = k \begin{vmatrix} 
+                    a_{11} & a_{12} & \cdots & a_{1n} \\
+                    \vdots & \vdots & & \vdots \\
+                    a_{i1} & a_{i2} & \cdots & a_{in} \\
+                    \vdots & \vdots & & \vdots \\
+                    a_{n1} & a_{n2} & \cdots & a_{nn}
+                    \end{vmatrix}$$
+                </div>
+                
+                <div class="note">
+                    <strong>💡 重要：</strong>逆用时，k只能乘到<strong>某一行（列）</strong>上，不能乘到每一行！
+                </div>
+                
+                <h3>性质4：单行可拆（加法性质）</h3>
+                <div class="math-block">
+                    $$\begin{vmatrix} 
+                    a_{11} & a_{12} & \cdots & a_{1n} \\
+                    \vdots & \vdots & & \vdots \\
+                    a_{i1}+b_{i1} & a_{i2}+b_{i2} & \cdots & a_{in}+b_{in} \\
+                    \vdots & \vdots & & \vdots \\
+                    a_{n1} & a_{n2} & \cdots & a_{nn}
+                    \end{vmatrix} = \begin{vmatrix} 
+                    a_{11} & a_{12} & \cdots & a_{1n} \\
+                    \vdots & \vdots & & \vdots \\
+                    a_{i1} & a_{i2} & \cdots & a_{in} \\
+                    \vdots & \vdots & & \vdots \\
+                    a_{n1} & a_{n2} & \cdots & a_{nn}
+                    \end{vmatrix} + \begin{vmatrix} 
+                    a_{11} & a_{12} & \cdots & a_{1n} \\
+                    \vdots & \vdots & & \vdots \\
+                    b_{i1} & b_{i2} & \cdots & b_{in} \\
+                    \vdots & \vdots & & \vdots \\
+                    a_{n1} & a_{n2} & \cdots & a_{nn}
+                    \end{vmatrix}$$
+                </div>
+                
+                <h3>性质5：两行（列）互换，变号</h3>
+                <div class="math-block">
+                    $$\text{互换两行（列）} \Rightarrow |A| \to -|A|$$
+                </div>
+                <p>换奇数次反号，换偶数次不变。</p>
+                
+                <h3>性质6：两行（列）相等或成比例，行列式为零</h3>
+                <div class="math-block">
+                    $$\text{若存在两行成比例} \Rightarrow |A| = 0$$
+                </div>
+                <p>几何意义：共线的向量无法构成有面积的图形。</p>
+                
+                <h3>性质7：倍加性质（最常用！）</h3>
+                <div class="math-block">
+                    $$\text{某行的k倍加到另一行，行列式不变}$$
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">🔥 典型应用</div>
+                    <p>计算：$\begin{vmatrix} 1 & 2 \\ 2 & 3 \end{vmatrix}$</p>
+                    <p><strong>解法：</strong>第1行的(-2)倍加到第2行</p>
+                    <div class="math-block">
+                        $$\begin{vmatrix} 1 & 2 \\ 2 & 3 \end{vmatrix} = \begin{vmatrix} 1 & 2 \\ 0 & -1 \end{vmatrix} = 1 \times (-1) - 0 = -1$$
+                    </div>
+                    <p>目的：把0化出来，简化计算！</p>
+                </div>
+                
+                <div class="quiz">
+                    <div class="quiz-question">
+                        📝 小测试：下列哪个运算是正确的？
+                    </div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="checkAnswer(this, false)">
+                            A. $3\begin{vmatrix} 1 & 2 \\ 3 & 3 \end{vmatrix} = \begin{vmatrix} 3 & 6 \\ 9 & 9 \end{vmatrix}$
+                        </div>
+                        <div class="quiz-option" onclick="checkAnswer(this, true)">
+                            B. $3\begin{vmatrix} 1 & 2 \\ 3 & 3 \end{vmatrix} = \begin{vmatrix} 3 & 6 \\ 3 & 3 \end{vmatrix}$
+                        </div>
+                        <div class="quiz-option" onclick="checkAnswer(this, false)">
+                            C. $\begin{vmatrix} 1 & 2 \\ 3 & 3 \end{vmatrix} + \begin{vmatrix} 2 & 1 \\ 1 & 1 \end{vmatrix} = \begin{vmatrix} 3 & 3 \\ 4 & 4 \end{vmatrix}$
+                        </div>
+                    </div>
+                    <div class="quiz-feedback"></div>
+                </div>
+            </section>
+            
+            <!-- 几个重要的行列式 -->
+            <section id="important">
+                <h2>🌟 几个重要的行列式（"12+1"型）</h2>
+                
+                <h3>1. 主对角线行列式</h3>
+                <div class="math-block">
+                    $$\begin{vmatrix} 
+                    a_{11} & a_{12} & \cdots & a_{1n} \\
+                    0 & a_{22} & \cdots & a_{2n} \\
+                    \vdots & \vdots & \ddots & \vdots \\
+                    0 & 0 & \cdots & a_{nn}
+                    \end{vmatrix} = \begin{vmatrix} 
+                    a_{11} & 0 & \cdots & 0 \\
+                    a_{21} & a_{22} & \cdots & 0 \\
+                    \vdots & \vdots & \ddots & \vdots \\
+                    a_{n1} & a_{n2} & \cdots & a_{nn}
+                    \end{vmatrix} = \begin{vmatrix} 
+                    a_{11} & 0 & \cdots & 0 \\
+                    0 & a_{22} & \cdots & 0 \\
+                    \vdots & \vdots & \ddots & \vdots \\
+                    0 & 0 & \cdots & a_{nn}
+                    \end{vmatrix} = \prod_{i=1}^{n} a_{ii}$$
+                </div>
+                <p>结论：上三角、下三角、对角行列式的值都等于<strong>主对角线元素的乘积</strong>。</p>
+                
+                <h3>2. 副对角线行列式</h3>
+                <div class="math-block">
+                    $$\begin{vmatrix} 
+                    0 & 0 & \cdots & 0 & a_{1n} \\
+                    0 & 0 & \cdots & a_{2,n-1} & * \\
+                    \vdots & \vdots & \ddots & \vdots & \vdots \\
+                    a_{n1} & * & \cdots & * & *
+                    \end{vmatrix} = (-1)^{\frac{n(n-1)}{2}} a_{1n}a_{2,n-1}\cdots a_{n1}$$
+                </div>
+                
+                <div class="note">
+                    <strong>💡 记忆技巧：</strong>副对角线行列式 = $(-1)^{\frac{n(n-1)}{2}} \times$ 副对角线元素乘积
+                </div>
+                
+                <h3>3. 拉普拉斯展开式（分块矩阵）</h3>
+                <div class="math-block">
+                    $$\begin{vmatrix} 
+                    A & O \\
+                    O & B
+                    \end{vmatrix} = \begin{vmatrix} 
+                    A & C \\
+                    O & B
+                    \end{vmatrix} = |A| \cdot |B|$$
+                    
+                    $$\begin{vmatrix} 
+                    O & A \\
+                    B & O
+                    \end{vmatrix} = \begin{vmatrix} 
+                    C & A \\
+                    B & O
+                    \end{vmatrix} = (-1)^{mn} |A| \cdot |B|$$
+                </div>
+                <p>其中A为m阶矩阵，B为n阶矩阵。</p>
+                
+                <h3>4. 范德蒙德行列式 ⭐⭐⭐</h3>
+                <div class="math-block">
+                    $$D_n = \begin{vmatrix} 
+                    1 & 1 & 1 & \cdots & 1 \\
+                    x_1 & x_2 & x_3 & \cdots & x_n \\
+                    x_1^2 & x_2^2 & x_3^2 & \cdots & x_n^2 \\
+                    \vdots & \vdots & \vdots & \ddots & \vdots \\
+                    x_1^{n-1} & x_2^{n-1} & x_3^{n-1} & \cdots & x_n^{n-1}
+                    \end{vmatrix} = \prod_{1 \leq i < j \leq n} (x_j - x_i)$$
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">🎯 范德蒙德行列式应用</div>
+                    <p>计算：$\begin{vmatrix} 1 & 1 & 1 \\ a & b & c \\ a^2 & b^2 & c^2 \end{vmatrix}$</p>
+                    <p><strong>解：</strong>这是3阶范德蒙德行列式</p>
+                    <div class="math-block">
+                        $$\begin{vmatrix} 1 & 1 & 1 \\ a & b & c \\ a^2 & b^2 & c^2 \end{vmatrix} = (b-a)(c-a)(c-b)$$
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="showMoreExamples()">查看更多范德蒙德例题</button>
+                <div id="moreExamples" style="display:none; margin-top: 1rem;">
+                    <div class="example">
+                        <p><strong>例题：</strong>已知质点运动轨迹为 $f(x) = a + bx + cx^2$，且过点$(x_1, y_1), (x_2, y_2), (x_3, y_3)$，求f(x)。</p>
+                        <p><strong>解：</strong>代入三个点得方程组：</p>
+                        <div class="math-block">
+                            $$\begin{cases}
+                            a + bx_1 + cx_1^2 = y_1 \\
+                            a + bx_2 + cx_2^2 = y_2 \\
+                            a + bx_3 + cx_3^2 = y_3
+                            \end{cases}$$
+                        </div>
+                        <p>系数行列式为范德蒙德行列式：</p>
+                        <div class="math-block">
+                            $$D = \begin{vmatrix} 1 & x_1 & x_1^2 \\ 1 & x_2 & x_2^2 \\ 1 & x_3 & x_3^2 \end{vmatrix} = (x_2-x_1)(x_3-x_1)(x_3-x_2)$$
+                        </div>
+                        <p>若 $x_1, x_2, x_3$ 互不相同，则 $D \neq 0$，方程组有唯一解。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 行列式的计算 -->
+            <section id="calculation">
+                <h2>🧮 行列式的计算方法</h2>
+                
+                <div class="tip">
+                    <strong>🎯 计算策略：</strong>
+                    <ol>
+                        <li>用性质：化出尽可能多的0</li>
+                        <li>通过性质+展开公式 → 化为基本形（"12+1"型）</li>
+                        <li>找差别不大的行作变换</li>
+                        <li>找规律（如范德蒙德行列式）</li>
+                        <li>归纳法/递推法</li>
+                    </ol>
+                </div>
+                
+                <h3>方法一：化为基本形</h3>
+                
+                <div class="example">
+                    <div class="example-title">例题1.2 计算爪形行列式</div>
+                    <p>计算：$\begin{vmatrix} 1 & 1 & 1 & 1 \\ 1 & 2 & 0 & 0 \\ 1 & 0 & 3 & 0 \\ 1 & 0 & 0 & 4 \end{vmatrix}$</p>
+                    
+                    <p><strong>分析：</strong>这是爪形行列式，用第1行消去其他元素。</p>
+                    
+                    <div class="code-block">
+第1行的(-1)倍加到第2、3、4行：
+$\begin{vmatrix} 
+1 & 1 & 1 & 1 \\ 
+0 & 1 & -1 & -1 \\ 
+0 & -1 & 2 & -1 \\ 
+0 & -1 & -1 & 3 
+\end{vmatrix}$
+
+按第1列展开，化为3阶行列式：
+$= 1 \times \begin{vmatrix} 
+1 & -1 & -1 \\ 
+-1 & 2 & -1 \\ 
+-1 & -1 & 3 
+\end{vmatrix}$
+
+继续用倍加性质化简...
+最终结果 = 24
+                    </div>
+                </div>
+                
+                <h3>方法二：递推法</h3>
+                
+                <div class="example">
+                    <div class="example-title">例题1.7 计算宽对角行列式</div>
+                    <p>计算：$D_4 = \begin{vmatrix} 
+                    1-a & a & 0 & 0 \\ 
+                    -1 & 1-a & a & 0 \\ 
+                    0 & -1 & 1-a & a \\ 
+                    0 & 0 & -1 & 1-a 
+                    \end{vmatrix}$</p>
+                    
+                    <p><strong>解法：</strong>找递推关系 $D_n$ 与 $D_{n-1}$ 的关系</p>
+                    
+                    <div class="code-block">
+按第1行展开：
+$D_4 = (1-a) \begin{vmatrix} 
+1-a & a & 0 \\ 
+-1 & 1-a & a \\ 
+0 & -1 & 1-a 
+\end{vmatrix} - a \begin{vmatrix} 
+-1 & a & 0 \\ 
+0 & 1-a & a \\ 
+0 & -1 & 1-a 
+\end{vmatrix}$
+
+$= (1-a)D_3 - a(-1) \times \begin{vmatrix} 
+1-a & a \\ 
+-1 & 1-a 
+\end{vmatrix}$
+
+$= (1-a)D_3 - a(-1)[(1-a)^2 + a]$
+
+继续递推...
+最终：$D_n = a^4 - a^3 + a^2 - a + 1$
+                    </div>
+                </div>
+                
+                <h3>方法三：行和相等型</h3>
+                
+                <div class="example">
+                    <div class="example-title">例题1.4 计算行和相等行列式</div>
+                    <p>计算：$D_n = \begin{vmatrix} 
+                    a & b & b & \cdots & b \\ 
+                    b & a & b & \cdots & b \\ 
+                    b & b & a & \cdots & b \\ 
+                    \vdots & \vdots & \vdots & \ddots & \vdots \\ 
+                    b & b & b & \cdots & a 
+                    \end{vmatrix}$</p>
+                    
+                    <p><strong>技巧：</strong>每行元素和相同，都是 $a + (n-1)b$</p>
+                    
+                    <div class="code-block">
+将其余各列加到第1列：
+第1列变为 $[a+(n-1)b, a+(n-1)b, \ldots, a+(n-1)b]^T$
+
+提出公因子 $a+(n-1)b$：
+$D_n = [a+(n-1)b] \begin{vmatrix} 
+1 & b & b & \cdots & b \\ 
+1 & a & b & \cdots & b \\ 
+1 & b & a & \cdots & b \\ 
+\vdots & \vdots & \vdots & \ddots & \vdots \\ 
+1 & b & b & \cdots & a 
+\end{vmatrix}$
+
+第1行的(-1)倍加到其余行：
+$= [a+(n-1)b] \begin{vmatrix} 
+1 & b & b & \cdots & b \\ 
+0 & a-b & 0 & \cdots & 0 \\ 
+0 & 0 & a-b & \cdots & 0 \\ 
+\vdots & \vdots & \vdots & \ddots & \vdots \\ 
+0 & 0 & 0 & \cdots & a-b 
+\end{vmatrix}$
+
+$= [a+(n-1)b](a-b)^{n-1}$
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 余子式和代数余子式 -->
+            <section id="cofactor">
+                <h2>🔢 余子式和代数余子式的计算</h2>
+                
+                <h3>基本定义</h3>
+                
+                <div class="math-block">
+                    <p><strong>余子式 $M_{ij}$：</strong>去掉元素 $a_{ij}$ 所在的第i行、第j列后，剩余元素按原位置组成的n-1阶行列式。</p>
+                    
+                    <p><strong>代数余子式 $A_{ij}$：</strong>$A_{ij} = (-1)^{i+j} M_{ij}$</p>
+                </div>
+                
+                <div class="note">
+                    <strong>💡 关键公式：</strong>
+                    <ul>
+                        <li>按第i行展开：$|A| = a_{i1}A_{i1} + a_{i2}A_{i2} + \cdots + a_{in}A_{in}$</li>
+                        <li>按第j列展开：$|A| = a_{1j}A_{1j} + a_{2j}A_{2j} + \cdots + a_{nj}A_{nj}$</li>
+                        <li>异行异列：$a_{i1}A_{k1} + a_{i2}A_{k2} + \cdots + a_{in}A_{kn} = 0$ （当 $i \neq k$）</li>
+                    </ul>
+                </div>
+                
+                <h3>线性组合的计算</h3>
+                
+                <div class="example">
+                    <div class="example-title">例题1.12 计算代数余子式组合</div>
+                    <p>设 $A = \begin{vmatrix} 
+                    2 & -1 & 2 & 3 \\ 
+                    0 & 1 & -1 & 0 \\ 
+                    1 & 3 & 4 & 5 \\ 
+                    1 & 2 & 1 & 1 
+                    \end{vmatrix}$，求 $A_{31} + A_{32} + A_{33} + M_{34}$</p>
+                    
+                    <p><strong>解法：</strong>这是"大A配小k"型</p>
+                    
+                    <div class="code-block">
+$A_{31} + A_{32} + A_{33} + M_{34}$
+$= A_{31} + A_{32} + A_{33} - A_{34}$
+
+将组合系数[1, 1, 1, -1]替换A的第3行：
+$= \begin{vmatrix} 
+2 & -1 & 2 & 3 \\ 
+0 & 1 & -1 & 0 \\ 
+1 & 1 & 1 & -1 \\ 
+1 & 2 & 1 & 1 
+\end{vmatrix}$
+
+化简计算得 = 6
+                    </div>
+                </div>
+                
+                <div class="warning">
+                    <strong>⚠️ 口诀：</strong>
+                    <ul>
+                        <li><strong>大A配小a</strong>：系数与某行元素相同 → 逆用展开式 → 结果为|A|</li>
+                        <li><strong>大A配小k</strong>：系数与某行元素不同 → k把小a吃 → 替换后计算</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 克拉默法则 -->
+            <section id="cramer">
+                <h2>⚖️ 克拉默法则</h2>
+                
+                <div class="note">
+                    <strong>📌 适用条件：</strong>n个方程、n个未知数的线性方程组，且系数行列式 $D \neq 0$
+                </div>
+                
+                <h3>非齐次线性方程组</h3>
+                
+                <div class="math-block">
+                    $$\begin{cases}
+                    a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n = b_1 \\
+                    a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n = b_2 \\
+                    \vdots \\
+                    a_{n1}x_1 + a_{n2}x_2 + \cdots + a_{nn}x_n = b_n
+                    \end{cases}$$
+                    
+                    <p>若系数行列式 $D = \begin{vmatrix} 
+                    a_{11} & a_{12} & \cdots & a_{1n} \\ 
+                    a_{21} & a_{22} & \cdots & a_{2n} \\ 
+                    \vdots & \vdots & \ddots & \vdots \\ 
+                    a_{n1} & a_{n2} & \cdots & a_{nn} 
+                    \end{vmatrix} \neq 0$</p>
+                    
+                    <p>则方程组有<strong>唯一解</strong>：$x_i = \frac{D_i}{D}$（i = 1, 2, ..., n）</p>
+                    
+                    <p>其中 $D_i$ 是用常数项 $b_1, b_2, \ldots, b_n$ 替换D中第i列得到的行列式。</p>
+                </div>
+                
+                <h3>齐次线性方程组</h3>
+                
+                <div class="math-block">
+                    $$\begin{cases}
+                    a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n = 0 \\
+                    a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n = 0 \\
+                    \vdots \\
+                    a_{n1}x_1 + a_{n2}x_2 + \cdots + a_{nn}x_n = 0
+                    \end{cases}$$
+                    
+                    <ul>
+                        <li>若 $D \neq 0$，则只有<strong>零解</strong></li>
+                        <li>若 $D = 0$，则有<strong>非零解</strong></li>
+                    </ul>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例题：克拉默法则应用</div>
+                    <p>解方程组：$\begin{cases} x_1 - 2x_2 + x_3 = 1 \\ x_1 + 0x_2 + 0x_3 = 2 \\ 0x_1 + x_2 + 0x_3 = 5 \end{cases}$</p>
+                    
+                    <div class="code-block">
+系数行列式：
+$D = \begin{vmatrix} 1 & -2 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{vmatrix} = 1 \neq 0$
+
+所以有唯一解：
+$D_1 = \begin{vmatrix} 1 & -2 & 1 \\ 2 & 0 & 0 \\ 5 & 1 & 0 \end{vmatrix} = 2$
+
+$x_1 = \frac{D_1}{D} = \frac{2}{1} = 2$
+
+类似可得：$x_2 = 5$, $x_3 = 9$
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 典型例题 -->
+            <section id="examples">
+                <h2>📚 典型例题精讲</h2>
+                
+                <div class="accordion">
+                    <div class="accordion-header">
+                        例题1.13：抽象型行列式（矩阵乘积）
+                    </div>
+                    <div class="accordion-content">
+                        <div class="example">
+                            <p><strong>题目：</strong>已知3阶矩阵 $B \neq O$，且B的每一列向量都是方程组的解：</p>
+                            <div class="math-block">
+                                $$\begin{cases}
+                                x_1 + 2x_2 - 2x_3 = 0 \\
+                                2x_1 - x_2 + \lambda x_3 = 0 \\
+                                3x_1 + x_2 - x_3 = 0
+                                \end{cases}$$
+                            </div>
+                            <p>(1) 求λ的值；(2) 证明 $|B| = 0$</p>
+                            
+                            <p><strong>解：</strong></p>
+                            <div class="code-block">
+(1) 设B = [β₁, β₂, β₃]，由于B的每列都是方程组的解，
+所以 Aβᵢ = 0 (i=1,2,3)
+
+即 A[β₁, β₂, β₃] = [0, 0, 0] = O
+所以 AB = O
+
+因为 B ≠ O，所以B的列向量不全为零，
+即齐次方程组有非零解
+因此系数行列式 |A| = 0
+
+|A| = |1   2  -2|
+     |2  -1   λ| = 5(λ-1) = 0
+     |3   1  -1|
+
+得 λ = 1
+
+(2) 由AB = O且B ≠ O，用反证法：
+假设 |B| ≠ 0，则B可逆
+在AB = O两端右乘B⁻¹，得 A = O
+这与 |A| ≠ 0矛盾
+所以 |B| = 0
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">
+                        例题1.11：抽象型组合运算
+                    </div>
+                    <div class="accordion-content">
+                        <div class="example">
+                            <p><strong>题目：</strong>设 $\boldsymbol{\alpha}_1, \boldsymbol{\alpha}_2, \boldsymbol{\alpha}_3$ 均为3维列向量，已知</p>
+                            <div class="math-block">
+                                $$A = [\boldsymbol{\alpha}_1, \boldsymbol{\alpha}_2, \boldsymbol{\alpha}_3], \quad B = [\boldsymbol{\alpha}_1 - \boldsymbol{\alpha}_2 + 2\boldsymbol{\alpha}_3, 2\boldsymbol{\alpha}_1 + 3\boldsymbol{\alpha}_2 - 5\boldsymbol{\alpha}_3, \boldsymbol{\alpha}_1 + 2\boldsymbol{\alpha}_2 - \boldsymbol{\alpha}_3]$$
+                            </div>
+                            <p>且 $|A| = 2$，则 $|B - A| = ?$</p>
+                            
+                            <p><strong>解法：</strong>关键是将线性组合表示为矩阵乘积</p>
+                            
+                            <div class="code-block">
+注意到：
+0α₁ - α₂ + 2α₃ = [α₁, α₂, α₃][0, -1, 2]ᵀ
+2α₁ + 2α₂ - 5α₃ = [α₁, α₂, α₃][2, 2, -5]ᵀ
+α₁ + 2α₂ - 2α₃ = [α₁, α₂, α₃][1, 2, -2]ᵀ
+
+所以 B - A = [α₁, α₂, α₃] |0  2  1|
+                            |-1 2  2|
+                            |2 -5 -2|
+
+因此 |B-A| = |α₁, α₂, α₃| · |0  2  1|
+                              |-1 2  2|
+                              |2 -5 -2|
+
+           = |A| · |0  2  1|
+                   |-1 2  2|
+                   |2 -5 -2|
+
+计算后面的行列式：
+|0  2  1|
+|-1 2  2| = 5
+|2 -5 -2|
+
+所以 |B-A| = 2 × 5 = 10
+                            </div>
+                            
+                            <div class="tip">
+                                <strong>💡 技巧总结：</strong>
+                                <ul>
+                                    <li>将向量的线性组合表示为矩阵乘积</li>
+                                    <li>利用 $|AB| = |A||B|$ 分解计算</li>
+                                    <li>$x_1\boldsymbol{\alpha}_1 + x_2\boldsymbol{\alpha}_2 + x_3\boldsymbol{\alpha}_3 = [\boldsymbol{\alpha}_1, \boldsymbol{\alpha}_2, \boldsymbol{\alpha}_3][x_1, x_2, x_3]^T$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 基础习题 -->
+            <section id="exercises">
+                <h2>✏️ 基础习题精练</h2>
+                
+                <div class="quiz">
+                    <div class="quiz-question">
+                        <strong>习题1.1</strong> 设 $f(x) = \begin{vmatrix} x-2 & x-1 & x-2 & x-3 \\ 2x-2 & 2x-1 & 2x-2 & 2x-3 \\ 3x-3 & 3x-2 & 4x-5 & 3x-5 \\ 4x & 4x-3 & 5x-7 & 4x-3 \end{vmatrix}$
+                        <br>则方程 $f(x) = 0$ 的根的个数为（&nbsp;&nbsp;）
+                    </div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="checkExercise(this, false, '1.1')">A. 1</div>
+                        <div class="quiz-option" onclick="checkExercise(this, true, '1.1')">B. 2</div>
+                        <div class="quiz-option" onclick="checkExercise(this, false, '1.1')">C. 3</div>
+                        <div class="quiz-option" onclick="checkExercise(this, false, '1.1')">D. 4</div>
+                    </div>
+                    <div class="quiz-feedback" id="feedback-1.1"></div>
+                </div>
+                
+                <div class="quiz">
+                    <div class="quiz-question">
+                        <strong>习题1.2</strong> 设 $A = \begin{vmatrix} 1 & -1 & 0 & 1 \\ -2 & 1 & -1 & 1 \\ 3 & -2 & 2 & -1 \\ 0 & 0 & 3 & 4 \end{vmatrix}$，$A_{ij}$ 是元素 $a_{ij}$ 的代数余子式，则 $A_{41} - A_{42} = $ ?
+                    </div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="checkExercise(this, false, '1.2')">A. 4</div>
+                        <div class="quiz-option" onclick="checkExercise(this, true, '1.2')">B. -4</div>
+                        <div class="quiz-option" onclick="checkExercise(this, false, '1.2')">C. 2</div>
+                        <div class="quiz-option" onclick="checkExercise(this, false, '1.2')">D. -2</div>
+                    </div>
+                    <div class="quiz-feedback" id="feedback-1.2"></div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">📝 习题1.3 - 多项式系数问题</div>
+                    <p>多项式 $f(x) = \begin{vmatrix} x & x & 1 & 2x \\ 1 & x & 2 & -1 \\ 2 & 1 & x & 1 \\ 2 & -1 & 1 & x \end{vmatrix}$ 中 $x^3$ 项的系数为 <input type="text" id="ans-1.3" placeholder="输入答案" style="width: 100px; padding: 0.5rem; border: 2px solid #a6d6c9; border-radius: 5px;">
+                    <button class="btn" onclick="checkTextAnswer('ans-1.3', '-5', '1.3')">提交答案</button></p>
+                    <div class="quiz-feedback" id="feedback-1.3"></div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">
+                        查看习题详细解答
+                    </div>
+                    <div class="accordion-content">
+                        <h4>习题1.1 详解</h4>
+                        <div class="code-block">
+利用行列式性质化简：
+将第1,2,3,4行分别提出公因子，然后倍加变换
+
+$f(x) = \begin{vmatrix} x-2 & x-1 & x-2 & x-3 \\ 2x-2 & 2x-1 & 2x-2 & 2x-3 \\ 3x-3 & 3x-2 & 4x-5 & 3x-5 \\ 4x & 4x-3 & 5x-7 & 4x-3 \end{vmatrix}$
+
+通过行变换化简后，得到：
+$f(x) = 5x(x-1)$
+
+所以方程 $f(x) = 0$ 的根为 $x = 0$ 或 $x = 1$
+共有2个根，选B。
+                        </div>
+                        
+                        <h4>习题1.2 详解</h4>
+                        <div class="code-block">
+这是"大A配小k"问题：
+$A_{41} - A_{42} = A_{41} \cdot 1 + A_{42} \cdot (-1) + A_{43} \cdot 0 + A_{44} \cdot 0$
+
+将系数[1, -1, 0, 0]替换A的第4行：
+$= \begin{vmatrix} 1 & -1 & 0 & 1 \\ -2 & 1 & -1 & 1 \\ 3 & -2 & 2 & -1 \\ 1 & -1 & 0 & 0 \end{vmatrix}$
+
+按第4行展开计算：
+$= 1 \times \begin{vmatrix} -1 & -1 & 1 \\ 1 & -1 & 1 \\ -2 & 2 & -1 \end{vmatrix} - (-1) \times \begin{vmatrix} 1 & 0 & 1 \\ -2 & -1 & 1 \\ 3 & 2 & -1 \end{vmatrix}$
+
+$= -4$
+
+选B。
+                        </div>
+                        
+                        <h4>习题1.3 详解</h4>
+                        <div class="code-block">
+按第一行展开行列式，找出含 $x^3$ 的项：
+
+$f(x) = x \cdot M_{11} + x \cdot M_{12} + 1 \cdot M_{13} + 2x \cdot M_{14}$
+
+只有第二项和第四项中可能含 $x^3$：
+- 第二项：$-x \cdot \begin{vmatrix} 1 & 2 & -1 \\ 2 & x & 1 \\ 2 & 1 & x \end{vmatrix}$ 含 $-x \cdot x^2 = -x^3$
+- 第四项：$-2x \cdot \begin{vmatrix} 1 & x & 2 \\ 2 & 1 & x \\ 2 & -1 & 1 \end{vmatrix}$ 含 $-2x \cdot x^2 = -2x^3$
+
+计算余子式中 $x^2$ 的系数后，
+总的 $x^3$ 项系数为 $-5$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note">
+                    <strong>🎓 练习建议：</strong>
+                    <ul>
+                        <li>每天练习2-3道行列式计算题</li>
+                        <li>重点掌握"12+1"型行列式的识别和计算</li>
+                        <li>熟练运用行列式性质进行化简</li>
+                        <li>区分具体型和抽象型的解题策略</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 总结回顾 -->
+            <section id="summary">
+                <h2>📖 本讲总结</h2>
+                
+                <div style="background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%); color: white; padding: 2rem; border-radius: 15px; margin: 2rem 0;">
+                    <h3 style="color: white; border: none; margin-bottom: 1rem;">🎯 核心要点</h3>
+                    <ol style="line-height: 2;">
+                        <li><strong>行列式的本质</strong>：测度（体积/面积），由向量组成</li>
+                        <li><strong>三种定义</strong>：本质定义、逆序数法、展开定理</li>
+                        <li><strong>七大性质</strong>：重点掌握互换、倍乘、倍加</li>
+                        <li><strong>"12+1"型</strong>：主对角线、副对角线、拉普拉斯、范德蒙德</li>
+                        <li><strong>计算方法</strong>：化基本形、递推法、行和相等</li>
+                        <li><strong>余子式运算</strong>：大A配小a、大A配小k</li>
+                        <li><strong>克拉默法则</strong>：$D \neq 0$ 时有唯一解</li>
+                    </ol>
+                </div>
+                
+                <div class="tip">
+                    <strong>💪 学习心得：</strong>
+                    <p>行列式是线性代数的基础工具，不仅要会计算，更要理解其几何意义。后续学习矩阵、向量空间、线性变换时，行列式的概念会反复出现。建议：</p>
+                    <ul>
+                        <li>理解为先，计算为辅</li>
+                        <li>多做题，培养"看出规律"的能力</li>
+                        <li>掌握从几何角度思考问题的方法</li>
+                        <li>重视抽象型题目的训练</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 互动测试区 -->
+            <section id="final-test">
+                <h2>🏆 综合测试</h2>
+                
+                <div class="quiz">
+                    <div class="quiz-question">
+                        <strong>测试题1：</strong>若 $\begin{vmatrix} a & b \\ c & d \end{vmatrix} = 2$，则 $\begin{vmatrix} 2a & 2b \\ c & d \end{vmatrix} = $ ?
+                    </div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="checkExercise(this, false, 'final-1')">A. 2</div>
+                        <div class="quiz-option" onclick="checkExercise(this, true, 'final-1')">B. 4</div>
+                        <div class="quiz-option" onclick="checkExercise(this, false, 'final-1')">C. 6</div>
+                        <div class="quiz-option" onclick="checkExercise(this, false, 'final-1')">D. 8</div>
+                    </div>
+                    <div class="quiz-feedback" id="feedback-final-1"></div>
+                </div>
+                
+                <div class="quiz">
+                    <div class="quiz-question">
+                        <strong>测试题2：</strong>若齐次线性方程组 $\begin{cases} x_1 + 2x_2 + 3x_3 = 0 \\ 2x_1 + 3x_2 + 5x_3 = 0 \\ x_1 + x_2 + \lambda x_3 = 0 \end{cases}$ 有非零解，则 $\lambda = $ ?
+                    </div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="checkExercise(this, false, 'final-2')">A. 1</div>
+                        <div class="quiz-option" onclick="checkExercise(this, true, 'final-2')">B. 2</div>
+                        <div class="quiz-option" onclick="checkExercise(this, false, 'final-2')">C. 3</div>
+                        <div class="quiz-option" onclick="checkExercise(this, false, 'final-2')">D. 4</div>
+                    </div>
+                    <div class="quiz-feedback" id="feedback-final-2"></div>
+                </div>
+                
+                <button class="btn" onclick="showConclusion()" style="margin-top: 2rem;">查看学习总结</button>
+                <div id="conclusion" style="display:none; margin-top: 2rem;">
+                    <div style="background: linear-gradient(135deg, #a6d6c9 0%, #d4f1e8 100%); padding: 2rem; border-radius: 15px;">
+                        <h3 style="color: #f27d00;">🎉 恭喜完成第1讲学习！</h3>
+                        <p>你已经掌握了行列式的核心知识。继续加油，下一讲我们将学习<strong>矩阵</strong>的概念和运算。</p>
+                        <p><strong>复习建议：</strong></p>
+                        <ul>
+                            <li>✅ 每天练习3-5道行列式计算题</li>
+                            <li>✅ 重点复习"12+1"型行列式</li>
+                            <li>✅ 理解行列式的几何意义</li>
+                            <li>✅ 准备进入矩阵章节的学习</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+        </div>
+    </div>
+    
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+    
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
+    
+    <script>
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+        
+        // Quiz answer checking
+        function checkAnswer(element, isCorrect) {
+            const feedback = element.parentElement.nextElementSibling;
+            if (isCorrect) {
+                feedback.className = 'quiz-feedback correct';
+                feedback.innerHTML = '✅ 正确！根据性质3，k只能乘到某一行上，不能乘到每一行。';
+            } else {
+                feedback.className = 'quiz-feedback incorrect';
+                feedback.innerHTML = '❌ 不正确。请再想想：提取公因子k时，只能作用于某一行或某一列。';
+            }
+        }
+        
+        // Exercise answer checking
+        function checkExercise(element, isCorrect, id) {
+            const feedback = document.getElementById('feedback-' + id);
+            if (isCorrect) {
+                feedback.className = 'quiz-feedback correct';
+                feedback.innerHTML = '✅ 回答正确！';
+            } else {
+                feedback.className = 'quiz-feedback incorrect';
+                feedback.innerHTML = '❌ 回答错误，请查看详细解答。';
+            }
+        }
+        
+        // Text answer checking
+        function checkTextAnswer(inputId, correctAnswer, feedbackId) {
+            const input = document.getElementById(inputId);
+            const feedback = document.getElementById('feedback-' + feedbackId);
+            const userAnswer = input.value.trim();
+            
+            if (userAnswer === correctAnswer) {
+                feedback.className = 'quiz-feedback correct';
+                feedback.innerHTML = '✅ 正确！x³项的系数确实是-5。';
+            } else {
+                feedback.className = 'quiz-feedback incorrect';
+                feedback.innerHTML = '❌ 不正确。提示：需要按第一行展开，找出含x³的项。正确答案是-5。';
+            }
+        }
+        
+        // Show more examples
+        function showMoreExamples() {
+            const examples = document.getElementById('moreExamples');
+            if (examples.style.display === 'none') {
+                examples.style.display = 'block';
+                event.target.textContent = '收起例题';
+            } else {
+                examples.style.display = 'none';
+                event.target.textContent = '查看更多范德蒙德例题';
+            }
+        }
+        
+        // Show conclusion
+        function showConclusion() {
+            const conclusion = document.getElementById('conclusion');
+            conclusion.style.display = 'block';
+            event.target.style.display = 'none';
+        }
+        
+        // Toggle sidebar (mobile)
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+        
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Show scroll to top button when scrolling
+        window.addEventListener('scroll', function() {
+            const scrollTop = document.getElementById('scrollTop');
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+        
+        // Smooth scrolling for sidebar links
+        document.querySelectorAll('.sidebar a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // Close sidebar on mobile after clicking
+                    if (window.innerWidth < 1024) {
+                        document.getElementById('sidebar').classList.remove('active');
+                    }
+                }
+            });
+        });
+        
+        // Initialize - open first accordion for demonstration
+        window.addEventListener('load', function() {
+            const firstAccordion = document.querySelector('.accordion-header');
+            if (firstAccordion) {
+                firstAccordion.click();
+            }
+            
+            // Trigger MathJax rendering
+            if (typeof MathJax !== 'undefined') {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+            }
+        });
+    </script>
+</body>
+</html>
+

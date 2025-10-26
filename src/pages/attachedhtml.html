@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数学题中的变形举例 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": {
+                styles: {
+                    ".MathJax": {
+                        color: "#1a5490"
+                    }
+                }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.2);
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        h1 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        nav {
+            background: #34495e;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0 20px;
+        }
+        
+        nav li a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            display: block;
+        }
+        
+        nav li a:hover {
+            background: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        main {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            font-family: 'Noto Serif SC', serif;
+        }
+        
+        h3 {
+            color: #34495e;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid #764ba2;
+        }
+        
+        h4 {
+            color: #555;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .intro {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-left: 5px solid #ff6b6b;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        
+        .method-box {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .example-box {
+            background: #e8f4f8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #3498db;
+        }
+        
+        .example-box h4 {
+            color: #2980b9;
+            margin-bottom: 15px;
+        }
+        
+        .formula {
+            background: #f0f0f0;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            text-align: center;
+            overflow-x: auto;
+        }
+        
+        .note-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .note-box strong {
+            color: #856404;
+        }
+        
+        .accordion {
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            transition: 0.4s;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+        
+        .accordion:hover, .accordion.active {
+            background: #764ba2;
+        }
+        
+        .accordion::after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .accordion.active::after {
+            content: "\2212";
+        }
+        
+        .panel {
+            padding: 0 18px;
+            background: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .panel.show {
+            padding: 20px 18px;
+            max-height: 2000px;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background: #282c34;
+            color: #61dafb;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        
+        .interactive-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+        
+        .interactive-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .quiz-box {
+            background: #e8f8f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #1abc9c;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            main {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .scroll-to-top.visible {
+            opacity: 1;
+        }
+        
+        .scroll-to-top:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>附录：数学题中的变形举例</h1>
+            <p class="subtitle">掌握变形技巧，提升解题能力</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#intro">引言</a></li>
+                <li><a href="#equivalent">等价变形</a></li>
+                <li><a href="#non-equivalent">不等式变形</a></li>
+                <li><a href="#function">函数性质</a></li>
+                <li><a href="#elimination">消去法</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <section id="intro">
+                <div class="intro">
+                    <h2>🎯 引言</h2>
+                    <p>数学考题的解题过程，本质上就是建立一座连接条件与结论的桥梁。搭建这座桥梁的每一步都是一个转化。无论这种转化所现的是<span class="highlight">"等量关系"</span>、<span class="highlight">"等价关系"</span>，还是<span class="highlight">"不等量放缩"</span>、<span class="highlight">"充分关系"</span>、<span class="highlight">"必要关系"</span>，均可在形式上统称为<strong>变形</strong>。</p>
+                    <p>在三向解题法的P、D中，变形的处理至关重要。请考生务必高度重视，且在多次研读本部分内容后做到践，总结，再实践，再总结，形成自己强大的数学题变形转化的能力，使变形如行云流水，必有所成。</p>
+                </div>
+            </section>
+            
+            <section id="equivalent">
+                <h2>1. 等式变形与等价变形</h2>
+                
+                <p>用"<strong>=</strong>"连接数学中的量$A$与量$B$，称为<span class="highlight">等式</span>，于是$A$与$B$的相互转化，为<strong>等式变形</strong>。</p>
+                <p>用"<strong>⇔</strong>"连接命题$A$与命题$B$，称为<span class="highlight">等价</span>，于是$A$与$B$的相互转化，为<strong>等价变形</strong>。</p>
+                
+                <button class="accordion">📌 (1) 定义法</button>
+                <div class="panel">
+                    <h4>基本原理</h4>
+                    <p>定义法是说，用$A$定义$B$，则由$B \Leftrightarrow A$，给出$B$，回归定义$A$，这是最基本的方法。</p>
+                    
+                    <div class="example-box">
+                        <h4>💡 示例</h4>
+                        <p>如 $\lim\limits_{x \to 0} f(x) = 0$，用定义：任给 $\varepsilon > 0$，当 $x \to 0$ 时，恒有 $|f(x)| < \varepsilon$，按题意取 $\varepsilon$，如例1.12。</p>
+                    </div>
+                    
+                    <h4>常考定义</h4>
+                    <div class="method-box">
+                        <p><strong>① 给出 $f(x)$ 在 $x = x_0$ 处连续</strong>，且 $\lim\limits_{x \to x_0} \frac{f(x)}{x-x_0} = a$，则 $\lim\limits_{x \to x_0} f(x) = 0 = f(x_0)$，于是</p>
+                        <div class="formula">
+                            $$f'(x_0) = \lim_{x \to x_0} \frac{f(x) - f(x_0)}{x - x_0} = a$$
+                        </div>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>② 给出 $f(x)$ 在 $x = x_0$ 的某邻域内一阶可导</strong>，且 $\lim\limits_{x \to x_0} \frac{f(x)}{(x-x_0)^2} = a$，则 $\lim\limits_{x \to x_0} f(x) = 0 = f(x_0)$，于是</p>
+                        <div class="formula">
+                            $$f'(x_0) = \lim_{x \to x_0} \frac{f(x) - f(x_0)}{x - x_0} = \lim_{x \to x_0} \frac{f(x)}{(x-x_0)^2} \cdot (x-x_0) = a \cdot 0 = 0$$
+                        </div>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>③ 给出可导函数 $f(x)$ 在 $x = x_0$ 处的切线方程为 $y = g(x)$</strong>，则 $f(x_0) = g(x_0)$，$f'(x_0) = g'(x_0)$。</p>
+                        <p>进一步，若 $f''(x) > 0$，且令 $F(x) = f(x) - g(x)$，则有</p>
+                        <div class="formula">
+                            $$F'(x_0) = f'(x_0) - g'(x_0) = 0, \quad F''(x_0) = f''(x_0) > 0$$
+                        </div>
+                        <p>所以 $x = x_0$ 为 $F(x)$ 的极小值点。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>④ 给出可导函数 $f(x)$ 与 $g(x)$ 在 $x = x_0$ 处相切</strong>，则 $f(x_0) = g(x_0)$，$f'(x_0) = g'(x_0)$。</p>
+                        <p>进一步，若 $f''(x) > 0$，$g''(x) < 0$，且令 $F(x) = f(x) - g(x)$，则有</p>
+                        <div class="formula">
+                            $$F'(x_0) = f'(x_0) - g'(x_0) = 0, \quad F''(x_0) = f''(x_0) - g''(x_0) > 0$$
+                        </div>
+                        <p>所以 $x = x_0$ 为 $F(x)$ 的极小值点。</p>
+                    </div>
+                </div>
+                
+                <button class="accordion">📌 (2) 公式法</button>
+                <div class="panel">
+                    <h4>基本思想</h4>
+                    <p>数学公式是用数学思想与方法已经得出的解决问题的简便数学表达。一方面，要注意公式的特征（也就是说，这个数学表达式的独特性在哪里？此独特性就指向解题思考的方向）；另一方面，要注意公式的成立条件（也就是说，这个数学表达式在什么条件下使用？对成立条件的思考，可加强对解题方向的把握）。</p>
+                    
+                    <div class="example-box">
+                        <h4>💡 示例：泰勒展开式</h4>
+                        <div class="formula">
+                            $$f(x) = f(0) + f'(0)x + \frac{f''(0)}{2}x^2 + \cdots$$
+                        </div>
+                        <p>泰勒展开式的独特性就在于它用函数在 $x = 0$ 处的各阶导数值来显示表示 $x = 0$ 附近的值。形式上联系了 "$f(x)$" 与 "$f^{(n)}(x)$，$n \geq 2$"。独特性的成立条件是"$n$ 阶可导，$n \geq 2$"，更可确认用泰勒公式。</p>
+                    </div>
+                </div>
+                
+                <button class="accordion">📌 (3) 换元法</button>
+                <div class="panel">
+                    <p>引入新元，代换旧元，使问题在形式或表达上简单化、规范化和常规化，从而解决问题。如常用的复杂部分代换，即令复杂部分等于 $t$。</p>
+                </div>
+                
+                <button class="accordion">📌 (4) 相消法</button>
+                <div class="panel">
+                    <p>加减相消法、乘除相消法和错位相消法是相消法的三种情况。</p>
+                    
+                    <h4>① 加减相消法</h4>
+                    <div class="method-box">
+                        <p><strong>a.</strong> 裂项为 $a_{n+1} - a_n$；<strong>b.</strong> 创造 $a_{n+1} - a_n = f(n)$，然后得 $a_{n+1} = a_{n+1} - a_n + a_n - a_{n-1} + \cdots + a_2 - a_1 + a_1$，本质上是通分的逆运算，形式上作同形分解。</p>
+                        
+                        <div class="example-box">
+                            <div class="formula">
+                                $$\frac{1}{n(n+k)} = \frac{1}{k}\left(\frac{1}{n} - \frac{1}{n+k}\right), \quad \frac{1}{(2n+1)(2n-1)} = \frac{1}{2}\left(\frac{1}{2n-1} - \frac{1}{2n+1}\right)$$
+                            </div>
+                            
+                            <div class="formula">
+                                $$\frac{1}{n(n+1)(n+2)} = \frac{1}{2}\left[\frac{1}{n(n+1)} - \frac{1}{(n+1)(n+2)}\right], \quad \frac{e^{-n}(e-1)}{(1-e^{-n})(e-e^{-n})} = \frac{e^n(e-1)}{(e^n-1)(e^{n+1}-1)} = \frac{1}{e^n-1} - \frac{1}{e^{n+1}-1}$$
+                            </div>
+                        </div>
+                        
+                        <p>在思想上，还可与共轭法和对数运算性质结合在一起思考。</p>
+                        
+                        <div class="example-box">
+                            <div class="formula">
+                                $$\frac{1}{\sqrt{n+1} + \sqrt{n}} = \sqrt{n+1} - \sqrt{n}; \quad \ln\left(1 + \frac{1}{n}\right) = \ln(n+1) - \ln n$$
+                            </div>
+                        </div>
+                        
+                        <p>关键就是有同形分解的意识和办法。</p>
+                        
+                        <div class="example-box">
+                            <div class="formula">
+                                $$\frac{2^{-n}}{(1-2^{-n})(2-2^{-n})} = \frac{2^n}{(2^n-1)(2^{n+1}-1)} = \frac{1}{2^n-1} - \frac{1}{2^{n+1}-1}$$
+                            </div>
+                            
+                            <div class="formula">
+                                $$\frac{a_{n+1}}{n} = \frac{a_n}{(n+1)(na_n+1)}, \quad a_1 = \frac{1}{2}, \text{ 则 } (n+1)a_{n+1} = \frac{na_n}{na_n+1} \Rightarrow \frac{1}{(n+1)a_{n+1}} = 1 + \frac{1}{na_n} \Rightarrow \frac{1}{na_n} = 1, \text{ 故}$$
+                            </div>
+                            
+                            <div class="formula">
+                                $$\frac{1}{na_n} = \frac{1}{na_n} - \frac{1}{(n-1)a_{n-1}} + \frac{1}{(n-1)a_{n-1}} - \cdots + \left(\frac{1}{2a_2} - \frac{1}{a_1}\right) + \frac{1}{a_1} = (n-1) + 2 = n+1 \Rightarrow a_n = \frac{1}{n(n+1)}$$
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4>② 乘除相消法</h4>
+                    <div class="method-box">
+                        <p>创造 $\frac{a_n}{a_{n-1}} = f(n)$，然后得 $a_n = \frac{a_n}{a_{n-1}} \cdot \frac{a_{n-1}}{a_{n-2}} \cdots \frac{a_2}{a_1} \cdot a_1$。</p>
+                        
+                        <div class="example-box">
+                            <p>如 $a_n = (n-1)a_{n-1} + \cdots + 3a_3 + 2a_2 + a_1$，$a_1 = 1$，$n \geq 2$，则 $a_{n+1} - a_n = na_n$，$\frac{a_{n+1}}{a_n} = n+1$。</p>
+                            <div class="formula">
+                                $$\text{故 } a_n = \frac{a_n}{a_{n-1}} \cdot \frac{a_{n-1}}{a_{n-2}} \cdots \frac{a_3}{a_2} \cdot a_2 = n(n-1)\cdots 3 \cdot a_2, \text{ 且 } a_2 = a_1 = 1, \text{ 得 } a_n = \frac{n!}{2}$$
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4>③ 错位相消法</h4>
+                    <div class="method-box">
+                        <div class="formula">
+                            $$S_n = a + aq + aq^2 + \cdots + aq^{n-1} \quad \text{①}$$
+                            $$qS_n = aq + aq^2 + \cdots + aq^n \quad \text{②}$$
+                        </div>
+                        <p>由①-②，得 $(1-q)S_n = a - aq^n$，于是 $S_n = \frac{a(1-q^n)}{1-q}$，$q \neq 1$。</p>
+                    </div>
+                </div>
+                
+                <button class="accordion">📌 (5) 倒置法</button>
+                <div class="panel">
+                    <p>将题给表达式取倒数，改变表达式结构，常用于分母复杂，分子单一的情形，即将"$\Delta$" → "$\nabla$"。</p>
+                    
+                    <div class="example-box">
+                        <h4>💡 例题</h4>
+                        <p>已知数列 $\{a_n\}$ 满足 $a_{n+1} = \frac{a_n}{a_n+2}$，且 $a_1 = 1$，求 $a_n$ 的表达式。</p>
+                        
+                        <p><strong>【解】</strong>由题设可知，$\frac{1}{a_{n+1}} = 1 + \frac{2}{a_n}$，因此有 $\frac{1}{a_{n+1}} + 1 = 2\left(\frac{1}{a_n} + 1\right)$，又 $a_1 = 1$，则 $\frac{1}{a_1} + 1 = 2$，故 $\frac{1}{a_n} + 1 = 2^n$，</p>
+                        <div class="formula">
+                            $$\text{所以 } a_n = \frac{1}{2^n-1}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="accordion">📌 (6) 平方开方法</button>
+                <div class="panel">
+                    <p>将题给表达式配成 $a^2$ 或 $a^2 + b^2$ 的形式，其表达式一般有下述特征。</p>
+                    
+                    <div class="method-box">
+                        <p><strong>① 倒数之和</strong>，即若 $a = \frac{1}{b}$，则有 $a^2 + b^2 = (a+b)^2 - 2 = (a-b)^2 + 2$，如</p>
+                        <div class="formula">
+                            $$x^2 + \frac{1}{x^2} = \left(x + \frac{1}{x}\right)^2 - 2 = \left(x - \frac{1}{x}\right)^2 + 2, \quad e^{2x} + e^{-2x} = (e^x + e^{-x})^2 - 2 = (e^x - e^{-x})^2 + 2$$
+                        </div>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>② $a^2 + b^2 + c^2$，$a+b+c$，$ab+bc+ac$，$(a+b)^2 + (b+c)^2 + (c+a)^2$ 的关系</strong>。</p>
+                        <div class="formula">
+                            $$a^2 + b^2 + c^2 = (a+b+c)^2 - 2(ab+bc+ac) \quad \text{(*)}$$
+                            $$a^2 + b^2 + c^2 + ab + bc + ac = \frac{1}{2}[(a+b)^2 + (b+c)^2 + (a+c)^2] \quad \text{(**)}$$
+                        </div>
+                        <p>(*)、(**)式可将上述表达式联系起来，遇到相关表达式时，可用(*)、(**)式试着作等式变形与转化。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>③ 三角函数的倍角公式</strong>。</p>
+                        <div class="formula">
+                            $$1 + \sin 2\theta = (\sin \theta + \cos \theta)^2$$
+                        </div>
+                    </div>
+                    
+                    <div class="note-box">
+                        <p><strong>【注】</strong>这里可有启发：若 $x^2 + y^2 = 1(x > 0, y > 0)$，令 $\begin{cases} x = \cos \theta \\ y = \sin \theta \end{cases}, \theta \in \left(0, \frac{\pi}{2}\right)$，则可化简一些式子，</p>
+                        <div class="formula">
+                            $$\text{如 } z = \frac{1}{y^2} + \frac{x}{y} + 1 = \frac{1}{\sin^2 \theta} + \cot \theta + 1 = \csc^2 \theta + \cot \theta + 1 = \left(\cot \theta + \frac{1}{2}\right)^2 + \frac{7}{4} \geq \frac{7}{4}$$
+                        </div>
+                        <div class="formula">
+                            $$\Rightarrow 1 + \cot^2 \theta$$
+                        </div>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>④ 平方后可简化</strong>。</p>
+                        <p>若 $a^2 + b^2 = A$，$ab = B$，则 $|a+b| = \sqrt{(a+b)^2} = \sqrt{A+2B}$。</p>
+                        
+                        <div class="example-box">
+                            <div class="formula">
+                                $$\sqrt{1 + \sqrt{a_n}} + \sqrt{1 - \sqrt{a_n}} = \sqrt{2 + 2\sqrt{1-a_n}}, \quad \sqrt{2 + \sqrt{3}} + \sqrt{2 - \sqrt{3}} = \sqrt{4 + 2\times 1} = \sqrt{6}$$
+                            </div>
+                            
+                            <div class="formula">
+                                $$\text{又如 } y = \sqrt{x+1} + \sqrt{2-x} \Rightarrow y^2 = 3 + 2\sqrt{(2-x)(x+1)}$$
+                            </div>
+                        </div>
+                        
+                        <p>这样一变形，方便讨论最值。</p>
+                    </div>
+                </div>
+                
+                <button class="accordion">📌 (7) 特殊值法</button>
+                <div class="panel">
+                    <p>令 $x = x_0$，使欲求表达式与条件表达式产生联系。</p>
+                    
+                    <div class="example-box">
+                        <p>如 $f(x) = ax^3 + bx^2 + cx + d$，则</p>
+                        <div class="formula">
+                            $$a+b+c+d = f(1), \quad a-b+c-d = -f(-1), \quad 3a+2b+c = f'(1)$$
+                        </div>
+                        <p>所以</p>
+                        <div class="formula">
+                            $$a+c = \frac{1}{2}[f(1) - f(-1)], \quad b+d = \frac{1}{2}[f(1) + f(-1)]$$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="accordion">📌 (8) 因式分解法</button>
+                <div class="panel">
+                    <div class="formula">
+                        $$a^2 + ab + b^2 = \frac{a^3 - b^3}{a-b}, \quad a^2 - ab + b^2 = \frac{a^3 + b^3}{a+b}$$
+                    </div>
+                    
+                    <p>当 $n$ 为正整数时，$a^{n-1} + a^{n-2}b + \cdots + ab^{n-2} + b^{n-1} = \frac{a^n - b^n}{a-b}$。</p>
+                    
+                    <p>当 $n$ 为正奇数时，$a^{n-1} - a^{n-2}b + \cdots - ab^{n-2} + b^{n-1} = \frac{a^n + b^n}{a+b}$。</p>
+                </div>
+                
+                <button class="accordion">📌 (9) 三角公式法</button>
+                <div class="panel">
+                    <div class="method-box">
+                        <p><strong>①</strong></p>
+                        <div class="formula">
+                            $$a\sin x + b\cos x = \sqrt{a^2 + b^2}\left(\sin x \cdot \frac{a}{\sqrt{a^2+b^2}} + \cos x \cdot \frac{b}{\sqrt{a^2+b^2}}\right)$$
+                            $$= \sqrt{a^2+b^2}(\sin x \cos \varphi + \cos x \sin \varphi) = \sqrt{a^2+b^2}\sin(x+\varphi)$$
+                        </div>
+                        <p>其中 $\varphi$ 为向量 $(a, b)$ 的方向角。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>②</strong> $\tan\left(\frac{\pi}{4} - \alpha\right) = \frac{1-\tan\alpha}{1+\tan\alpha}$。</p>
+                    </div>
+                </div>
+                
+                <button class="accordion">📌 (10) 共轭法</button>
+                <div class="panel">
+                    <p>$A$ 与 $B$ 互为共轭式，可理解为 $A$，$B$ 具有函数形式上的相似性，且其代数运算结果简单。当题中出现 $A$ 时，可考虑 $B$，并与 $A$ 作运算。</p>
+                    
+                    <div class="method-box">
+                        <p><strong>① 由于 $\sqrt{a} - \sqrt{b} = \frac{a-b}{\sqrt{a}+\sqrt{b}}$</strong>，故见到 $\sqrt{a} - \sqrt{b}$，可考虑其共轭式 $\sqrt{a} + \sqrt{b}$。</p>
+                        <p>当然，更扩广泛地，$a+b$ 与 $a-b$ 亦互为共轭式。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>② 由于 $\sin^2 x + \cos^2 x = 1$ 或 $2\sin x\cos x = \sin 2x$</strong>，则 $\sin x$ 与 $\cos x$ 互为共轭式。</p>
+                    </div>
+                    
+                    <p>显然，以上内容还包括以下常用的等式变形：</p>
+                    
+                    <div class="method-box">
+                        <p><strong>① $a = a+b-b$ (加项减项)。② $a = \frac{a}{b} \cdot b$ (倍项缩项)。</strong></p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>③ $1 = a \cdot \frac{1}{a} = \sin^2 x + \cos^2 x = a^0$ (1的转化)(如 $1 = e^0$)。④ $x^4 + 1 = x^2\left(x^2 + \frac{1}{x^2}\right)$ (创造 $a + \frac{1}{a}$)。</strong></p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑤ $a^b = e^d \Rightarrow b\ln a = d\ln e$ (取对数法)。⑥ $\int_a^b f(x)dx = \int_a^c f(x)dx + \int_c^b f(x)dx$。</strong></p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="non-equivalent">
+                <h2>2. 不等式变形</h2>
+                
+                <p>用不等号连接数学中的量 $A$ 与量 $B$，称为<span class="highlight">不等式</span>，于是 $A$ 与 $B$ 的相互转化形成了放大与缩小，即<strong>为不等式变形</strong>。</p>
+                
+                <button class="accordion">📌 (1) 抽象型基本不等关系</button>
+                <div class="panel">
+                    <div class="method-box">
+                        <p><strong>①</strong> $0 \leq a + |a| \leq 2|a|$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>②</strong> $|a| = |a-b+b| \leq |a-b| + |b|$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>③</strong> $|a-b| = |a-c+c-b| \leq |a-c| + |c-b|$ ——→ <span class="highlight">三个量的关系</span></p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>④</strong> $\frac{2}{\frac{1}{a} + \frac{1}{b}} \leq \sqrt{ab} \leq \frac{a+b}{2} \leq \sqrt{\frac{a^2+b^2}{2}}$ $(a, b > 0)$。</p>
+                        <p class="highlight">以 "$ab$" 为自标放缩</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑤</strong> $|ab| \leq \frac{a^2+b^2}{2}$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑥</strong> $\frac{a+b+c}{3} \geq \sqrt[3]{abc}$ $(a,b,c > 0)$；如：$a > 0$，$\frac{2a^2+1}{3a^2} = \frac{1}{3}\left(a + a + \frac{1}{a^2}\right) \geq \sqrt[3]{a \cdot a \cdot \frac{1}{a^2}} = 1$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑦</strong> $a + \frac{1}{a} \geq 2(a > 0)$；如：$a > 1$，$\frac{(a-1)^2+1}{a-1} = a-1 + \frac{1}{a-1} \geq 2\sqrt{(a-1) \cdot \frac{1}{a-1}} = 2$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑧</strong> $\frac{(b-a)^2}{2} \leq (x-a)^2 + (b-x)^2 \leq (b-a)^2$，$x \in [a, b]$。</p>
+                        <p class="highlight">以 "$(x-a)^2 + (b-x)^2$" 为自标放缩</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑨</strong> $\left|\int_a^b f(x)dx\right| \leq \int_a^b |f(x)|dx$ $(a < b)$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑩</strong> $\left|\int_a^b f(x)dx\right| = \left|\int_a^c f(x)dx + \int_c^b f(x)dx\right| \leq \int_a^c |f(x)|dx + \int_c^b |f(x)|dx$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑪</strong> $(a_1b_1 + a_2b_2)^2 \leq (a_1^2 + a_2^2)(b_1^2 + b_2^2)$ (柯西不等式)。</p>
+                    </div>
+                    
+                    <div class="note-box">
+                        <p><strong>【注】</strong>设 $\alpha = (a_1, a_2)$，$\beta = (b_1, b_2)$，则 $a \cdot \beta = \|\alpha\| \|\beta\| \cos \theta$，即 $a_1b_1 + a_2b_2 = \sqrt{a_1^2 + a_2^2} \cdot \sqrt{b_1^2 + b_2^2} \cdot \cos\theta$。显然，$\cos\theta \leq 1$，故有 $(a_1b_1 + a_2b_2)^2 \leq (a_1^2 + a_2^2)(b_1^2 + b_2^2)$。$\cos\theta$ 是到面 $\alpha$，$\beta$ 位置关系的重，$\alpha$，$\beta$ 越趋向于"正交"位置关系，$a_1b_1 + a_2b_2$ 越小，此不等式在积分学中的表达为</p>
+                        <div class="formula">
+                            $$\left[\int_a^b f(x)g(x)dx\right]^2 \leq \int_a^b f^2(x)dx \cdot \int_a^b g^2(x)dx$$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="accordion">📌 (2) 抽象型条件不等关系</button>
+                <div class="panel">
+                    <p>这里的不等关系，是要在相关变量满足一定条件下才能成立的，故称<strong>条件不等关系</strong>。</p>
+                    
+                    <div class="method-box">
+                        <p><strong>①</strong> $0 < a < 1 \Rightarrow a > a^2$，$\frac{a^2}{2} < a < \frac{a^2}{2} < a$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>②</strong> 若 $ab = A$，则 $a + b \geq 2\sqrt{A}$ $(a, b > 0)$。</p>
+                        <p class="highlight">以 "$ab$" 为起点，"$a+b$" 为自标放缩</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>③</strong> 若 $a+b = A$，则 $ab \leq \frac{1}{4}A^2$ $(a, b > 0)$。</p>
+                        <p class="highlight">以 "$a+b$" 为起点，"$ab$" 为自标放缩</p>
+                    </div>
+                    
+                    <div class="example-box">
+                        <p>如：$x_0 + (1-x_0) = 1$，$x_0 \in (0, 1)$，则 $x_0(1-x_0) \leq \frac{1}{4}$，$x_0(1-x_0) \geq 4$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>④</strong> $a_n > 0$，$a_n$ 单调递少 $\Rightarrow a_{n+1} \leq \sqrt{a_n a_{n+1}}$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑤</strong> $a > 1 \Rightarrow \frac{a}{1+a} > \frac{1}{2}$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑥</strong> $0 < a < 1 \Rightarrow \frac{a}{2} < \frac{a}{1+a} < a$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑦</strong> $0 < a < \frac{1}{2} \Rightarrow a < \frac{a}{1-a} < 2a$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑧</strong> $0 < a < 1 \Rightarrow \frac{a}{1-a} > a$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑨</strong> $0 < a < 1 \Rightarrow 1 - \sqrt{1-a} = \frac{a}{1+\sqrt{1-a}} < a$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑩</strong> $0 < a < 2 \Rightarrow \sqrt{a(2-a)} \leq \frac{a+2-a}{2} = 1$。</p>
+                    </div>
+                </div>
+                
+                <button class="accordion">📌 (3) 初等函数不等关系</button>
+                <div class="panel">
+                    <div class="method-box">
+                        <p><strong>①</strong> $e^x \geq x+1 \Rightarrow e^x \geq e+1$；如：$e^{x-1} \geq x$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>②</strong> $e^x \geq ex$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>③</strong> $1 - \frac{1}{x} \leq \ln x \leq x-1$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>④</strong> 当 $0 < x < 1$ 时，$\frac{x}{x+1} \leq \ln\left(1+\frac{1}{x}\right) \leq \frac{1}{x}$。</p>
+                    </div>
+                    
+                    <div class="example-box">
+                        <div class="formula">
+                            $$\text{如：}\ln(1+n) \leq n; \quad \ln n < n; \quad \frac{1}{\ln\sqrt{n}} = \frac{1}{\frac{1}{2}\ln n} = \frac{2}{\ln n} > \frac{2}{n}$$
+                        </div>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p>事实上，根据泰勒展开式，当 $x > 0$ 时，$\ln(1+x) = x - \frac{1}{2}x^2 + \frac{1}{3}x^3 - \cdots$。</p>
+                        
+                        <p>又有</p>
+                        <div class="formula">
+                            $$\ln(1+x) - x = -\frac{1}{2}x^2 + \frac{1}{3}x^3 - \cdots > -\frac{1}{2}x^2, \quad x - \ln(1+x) = \frac{1}{2}x^2 - \frac{1}{3}x^3 + \cdots < \frac{1}{2}x^2$$
+                        </div>
+                        
+                        <p>故</p>
+                        <div class="formula">
+                            $$\frac{1}{n^2} - \ln\frac{n^2+1}{n^2} = \frac{1}{n^2} - \ln\left(1 + \frac{1}{n^2}\right) < \frac{1}{2n^4}$$
+                        </div>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑤</strong> $e^x - \ln x > 2$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑥</strong> $n! < n^n$，$\ln n! < \ln n^n = n\ln n$，$n > 1$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑦</strong> $\sin x < x < \tan x$，$x \in \left(0, \frac{\pi}{2}\right)$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑧</strong> $\frac{2}{\pi} < \frac{\sin x}{x} < 1$，$x \in \left(0, \frac{\pi}{2}\right)$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑨</strong> $1 < \frac{\tan x}{x} < \frac{4}{\pi}$，$x \in \left(0, \frac{\pi}{4}\right)$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑩</strong> $\left(1 + \frac{1}{x}\right)^x < e$，$x > 0$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑪</strong> $x\ln x \geq -\frac{1}{e}$，$x > 0$。</p>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>⑫</strong> $|\cos x| = \left|\sin\left(\frac{\pi}{2} - x\right)\right| \leq \left|x - \frac{\pi}{2}\right|$。</p>
+                    </div>
+                </div>
+                
+                <button class="accordion">📌 (4) 函数性态中的不等关系</button>
+                <div class="panel">
+                    <h4>① 极限保号性中的不等关系</h4>
+                    <div class="method-box">
+                        <p>若 $\lim\limits_{n \to \infty} x_n = a \neq 0$，则 $|x_n| > \frac{|a|}{2}$。若 $\lim\limits_{x \to x} f(x) = a \neq 0$，则 $|f(x)| > \frac{|a|}{2}$。当 $a = 0$ 时，$|x_n| < \frac{1}{2}$，$|f(x)| < \frac{1}{2}$。</p>
+                    </div>
+                    
+                    <h4>② 函数单调性中的不等关系</h4>
+                    <div class="method-box">
+                        <p><strong>a.</strong> 若 $f(x)$ 单调递增，则当 $x > x_0$ 时，$f(x) \geq f(x_0)$。</p>
+                        
+                        <p><strong>b.</strong> 若 $f(x)$ 单调递增，则 $(x-x_0)[f(x) - f(x_0)] \geq 0$。</p>
+                        
+                        <div class="example-box">
+                            <p>如：$f(x)$ 在 $[a, b]$ 上单调递增 $\Rightarrow \begin{cases} \left[f(x) - f\left(\frac{a+b}{2}\right)\right]\left(x - \frac{a+b}{2}\right) \geq 0 \\ \forall c \in [a, b], [f(x) - f(c)](x-c) \geq 0 \end{cases}$</p>
+                        </div>
+                        
+                        <p><strong>c.</strong> $a$，$b > 0$，$a = \ln(a+e^b) \Rightarrow a > \ln e^b = b$ ($\ln x$ 单调)。</p>
+                        
+                        <p><strong>d.</strong> $0 < a$，$b < \frac{\pi}{2}$，$\cos a - a = \cos b \Rightarrow \cos a - \cos b = a > 0$ ($\cos x$ 单调) $\Rightarrow b > a$。</p>
+                    </div>
+                    
+                    <h4>③ 曲线凹凸性中的不等关系</h4>
+                    <div class="method-box">
+                        <div class="formula">
+                            $$f''(x) > 0 \Rightarrow f(x) \leq f(a) + \frac{f(b) - f(a)}{b-a}(x-a), \quad a \leq x \leq b$$
+                        </div>
+                    </div>
+                    
+                    <h4>④ 积分不等关系</h4>
+                    <div class="method-box">
+                        <div class="formula">
+                            $$0 < a_n = \int_0^{\frac{\pi}{4}} \tan^n xdx = \int_0^1 \frac{t^n}{1+t^2}dt < \int_0^1 t^n dt = \frac{1}{n+1} \Rightarrow 0 < a_n < \frac{1}{n+1} < \frac{1}{n}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="accordion">📌 (5) 消去法中的不等关系</button>
+                <div class="panel">
+                    <div class="method-box">
+                        <p><strong>①</strong> 因 $\frac{1}{(2n-1)^2} > \frac{1}{(2n-1)(2n+1)} = \frac{1}{2}\left(\frac{1}{2n-1} - \frac{1}{2n+1}\right)$，故</p>
+                        <div class="formula">
+                            $$1 + \frac{1}{3^2} + \frac{1}{5^2} + \cdots + \frac{1}{(2n-1)^2} > 1 + \frac{1}{2}\left(\frac{1}{3} - \frac{1}{5} + \frac{1}{5} - \frac{1}{7} + \cdots + \frac{1}{2n-1} - \frac{1}{2n+1}\right)$$
+                            $$= 1 + \frac{1}{2}\left(\frac{1}{3} - \frac{1}{2n+1}\right) = \frac{7}{6} - \frac{1}{2(2n+1)}$$
+                        </div>
+                    </div>
+                    
+                    <div class="method-box">
+                        <p><strong>②</strong></p>
+                        <div class="formula">
+                            $$S_n = \sum_{k=1}^n a_k, \quad a_n > 0 \Rightarrow \frac{a_n}{S_n^2} = \frac{S_n - S_{n-1}}{S_n^2} < \frac{S_n - S_{n-1}}{S_n \cdot S_{n-1}} = \frac{1}{S_{n-1}} - \frac{1}{S_n}$$
+                        </div>
+                        
+                        <p>故</p>
+                        <div class="formula">
+                            $$\sum_{k=2}^n \frac{a_k}{S_k^2} < \frac{1}{S_1} - \frac{1}{S_2} + \frac{1}{S_2} - \frac{
+1}{S_3} + \cdots + \frac{1}{S_{n-1}} - \frac{1}{S_n} = \frac{1}{a_1} - \frac{1}{S_n}$$
+                        </div>
+                    </div>
+                    
+                    <p>本部分内容至此结束，但本书作者希望考生将本部分内容反复练习、思考、自行扩充，甚至反复抄写，达到能背诵的程度。你自会发现你力不知不觉上来了。事实上，本书所讲到的"隐含条件体系块"、"等价表述体系块"与"形式化归体系块"，都与变形紧密相关，变形能力的提升，既要在科学的方向，也要有足够量的反复实践。若解题者数学变形可行行云流水，则可达"用数学思考数学"的状态，这便是真正学会了。</p>
+                </div>
+            </section>
+            
+            <section id="function">
+                <h2>3. 函数性质综合应用</h2>
+                
+                <div class="quiz-box">
+                    <h3>🎓 互动练习：判断函数单调性</h3>
+                    <p>已知函数 $f(x) = x^3 - 3x$，判断其在区间 $(-1, 1)$ 上的单调性。</p>
+                    <button class="interactive-btn" onclick="showAnswer1()">显示解答</button>
+                    <div id="answer1" class="hidden" style="margin-top: 15px; padding: 15px; background: white; border-radius: 5px;">
+                        <p><strong>解：</strong>求导得 $f'(x) = 3x^2 - 3 = 3(x^2 - 1) = 3(x-1)(x+1)$</p>
+                        <p>当 $x \in (-1, 1)$ 时，$f'(x) < 0$，因此函数在 $(-1, 1)$ 上单调递减。</p>
+                    </div>
+                </div>
+                
+                <div class="note-box">
+                    <p><strong>💡 提示：</strong>在解决数学问题时，要善于将复杂的表达式通过变形转化为熟悉的形式，这样可以大大简化问题的求解过程。</p>
+                </div>
+            </section>
+            
+            <section id="elimination">
+                <h2>4. 综合变形技巧总结</h2>
+                
+                <div class="method-box">
+                    <h3>🔑 核心要点</h3>
+                    <ul>
+                        <li><strong>等价变形</strong>：保持数学关系不变的转化，是解题的基础。</li>
+                        <li><strong>放缩技巧</strong>：在不等式证明中，通过适当的放大或缩小来达到目的。</li>
+                        <li><strong>函数性质</strong>：利用单调性、凹凸性等性质建立不等关系。</li>
+                        <li><strong>消去法</strong>：通过裂项、错位等方法简化复杂表达式。</li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🎯 综合应用示例</h4>
+                    <p>证明：当 $n \geq 2$ 时，$\ln 2 + \ln 3 + \cdots + \ln n > \frac{1}{2} \cdot \frac{n-1}{n} \cdot n\ln n$</p>
+                    
+                    <button class="interactive-btn" onclick="showAnswer2()">显示证明</button>
+                    <div id="answer2" class="hidden" style="margin-top: 15px; padding: 15px; background: white; border-radius: 5px;">
+                        <p><strong>证明：</strong>若 $f(x)$ 单调递减，则 $\sum_{k=1}^{n-1} f(k+1) \leq \sum_{k=1}^{n-1} \int_k^{k+1} f(x)dx \leq \sum_{k=1}^{n-1} \int_k^{k+1} f(k)dk = \sum_{k=1}^{n-1} f(k)$。</p>
+                        
+                        <p>如：$\sum_{k=1}^{n-1} \frac{1}{k+1} > \sum_{k=1}^{n-1} \int_k^{k+1} \frac{1}{x}dx = \sum_{k=1}^{n-1} \frac{1}{k}$，即 $\frac{1}{2} + \cdots + \frac{1}{n} < \int_1^n \frac{1}{x}dx \leq 1 + \frac{1}{2} + \cdots + \frac{1}{n-1}$，也即</p>
+                        
+                        <div class="formula">
+                            $$\frac{1}{2} + \cdots + \frac{1}{n} \leq \ln n \leq 1 + \frac{1}{2} + \cdots + \frac{1}{n-1}, \text{ 从而 } \ln 2 > \frac{1}{2}, \ln 3 > \frac{1}{2} + \frac{1}{3} > \frac{2}{3}, \cdots, \ln n > \frac{1}{2} + \cdots + \frac{1}{n} > \frac{n-1}{n}$$
+                        </div>
+                        
+                        <p>故 $\ln 2\ln 3\cdots\ln n > \frac{1}{2} \cdot \frac{2}{3} \cdots \frac{n-1}{n} = \frac{1}{n}$。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                <h2>📚 学习建议</h2>
+                <div class="method-box">
+                    <h3>如何掌握变形技巧？</h3>
+                    <ol>
+                        <li><strong>系统学习</strong>：认真研读本附录的每一个方法和示例。</li>
+                        <li><strong>多次实践</strong>：对于重要的变形技巧，要反复练习直到熟练。</li>
+                        <li><strong>总结归纳</strong>：建立自己的变形技巧库，记录常用的方法。</li>
+                        <li><strong>融会贯通</strong>：在做题时主动尝试运用各种变形方法。</li>
+                        <li><strong>持续提升</strong>：将变形能力的培养贯穿于整个数学学习过程。</li>
+                    </ol>
+                </div>
+                
+                <div class="note-box">
+                    <p><strong>💪 坚持练习</strong>：数学变形能力的提升需要大量的练习和思考。当你能够熟练运用各种变形技巧时，你会发现数学问题的解决变得如行云流水般自然。这正是"用数学思考数学"的最高境界！</p>
+                </div>
+            </section>
+            
+            <div style="text-align: center; margin: 40px 0;">
+                <button class="interactive-btn" onclick="scrollToTop()">返回顶部 ↑</button>
+            </div>
+        </main>
+        
+        <footer>
+            <p>© 2025 数学题变形举例教程 | 高等数学 18讲附录</p>
+            <p style="margin-top: 10px; opacity: 0.8;">本教程旨在帮助学生系统掌握数学变形技巧，提升解题能力</p>
+        </footer>
+    </div>
+    
+    <button class="scroll-to-top" id="scrollTopBtn" onclick="scrollToTop()">↑</button>
+    
+    <script>
+        // Accordion functionality
+        const accordions = document.querySelectorAll('.accordion');
+        accordions.forEach(accordion => {
+            accordion.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const panel = this.nextElementSibling;
+                panel.classList.toggle('show');
+            });
+        });
+        
+        // Show answer functions
+        function showAnswer1() {
+            const answer = document.getElementById('answer1');
+            answer.classList.toggle('hidden');
+        }
+        
+        function showAnswer2() {
+            const answer = document.getElementById('answer2');
+            answer.classList.toggle('hidden');
+        }
+        
+        // Scroll to top functionality
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Show/hide scroll to top button
+        window.onscroll = function() {
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        };
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+        
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
+

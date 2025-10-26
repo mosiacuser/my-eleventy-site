@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第5讲：大数定律与中心极限定理 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": {
+                styles: {
+                    ".MathJax": {
+                        color: "#343434 !important"
+                    }
+                }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #a6d6c9 0%, #ffffff 50%, #f7d117 100%);
+            min-height: 100vh;
+            color: #343434;
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #343434 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        /* Navigation */
+        nav {
+            background-color: #343434;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #f27d00;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        nav a:hover {
+            background-color: #f7d117;
+            color: #343434;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Section Styles */
+        section {
+            background-color: white;
+            margin: 30px 0;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #f27d00;
+        }
+        
+        section h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        section h3 {
+            color: #343434;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding: 10px;
+            background-color: #f7d117;
+            border-radius: 5px;
+        }
+        
+        /* Example Box */
+        .example {
+            background: linear-gradient(135deg, #a6d6c9 0%, #ffffff 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #f27d00;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .example-title {
+            background-color: #f27d00;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        /* Solution Box */
+        .solution {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border: 2px solid #a6d6c9;
+        }
+        
+        .solution-header {
+            background-color: #343434;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        /* Collapsible Sections */
+        .collapsible {
+            background-color: #f27d00;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            border-radius: 10px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .collapsible:hover {
+            background-color: #343434;
+            transform: translateX(5px);
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f9f9f9;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .content-inner {
+            padding: 20px;
+        }
+        
+        /* Highlight Box */
+        .highlight {
+            background-color: #f7d117;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f27d00;
+        }
+        
+        .highlight strong {
+            color: #343434;
+        }
+        
+        /* Note Box */
+        .note {
+            background-color: #a6d6c9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #343434;
+        }
+        
+        /* Math Display */
+        .math-display {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 2px solid #a6d6c9;
+            overflow-x: auto;
+        }
+        
+        /* Multiple Choice */
+        .choice-container {
+            margin: 20px 0;
+        }
+        
+        .choice {
+            background-color: #f9f9f9;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 2px solid #a6d6c9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .choice:hover {
+            background-color: #a6d6c9;
+            transform: translateX(10px);
+        }
+        
+        .choice.correct {
+            background-color: #a6d6c9;
+            border-color: #343434;
+            font-weight: 600;
+        }
+        
+        /* Button Styles */
+        .btn {
+            background-color: #f27d00;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+            font-weight: 600;
+        }
+        
+        .btn:hover {
+            background-color: #343434;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Formula Card */
+        .formula-card {
+            background: linear-gradient(135deg, #343434 0%, #f27d00 100%);
+            color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .formula-card .MathJax {
+            color: white !important;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #343434;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            section {
+                padding: 20px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        section {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        /* Scroll to top button */
+        #scrollTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 99;
+            border: none;
+            outline: none;
+            background-color: #f27d00;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 18px;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        #scrollTopBtn:hover {
+            background-color: #343434;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 第5讲：大数定律与中心极限定理</h1>
+            <p>Law of Large Numbers & Central Limit Theorem</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#example5-5">例5.5</a></li>
+                <li><a href="#example5-6">例5.6</a></li>
+                <li><a href="#exercises">习题</a></li>
+                <li><a href="#solutions">解答</a></li>
+            </ul>
+        </nav>
+        
+        <!-- Example 5.5 Section -->
+        <section id="example5-5">
+            <h2>📘 例题精讲</h2>
+            
+            <div class="example">
+                <div class="example-title">🔢 例5.5（莫弗-拉普拉斯定理应用）</div>
+                
+                <div class="highlight">
+                    <strong>题目背景：</strong>已知 $X_i \sim B\left(n, \frac{1}{2}\right)$，根据莫弗-拉普拉斯定理求极限。
+                </div>
+                
+                <div class="math-display">
+                    <p><strong>根据莫弗-拉普拉斯定理：</strong></p>
+                    $$\lim_{n \to \infty} P\left\{\frac{X_n - \frac{1}{2}n}{\sqrt{\frac{1}{4}n}} \leq x\right\} = \lim_{n \to \infty} P\left\{\frac{2X_n - n}{\sqrt{n}} \leq x\right\} = \Phi(x)$$
+                </div>
+                
+                <div class="note">
+                    <strong>💡 关键点：</strong>
+                    <ul>
+                        <li>对于二项分布 $B(n, p)$，均值 $\mu = np$，方差 $\sigma^2 = np(1-p)$</li>
+                        <li>当 $p = \frac{1}{2}$ 时，$\mu = \frac{n}{2}$，$\sigma = \frac{\sqrt{n}}{2}$</li>
+                        <li>标准化后收敛到标准正态分布</li>
+                    </ul>
+                </div>
+                
+                <div class="solution">
+                    <div class="solution-header">📝 解答步骤</div>
+                    <p><strong>答案：选择 (B)</strong></p>
+                    <p>通过标准化变换，将二项分布转化为标准正态分布的形式。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Example 5.6 Section -->
+        <section id="example5-6">
+            <div class="example">
+                <div class="example-title">🚛 例5.6（中心极限定理实际应用）</div>
+                
+                <div class="highlight">
+                    <strong>实际问题：</strong>生产线生产的产品成箱包装，每箱质量是随机的。假设平均每箱重50千克，标准差为5千克。若用载重为5吨的汽车承运，试用中心极限定理说明每辆汽车最多可以装多少箱，才能保证不超载的概率大于0.977。已知 $\Phi(2) = 0.977$。
+                </div>
+                
+                <button class="collapsible">点击查看详细解答 ▼</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <div class="solution">
+                            <div class="solution-header">📝 解答过程</div>
+                            
+                            <p><strong>第一步：设定随机变量</strong></p>
+                            <p>设 $X_i$ ($i = 1, 2, \cdots, n$) 为"第 $i$ 箱产品的质量（千克）"。由题意，$X_i$ 独立同分布，且：</p>
+                            <div class="math-display">
+                                $$E(X_i) = 50 \text{ 千克（平均每箱重50千克）}$$
+                                $$D(X_i) = 5^2 = 25$$
+                            </div>
+                            
+                            <p><strong>第二步：定义总质量</strong></p>
+                            <p>$n$ 箱总质量为 $T_n = \sum_{i=1}^{n} X_i$，从而有：</p>
+                            <div class="math-display">
+                                $$E(T_n) = 50n$$
+                                $$D(T_n) = 25n$$
+                                $$\sigma(T_n) = 5\sqrt{n}$$
+                            </div>
+                            
+                            <p><strong>第三步：应用列维-林德伯格定理</strong></p>
+                            <p>由列维-林德伯格定理，知 $T_n$ 近似服从 $N(50n, 25n)$，因此有：</p>
+                            <div class="math-display">
+                                $$P\{T_n \leq 5000\} = P\left\{\frac{T_n - 50n}{5\sqrt{n}} \leq \frac{5000 - 50n}{5\sqrt{n}}\right\} \approx \Phi\left(\frac{1000 - 10n}{\sqrt{n}}\right) > 0.977$$
+                            </div>
+                            
+                            <p><strong>第四步：求解不等式</strong></p>
+                            <div class="math-display">
+                                $$\frac{1000 - 10n}{\sqrt{n}} > 2$$
+                                $$1000 - 10n > 2\sqrt{n}$$
+                                $$n < 98.0199$$
+                            </div>
+                            
+                            <div class="formula-card">
+                                <h3 style="color: white; margin-bottom: 15px;">🎯 最终答案</h3>
+                                <p style="font-size: 1.3em;">每辆汽车最多可以装 <strong>98箱</strong>，才能保证不超载的概率大于0.977。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Exercises Section -->
+        <section id="exercises">
+            <h2>📝 基础习题精练</h2>
+            
+            <!-- Exercise 5.1 -->
+            <button class="collapsible">习题 5.1 - 指数分布与中心极限定理</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="highlight">
+                        <strong>题目：</strong>设 $X_1, X_2, \cdots, X_n, \cdots$ 为独立同分布随机变量序列，且均服从参数为 $\lambda (> 1)$ 的指数分布，记 $\Phi(x)$ 为标准正态分布函数。则（ ）
+                    </div>
+                    
+                    <div class="choice-container">
+                        <div class="choice" onclick="checkAnswer(this, false)">
+                            (A) $\displaystyle\lim_{n \to \infty} P\left\{\frac{\sum_{i=1}^n X_i - n\lambda}{\lambda\sqrt{n}} \leq x\right\} = \Phi(x)$
+                        </div>
+                        <div class="choice" onclick="checkAnswer(this, false)">
+                            (B) $\displaystyle\lim_{n \to \infty} P\left\{\frac{\sum_{i=1}^n X_i - n\lambda}{\sqrt{\lambda n}} \leq x\right\} = \Phi(x)$
+                        </div>
+                        <div class="choice correct" onclick="checkAnswer(this, true)">
+                            (C) $\displaystyle\lim_{n \to \infty} P\left\{\frac{\lambda\sum_{i=1}^n X_i - n}{\sqrt{n}} \leq x\right\} = \Phi(x)$ ✓
+                        </div>
+                        <div class="choice" onclick="checkAnswer(this, false)">
+                            (D) $\displaystyle\lim_{n \to \infty} P\left\{\frac{\sum_{i=1}^n X_i - \lambda}{\sqrt{n\lambda}} \leq x\right\} = \Phi(x)$
+                        </div>
+                    </div>
+                    
+                    <button class="btn" onclick="showExplanation('exp5-1')">查看解析</button>
+                    <div id="exp5-1" style="display:none; margin-top: 15px;">
+                        <div class="solution">
+                            <div class="solution-header">📝 详细解析</div>
+                            <p>对于参数为 $\lambda$ 的指数分布：</p>
+                            <div class="math-display">
+                                $$E\left(\sum_{i=1}^n X_i\right) = \frac{n}{\lambda}, \quad D\left(\sum_{i=1}^n X_i\right) = \frac{n}{\lambda^2}$$
+                            </div>
+                            <p>因此：</p>
+                            <div class="math-display">
+                                $$\lim_{n \to \infty} P\left\{\frac{\sum_{i=1}^n X_i - \frac{n}{\lambda}}{\sqrt{n}/\lambda} \leq x\right\} = \Phi(x)$$
+                            </div>
+                            <p>即：</p>
+                            <div class="math-display">
+                                $$\lim_{n \to \infty} P\left\{\frac{\lambda\sum_{i=1}^n X_i - n}{\sqrt{n}} \leq x\right\} = \Phi(x)$$
+                            </div>
+                            <p><strong>答案：(C)</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Exercise 5.2 -->
+            <button class="collapsible">习题 5.2 - 二项分布的正态近似</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="highlight">
+                        <strong>题目：</strong>设 $X_1, X_2, \cdots, X_{100}$ 为来自总体 $X$ 的简单随机样本，其中 $P(X=0) = P(X=1) = \frac{1}{2}$。$\Phi(x)$ 表示标准正态分布函数，则利用中心极限定理可得 $P\left\{\sum_{i=1}^{100} X_i \leq 55\right\}$ 的近似值为（ ）
+                    </div>
+                    
+                    <div class="choice-container">
+                        <div class="choice" onclick="checkAnswer(this, false)">
+                            (A) $1 - \Phi(1)$
+                        </div>
+                        <div class="choice correct" onclick="checkAnswer(this, true)">
+                            (B) $\Phi(1)$ ✓
+                        </div>
+                        <div class="choice" onclick="checkAnswer(this, false)">
+                            (C) $1 - \Phi(0.2)$
+                        </div>
+                        <div class="choice" onclick="checkAnswer(this, false)">
+                            (D) $\Phi(0.2)$
+                        </div>
+                    </div>
+                    
+                    <button class="btn" onclick="showExplanation('exp5-2')">查看解析</button>
+                    <div id="exp5-2" style="display:none; margin-top: 15px;">
+                        <div class="solution">
+                            <div class="solution-header">📝 详细解析</div>
+                            <p>由总体的概率分布得：</p>
+                            <div class="math-display">
+                                $$E(X) = \frac{1}{2}, \quad D(X) = \frac{1}{4}$$
+                            </div>
+                            <p>因此：</p>
+                            <div class="math-display">
+                                $$E\left(\sum_{i=1}^{100} X_i\right) = 50, \quad D\left(\sum_{i=1}^{100} X_i\right) = 25$$
+                            </div>
+                            <p>由中心极限定理，$\sum_{i=1}^{100} X_i$ 近似服从 $N(50, 25)$，从而：</p>
+                            <div class="math-display">
+                                $$P\left\{\sum_{i=1}^{100} X_i \leq 55\right\} = P\left\{\frac{\sum_{i=1}^{100} X_i - 50}{5} \leq \frac{55-50}{5}\right\} \approx \Phi(1)$$
+                            </div>
+                            <p><strong>答案：(B)</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Exercise 5.3 -->
+            <button class="collapsible">习题 5.3 - 超负荷试验概率计算</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="highlight">
+                        <strong>题目：</strong>设某种电气元件不能承受超负荷试验的概率为0.05。现在对100个这样的元件进行超负荷试验，以 $X$ 表示"不能承受试验而烧毁的元件数"，则根据中心极限定理，$P(5 \leq X \leq 10) \approx$ ______。（已知 $\Phi(2.29) = 0.989$）
+                    </div>
+                    
+                    <button class="btn" onclick="showExplanation('exp5-3')">查看解析</button>
+                    <div id="exp5-3" style="display:none; margin-top: 15px;">
+                        <div class="solution">
+                            <div class="solution-header">📝 详细解析</div>
+                            <p>不能承受试验而烧毁的元件数 $X \sim B(n, p)$。根据莫弗-拉普拉斯定理，$X$ 近似服从正态分布 $N(np, npq)$，其中 $n = 100$，$p = 0.05$，$q = 0.95$。因此：</p>
+                            <div class="math-display">
+                                $$P\{5 \leq X \leq 10\} = P\left\{\frac{5-np}{\sqrt{npq}} \leq \frac{X-np}{\sqrt{npq}} \leq \frac{10-np}{\sqrt{npq}}\right\}$$
+                                $$= P\left\{0 \leq \frac{X-5}{\sqrt{4.75}} \leq \frac{10-5}{\sqrt{4.75}}\right\}$$
+                                $$= P\left\{0 \leq \frac{X-5}{\sqrt{4.75}} \leq 2.29\right\}$$
+                                $$\approx \Phi(2.29) - \Phi(0) = 0.489$$
+                            </div>
+                            <p><strong>答案：0.489</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Exercise 5.4 -->
+            <button class="collapsible">习题 5.4 - 大数定律应用</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="highlight">
+                        <strong>题目：</strong>将一枚骰子重复掷 $n$ 次，则当 $n \to \infty$ 时，$n$ 次掷出点数的算术平均值 $\overline{X}_n$ 依概率收敛于 ______。
+                    </div>
+                    
+                    <button class="btn" onclick="showExplanation('exp5-4')">查看解析</button>
+                    <div id="exp5-4" style="display:none; margin-top: 15px;">
+                        <div class="solution">
+                            <div class="solution-header">📝 详细解析</div>
+                            <p>设 $X_1, X_2, \cdots, X_n$ 是各次掷出的点数，显然它们独立同分布。每次掷出点数的数学期望等于：</p>
+                            <div class="math-display">
+                                $$E(X) = \frac{1 + 2 + 3 + 4 + 5 + 6}{6} = \frac{21}{6} = \frac{7}{2}$$
+                            </div>
+                            <p>因此，根据辛钦大数定律，$\overline{X}_n$ 依概率收敛于 $\frac{7}{2}$。</p>
+                            <p><strong>答案：$\frac{7}{2}$</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Exercise 5.5 -->
+            <button class="collapsible">习题 5.5 - 证明题：高阶矩的正态近似</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="highlight">
+                        <strong>题目：</strong>假设 $X_1, X_2, \cdots, X_n$ 是来自总体 $X$ 的简单随机样本，已知 $E(X^k) = \alpha_k$ ($k = 1, 2, 3, 4$)。证明：当 $n$ 充分大时，随机变量 $Z_n = \frac{1}{n}\sum_{i=1}^n X_i^2$ 近似服从正态分布，并指出其分布参数。
+                    </div>
+                    
+                    <button class="btn" onclick="showExplanation('exp5-5')">查看解析</button>
+                    <div id="exp5-5" style="display:none; margin-top: 15px;">
+                        <div class="solution">
+                            <div class="solution-header">📝 详细证明</div>
+                            <p><strong>证明过程：</strong></p>
+                            <p>依题意 $X_1, X_2, \cdots, X_n$ 独立同分布，可知 $X_1^2, X_2^2, \cdots, X_n^2$ 也独立同分布且有：</p>
+                            <div class="math-display">
+                                $$E(X_i^2) = \alpha_2$$
+                                $$D(X_i^2) = E(X_i^4) - [E(X_i^2)]^2 = \alpha_4 - \alpha_2^2$$
+                            </div>
+                            
+                            <p>由列维-林德伯格定理：</p>
+                            <div class="math-display">
+                                $$V_n = \frac{\sum_{i=1}^n X_i^2 - n\alpha_2}{\sqrt{n(\alpha_4 - \alpha_2^2)}} = \frac{\frac{1}{n}\sum_{i=1}^n X_i^2 - \alpha_2}{\sqrt{(\alpha_4 - \alpha_2^2)/n}} = \frac{Z_n - \alpha_2}{\sqrt{(\alpha_4 - \alpha_2^2)/n}}$$
+                            </div>
+                            
+                            <p>的极限分布是标准正态分布。</p>
+                            
+                            <p>所以当 $n$ 充分大时，$V_n$ 近似服从标准正态分布，从而：</p>
+                            <div class="math-display">
+                                $$Z_n = \sqrt{\frac{\alpha_4 - \alpha_2^2}{n}} \cdot V_n + \alpha_2$$
+                            </div>
+                            
+                            <div class="formula-card">
+                                <h3 style="color: white; margin-bottom: 15px;">🎯 结论</h3>
+                                <p style="font-size: 1.2em;">$Z_n$ 近似服从参数为 $\mu = \alpha_2$，$\sigma^2 = \frac{\alpha_4 - \alpha_2^2}{n}$ 的正态分布。</p>
+                                <div class="math-display" style="background-color: rgba(255,255,255,0.2); margin-top: 15px;">
+                                    $$Z_n \sim N\left(\alpha_2, \frac{\alpha_4 - \alpha_2^2}{n}\right)$$
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Key Concepts Section -->
+        <section id="concepts">
+            <h2>🎓 核心概念总结</h2>
+            
+            <div class="formula-card">
+                <h3 style="color: white;">列维-林德伯格中心极限定理</h3>
+                <p>设 $X_1, X_2, \cdots, X_n, \cdots$ 独立同分布，且 $E(X_i) = \mu$，$D(X_i) = \sigma^2 > 0$，则：</p>
+                <div class="math-display" style="background-color: rgba(255,255,255,0.2);">
+                    $$\lim_{n \to \infty} P\left\{\frac{\sum_{i=1}^n X_i - n\mu}{\sigma\sqrt{n}} \leq x\right\} = \Phi(x)$$
+                </div>
+            </div>
+            
+            <div class="formula-card">
+                <h3 style="color: white;">莫弗-拉普拉斯定理</h3>
+                <p>设随机变量 $X_n \sim B(n, p)$ ($0 < p < 1$)，则：</p>
+                <div class="math-display" style="background-color: rgba(255,255,255,0.2);">
+                    $$\lim_{n \to \infty} P\left\{\frac{X_n - np}{\sqrt{np(1-p)}} \leq x\right\} = \Phi(x)$$
+                </div>
+            </div>
+            
+            <div class="formula-card">
+                <h3 style="color: white;">辛钦大数定律</h3>
+                <p>设 $X_1, X_2, \cdots, X_n, \cdots$ 独立同分布，且 $E(X_i) = \mu$，则：</p>
+                <div class="math-display" style="background-color: rgba(255,255,255,0.2);">
+                    $$\overline{X}_n = \frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{P} \mu$$
+                </div>
+            </div>
+            
+            <div class="note">
+                <h3>💡 应用技巧</h3>
+                <ul>
+                    <li><strong>标准化：</strong>将随机变量标准化为 $\frac{Y - E(Y)}{\sqrt{D(Y)}}$ 的形式</li>
+                    <li><strong>识别分布：</strong>判断是二项分布用莫弗-拉普拉斯定理，一般分布用列维-林德伯格定理</li>
+                    <li><strong>计算期望方差：</strong>$E(\sum X_i) = n\mu$，$D(\sum X_i) = n\sigma^2$</li>
+                    <li><strong>查表：</strong>熟练使用标准正态分布表 $\Phi(x)$</li>
+                </ul>
+            </div>
+        </section>
+        
+        <footer>
+            <p>📚 考研数学基础30讲：概率论与数理统计分册</p>
+            <p>© 2025 交互式教程 | 祝学习进步！</p>
+        </footer>
+    </div>
+    
+    <!-- Scroll to top button -->
+    <button onclick="scrollToTop()" id="scrollTopBtn" title="返回顶部">↑</button>
+    
+    <script>
+        // Collapsible sections
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+        
+        // Show explanation function
+        function showExplanation(id) {
+            var element = document.getElementById(id);
+            if (element.style.display === "none") {
+                element.style.display = "block";
+            } else {
+                element.style.display = "none";
+            }
+        }
+        
+        // Check answer function
+        function checkAnswer(element, isCorrect) {
+            if (isCorrect) {
+                alert("✅ 回答正确！");
+            } else {
+                alert("❌ 回答错误，请再想想！");
+            }
+        }
+        
+        // Scroll to top functionality
+        window.onscroll = function() {
+            scrollFunction();
+        };
+        
+        function scrollFunction() {
+            var scrollTopBtn = document.getElementById("scrollTopBtn");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollTopBtn.style.display = "block";
+            } else {
+                scrollTopBtn.style.display = "none";
+            }
+        }
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

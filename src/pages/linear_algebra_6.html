@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第6讲 二次型 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --primary-green: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --primary-white: #ffffff;
+            --primary-dark: #343434;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--primary-dark);
+            line-height: 1.8;
+        }
+        
+        /* Navigation Bar */
+        nav {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(90deg, var(--primary-orange) 0%, #ff9a3c 100%);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+        }
+        
+        nav h1 {
+            color: var(--primary-white);
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 80px;
+            width: 250px;
+            height: calc(100vh - 80px);
+            background: var(--primary-white);
+            box-shadow: var(--shadow);
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar h3 {
+            color: var(--primary-orange);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .sidebar a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover {
+            background: var(--primary-green);
+            color: var(--primary-white);
+            transform: translateX(5px);
+        }
+        
+        /* Toggle Button */
+        .toggle-btn {
+            position: fixed;
+            left: 10px;
+            top: 90px;
+            z-index: 1001;
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+        
+        /* Main Content */
+        .container {
+            margin-left: 270px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .container.full-width {
+            margin-left: 20px;
+        }
+        
+        /* Section Styles */
+        section {
+            background: var(--primary-white);
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        h2 {
+            color: var(--primary-orange);
+            border-bottom: 3px solid var(--primary-green);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        
+        h3 {
+            color: #ff9a3c;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+        
+        h4 {
+            color: var(--primary-dark);
+            margin-top: 1rem;
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+        }
+        
+        /* Highlight Boxes */
+        .definition-box, .theorem-box, .example-box, .note-box {
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            border-left: 5px solid;
+        }
+        
+        .definition-box {
+            background: #fff9e6;
+            border-color: var(--primary-yellow);
+        }
+        
+        .theorem-box {
+            background: #e6f7f5;
+            border-color: var(--primary-green);
+        }
+        
+        .example-box {
+            background: #fff0e6;
+            border-color: var(--primary-orange);
+        }
+        
+        .note-box {
+            background: #f0f0f0;
+            border-color: var(--primary-dark);
+        }
+        
+        .box-title {
+            font-weight: 700;
+            color: var(--primary-orange);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Math Formulas */
+        .math-display {
+            background: #f8f9fa;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            overflow-x: auto;
+            border-left: 4px solid var(--primary-green);
+        }
+        
+        /* Code Blocks */
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #c7254e;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        
+        th {
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        /* Collapsible Sections */
+        details {
+            background: #f8f9fa;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border: 2px solid var(--primary-green);
+        }
+        
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--primary-orange);
+            padding: 0.5rem;
+            user-select: none;
+        }
+        
+        summary:hover {
+            background: var(--primary-green);
+            color: var(--primary-white);
+            border-radius: 5px;
+        }
+        
+        /* Buttons */
+        .btn {
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            background: #ff9a3c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Quiz Section */
+        .quiz-container {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+        
+        .quiz-question {
+            margin-bottom: 1.5rem;
+        }
+        
+        .quiz-options label {
+            display: block;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            background: var(--primary-white);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quiz-options label:hover {
+            background: var(--primary-green);
+            color: var(--primary-white);
+        }
+        
+        .quiz-options input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        
+        .result {
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .result.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        section {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .container {
+                margin-left: 220px;
+            }
+            
+            nav h1 {
+                font-size: 1.4rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .container {
+                margin-left: 10px;
+                padding: 1rem;
+            }
+            
+            .toggle-btn {
+                display: block;
+            }
+        }
+        
+        /* Scroll to Top Button */
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+        }
+        
+        #scrollTopBtn:hover {
+            background: #ff9a3c;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <h1>📐 第6讲 二次型 - 交互式教程</h1>
+    </nav>
+    
+    <!-- Toggle Sidebar Button -->
+    <button class="toggle-btn" onclick="toggleSidebar()">☰ 目录</button>
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <h3>📚 章节导航</h3>
+        <ul>
+            <li><a href="#intro">基础知识结构</a></li>
+            <li><a href="#definition">二次型的定义与矩阵表示</a></li>
+            <li><a href="#transformation">合同变换与标准形</a></li>
+            <li><a href="#inertia">惯性定理</a></li>
+            <li><a href="#positive-definite">正定二次型</a></li>
+            <li><a href="#examples">典型例题</a></li>
+            <li><a href="#exercises">基础习题</a></li>
+            <li><a href="#quiz">互动测验</a></li>
+        </ul>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="container" id="container">
+        
+        <!-- Introduction Section -->
+        <section id="intro">
+            <h2>🎯 基础知识结构</h2>
+            <p>二次型是将相似理论应用在一个重要的研究对象（二次齐次式）上。本讲将系统学习二次型的定义、标准化方法以及正定性判定。</p>
+            
+            <div class="note-box">
+                <div class="box-title">💡 核心要点</div>
+                <ul>
+                    <li><strong>二次型的定义与矩阵表示</strong> - 理解对称矩阵的唯一性</li>
+                    <li><strong>化二次型为标准形与规范形</strong> - 配方法与正交变换法</li>
+                    <li><strong>合同关系</strong> - 对图形来说，封闭和非封闭都很重要</li>
+                    <li><strong>惯性定理</strong> - 正负惯性指数在合同变换下不变</li>
+                    <li><strong>正定二次型</strong> - 充要条件及判定方法</li>
+                </ul>
+            </div>
+            
+            <p><strong>几何意义：</strong>凡是正定二次型，在3维空间中是抛物面形状的，用 $z=1$ 去截，截出来的是一条封闭的曲线（椭圆类）。</p>
+        </section>
+        
+        <!-- Definition Section -->
+        <section id="definition">
+            <h2>📝 一、二次型的定义及其矩阵表达式</h2>
+            
+            <div class="definition-box">
+                <div class="box-title">定义：二次型</div>
+                <p>$n$ 元变量 $x_1, x_2, \ldots, x_n$ 的二次齐次多项式</p>
+                <div class="math-display">
+                    $$f(x_1, x_2, \ldots, x_n) = a_{11}x_1^2 + 2a_{12}x_1x_2 + \cdots + 2a_{1n}x_1x_n$$
+                    $$+ a_{22}x_2^2 + \cdots + 2a_{2n}x_2x_n$$
+                    $$+ \cdots + a_{nn}x_n^2$$
+                </div>
+                <p>称为 <strong>$n$ 元二次型</strong>，简称<strong>二次型</strong>。</p>
+            </div>
+            
+            <h3>矩阵表示</h3>
+            <p>因为 $x_ix_j = x_jx_i$，若令 $a_{ij} = a_{ji}$ $(i, j = 1, 2, \ldots, n)$，则交叉项 $2a_{ij}x_ix_j = a_{ij}x_ix_j + a_{ji}x_jx_i$。</p>
+            
+            <p>二次型可以表示为<strong>和式</strong>：</p>
+            <div class="math-display">
+                $$f(x_1, x_2, \ldots, x_n) = \sum_{i=1}^{n}\sum_{j=1}^{n}a_{ij}x_ix_j$$
+            </div>
+            
+            <p>或表示为<strong>矩阵形式</strong>：</p>
+            <div class="math-display">
+                $$f(\mathbf{x}) = \mathbf{x}^T A\mathbf{x}$$
+            </div>
+            
+            <p>其中 $\mathbf{x} = [x_1, x_2, \ldots, x_n]^T$，$A = (a_{ij})_{n \times n}$ 是<strong>实对称矩阵</strong>（$A^T = A$），称为二次型的<strong>矩阵</strong>。</p>
+            
+            <div class="note-box">
+                <div class="box-title">⚠️ 重要提示</div>
+                <p>二次型的矩阵 $A$ <strong>必须是对称矩阵</strong>，这保证了矩阵的唯一性。对角线元素 $a_{ii}$ 是平方项 $x_i^2$ 的系数，非对角元素 $a_{ij}$ 是交叉项 $x_ix_j$ 系数的一半。</p>
+            </div>
+            
+            <details>
+                <summary>📌 点击查看示例：如何从二次型写出矩阵</summary>
+                <div class="example-box">
+                    <div class="box-title">例题</div>
+                    <p>写出三元二次型 $f(x_1, x_2, x_3) = 2x_1^2 + 2x_2^2 + 2x_3^2 - 2x_1x_2 - 2x_2x_3 + 2x_1x_3$ 的矩阵 $A$。</p>
+                    
+                    <p><strong>解：</strong>对角线元素是平方项系数，非对角元素是交叉项系数的一半：</p>
+                    <div class="math-display">
+                        $$A = \begin{bmatrix} 2 & -1 & 1 \\ -1 & 2 & -1 \\ 1 & -1 & 2 \end{bmatrix}$$
+                    </div>
+                    
+                    <p>验证：$f(x_1, x_2, x_3) = [x_1, x_2, x_3] \begin{bmatrix} 2 & -1 & 1 \\ -1 & 2 & -1 \\ 1 & -1 & 2 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix}$</p>
+                </div>
+            </details>
+        </section>
+        
+        <!-- Transformation Section -->
+        <section id="transformation">
+            <h2>🔄 二、合同变换、二次型的合同标准形、规范形</h2>
+            
+            <h3>1. 线性变换的定义</h3>
+            <div class="definition-box">
+                <div class="box-title">定义：线性变换</div>
+                <p>对于 $n$ 元二次型 $f(x_1, x_2, \ldots, x_n)$，若令</p>
+                <div class="math-display">
+                    $$\begin{cases}
+                    x_1 = c_{11}y_1 + c_{12}y_2 + \cdots + c_{1n}y_n \\
+                    x_2 = c_{21}y_1 + c_{22}y_2 + \cdots + c_{2n}y_n \\
+                    \vdots \\
+                    x_n = c_{n1}y_1 + c_{n2}y_2 + \cdots + c_{nn}y_n
+                    \end{cases}$$
+                </div>
+                <p>即 $\mathbf{x} = C\mathbf{y}$，称为<strong>线性变换</strong>。若 $|C| \neq 0$，则称为<strong>可逆线性变换</strong>。</p>
+            </div>
+            
+            <h3>2. 矩阵合同的定义</h3>
+            <div class="definition-box">
+                <div class="box-title">定义：矩阵合同</div>
+                <p>设 $A, B$ 为 $n$ 阶矩阵，若存在可逆矩阵 $C$，使得</p>
+                <div class="math-display">
+                    $$C^TAC = B$$
+                </div>
+                <p>则称 $A$ 与 $B$ <strong>合同</strong>，记作 $A \cong B$。此时称对应的二次型 $f(\mathbf{x})$ 与 $g(\mathbf{y})$ 为<strong>合同二次型</strong>。</p>
+            </div>
+            
+            <div class="theorem-box">
+                <div class="box-title">合同关系的性质</div>
+                <ul>
+                    <li><strong>反身性：</strong>$A \cong A$</li>
+                    <li><strong>对称性：</strong>若 $A \cong B$，则 $B \cong A$</li>
+                    <li><strong>传递性：</strong>若 $A \cong B$ 且 $B \cong C$，则 $A \cong C$</li>
+                    <li><strong>秩不变：</strong>若 $A \cong B$，则 $r(A) = r(B)$</li>
+                </ul>
+            </div>
+            
+            <h3>3. 二次型的标准形与规范形</h3>
+            
+            <div class="definition-box">
+                <div class="box-title">标准形</div>
+                <p>若二次型中只含有平方项，没有交叉项，即形如</p>
+                <div class="math-display">
+                    $$d_1x_1^2 + d_2x_2^2 + \cdots + d_nx_n^2$$
+                </div>
+                <p>的二次型称为<strong>标准形</strong>。</p>
+            </div>
+            
+            <div class="definition-box">
+                <div class="box-title">规范形</div>
+                <p>若标准形中，系数 $d_i$ $(i=1,2,\ldots,n)$ 的取值范围为 $\{1, -1, 0\}$，即形如</p>
+                <div class="math-display">
+                    $$x_1^2 + \cdots + x_p^2 - x_{p+1}^2 - \cdots - x_{p+q}^2 + 0 \cdot x_{p+q+1}^2 + \cdots$$
+                </div>
+                <p>的二次型称为<strong>规范形</strong>（在不考虑系数顺序时唯一）。</p>
+            </div>
+            
+            <h3>4. 化二次型为标准形的方法</h3>
+            
+            <div class="theorem-box">
+                <div class="box-title">⭐ 定理1（配方法）</div>
+                <p>任何二次型 $f(\mathbf{x}) = \mathbf{x}^TA\mathbf{x}$ 均可通过<strong>配方法</strong>（作可逆线性变换 $\mathbf{x} = C\mathbf{y}$）化成标准形及规范形。</p>
+                <p>用矩阵语言表述：任何实对称矩阵 $A$，必存在可逆矩阵 $C$，使得</p>
+                <div class="math-display">
+                    $$C^TAC = \Lambda = \begin{bmatrix} d_1 & & \\ & \ddots & \\ & & d_n \end{bmatrix}$$
+                </div>
+                <p>或</p>
+                <div class="math-display">
+                    $$C^TAC = \begin{bmatrix} 1 & & & \\ & \ddots & & \\ & & -1 & \\ & & & \ddots & \\ & & & & 0 \end{bmatrix}$$
+                </div>
+            </div>
+            
+            <div class="note-box">
+                <div class="box-title">⚠️ 注意</div>
+                <p>此处 $C$ 的列向量<strong>一般不是</strong> $A$ 的特征向量，$d_i$ $(i=1,2,\ldots,n)$ <strong>一般也不是</strong> $A$ 的特征值。</p>
+            </div>
+            
+            <details>
+                <summary>📌 点击查看配方法详细步骤</summary>
+                <div class="example-box">
+                    <div class="box-title">配方法步骤</div>
+                    <ol>
+                        <li><strong>有平方项：</strong>将某个变量的平方项及与其有关的混合项一次配完，配成一个完全平方</li>
+                        <li><strong>无平方项：</strong>先作可逆线性变换使其出现平方项，然后再配完全平方</li>
+                        <li><strong>写出线性变换：</strong>保证变量个数不变，使变换可逆</li>
+                    </ol>
+                </div>
+            </details>
+            
+            <div class="theorem-box">
+                <div class="box-title">⭐ 定理2（正交变换法）</div>
+                <p>任何二次型 $f(\mathbf{x}) = \mathbf{x}^TA\mathbf{x}$ 也可以通过<strong>正交变换</strong> $\mathbf{x} = Q\mathbf{y}$ 化成标准形。</p>
+                <p>用矩阵语言表述：任何实对称矩阵 $A$，一定存在正交矩阵 $Q$，使得</p>
+                <div class="math-display">
+                    $$Q^{-1}AQ = Q^TAQ = \Lambda = \begin{bmatrix} \lambda_1 & & \\ & \ddots & \\ & & \lambda_n \end{bmatrix}$$
+                </div>
+                <p>其中 $Q$ 由 $A$ 的<strong>特征向量</strong>（单位化后）拼成，$\lambda_i$ 是 $A$ 的<strong>特征值</strong>。</p>
+            </div>
+            
+            <div class="note-box">
+                <div class="box-title">💡 配方法 vs 正交变换法</div>
+                <table>
+                    <tr>
+                        <th>方法</th>
+                        <th>变换矩阵</th>
+                        <th>标准形系数</th>
+                        <th>优缺点</th>
+                    </tr>
+                    <tr>
+                        <td>配方法</td>
+                        <td>$C$ 可逆，但 $C^{-1} \neq C^T$</td>
+                        <td>一般不是特征值</td>
+                        <td>计算简单，但不唯一</td>
+                    </tr>
+                    <tr>
+                        <td>正交变换法</td>
+                        <td>$Q$ 正交，$Q^{-1} = Q^T$</td>
+                        <td>就是特征值</td>
+                        <td>唯一（不考虑顺序），但计算稍复杂</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Inertia Theorem Section -->
+        <section id="inertia">
+            <h2>⚖️ 三、惯性定理</h2>
+            
+            <div class="theorem-box">
+                <div class="box-title">⭐ 惯性定理</div>
+                <p>无论选取什么样的可逆线性变换，将二次型化成标准形或规范形，其<strong>正项个数 $p$</strong>、<strong>负项个数 $q$</strong> 都是不变的。</p>
+                <ul>
+                    <li>$p$ 称为<strong>正惯性指数</strong></li>
+                    <li>$q$ 称为<strong>负惯性指数</strong></li>
+                    <li>若二次型的秩为 $r$，则 $r = p + q$</li>
+                </ul>
+            </div>
+            
+            <div class="theorem-box">
+                <div class="box-title">推论：二次型合同的充要条件</div>
+                <p>两个二次型（或实对称矩阵）合同的充要条件是有<strong>相同的正、负惯性指数</strong>，或有相同的秩及正（或负）惯性指数，或有相同的正、负特征值个数。</p>
+            </div>
+            
+            <div class="note-box">
+                <div class="box-title">🔑 关键点</div>
+                <ul>
+                    <li>可逆线性变换不改变二次型的秩</li>
+                    <li>可逆线性变换不改变正、负惯性指数</li>
+                    <li>规范形在不考虑系数顺序时是唯一的</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Positive Definite Section -->
+        <section id="positive-definite">
+            <h2>✅ 四、正定二次型及其判别</h2>
+            
+            <h3>1. 定义</h3>
+            <div class="definition-box">
+                <div class="box-title">定义：正定二次型</div>
+                <p>$n$ 元二次型 $f(x_1, x_2, \ldots, x_n) = \mathbf{x}^TA\mathbf{x}$，若对任意的 $\mathbf{x} = [x_1, x_2, \ldots, x_n]^T \neq \mathbf{0}$，均有</p>
+                <div class="math-display">
+                    $$\mathbf{x}^TA\mathbf{x} > 0$$
+                </div>
+                <p>则称 $f$ 为<strong>正定二次型</strong>，称矩阵 $A$ 为<strong>正定矩阵</strong>。</p>
+            </div>
+            
+            <p><strong>几何意义：</strong>在二元情况下，$z = f(x_1, x_2)$ 形成一个空间坐标系。若 $f$ 为正定二次型，并且 $f = 1$，则图形是封闭的椭圆类曲线。在三元情况下，$f(x_1, x_2, x_3) = 1$ 表示椭球面类封闭曲面。</p>
+            
+            <h3>2. 充要条件</h3>
+            <div class="theorem-box">
+                <div class="box-title">⭐ 正定二次型的充要条件</div>
+                <p>$n$ 元二次型 $f = \mathbf{x}^TA\mathbf{x}$ 正定 $\Leftrightarrow$ 以下任一条件：</p>
+                <ol>
+                    <li>$f$ 的<strong>正惯性指数 $p = n$</strong>（意味着标准形系数全为正）</li>
+                    <li>存在可逆矩阵 $D$，使 $A = D^TD$（理论价值大）</li>
+                    <li>$A = E$（即 $A$ 合同于单位矩阵）</li>
+                    <li>$A$ 的<strong>特征值 $\lambda_i > 0$</strong> $(i=1,2,\ldots,n)$</li>
+                    <li>⭐ <strong>$A$ 的全部顺序主子式均大于 0</strong>（最常用）</li>
+                </ol>
+            </div>
+            
+            <div class="note-box">
+                <div class="box-title">📐 顺序主子式</div>
+                <p>设 $A = (a_{ij})_{n \times n}$，则</p>
+                <div class="math-display">
+                    $$\Delta_k = \begin{vmatrix} a_{11} & a_{12} & \cdots & a_{1k} \\ a_{21} & a_{22} & \cdots & a_{2k} \\ \vdots & \vdots & & \vdots \\ a_{k1} & a_{k2} & \cdots & a_{kk} \end{vmatrix}$$
+                </div>
+                <p>称为 $n$ 阶矩阵 $A$ 的 <strong>$k$ 阶顺序（或左上角）主子式</strong>。当 $k$ 取 $1, 2, \ldots, n$ 时，就得到 $A$ 的 $n$ 个顺序主子式。</p>
+            </div>
+            
+            <h3>3. 必要条件</h3>
+            <div class="note-box">
+                <div class="box-title">正定二次型的必要条件</div>
+                <ul>
+                    <li>$a_{ii} > 0$ $(i=1,2,\ldots,n)$（对角元素全为正）</li>
+                    <li>$|A| > 0$（行列式大于 0）</li>
+                </ul>
+                <p>⚠️ 注意：这些只是<strong>必要条件</strong>，不充分！</p>
+            </div>
+            
+            <details>
+                <summary>📌 点击查看正定性判别示例</summary>
+                <div class="example-box">
+                    <div class="box-title">例题：判别正定性</div>
+                    <p>判别二次型 $f(x_1, x_2, x_3) = 2x_1^2 + 2x_2^2 + 2x_3^2 + 2x_1x_2 + 2x_1x_3 + 2x_2x_3$ 的正定性。</p>
+                    
+                    <p><strong>解：</strong>二次型的矩阵为</p>
+                    <div class="math-display">
+                        $$A = \begin{bmatrix} 2 & 1 & 1 \\ 1 & 2 & 1 \\ 1 & 1 & 2 \end{bmatrix}$$
+                    </div>
+                    
+                    <p>计算各阶顺序主子式：</p>
+                    <div class="math-display">
+                        $$\Delta_1 = 2 > 0$$
+                        $$\Delta_2 = \begin{vmatrix} 2 & 1 \\ 1 & 2 \end{vmatrix} = 3 > 0$$
+                        $$\Delta_3 = \begin{vmatrix} 2 & 1 & 1 \\ 1 & 2 & 1 \\ 1 & 1 & 2 \end{vmatrix} = 4 > 0$$
+                    </div>
+                    
+                    <p>因为所有顺序主子式都大于 0，所以 $A$ 正定，$f$ 是正定二次型。✅</p>
+                </div>
+            </details>
+        </section>
+        
+        <!-- Examples Section -->
+        <section id="examples">
+            <h2>📖 五、典型例题精选</h2>
+            
+            <div class="example-box">
+                <div class="box-title">例6.2 用配方法化二次型为标准形</div>
+                <p>化二次型</p>
+                <div class="math-display">
+                    $$f(x_1, x_2, x_3) = x_1^2 + 2x_1x_2 + 2x_1x_3 - x_2^2 - 2x_2x_3 - x_3^2$$
+                </div>
+                <p>为标准形，并写出所作的可逆线性变换。</p>
+                
+                <details>
+                    <summary>点击查看详细解答</summary>
+                    <p><strong>解：</strong>先对 $x_1$ 及所有含 $x_1$ 的混合项配完全平方：</p>
+                    <div class="math-display">
+                        $$f = (x_1 + x_2 + x_3)^2 - x_2^2 - x_3^2 - 2x_2x_3 - x_2^2 - 2x_2x_3 - x_3^2$$
+                        $$= (x_1 + x_2 + x_3)^2 - 2x_2^2 - 4x_2x_3 - 2x_3^2$$
+                    </div>
+                    
+                    <p>再对 $x_2$ 及所有含 $x_2$ 的混合项配完全平方：</p>
+                    <div class="math-display">
+                        $$f = (x_1 + x_2 + x_3)^2 - 2(x_2 + x_3)^2 + 0 \cdot x_3^2$$
+                    </div>
+                    
+                    <p>作线性变换：</p>
+                    <div class="math-display">
+                        $$\begin{cases}
+                        y_1 = x_1 + x_2 + x_3 \\
+                        y_2 = x_2 + x_3 \\
+                        y_3 = x_3
+                        \end{cases} \quad \text{即} \quad \begin{cases}
+                        x_1 = y_1 - y_2 \\
+                        x_2 = y_2 - y_3 \\
+                        x_3 = y_3
+                        \end{cases}$$
+                    </div>
+                    
+                    <p>标准形为：$f = y_1^2 - 2y_2^2$</p>
+                    
+                    <p>变换矩阵：$C = \begin{bmatrix} 1 & -1 & 0 \\ 0 & 1 & -1 \\ 0 & 0 & 1 \end{bmatrix}$，$|C| = 1 \neq 0$，所以是可逆线性变换。✅</p>
+                </details>
+            </div>
+            
+            <div class="example-box">
+                <div class="box-title">例6.4 用正交变换化二次型为标准形</div>
+                <p>用正交变换化二次型</p>
+                <div class="math-display">
+                    $$f(x_1, x_2, x_3) = 2x_1^2 + 5x_2^2 + 5x_3^2 + 4x_1x_2 - 4x_1x_3 - 8x_2x_3$$
+                </div>
+                <p>为标准形，并求所作的正交变换。</p>
+                
+                <details>
+                    <summary>点击查看详细解答</summary>
+                    <p><strong>解：</strong>二次型的对应矩阵为</p>
+                    <div class="math-display">
+                        $$A = \begin{bmatrix} 2 & 2 & -2 \\ 2 & 5 & -4 \\ -2 & -4 & 5 \end{bmatrix}$$
+                    </div>
+                    
+                    <p><strong>步骤1：求特征值</strong></p>
+                    <div class="math-display">
+                        $$|\lambda E - A| = \begin{vmatrix} \lambda-2 & -2 & 2 \\ -2 & \lambda-5 & 4 \\ 2 & 4 & \lambda-5 \end{vmatrix} = (\lambda-6)(\lambda+4)(\lambda-2) = 0$$
+                    </div>
+                    <p>特征值为：$\lambda_1 = 6, \lambda_2 = 2, \lambda_3 = -4$</p>
+                    
+                    <p><strong>步骤2：求特征向量</strong></p>
+                    <p>对 $\lambda_1 = 6$：基础解系为 $\xi_1 = [1, 2, -2]^T$</p>
+                    <p>对 $\lambda_2 = 2$：基础解系为 $\xi_2 = [2, 0, 1]^T$ 和 $\xi_3' = [-2, 1, 0]^T$（需正交化）</p>
+                    <p>对 $\lambda_3 = -4$：基础解系为 $\xi_4 = [1, 2, -2]^T$（已在前面）</p>
+                    
+                    <p><strong>步骤3：单位化</strong></p>
+                    <div class="math-display">
+                        $$\eta_1 = \frac{\xi_1}{|\xi_1|} = \frac{1}{3}[1, 2, -2]^T, \quad \eta_2 = \frac{\xi_2}{|\xi_2|} = \frac{1}{\sqrt{5}}[2, 0, 1]^T, \quad \eta_3 = \frac{\xi_3'}{|\xi_3'|} = \frac{1}{3\sqrt{5}}[2, 4, 5]^T$$
+                    </div>
+                    
+                    <p><strong>正交矩阵：</strong></p>
+                    <div class="math-display">
+                        $$Q = [\eta_1, \eta_2, \eta_3] = \begin{bmatrix} \frac{1}{3} & \frac{2}{\sqrt{5}} & \frac{2}{3\sqrt{5}} \\ \frac{2}{3} & 0 & \frac{4}{3\sqrt{5}} \\ -\frac{2}{3} & \frac{1}{\sqrt{5}} & \frac{5}{3\sqrt{5}} \end{bmatrix}$$
+                    </div>
+                    
+                    <p><strong>标准形：</strong>$f = 6y_1^2 + 2y_2^2 - 4y_3^2$</p>
+                    
+                    <p>正交变换为：$\mathbf{x} = Q\mathbf{y}$ ✅</p>
+                </details>
+            </div>
+            
+            <div class="example-box">
+                <div class="box-title">例6.12 正定矩阵的判定</div>
+                <p>设实二次型 $f(\mathbf{x}) = \mathbf{x}^TA\mathbf{x}$，其中 $A = (a_{ij})_{n \times n}$ 是实对称矩阵，则 $f$ 为正定二次型的充要条件是（）。</p>
+                <p>(A) $A^*$ 是正定矩阵 &nbsp;&nbsp; (B) $A^{-1}$ 是正定矩阵</p>
+                <p>(C) $f$ 的负惯性指数为零 &nbsp;&nbsp; (D) 存在 $n$ 阶实矩阵 $C$，使得 $A = C^TC$</p>
+                
+                <details>
+                    <summary>点击查看详细解答</summary>
+                    <p><strong>解：</strong>应选 (B)。</p>
+                    
+                    <p><strong>分析：</strong></p>
+                    <ul>
+                        <li>(A) $A^*$ 正定是 $A$ 正定的必要条件，但不充分。例如 $A = -E$ 时，$A^* = |A|A^{-1} = E$ 正定，但 $A$ 不正定。</li>
+                        <li><strong>(B) 正确。</strong>若 $A$ 正定，则 $A^T = A$，且特征值 $\lambda_i > 0$，所以 $A^{-1}$ 的特征值 $\frac{1}{\lambda_i} > 0$，且 $(A^{-1})^T = A^{-1}$，故 $A^{-1}$ 正定。反之亦然。</li>
+                        <li>(C) 负惯性指数为零，但正惯性指数 $p$ 不一定等于 $n$（可能 $p < n$），所以不充分。</li>
+                        <li>(D) 缺少"$C$ 可逆"的条件，不充分。</li>
+                    </ul>
+                </details>
+            </div>
+        </section>
+        
+        <!-- Exercises Section -->
+        <section id="exercises">
+            <h2>✏️ 六、基础习题精练</h2>
+            
+            <div class="note-box">
+                <div class="box-title">习题列表</div>
+                <ol>
+                    <li>二次型 $f(x_1, x_2, x_3) = 2x_1^2 + 2x_3^2 + 4x_1x_2 - 4x_1x_3 + 8x_2x_3$ 的规范形为（）
+                        <ul style="list-style-type: none;">
+                            <li>(A) $y_1^2 + y_2^2 + y_3^2$ &nbsp;&nbsp; (B) $y_1^2 + y_2^2 - y_3^2$</li>
+                            <li>(C) $y_1^2 - y_2^2 - y_3^2$ &nbsp;&nbsp; (D) $-y_1^2 - y_2^2 - y_3^2$</li>
+                        </ul>
+                    </li>
+                    <li>设 $f(x_1, x_2) = x_1^2 + 3x_2^2 + 4x_1x_2$，则 $f(x_1, x_2)$ 对应的矩阵与下列矩阵不合同的是（）
+                        <ul style="list-style-type: none;">
+                            <li>(A) $\begin{bmatrix} -1 & 1 \\ 1 & 2 \end{bmatrix}$ &nbsp;&nbsp; (B) $\begin{bmatrix} 1 & 2 \\ 2 & 1 \end{bmatrix}$</li>
+                            <li>(C) $\begin{bmatrix} 0 & -1 \\ -1 & 1 \end{bmatrix}$ &nbsp;&nbsp; (D) $\begin{bmatrix} 1 & 1 \\ 1 & 2 \end{bmatrix}$</li>
+                        </ul>
+                    </li>
+                    <li>下列矩阵中，为正定矩阵的是（）
+                        <ul style="list-style-type: none;">
+                            <li>(A) $\begin{bmatrix} 4 & 2 & 3 \\ 2 & 2 & 1 \\ 3 & 1 & -1 \end{bmatrix}$ &nbsp;&nbsp; (B) $\begin{bmatrix} 1 & 2 & 2 \\ 2 & 1 & 2 \\ 2 & 2 & 4 \end{bmatrix}$</li>
+                            <li>(C) $\begin{bmatrix} 1 & 2 & 2 \\ 2 & 1 & 0 \\ 2 & 0 & 2 \end{bmatrix}$ &nbsp;&nbsp; (D) $\begin{bmatrix} 3 & 0 & 1 \\ 0 & 2 & 1 \\ 1 & 1 & 2 \end{bmatrix}$</li>
+                        </ul>
+                    </li>
+                    <li>设二次型 $f(x_1, x_2, x_3) = 2x_1^2 + 4x_2^2 + ax_3^2 + 4x_1x_2 + 4x_1x_3 + 4x_2x_3$ 的秩为2，则参数 $a = $ ______。</li>
+                    <li>二次型 $f(x_1, x_2, x_3) = (x_1 + x_2)^2 + (x_2 - x_3)^2 + (x_3 + x_1)^2$ 的秩为 ______。</li>
+                    <li>设二次型 $f(x_1, x_2, x_3) = x_1^2 + 3x_2^2 + x_3^2 + 2x_1x_2 + 2x_1x_3 + 2x_2x_3$，则 $f$ 的正惯性指数为 ______。</li>
+                    <li>若 $f(x_1, x_2, x_3) = x_1^2 + 2tx_1x_2 - 2x_1x_3 + x_2^2 + 4x_2x_3 + 5x_3^2$ 正定，则 $t$ 的取值范围是 ______。</li>
+                </ol>
+            </div>
+            
+            <details>
+                <summary>📌 点击查看习题答案</summary>
+                <div class="note-box">
+                    <div class="box-title">习题答案</div>
+                    <ol>
+                        <li>(B) $y_1^2 + y_2^2 - y_3^2$</li>
+                        <li>(D)</li>
+                        <li>(D)</li>
+                        <li>$a = 2$</li>
+                        <li>秩为 2</li>
+                        <li>正惯性指数为 2</li>
+                        <li>$-\frac{4}{5} < t < 0$</li>
+                    </ol>
+                </div>
+            </details>
+        </section>
+        
+        <!-- Interactive Quiz Section -->
+        <section id="quiz">
+            <h2>🎮 七、互动测验</h2>
+            
+            <div class="quiz-container">
+                <div class="quiz-question">
+                    <h3>问题1：关于二次型矩阵的性质</h3>
+                    <p>二次型的矩阵必须满足什么条件？</p>
+                    <div class="quiz-options">
+                        <label>
+                            <input type="radio" name="q1" value="a">
+                            A. 必须是对角矩阵
+                        </label>
+                        <label>
+                            <input type="radio" name="q1" value="b">
+                            B. 必须是对称矩阵
+                        </label>
+                        <label>
+                            <input type="radio" name="q1" value="c">
+                            C. 必须是正定矩阵
+                        </label>
+                        <label>
+                            <input type="radio" name="q1" value="d">
+                            D. 必须是可逆矩阵
+                        </label>
+                    </div>
+                    <button class="btn" onclick="checkAnswer('q1', 'b', 'result1')">提交答案</button>
+                    <div id="result1" class="result"></div>
+                </div>
+                
+                <div class="quiz-question">
+                    <h3>问题2：正定矩阵的判定</h3>
+                    <p>下列哪个条件是正定矩阵的充要条件？</p>
+                    <div class="quiz-options">
+                        <label>
+                            <input type="radio" name="q2" value="a">
+                            A. 对角元素全为正
+                        </label>
+                        <label>
+                            <input type="radio" name="q2" value="b">
+                            B. 行列式大于零
+                        </label>
+                        <label>
+                            <input type="radio" name="q2" value="c">
+                            C. 所有顺序主子式大于零
+                        </label>
+                        <label>
+                            <input type="radio" name="q2" value="d">
+                            D. 迹大于零
+                        </label>
+                    </div>
+                    <button class="btn" onclick="checkAnswer('q2', 'c', 'result2')">提交答案</button>
+                    <div id="result2" class="result"></div>
+                </div>
+                
+                <div class="quiz-question">
+                    <h3>问题3：惯性定理</h3>
+                    <p>在合同变换下，什么是不变的？</p>
+                    <div class="quiz-options">
+                        <label>
+                            <input type="radio" name="q3" value="a">
+                            A. 矩阵的特征值
+                        </label>
+                        <label>
+                            <input type="radio" name="q3" value="b">
+                            B. 正负惯性指数
+                        </label>
+                        <label>
+                            <input type="radio" name="q3" value="c">
+                            C. 矩阵的行列式
+                        </label>
+                        <label>
+                            <input type="radio" name="q3" value="d">
+                            D. 矩阵的迹
+                        </label>
+                    </div>
+                    <button class="btn" onclick="checkAnswer('q3', 'b', 'result3')">提交答案</button>
+                    <div id="result3" class="result"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <section style="text-align: center; padding: 2rem; background: var(--primary-green); border-radius: 10px;">
+            <h3>🎉 恭喜完成本讲学习！</h3>
+            <p>继续加油，掌握线性代数的精髓！</p>
+            <p style="margin-top: 1rem; color: var(--primary-dark);">
+                <strong>提示：</strong>本教程基于PDF教材制作，保留了所有核心内容并增加了交互功能。
+            </p>
+        </section>
+        
+    </div>
+    
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
+    
+    <script>
+        // Toggle Sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const container = document.getElementById('container');
+            sidebar.classList.toggle('hidden');
+            container.classList.toggle('full-width');
+        }
+        
+        // Check Quiz Answer
+        function checkAnswer(questionName, correctAnswer, resultId) {
+            const selected = document.querySelector(`input[name="${questionName}"]:checked`);
+            const resultDiv = document.getElementById(resultId);
+            
+            if (!selected) {
+                resultDiv.textContent = '请先选择一个答案！';
+                resultDiv.className = 'result incorrect';
+                resultDiv.style.display = 'block';
+                return;
+            }
+            
+            if (selected.value === correctAnswer) {
+                resultDiv.textContent = '✅ 回答正确！做得好！';
+                resultDiv.className = 'result correct';
+            } else {
+                resultDiv.textContent = '❌ 回答错误，请再试一次！';
+                resultDiv.className = 'result incorrect';
+            }
+            resultDiv.style.display = 'block';
+        }
+        
+        // Scroll to Top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Show/Hide Scroll to Top Button
+        window.onscroll = function() {
+            const btn = document.getElementById('scrollTopBtn');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                btn.style.display = 'block';
+            } else {
+                btn.style.display = 'none';
+            }
+        };
+        
+        // Smooth Scrolling for Navigation Links
+        document.querySelectorAll('.sidebar a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+        
+        // Add Animation on Scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第4讲 线性方程组 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": {
+                styles: {".MathJax": {color: "#343434"}}
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: #343434;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* Navigation */
+        nav {
+            background-color: #343434;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 0;
+        }
+        
+        nav li {
+            margin: 0;
+        }
+        
+        nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 1rem 1.5rem;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover {
+            background-color: #f27d00;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* Section */
+        section {
+            background: white;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        section h2 {
+            color: #f27d00;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        section h3 {
+            color: #343434;
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem 0;
+            padding-left: 1rem;
+            border-left: 4px solid #f7d117;
+        }
+        
+        section h4 {
+            color: #f27d00;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+        
+        /* Highlight boxes */
+        .highlight-box {
+            background: linear-gradient(135deg, #a6d6c9 0%, #d4f1e8 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 5px solid #f27d00;
+        }
+        
+        .important-box {
+            background: linear-gradient(135deg, #fff3cd 0%, #fffaeb 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 5px solid #f7d117;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fce8e8 0%, #fff5f5 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 5px solid #dc3545;
+        }
+        
+        /* Code blocks */
+        .code-block {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Roboto Mono', monospace;
+            overflow-x: auto;
+        }
+        
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+        }
+        
+        /* Accordion */
+        .accordion {
+            margin: 1rem 0;
+        }
+        
+        .accordion-item {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: white;
+            padding: 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .accordion-header:hover {
+            opacity: 0.9;
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 1rem;
+        }
+        
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 1rem;
+        }
+        
+        .accordion-icon {
+            transition: transform 0.3s;
+        }
+        
+        .accordion-icon.active {
+            transform: rotate(180deg);
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f27d00;
+            color: white;
+            font-weight: 500;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        /* Matrix display */
+        .matrix {
+            display: inline-block;
+            text-align: center;
+            margin: 1rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(242, 125, 0, 0.3);
+        }
+        
+        /* Example box */
+        .example-box {
+            background-color: #f8f9fa;
+            border: 2px solid #a6d6c9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .example-box h4 {
+            color: #343434;
+            margin-top: 0;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #343434;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            nav a {
+                border-bottom: 1px solid #555;
+            }
+            
+            section {
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+        }
+        
+        /* Special emphasis */
+        .star-rating {
+            color: #f7d117;
+            font-size: 1.2rem;
+        }
+        
+        strong {
+            color: #f27d00;
+        }
+        
+        /* Scroll to top button */
+        #scrollTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            border: none;
+            outline: none;
+            background-color: #f27d00;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 18px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        #scrollTopBtn:hover {
+            background-color: #343434;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>📐 第4讲 线性方程组</h1>
+        <p>考研数学基础30讲 · 线性代数分册</p>
+    </header>
+    
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#structure">知识结构</a></li>
+            <li><a href="#basics">基础内容</a></li>
+            <li><a href="#homogeneous">齐次方程组</a></li>
+            <li><a href="#non-homogeneous">非齐次方程组</a></li>
+            <li><a href="#common-solution">公共解</a></li>
+            <li><a href="#same-solution">同解方程组</a></li>
+            <li><a href="#exercises">习题精练</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Main Container -->
+    <div class="container">
+        
+        <!-- Section: Knowledge Structure -->
+        <section id="structure">
+            <h2>📊 基础知识结构</h2>
+            
+            <div class="highlight-box">
+                <p><strong>本部分主要内容：</strong></p>
+                <ul>
+                    <li><strong>齐次线性方程组</strong>
+                        <ul>
+                            <li>有解的条件</li>
+                            <li>解的性质</li>
+                            <li>基础解系和解的结构</li>
+                            <li><span class="star-rating">★★</span> 求解方法与步骤（必考知识点，需熟练掌握计算能力）</li>
+                        </ul>
+                    </li>
+                    <li><strong>非齐次线性方程组</strong>
+                        <ul>
+                            <li>有解的条件</li>
+                            <li>解的性质</li>
+                            <li>求解方法与步骤（需强化计算能力）</li>
+                        </ul>
+                    </li>
+                    <li><strong>两个方程组的公共解</strong></li>
+                    <li><strong>同解方程组</strong></li>
+                </ul>
+            </div>
+            
+            <div class="important-box">
+                <h4>💡 核心思想</h4>
+                <p>线性方程组与向量组其实是<strong>一回事</strong>！方程组的解就是描述向量组中各成员关系的<strong>系数</strong>。</p>
+            </div>
+        </section>
+        
+        <!-- Section: Basics -->
+        <section id="basics">
+            <h2>📚 基础内容精讲</h2>
+            
+            <h3>线性方程组与向量组的关系</h3>
+            
+            <p>考虑一般的非齐次线性方程组：</p>
+            
+            <div class="code-block">
+$$
+\begin{cases}
+a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n = b_1 \\
+a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n = b_2 \\
+\cdots\cdots \\
+a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n = b_m
+\end{cases}
+$$
+            </div>
+            
+            <h4>系数矩阵</h4>
+            <p>由未知数 $x_i$ 前的系数 $a_{ij}$ 组成的矩阵：</p>
+            
+            <div class="code-block">
+$$
+A = \begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} \\
+a_{21} & a_{22} & \cdots & a_{2n} \\
+\vdots & \vdots & & \vdots \\
+a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{bmatrix}
+$$
+            </div>
+            
+            <h4>增广矩阵</h4>
+            <p>在系数矩阵基础上添加自由项列向量：</p>
+            
+            <div class="code-block">
+$$
+[A:b] = \begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} & b_1 \\
+a_{21} & a_{22} & \cdots & a_{2n} & b_2 \\
+\vdots & \vdots & & \vdots & \vdots \\
+a_{m1} & a_{m2} & \cdots & a_{mn} & b_m
+\end{bmatrix}
+$$
+            </div>
+            
+            <h4>向量形式</h4>
+            <p>方程组可以写成向量的线性组合形式：</p>
+            
+            <div class="code-block">
+$$
+x_1\alpha_1 + x_2\alpha_2 + \cdots + x_n\alpha_n = \beta
+$$
+            </div>
+            
+            <p>其中 $\alpha_j$ 是系数矩阵的列向量，$\beta$ 是自由项向量。</p>
+            
+            <div class="highlight-box">
+                <h4>🎯 核心理解</h4>
+                <p><strong>解向量 $(x_1, x_2, \ldots, x_n)^T$ 的各分量，就是向量组 $\alpha_1, \alpha_2, \ldots, \alpha_n$ 表示向量 $\beta$ 的组合系数。</strong></p>
+                <p>换句话说：</p>
+                <ul>
+                    <li>$x_1, x_2, \ldots, x_n$ 表示自由项 $\beta$ 被 $\alpha_1, \alpha_2, \ldots, \alpha_n$ 线性表示的组合系数</li>
+                    <li>（仅数学一）$\alpha_1, \alpha_2, \ldots, \alpha_n$ 在基下的坐标</li>
+                    <li>方程组的解</li>
+                </ul>
+            </div>
+            
+            <h4>求解基本方法</h4>
+            <div class="important-box">
+                <p><strong>求解线性方程组的基本方法：</strong></p>
+                <ol>
+                    <li>对增广矩阵作<strong>初等行变换</strong>（不改变未知数的值，属于同解变换）</li>
+                    <li>化成<strong>行阶梯形矩阵</strong></li>
+                    <li>得出真实约束的个数并求未知数</li>
+                </ol>
+                <p>⚠️ <strong>注意：必须是行变换！</strong>因为行变换不改变各向量间的系数关系。</p>
+            </div>
+        </section>
+        
+        <!-- Section: Homogeneous Systems -->
+        <section id="homogeneous">
+            <h2>🔢 齐次线性方程组</h2>
+            
+            <p>齐次线性方程组的形式为（自由项全为0）：</p>
+            
+            <div class="code-block">
+$$
+\begin{cases}
+a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n = 0 \\
+a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n = 0 \\
+\cdots\cdots \\
+a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n = 0
+\end{cases}
+$$
+            </div>
+            
+            <p>向量形式：$x_1\alpha_1 + x_2\alpha_2 + \cdots + x_n\alpha_n = 0$</p>
+            <p>矩阵形式：$A_{m \times n}x = 0$</p>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>1️⃣ 有解的条件</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><strong>当 $r(A) = n$</strong>（即 $\alpha_1, \alpha_2, \ldots, \alpha_n$ 线性无关）时，方程组有<strong>唯一零解</strong></li>
+                            <li><span class="star-rating">★★★★★</span> <strong>当 $r(A) = r < n$</strong>（即 $\alpha_1, \alpha_2, \ldots, \alpha_n$ 线性相关）时，方程组有<strong>非零解</strong>（无穷多解），且有 $n - r$ 个线性无关解</li>
+                        </ul>
+                        
+                        <div class="important-box">
+                            <p><strong>自由变量的个数：</strong></p>
+                            $$s = n - r(A)$$
+                            <p>这个数也称为：</p>
+                            <ul>
+                                <li>未知量的个数（自由度）</li>
+                                <li>（仅数学一）解空间的维数</li>
+                                <li>基础解系所含向量的个数</li>
+                            </ul>
+                            <p><strong>理解：</strong>$n - r(A)$ = 未知数的个数 - 真实约束的个数 → 一个真实约束限制一个变量</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>2️⃣ 解的性质</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>若 $A\xi_1 = 0$，$A\xi_2 = 0$，则：</p>
+                        $$A(k_1\xi_1 + k_2\xi_2) = 0$$
+                        <p>其中 $k_1, k_2$ 是任意常数。</p>
+                        <p><strong>理解：</strong>齐次线性方程组的解向量线性组合后形成的新向量仍是该方程组的解。</p>
+                        
+                        <div class="highlight-box">
+                            <h4>类消去律</h4>
+                            <p>若 $A_{m \times n}$，$r(A) = n$，$AB = AC$，则 $B = C$。</p>
+                            <p><strong>证明：</strong>因 $r(A) = n$，$A$ 列满秩，于是 $n - r(A) = 0$，$Ax = 0$ 只有零解，故由 $AB = AC$，有 $A(B - C) = 0$，于是 $B = C$。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>3️⃣ 基础解系和解的结构</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <h4>基础解系的定义</h4>
+                        <p>设 $\xi_1, \xi_2, \ldots, \xi_{n-r}$ 满足：</p>
+                        <ul>
+                            <li>① 是方程组 $Ax = 0$ 的解</li>
+                            <li>② 线性无关</li>
+                            <li>③ 方程组 $Ax = 0$ 的任一解均可由 $\xi_1, \xi_2, \ldots, \xi_{n-r}$ 线性表示</li>
+                        </ul>
+                        <p>则称 $\xi_1, \xi_2, \ldots, \xi_{n-r}$ 为 $Ax = 0$ 的<strong>基础解系</strong>。</p>
+                        <p><strong>个数：</strong>$s = n - r(A)$</p>
+                        
+                        <div class="important-box">
+                            <p>（仅数学一）基础解系也称为解空间的基，解空间内的任意一个向量都可以通过基来线性表示。</p>
+                        </div>
+                        
+                        <h4>通解</h4>
+                        <p>设 $\xi_1, \xi_2, \ldots, \xi_{n-r}$ 是 $Ax = 0$ 的基础解系，则：</p>
+                        $$x = k_1\xi_1 + k_2\xi_2 + \cdots + k_{n-r}\xi_{n-r}$$
+                        <p>是方程组 $Ax = 0$ 的<strong>通解</strong>，其中 $k_1, k_2, \ldots, k_{n-r}$ 是任意常数。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>4️⃣ 求解方法与步骤</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="highlight-box">
+                            <p><strong>步骤：</strong></p>
+                            <ol>
+                                <li><strong>步骤1：</strong>将系数矩阵 $A$ 作初等行变换化成行阶梯形矩阵 $B$（或行最简阶梯形矩阵）
+                                    <ul>
+                                        <li>目的：化成行阶梯形矩阵后方便看出矩阵的秩和判断哪些向量前的系数为自由变量</li>
+                                        <li>阶梯数为 $r$，即 $r(A) = r$（阶梯数为真实约束个数，即为行向量组的秩）</li>
+                                    </ul>
+                                </li>
+                                <li><strong>步骤2：</strong>按列找出一个秩为 $r$ 的子矩阵，剩余列位置的未知数设为自由变量
+                                    <ul>
+                                        <li>自由变量的个数：$n - r(A)$</li>
+                                    </ul>
+                                </li>
+                                <li><strong>步骤3：</strong>按基础解系定义求出 $\xi_1, \xi_2, \ldots, \xi_{n-r}$，并写出通解
+                                    <ul>
+                                        <li>确定基础解系中有几个向量：$s = n - r(A)$</li>
+                                        <li>取的 $|A_s|$（$s$ 阶子式）$\neq 0$，即可确定线性无关的向量组</li>
+                                        <li>$\xi_1, \xi_2$ 是 $Ax = 0$ 的解，即是与行向量垂直的向量</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                            <p><strong>通解：</strong>$x = k_1\xi_1 + k_2\xi_2 + \cdots + k_{n-r}\xi_{n-r}$（$k_1, k_2, \ldots, k_{n-r}$ 为任意常数）</p>
+                        </div>
+                        
+                        <div class="warning-box">
+                            <p><strong>⚠️ 注意：</strong></p>
+                            <ul>
+                                <li>自由变量的取值是随意的，但为保证基础解系是线性无关的，故 $x_3, x_5$ 的两次取值须不成比例</li>
+                                <li>且为方便求解其他未知量，一般先定一个为1，其余为0</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>示例：求齐次线性方程组通解</h3>
+            
+            <div class="example-box">
+                <h4>例 4.1</h4>
+                <p>求齐次线性方程组</p>
+                <div class="code-block">
+$$
+\begin{cases}
+x_1 + x_2 - 3x_4 - x_5 = 0 \\
+x_1 - x_2 + 2x_3 - x_4 = 0 \\
+4x_1 - 2x_2 + 6x_3 + 3x_4 - 4x_5 = 0 \\
+2x_1 + 4x_2 - 2x_3 + 4x_4 - 7x_5 = 0
+\end{cases}
+$$
+                </div>
+                <p>的通解。</p>
+                
+                <button class="btn" onclick="showSolution('solution1')">查看解答</button>
+                
+                <div id="solution1" style="display:none; margin-top:1rem;">
+                    <h4>解：</h4>
+                    <p><strong>步骤1：</strong>将系数矩阵作初等行变换，化成行阶梯形矩阵</p>
+                    
+                    <div class="code-block">
+$$
+A = \begin{bmatrix}
+1 & 1 & 0 & -3 & -1 \\
+1 & -1 & 2 & -1 & 0 \\
+4 & -2 & 6 & 3 & -4 \\
+2 & 4 & -2 & 4 & -7
+\end{bmatrix}
+\rightarrow
+\begin{bmatrix}
+1 & 1 & 0 & -3 & -1 \\
+0 & -2 & 2 & 2 & 1 \\
+0 & -6 & 6 & 15 & 0 \\
+0 & 2 & -2 & 10 & -5
+\end{bmatrix}
+$$
+$$
+\rightarrow
+\begin{bmatrix}
+1 & 1 & 0 & -3 & -1 \\
+0 & -2 & 2 & 2 & 1 \\
+0 & 0 & 0 & 9 & -3 \\
+0 & 0 & 0 & 12 & -4
+\end{bmatrix}
+\rightarrow
+\begin{bmatrix}
+1 & 1 & 0 & -3 & -1 \\
+0 & -2 & 2 & 2 & 1 \\
+0 & 0 & 0 & 9 & -3 \\
+0 & 0 & 0 & 0 & 0
+\end{bmatrix}
+$$
+                    </div>
+                    
+                    <p>阶梯数为3，即 $r(A) = 3$。</p>
+                    
+                    <p><strong>步骤2：</strong>确定秩为3后，按列找出一个秩为3的子矩阵（取第一、二、四列），剩余第三、五列位置的元素 $x_3, x_5$ 即设为自由未知量。</p>
+                    
+                    <p>自由变量的个数为 $5 - r(A) = 5 - 3 = 2$</p>
+                    
+                    <p><strong>步骤3：</strong>取自由未知量 $x_3 = k_1$，$x_5 = 3k_2$，代入方程组得：</p>
+                    
+                    <div class="code-block">
+$$
+\begin{cases}
+x_4 = k_2 \\
+x_2 = x_3 + x_4 + \frac{1}{2}x_5 = k_1 + \frac{5}{2}k_2 \\
+x_1 = -x_2 + 3x_4 + x_5 = -k_1 + \frac{7}{2}k_2
+\end{cases}
+$$
+                    </div>
+                    
+                    <p>由此得通解：</p>
+                    
+                    <div class="code-block">
+$$
+x = \begin{bmatrix} x_1 \\ x_2 \\ x_3 \\ x_4 \\ x_5 \end{bmatrix}
+= \begin{bmatrix} -k_1 + \frac{7}{2}k_2 \\ k_1 + \frac{5}{2}k_2 \\ k_1 + 0 \\ 0 + k_2 \\ 0 + 3k_2 \end{bmatrix}
+= k_1 \begin{bmatrix} -1 \\ 1 \\ 1 \\ 0 \\ 0 \end{bmatrix}
++ k_2 \begin{bmatrix} \frac{7}{2} \\ \frac{5}{2} \\ 0 \\ 1 \\ 3 \end{bmatrix}
+$$
+                    </div>
+                    
+                    <p>其中 $k_1, k_2$ 是任意常数。</p>
+                    
+                    <div class="highlight-box">
+                        <p><strong>基础解系：</strong></p>
+                        $$
+                        \xi_1 = [-1, 1, 1, 0, 0]^T, \quad \xi_2 = \left[\frac{7}{2}, \frac{5}{2}, 0, 1, 3\right]^T
+                        $$
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Non-homogeneous Systems -->
+        <section id="non-homogeneous">
+            <h2>📐 非齐次线性方程组</h2>
+            
+            <p>非齐次线性方程组的形式为（自由项不全为0）：</p>
+            
+            <div class="code-block">
+$$
+\begin{cases}
+a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n = b_1 \\
+a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n = b_2 \\
+\cdots\cdots \\
+a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n = b_m
+\end{cases}
+$$
+            </div>
+            
+            <p>向量形式：$x_1\alpha_1 + x_2\alpha_2 + \cdots + x_n\alpha_n = b$</p>
+            <p>矩阵形式：$Ax = b$</p>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>1️⃣ 有解的条件</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <ul>
+                            <li>若 $r(A) \neq r([A, b])$（$b$ 不能由 $\alpha_1, \alpha_2, \ldots, \alpha_n$ 线性表示），则方程组<strong>无解</strong></li>
+                            <li>若 $r(A) = r([A, b]) = n$（即 $\alpha_1, \alpha_2, \ldots, \alpha_n$ 线性无关，$\alpha_1, \alpha_2, \ldots, \alpha_n, b$ 线性相关），则方程组有<strong>唯一解</strong></li>
+                            <li>若 $r(A) = r([A, b]) = r < n$，则方程组有<strong>无穷多解</strong></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>2️⃣ 解的性质</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>设 $\eta_1, \eta_2, \eta_3$ 是非齐次线性方程组 $Ax = b$ 的解，$\xi$ 是对应齐次线性方程组 $Ax = 0$ 的解，则：</p>
+                        <ul>
+                            <li>(1) $\eta_1 - \eta_2$ 是 $Ax = 0$ 的解</li>
+                            <li>(2) $k\xi + \eta$ 是 $Ax = b$ 的解</li>
+                        </ul>
+                        
+                        <div class="important-box">
+                            <p><strong>理解：</strong>非齐次方程组的通解形式为：</p>
+                            $$\text{非齐次通解} = \text{齐次通解} + \text{非齐次的一个特解}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>3️⃣ 求解方法与步骤</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="highlight-box">
+                            <p><strong>步骤：</strong></p>
+                            <ol>
+                                <li><strong>①</strong> 写出 $Ax = b$ 的导出方程组 $Ax = 0$ 并求 $Ax = 0$ 的通解 $k_1\xi_1 + k_2\xi_2 + \cdots + k_{n-r}\xi_{n-r}$
+                                    <ul>
+                                        <li>$A \rightarrow$ 行阶梯形矩阵</li>
+                                        <li>确定矩阵的秩、自由变量和非自由变量</li>
+                                        <li>求出基础解系</li>
+                                    </ul>
+                                </li>
+                                <li><strong>②</strong> 求出 $Ax = b$ 的一个特解 $\eta$</li>
+                                <li><span class="star-rating">★★★</span> <strong>③</strong> $Ax = b$ 的通解为：
+                                    $$x = k_1\xi_1 + k_2\xi_2 + \cdots + k_{n-r}\xi_{n-r} + \eta$$
+                                    其中 $k_1, k_2, \ldots, k_{n-r}$ 为任意常数
+                                </li>
+                            </ol>
+                        </div>
+                        
+                        <div class="important-box">
+                            <p><strong>求特解的方法：</strong></p>
+                            <p>在增广矩阵的行阶梯形中，令所有自由变量全为0，代入求解其他变量，得到的解即为一个特解。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>示例：求非齐次线性方程组通解</h3>
+            
+            <div class="example-box">
+                <h4>例 4.8</h4>
+                <p>设</p>
+                <div class="code-block">
+$$
+A = \begin{bmatrix}
+\lambda & 1 & 1 \\
+0 & \lambda - 1 & 0 \\
+1 & 1 & \lambda
+\end{bmatrix}, \quad
+b = \begin{bmatrix} a \\ 1 \\ 1 \end{bmatrix}
+$$
+                </div>
+                <p>已知线性方程组 $Ax = b$ 存在两个不同的解。</p>
+                <p>(1) 求 $\lambda, a$ 的值；</p>
+                <p>(2) 求方程组 $Ax = b$ 的通解。</p>
+                
+                <button class="btn" onclick="showSolution('solution2')">查看解答</button>
+                
+                <div id="solution2" style="display:none; margin-top:1rem;">
+                    <h4>解：</h4>
+                    <p>(1) 因为非齐次线性方程组 $Ax = b$ 有两个不同的解，所以系数行列式：</p>
+                    
+                    <div class="code-block">
+$$
+|A| = \begin{vmatrix}
+\lambda & 1 & 1 \\
+0 & \lambda - 1 & 0 \\
+1 & 1 & \lambda
+\end{vmatrix}
+= (\lambda - 1)^2(\lambda + 1) = 0
+$$
+                    </div>
+                    
+                    <p>解得 $\lambda = -1$ 或 $\lambda = 1$。</p>
+                    
+                    <p>当 $\lambda = 1$ 时，对方程组 $Ax = b$ 的增广矩阵作初等行变换：</p>
+                    
+                    <div class="code-block">
+$$
+[A:b] = \begin{bmatrix}
+1 & 1 & 1 & a \\
+0 & 0 & 0 & 1 \\
+1 & 1 & 1 & 1
+\end{bmatrix}
+\rightarrow
+\begin{bmatrix}
+1 & 1 & 1 & 1 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 0 & a-1
+\end{bmatrix}
+$$
+                    </div>
+                    
+                    <p>则其增广矩阵的秩为2，系数矩阵 $A$ 的秩为1，方程组 $Ax = b$ 无解，故 $\lambda = 1$ 应舍去。</p>
+                    
+                    <p>当 $\lambda = -1$ 时，对方程组 $Ax = b$ 的增广矩阵作初等行变换：</p>
+                    
+                    <div class="code-block">
+$$
+[A:b] = \begin{bmatrix}
+-1 & 1 & 1 & a \\
+0 & -2 & 0 & 1 \\
+1 & 1 & -1 & 1
+\end{bmatrix}
+\rightarrow
+\begin{bmatrix}
+1 & 1 & -1 & 1 \\
+0 & -2 & 0 & 1 \\
+0 & 0 & 0 & a+2
+\end{bmatrix}
+$$
+                    </div>
+                    
+                    <p>因为方程组 $Ax = b$ 有解，所以 $a + 2 = 0$，即 $a = -2$。</p>
+                    
+                    <p><strong>综上：</strong>$\lambda = -1$，$a = -2$。</p>
+                    
+                    <p>(2) 当 $\lambda = -1$，$a = -2$ 时，继续对 (1) 中的矩阵 $B$ 作初等行变换：</p>
+                    
+                    <div class="code-block">
+$$
+B \rightarrow
+\begin{bmatrix}
+1 & 0 & -1 & \frac{3}{2} \\
+0 & 1 & 0 & -\frac{1}{2} \\
+0 & 0 & 0 & 0
+\end{bmatrix}
+$$
+                    </div>
+                    
+                    <p>于是方程组 $Ax = b$ 的通解为：</p>
+                    
+                    <div class="code-block">
+$$
+x = \frac{1}{2}\begin{bmatrix} 3 \\ -1 \\ 0 \end{bmatrix}
++ k\begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix}
+$$
+                    </div>
+                    
+                    <p>其中 $k$ 为任意常数。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Common Solutions -->
+        <section id="common-solution">
+            <h2>🔗 两个方程组的公共解</h2>
+            
+            <p>齐次线性方程组 $A_{m \times n}x = 0$ 和 $B_{s \times n}x = 0$ 的公共解是满足方程组</p>
+            
+            <div class="code-block">
+$$
+\begin{bmatrix} A \\ B \end{bmatrix} x = 0
+$$
+            </div>
+            
+            <p>的解，即联立求解。</p>
+            
+            <div class="highlight-box">
+                <h4>求公共解的方法</h4>
+                <p><strong>方法一：直接联立</strong></p>
+                <p>将 $Ax = 0$，$Bx = 0$ 联立，对增广矩阵</p>
+                <div class="code-block">
+$$
+\begin{bmatrix} A \\ B \end{bmatrix}
+$$
+                </div>
+                <p>作初等行变换，求出新方程组的解。</p>
+                
+                <p><strong>方法二：在通解中求公共解</strong></p>
+                <p>在方程组 $Ax = 0$ 的通解中找出满足方程组 $Bx = 0$ 的解（或在 $Bx = 0$ 的通解中找出满足 $Ax = 0$ 的解），即是 $Ax = 0$ 与 $Bx = 0$ 的公共解。</p>
+                
+                <p><strong>方法三：从基础解系中找公共解</strong></p>
+                <p>从方程组 $Ax = 0$，$Bx = 0$ 的通解中找出公共解，即：</p>
+                <div class="code-block">
+$$
+k_1\xi_1 + k_2\xi_2 + \cdots + k_s\xi_s = l_1\eta_1 + l_2\eta_2 + \cdots + l_t\eta_t
+$$
+                </div>
+                <p>即：</p>
+                <div class="code-block">
+$$
+k_1\xi_1 + k_2\xi_2 + \cdots + k_s\xi_s - l_1\eta_1 - l_2\eta_2 - \cdots - l_t\eta_t = 0
+$$
+                </div>
+                <p>解此式，求出 $k_i$ 或 $l_j$，$i = 1, 2, \ldots, s$；$j = 1, 2, \ldots, t$，即可求出公共解。</p>
+            </div>
+            
+            <div class="example-box">
+                <h4>例 4.12</h4>
+                <p>已知线性方程组</p>
+                <div class="code-block">
+$$
+(I) \begin{cases}
+x_1 + x_2 = 0 \\
+x_2 - x_4 = 0
+\end{cases}
+\quad
+(II) \begin{cases}
+x_1 - x_2 + x_3 = 0 \\
+x_2 - x_3 + x_4 = 0
+\end{cases}
+$$
+                </div>
+                <p>(1) 分别求方程组 (I)，(II) 的基础解系；</p>
+                <p>(2) 求方程组 (I)，(II) 的公共解。</p>
+                
+                <button class="btn" onclick="showSolution('solution3')">查看解答</button>
+                
+                <div id="solution3" style="display:none; margin-top:1rem;">
+                    <h4>解：</h4>
+                    <p>(1) 由方程组 (I) 得其系数矩阵为：</p>
+                    
+                    <div class="code-block">
+$$
+A = \begin{bmatrix}
+1 & 1 & 0 & 0 \\
+0 & 1 & 0 & -1
+\end{bmatrix}
+$$
+                    </div>
+                    
+                    <p>解得其基础解系为：</p>
+                    <div class="code-block">
+$$
+\xi_1 = [0, 0, 1, 0]^T, \quad \xi_2 = [-1, 1, 0, 1]^T
+$$
+                    </div>
+                    
+                    <p>同理，方程组 (II) 的系数矩阵为：</p>
+                    
+                    <div class="code-block">
+$$
+B = \begin{bmatrix}
+1 & -1 & 1 & 0 \\
+0 & 1 & -1 & 1
+\end{bmatrix}
+$$
+                    </div>
+                    
+                    <p>其基础解系为：</p>
+                    <div class="code-block">
+$$
+\eta_1 = [0, 1, 1, 0]^T, \quad \eta_2 = [-1, -1, 0, 1]^T
+$$
+                    </div>
+                    
+                    <p>(2) 方程组 (I)，(II) 的公共解应满足：</p>
+                    
+                    <div class="code-block">
+$$
+k_1\xi_1 + k_2\xi_2 = l_1\eta_1 + l_2\eta_2
+$$
+                    </div>
+                    
+                    <p>即：</p>
+                    
+                    <div class="code-block">
+$$
+k_1 \begin{bmatrix} 0 \\ 0 \\ 1 \\ 0 \end{bmatrix}
++ k_2 \begin{bmatrix} -1 \\ 1 \\ 0 \\ 1 \end{bmatrix}
+= l_1 \begin{bmatrix} 0 \\ 1 \\ 1 \\ 0 \end{bmatrix}
++ l_2 \begin{bmatrix} -1 \\ -1 \\ 0 \\ 1 \end{bmatrix}
+$$
+                    </div>
+                    
+                    <p>由上式可得 $k_2 = l_1 + l_2$，$k_1 = l_1 - l_2$，$k_2 = l_2$。</p>
+                    
+                    <p>解得 $k_1 = 2k_2$，代入方程组 (I) 的通解，得方程组 (I)，(II) 的公共解是：</p>
+                    
+                    <div class="code-block">
+$$
+2k_2\xi_1 + k_2\xi_2 = k_2(2\xi_1 + \xi_2) = k_2[-1, 1, 2, 1]^T
+$$
+                    </div>
+                    
+                    <p>其中 $k_2$ 是任意常数。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Same Solution Systems -->
+        <section id="same-solution">
+            <h2>🔄 同解方程组</h2>
+            
+            <div class="important-box">
+                <h4>定义</h4>
+                <p>若两个方程组 $Ax = 0$ 和 $Bx = 0$ 有完全相同的解，则称它们为<strong>同解方程组</strong>。</p>
+            </div>
+            
+            <h3>同解的充要条件</h3>
+            
+            <div class="highlight-box">
+                <p>$Ax = 0$，$Bx = 0$ 是同解方程组</p>
+                <p>$\Leftrightarrow$ $Ax = 0$ 的解满足 $Bx = 0$，且 $Bx = 0$ 的解满足 $Ax = 0$（互相把解代入求出结果即可）</p>
+                <p>$\Leftrightarrow$ $r(A) = r(B)$，且 $Ax = 0$ 的解满足 $Bx = 0$（或 $Bx = 0$ 的解满足 $Ax = 0$）</p>
+                <p><span class="star-rating">★★★</span> $\Leftrightarrow$ $r(A) = r(B) = r\begin{bmatrix} A \\ B \end{bmatrix}$ <strong>（三秩相同）</strong></p>
+            </div>
+            
+            <div class="important-box">
+                <h4>主要用途</h4>
+                <p>该结论主要用来证明方程组是否同解，也是证明秩相等的常用方法：</p>
+                <ul>
+                    <li>证 $r(A) \leq r(B)$：常用向量组来证明</li>
+                    <li>证 $r(A) = r(B)$：即证 $Ax = 0$ 与 $Bx = 0$ 同解</li>
+                    <li>或证 $\alpha \leq \beta \leq r(A) \leq r(B) \leq \cdots \leq \alpha$</li>
+                </ul>
+            </div>
+            
+            <div class="example-box">
+                <h4>例 4.14</h4>
+                <p>设方程组 $Ax = b$ 有解，证明：$A^Tx = 0$ 和</p>
+                <div class="code-block">
+$$
+\begin{bmatrix} A^T \\ b^T \end{bmatrix} x = 0
+$$
+                </div>
+                <p>是同解方程组。</p>
+                
+                <button class="btn" onclick="showSolution('solution4')">查看证明</button>
+                
+                <div id="solution4" style="display:none; margin-top:1rem;">
+                    <h4>证明：</h4>
+                    <p>① 显然</p>
+                    <div class="code-block">
+$$
+\begin{bmatrix} A^T \\ b^T \end{bmatrix} x = 0
+$$
+                    </div>
+                    <p>的解必满足 $A^Tx = 0$。</p>
+                    
+                    <p>② 因 $Ax = b$ 有解，故 $r(A) = r([A, b])$，得：</p>
+                    <div class="code-block">
+$$
+r(A^T) = r\begin{bmatrix} A^T \\ b^T \end{bmatrix}
+$$
+                    </div>
+                    
+                    <p>故 $A^Tx = 0$ 和</p>
+                    <div class="code-block">
+$$
+\begin{bmatrix} A^T \\ b^T \end{bmatrix} x = 0
+$$
+                    </div>
+                    <p>的基础解系中所含解向量个数相等。</p>
+                    
+                    <p>由 ①、② 知，方程组 $A^Tx = 0$ 和</p>
+                    <div class="code-block">
+$$
+\begin{bmatrix} A^T \\ b^T \end{bmatrix} x = 0
+$$
+                    </div>
+                    <p>是同解方程组。</p>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <h4>⚠️ 重要注意事项</h4>
+                <p>由 $r(A) = r([A, B])$，得 $r(A^T) = r\begin{bmatrix} A^T \\ B^T \end{bmatrix}$。</p>
+                <p>此时 $b$ 是一个列向量，但即便是 $r(A) = r([A, B])$（其中 $A$，$B$ 为矩阵），也有：</p>
+                <div class="code-block">
+$$
+r(A^T) = r\begin{bmatrix} A^T \\ B^T \end{bmatrix}
+$$
+                </div>
+                <p><strong>而不是</strong> $r([A^T, B^T])$。</p>
+                
+                <p><strong>原因：</strong>由 $r(A) = r([A, B])$，知 $B$ 的每一列均可由 $A$ 的列向量线性表示，于是 $B^T$ 的每一行均可由 $A^T$ 的行向量线性表示，故有：</p>
+                <div class="code-block">
+$$
+r(A^T) = r\begin{bmatrix} A^T \\ B^T \end{bmatrix}
+$$
+                </div>
+                
+                <p><strong>易错点：</strong>$r([A, B])$ 与 $r([A^T, B^T])$ 却不一定相等！</p>
+            </div>
+        </section>
+        
+        <!-- Section: Exercises -->
+        <section id="exercises">
+            <h2>📝 基础习题精练</h2>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>习题 4.1</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>设线性方程组</p>
+                        <div class="code-block">
+$$
+\begin{cases}
+x_1 + 2x_2 + \lambda x_3 = \mu + 1 \\
+x_1 - 4x_2 = \mu - 1 \\
+x_1 + 2x_2 - 2x_3 = 0
+\end{cases}
+$$
+                        </div>
+                        <p>无解，则 $\lambda, \mu$ 应满足条件（　）</p>
+                        <p>(A) $\lambda = -2$，$\mu \neq -1$　　(B) $\mu = 0$，$\lambda \neq 0$</p>
+                        <p>(C) $\lambda = 0$，$\mu \neq 1$　　(D) $\lambda = 0$，$\mu \neq -1$</p>
+                        
+                        <button class="btn" onclick="showSolution('ex1')">查看答案</button>
+                        
+                        <div id="ex1" style="display:none; margin-top:1rem;">
+                            <p><strong>答案：(A)</strong></p>
+                            <p><strong>分析：</strong>对方程组的增广矩阵施以初等行变换，在此基础上依据 $r([A, b]) \neq r(A)$ 确定 $\lambda, \mu$ 应满足的条件。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>习题 4.2</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>设 $A$ 是 $m \times n$ 矩阵，$Ax = 0$ 是非齐次线性方程组 $Ax = b$ 所对应的齐次线性方程组，则下列结论正确的是（　）</p>
+                        <p>(A) 若 $Ax = 0$ 仅有零解，
+则 Ax=bAx = b
+Ax=b 有唯一解
+</p>
+<p>(B) 若 Ax=0Ax = 0
+Ax=0 有非零解，则 Ax=bAx = b
+Ax=b 有无穷多解
+</p>
+<p>(C) 若 Ax=bAx = b
+Ax=b 有无穷多解，则 Ax=0Ax = 0
+Ax=0 仅有零解
+</p>
+<p>(D) 若 Ax=bAx = b
+Ax=b 有无穷多解，则 Ax=0Ax = 0
+Ax=0 有非零解
+</p>
+                    <button class="btn" onclick="showSolution('ex2')">查看答案</button>
+                    
+                    <div id="ex2" style="display:none; margin-top:1rem;">
+                        <p><strong>答案：(D)</strong></p>
+                        <p><strong>分析：</strong></p>
+                        <ul>
+                            <li>若 $Ax = 0$ 仅有零解，则 $r(A) = n$（列满秩）不能推出 $r([A, b]) = n$，故 $Ax = b$ 可能有解可能无解，(A) 不成立</li>
+                            <li>若 $Ax = 0$ 有非零解，则 $r(A) < n$（列不满秩）不能推出 $r(A) = r([A, b])$，故 $Ax = b$ 可能有解，可能无解，(B) 不成立</li>
+                            <li>若 $Ax = b$ 有无穷多解，则 $r(A) = r([A, b]) < n$，故此时 $Ax = 0$ 有无穷多解，即有非零解，(C) 不成立，(D) 成立</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>习题 4.3</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <p>已知线性方程组 $A_{4 \times 4}x = 0$ 有基础解系</p>
+                    <div class="code-block">
+ξ1=[1,2,−3,0]T,ξ2=[2,−1,0,1]T,ξ3=[1,0,−2,1]T\xi_1 = [1, 2, -3, 0]^T, \quad \xi_2 = [2, -1, 0, 1]^T, \quad \xi_3 = [1, 0, -2, 1]^Tξ1​=[1,2,−3,0]T,ξ2​=[2,−1,0,1]T,ξ3​=[1,0,−2,1]T
+</div>
+<p>则下列向量是该方程组的解的是（　）</p>
+<p>(A) [−1,5,3,7]T[-1, 5, 3, 7]^T
+[−1,5,3,7]T　　(B) [0,4,−9,1]T[0, 4, -9, 1]^T
+[0,4,−9,1]T</p>
+<p>(C) [1,2,−3,1]T[1, 2, -3, 1]^T
+[1,2,−3,1]T　　(D) [2,−1,−2,0]T[2, -1, -2, 0]^T
+[2,−1,−2,0]T</p>
+                    <button class="btn" onclick="showSolution('ex3')">查看答案</button>
+                    
+                    <div id="ex3" style="display:none; margin-top:1rem;">
+                        <p><strong>答案：(B)</strong></p>
+                        <p><strong>解析：</strong>$Ax = 0$ 的解向量可由基础解系线性表示，将选项中的向量记为 $\beta_1, \beta_2, \beta_3, \beta_4$。若存在 $x_1, x_2, x_3$ 使得：</p>
+                        <div class="code-block">
+x1ξ1+x2ξ2+x3ξ3=βix_1\xi_1 + x_2\xi_2 + x_3\xi_3 = \beta_ix1​ξ1​+x2​ξ2​+x3​ξ3​=βi​
+</div>
+<p>则 βi\beta_i
+βi​ 可由 ξ1,ξ2,ξ3\xi_1, \xi_2, \xi_3
+ξ1​,ξ2​,ξ3​ 线性表示，即是解向量。通过计算可知只有 (B) 选项满足条件。
+</p>
+</div>
+</div>
+</div>
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>习题 4.4</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <p>设 $\xi_1, \xi_2, \xi_3$ 是 $Ax = 0$ 的基础解系，则该方程组的基础解系还可以表示成（　）</p>
+                    <p>(A) $\xi_1, \xi_2, \xi_3$ 的一个等价向量组</p>
+                    <p>(B) $\xi_1, \xi_2, \xi_3$ 的一个等秩向量组</p>
+                    <p>(C) $\xi_1 + \xi_2, \xi_2 + \xi_3, \xi_3 + \xi_1$</p>
+                    <p>(D) $\xi_1 - \xi_2, \xi_2 - \xi_3, \xi_3 - \xi_1$</p>
+                    
+                    <button class="btn" onclick="showSolution('ex4')">查看答案</button>
+                    
+                    <div id="ex4" style="display:none; margin-top:1rem;">
+                        <p><strong>答案：(C)</strong></p>
+                        <p><strong>解析：</strong></p>
+                        <ul>
+                            <li>和 $\xi_1, \xi_2, \xi_3$ 等价的向量组不一定线性无关（此时向量个数大于秩）</li>
+                            <li>和 $\xi_1, \xi_2, \xi_3$ 等秩的向量组中的向量不一定是解向量</li>
+                            <li>由 $(\xi_1 - \xi_2) + (\xi_2 - \xi_3) + (\xi_3 - \xi_1) = 0$，知 $\xi_1 - \xi_2, \xi_2 - \xi_3, \xi_3 - \xi_1$ 线性相关，(D) 排除</li>
+                            <li>对于 (C)，可以证明：</li>
+                        </ul>
+                        <div class="code-block">
+[ξ1+ξ2,ξ2+ξ3,ξ3+ξ1]=[ξ1,ξ2,ξ3][101110011][\xi_1 + \xi_2, \xi_2 + \xi_3, \xi_3 + \xi_1] = [\xi_1, \xi_2, \xi_3]
+\begin{bmatrix}
+1 & 0 & 1 \\
+1 & 1 & 0 \\
+0 & 1 & 1
+\end{bmatrix}[ξ1​+ξ2​,ξ2​+ξ3​,ξ3​+ξ1​]=[ξ1​,ξ2​,ξ3​]​110​011​101​​
+</div>
+<p>其中系数矩阵的行列式 =2≠0= 2 \neq 0
+=2=0，又 ξ1,ξ2,ξ3\xi_1, \xi_2, \xi_3
+ξ1​,ξ2​,ξ3​ 线性无关，则 ξ1+ξ2,ξ2+ξ3,ξ3+ξ1\xi_1 + \xi_2, \xi_2 + \xi_3, \xi_3 + \xi_1
+ξ1​+ξ2​,ξ2​+ξ3​,ξ3​+ξ1​ 线性无关，且均是解向量，故选 (C)。
+</p>
+</div>
+</div>
+</div>
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>习题 4.7</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <p>设 $\xi_1 = [1, 3, -2]^T$，$\xi_2 = [2, -1, 3]^T$ 是 $Ax = 0$ 的基础解系，已知 $\eta = [2, a, b]^T$ 是方程组</p>
+                    <div class="code-block">
+{Ax=0x1+2x2+x3=−2\begin{cases}
+Ax = 0 \\
+x_1 + 2x_2 + x_3 = -2
+\end{cases}{Ax=0x1​+2x2​+x3​=−2​
+</div>
+<p>的解，则 a = $ ______，
+b = $ ______。
+</p>
+                    <button class="btn" onclick="showSolution('ex7')">查看答案</button>
+                    
+                    <div id="ex7" style="display:none; margin-top:1rem;">
+                        <p><strong>答案：</strong>$a = -6$，$b = 8$</p>
+                        <p><strong>解析：</strong>将 $\eta = [2, a, b]$ 代入 $x_1 + 2x_2 + x_3 = -2$，得 $2 + 2a + b = -2$。</p>
+                        <p>又 $\eta = [2, a, b]^T$ 也是 $Ax = 0$ 的解，于是 $\eta = [2, a, b]^T$ 能由 $\xi_1, \xi_2$ 表示，于是 $\xi_1, \xi_2, \eta$ 线性相关，进而：</p>
+                        <div class="code-block">
+∣1223−1a−23b∣=0\begin{vmatrix}
+1 & 2 & 2 \\
+3 & -1 & a \\
+-2 & 3 & b
+\end{vmatrix} = 0​13−2​2−13​2ab​​=0
+</div>
+<p>于是 a+b−2=0a + b - 2 = 0
+a+b−2=0，解得 a=−6a = -6
+a=−6，b=8b = 8
+b=8。
+</p>
+</div>
+</div>
+</div>
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>习题 4.8 - 求解非齐次线性方程组</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <p>求解非齐次线性方程组</p>
+                    <div class="code-block">
+{x1+5x2−x3−x4=−1x1−2x2+x3+3x4=33x1+8x2−x3+x4=1x1−9x2+3x3+7x4=7\begin{cases}
+x_1 + 5x_2 - x_3 - x_4 = -1 \\
+x_1 - 2x_2 + x_3 + 3x_4 = 3 \\
+3x_1 + 8x_2 - x_3 + x_4 = 1 \\
+x_1 - 9x_2 + 3x_3 + 7x_4 = 7
+\end{cases}⎩⎨⎧​x1​+5x2​−x3​−x4​=−1x1​−2x2​+x3​+3x4​=33x1​+8x2​−x3​+x4​=1x1​−9x2​+3x3​+7x4​=7​
+</div>
+<p>并用对应的齐次线性方程组的基础解系表示通解。</p>
+                    <button class="btn" onclick="showSolution('ex8')">查看解答</button>
+                    
+                    <div id="ex8" style="display:none; margin-top:1rem;">
+                        <p><strong>解：</strong>对增广矩阵作初等行变换化成阶梯形矩阵：</p>
+                        <div class="code-block">
+$$
+[A:b] = \begin{bmatrix}
+1 & 5 & -1 & -1 & -1 \
+1 & -2 & 1 & 3 & 3 \
+3 & 8 & -1 & 1 & 1 \
+1 & -9 & 3 & 7 & 7
+\end{bmatrix}
+\rightarrow
+\begin{bmatrix}
+1 & 5 & -1 & -1 & -1 \
+0 & -7 & 2 & 4 & 4 \
+0 & 0 & 0 & 0 & 0 \
+0 & 0 & 0 & 0 & 0
+\end{bmatrix}
+$$
+</div>
+                        <p>取自由未知量 $x_3 = k_1$，$x_4 = k_2$，代入得：</p>
+                        <div class="code-block">
+{x2=−17(4−2k1−4k2)=−47+27k1+47k2x1=−1+k1+k2−5(−47+27k1+47k2)=137−37k1−137k2\begin{cases}
+x_2 = -\frac{1}{7}(4 - 2k_1 - 4k_2) = -\frac{4}{7} + \frac{2}{7}k_1 + \frac{4}{7}k_2 \\
+x_1 = -1 + k_1 + k_2 - 5(-\frac{4}{7} + \frac{2}{7}k_1 + \frac{4}{7}k_2) = \frac{13}{7} - \frac{3}{7}k_1 - \frac{13}{7}k_2
+\end{cases}{x2​=−71​(4−2k1​−4k2​)=−74​+72​k1​+74​k2​x1​=−1+k1​+k2​−5(−74​+72​k1​+74​k2​)=713​−73​k1​−713​k2​​
+</div>
+                        <p>得通解为：</p>
+                        <div class="code-block">
+$$
+x = \begin{bmatrix} \frac{13}{7} \ -\frac{4}{7} \ 0 \ 0 \end{bmatrix}
+
+k_1 \begin{bmatrix} -\frac{3}{7} \ \frac{2}{7} \ 1 \ 0 \end{bmatrix}
+k_2 \begin{bmatrix} -\frac{13}{7} \ \frac{4}{7} \ 0 \ 1 \end{bmatrix}
+$$
+</div>
+                      <p>其中 $k_1, k_2$ 是任意常数，基础解系为：</p>
+                      <div class="code-block">
+
+
+[−37,27,1,0]T,[−137,47,0,1]T\left[-\frac{3}{7}, \frac{2}{7}, 1, 0\right]^T, \quad
+\left[-\frac{13}{7}, \frac{4}{7}, 0, 1\right]^T[−73​,72​,1,0]T,[−713​,74​,0,1]T
+</div>
+</div>
+</div>
+</div>
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>习题 4.10 - 同解方程组问题</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <p>已知方程组 (I)</p>
+                    <div class="code-block">
+{x1+x2−2x4=−64x1−x2−x3−x4=13x1−x2−x3=3\begin{cases}
+x_1 + x_2 - 2x_4 = -6 \\
+4x_1 - x_2 - x_3 - x_4 = 1 \\
+3x_1 - x_2 - x_3 = 3
+\end{cases}⎩⎨⎧​x1​+x2​−2x4​=−64x1​−x2​−x3​−x4​=13x1​−x2​−x3​=3​
+</div>
+<p>和方程组 (II)</p>
+<div class="code-block">
+{x1+mx2−x3−x4=−5nx2−x3−2x4=−11x3−2x4=1−t\begin{cases}
+x_1 + mx_2 - x_3 - x_4 = -5 \\
+nx_2 - x_3 - 2x_4 = -11 \\
+x_3 - 2x_4 = 1 - t
+\end{cases}⎩⎨⎧​x1​+mx2​−x3​−x4​=−5nx2​−x3​−2x4​=−11x3​−2x4​=1−t​
+</div>
+<p>(1) 求解方程组 (I)；</p>
+<p>(2) 求 m,n,tm, n, t
+m,n,t 为何值时，方程组 (I) 与方程组 (II) 同解。
+</p>
+                    <button class="btn" onclick="showSolution('ex10')">查看解答</button>
+                    
+                    <div id="ex10" style="display:none; margin-top:1rem;">
+                        <h4>解：</h4>
+                        <p>(1) 对方程组 (I) 的增广矩阵 $\bar{A}$ 作初等行变换：</p>
+                        <div class="code-block">
+Aˉ=[110−2−64−1−1−113−1−103]→[100−1−2010−1−4001−2−5]\bar{A} = \begin{bmatrix}
+1 & 1 & 0 & -2 & -6 \\
+4 & -1 & -1 & -1 & 1 \\
+3 & -1 & -1 & 0 & 3
+\end{bmatrix}
+\rightarrow
+\begin{bmatrix}
+1 & 0 & 0 & -1 & -2 \\
+0 & 1 & 0 & -1 & -4 \\
+0 & 0 & 1 & -2 & -5
+\end{bmatrix}Aˉ=​143​1−1−1​0−1−1​−2−10​−613​​→​100​010​001​−1−1−2​−2−4−5​​
+</div>
+                        <p>所以 (I) 的通解为：</p>
+                        <div class="code-block">
+[x1,x2,x3,x4]T=C[1,1,2,1]T+[−2,−4,−5,0]T[x_1, x_2, x_3, x_4]^T = C[1, 1, 2, 1]^T + [-2, -4, -5, 0]^T[x1​,x2​,x3​,x4​]T=C[1,1,2,1]T+[−2,−4,−5,0]T
+</div>
+<p>其中 CC
+C 为任意常数。
+</p>
+                        <p>(2) 由 (1) 知 $x_1 = C - 2$，$x_2 = C - 4$，$x_3 = 2C - 5$，$x_4 = C$，将其代入 (II) 的各个方程，整理得：</p>
+                        <div class="code-block">
+{(m−2)C+(8−4m)=0(n−4)C+(16−4n)=0t−6=0\begin{cases}
+(m - 2)C + (8 - 4m) = 0 \\
+(n - 4)C + (16 - 4n) = 0 \\
+t - 6 = 0
+\end{cases}⎩⎨⎧​(m−2)C+(8−4m)=0(n−4)C+(16−4n)=0t−6=0​
+</div>
+                        <p>令 $C = 0$，解得 $m = 2$，$n = 4$，$t = 6$。</p>
+                        
+                        <p>当 $m = 2$，$n = 4$，$t = 6$ 时，代入方程组 (II) 验证可知，此时方程组 (I) 与 (II) 同解。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="important-box" style="margin-top: 2rem;">
+            <h4>💪 练习建议</h4>
+            <ul>
+                <li>线性方程组的求解是线性代数的核心内容，需要<strong>大量练习</strong>以提升计算能力</li>
+                <li>重点掌握<strong>初等行变换</strong>的技巧，这是求解的基础</li>
+                <li>理解<strong>基础解系</strong>的概念和求法，这是考试的重点</li>
+                <li>掌握<strong>齐次通解 + 特解 = 非齐次通解</strong>的结构</li>
+                <li>熟练运用<strong>秩</strong>的概念判断方程组的解的情况</li>
+            </ul>
+        </div>
+    </section>
+    
+    <!-- Summary Section -->
+    <section>
+        <h2>📌 本讲总结</h2>
+        
+        <div class="highlight-box">
+            <h3>核心要点回顾</h3>
+            <ol>
+                <li><strong>线性方程组与向量组的本质关系</strong>
+                    <ul>
+                        <li>方程组的解就是向量组线性表示的系数</li>
+                        <li>系数矩阵、增广矩阵的概念</li>
+                    </ul>
+                </li>
+                
+                <li><strong>齐次线性方程组 $Ax = 0$</strong>
+                    <ul>
+                        <li>有解条件：总有零解；$r(A) < n$ 时有非零解</li>
+                        <li>基础解系：$n - r(A)$ 个线性无关的解</li>
+                        <li>通解：$x = k_1\xi_1 + k_2\xi_2 + \cdots + k_{n-r}\xi_{n-r}$</li>
+                    </ul>
+                </li>
+                
+                <li><strong>非齐次线性方程组 $Ax = b$</strong>
+                    <ul>
+                        <li>有解条件：$r(A) = r([A, b])$</li>
+                        <li>通解结构：$x = k_1\xi_1 + k_2\xi_2 + \cdots + k_{n-r}\xi_{n-r} + \eta$</li>
+                        <li>齐次通解 + 特解 = 非齐次通解</li>
+                    </ul>
+                </li>
+                
+                <li><strong>求解方法</strong>
+                    <ul>
+                        <li>初等行变换化成行阶梯形矩阵</li>
+                        <li>确定秩和自由变量</li>
+                        <li>求基础解系和特解</li>
+                    </ul>
+                </li>
+                
+                <li><strong>同解方程组</strong>
+                    <ul>
+                        <li>充要条件：$r(A) = r(B) = r\begin{bmatrix} A \\ B \end{bmatrix}$</li>
+                        <li>常用于证明秩相等</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+        
+        <div class="important-box" style="margin-top: 1.5rem;">
+            <h3>⭐ 考试重点</h3>
+            <ul>
+                <li><span class="star-rating">★★★★★</span> 齐次方程组基础解系的求法（必考）</li>
+                <li><span class="star-rating">★★★★★</span> 非齐次方程组通解的求法（必考）</li>
+                <li><span class="star-rating">★★★</span> 方程组有解的条件判断</li>
+                <li><span class="star-rating">★★★</span> 公共解和同解方程组</li>
+                <li><span class="star-rating">★★</span> 解的性质和结构的证明</li>
+            </ul>
+        </div>
+    </section>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>考研数学基础30讲 · 线性代数分册</p>
+    <p>第4讲 线性方程组</p>
+    <p style="margin-top: 1rem;">© 2024 交互式数学教程 | 祝您学习顺利！</p>
+</footer>
+
+<!-- Scroll to Top Button -->
+<button onclick="scrollToTop()" id="scrollTopBtn" title="返回顶部">↑</button>
+
+<!-- JavaScript -->
+<script>
+    // Accordion functionality
+    function toggleAccordion(element) {
+        const content = element.nextElementSibling;
+        const icon = element.querySelector('.accordion-icon');
+        
+        content.classList.toggle('active');
+        icon.classList.toggle('active');
+    }
+    
+    // Show solution functionality
+    function showSolution(id) {
+        const solution = document.getElementById(id);
+        if (solution.style.display === 'none') {
+            solution.style.display = 'block';
+            event.target.textContent = '隐藏解答';
+        } else {
+            solution.style.display = 'none';
+            event.target.textContent = '查看解答';
+        }
+    }
+    
+    // Scroll to top functionality
+    window.onscroll = function() {
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            scrollTopBtn.style.display = "block";
+        } else {
+            scrollTopBtn.style.display = "none";
+        }
+    };
+    
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+    
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('nav a').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Add animation on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all sections
+    document.querySelectorAll('section').forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(section);
+    });
+</script>
+</body>
+</html>

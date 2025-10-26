@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>零基础课：线性代数入门 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-orange: #f27d00;
+            --primary-cyan: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --primary-white: #ffffff;
+            --primary-dark: #343434;
+            --shadow: rgba(52, 52, 52, 0.15);
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--primary-dark);
+            background: linear-gradient(135deg, #fff5e6 0%, #e6f7f1 100%);
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--primary-white);
+            padding: 2rem 0;
+            box-shadow: 0 4px 20px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--primary-dark);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            background-color: var(--primary-cyan);
+            color: var(--primary-dark);
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--primary-yellow);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Section Styles */
+        .section {
+            background-color: var(--primary-white);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 25px var(--shadow);
+            border-left: 5px solid var(--primary-orange);
+            transition: transform 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px var(--shadow);
+        }
+
+        h2 {
+            color: var(--primary-orange);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-cyan);
+        }
+
+        h3 {
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem 0;
+            padding-left: 1rem;
+            border-left: 4px solid var(--primary-yellow);
+        }
+
+        h4 {
+            color: var(--primary-orange);
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffaeb 100%);
+            border-left: 5px solid var(--primary-yellow);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(247, 209, 23, 0.2);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e6f7f1 0%, #f0faf6 100%);
+            border-left: 5px solid var(--primary-cyan);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(166, 214, 201, 0.2);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Math Display */
+        .math-block {
+            background-color: #f9f9f9;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 2px solid var(--primary-cyan);
+        }
+
+        /* Matrix/Vector Display */
+        .matrix-example {
+            background-color: #fafafa;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 6px;
+            font-family: 'Roboto Mono', monospace;
+            border: 1px solid #ddd;
+        }
+
+        /* Interactive Elements */
+        .accordion {
+            background-color: var(--primary-cyan);
+            color: var(--primary-dark);
+            cursor: pointer;
+            padding: 1.2rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: 0.3s;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 2px 5px var(--shadow);
+        }
+
+        .accordion:hover,
+        .accordion.active {
+            background-color: var(--primary-yellow);
+        }
+
+        .accordion:after {
+            content: '\25BC';
+            float: right;
+            margin-left: 5px;
+            transition: transform 0.3s;
+        }
+
+        .accordion.active:after {
+            transform: rotate(180deg);
+        }
+
+        .panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #fafafa;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 1rem;
+        }
+
+        .panel-content {
+            padding: 1.5rem;
+        }
+
+        /* Example Box */
+        .example-box {
+            background: linear-gradient(135deg, #ffe6cc 0%, #fff0e0 100%);
+            border: 2px dashed var(--primary-orange);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .example-title {
+            color: var(--primary-orange);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 10px var(--shadow);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: var(--primary-orange);
+            color: var(--primary-white);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            background-color: var(--primary-white);
+        }
+
+        tr:hover td {
+            background-color: #f5f5f5;
+        }
+
+        /* Interactive Button */
+        .interactive-btn {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--primary-white);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(242, 125, 0, 0.3);
+            margin: 0.5rem;
+        }
+
+        .interactive-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(242, 125, 0, 0.4);
+        }
+
+        /* Visual Graph Placeholder */
+        .graph-container {
+            background-color: #f9f9f9;
+            border: 2px solid var(--primary-cyan);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .graph-placeholder {
+            color: #888;
+            font-style: italic;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-dark);
+            color: var(--primary-white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+        }
+
+        /* Scroll to Top Button */
+        #scrollTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 99;
+            border: none;
+            outline: none;
+            background-color: var(--primary-orange);
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 18px;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        #scrollTopBtn:hover {
+            background-color: var(--primary-yellow);
+            transform: scale(1.1);
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Code Block */
+        code {
+            background-color: #f4f4f4;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+            color: var(--primary-orange);
+        }
+
+        /* Special Typography */
+        strong {
+            color: var(--primary-orange);
+            font-weight: 600;
+        }
+
+        em {
+            color: var(--primary-dark);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <h1>📚 零基础课 第0讲</h1>
+            <p class="subtitle">线性代数入门 - 考研数学基础30讲</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#intro" class="nav-btn">📖 课程介绍</a>
+            <a href="#vectors" class="nav-btn">🔢 向量基础</a>
+            <a href="#operations" class="nav-btn">➕ 运算规则</a>
+            <a href="#transformations" class="nav-btn">🔄 线性变换</a>
+            <a href="#applications" class="nav-btn">💡 实际应用</a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Introduction Section -->
+        <section id="intro" class="section">
+            <h2>📖 课程介绍</h2>
+            
+            <div class="highlight-box">
+                <p><strong>本书特点：</strong>按照《全国硕士研究生招生考试数学考试大纲》编写的线性代数教材，是基础阶段用书。学完本书，考生即学完了所谓"基础"和"强化"的内容，可以开始研究解题。</p>
+            </div>
+
+            <h3>📚 课程结构（共6讲）</h3>
+            <p>课程分为三大版块进行学习：</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>版块</th>
+                        <th>内容</th>
+                        <th>重要程度</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong style="color: var(--primary-cyan);">基础版块</strong></td>
+                        <td>行列式、矩阵、向量组</td>
+                        <td>⭐⭐⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color: var(--primary-yellow);">主题版块</strong></td>
+                        <td>方程组</td>
+                        <td>⭐⭐⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color: var(--primary-orange);">应用版块</strong></td>
+                        <td>★特征值、★二次型</td>
+                        <td>⭐⭐⭐⭐</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <h4>💡 什么是线性代数？</h4>
+                <p><strong>线性代数是一种代数结构。</strong>通俗来讲，<strong>向量空间</strong>是这个结构的基石，我们要在向量空间中研究<em>向量与向量的关系</em>。</p>
+            </div>
+        </section>
+
+        <!-- Vectors Section -->
+        <section id="vectors" class="section">
+            <h2>🔢 对象（元素）：向量</h2>
+
+            <button class="accordion">① 向量的定义</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <p><strong>定义：</strong>拼在一起的有序数组</p>
+                    <div class="math-block">
+                        $$\text{例如：} \begin{bmatrix} -1 \\ 1 \end{bmatrix}$$
+                    </div>
+                    <p>这是一个2维向量，包含两个元素：-1 和 1。</p>
+                </div>
+            </div>
+
+            <button class="accordion">② 向量的维数</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <p><strong>维数：</strong>向量中数的个数</p>
+                    <div class="example-box">
+                        <div class="example-title">📝 示例</div>
+                        <p>向量 \(\begin{bmatrix} -1 \\ 1 \end{bmatrix}\) 是 <strong>2维向量</strong></p>
+                        <p>向量 \(\begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}\) 是 <strong>3维向量</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="accordion">③ 向量的意义（数据表达信息）</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <p><strong>核心思想：</strong>数据可以表达信息，向量是表达结构化信息的工具。</p>
+                    
+                    <div class="example-box">
+                        <div class="example-title">🎯 实际案例：兴趣程度表达</div>
+                        <p>假设一个人对于<strong>运动</strong>和<strong>音乐</strong>的兴趣程度可以分为三种：</p>
+                        <ul>
+                            <li><strong>不喜欢</strong>：用 -1 表示</li>
+                            <li><strong>无所谓</strong>：用 0 表示</li>
+                            <li><strong>喜欢</strong>：用 1 表示</li>
+                        </ul>
+                        
+                        <p>则可用以下向量来表示某人的兴趣程度：</p>
+                        <div class="math-block">
+                            $$\begin{bmatrix} \text{运动兴趣程度} \\ \text{音乐兴趣程度} \end{bmatrix}$$
+                        </div>
+
+                        <h4>具体例子：</h4>
+                        <div class="matrix-example">
+                            <p>向量 \(\begin{bmatrix} -1 \\ 1 \end{bmatrix}\) 代表：<strong>不喜欢运动，喜欢音乐</strong></p>
+                            <p>向量 \(\begin{bmatrix} 0 \\ 1 \end{bmatrix}\) 代表：<strong>对运动无所谓，喜欢音乐</strong></p>
+                        </div>
+                    </div>
+
+                    <button class="interactive-btn" onclick="showInterestExample()">🎮 点击查看更多示例</button>
+                    <div id="interestExamples" style="display:none; margin-top: 1rem;">
+                        <div class="info-box">
+                            <p>向量 \(\begin{bmatrix} 1 \\ -1 \end{bmatrix}\) 代表：<strong>喜欢运动，不喜欢音乐</strong></p>
+                            <p>向量 \(\begin{bmatrix} 0 \\ 0 \end{bmatrix}\) 代表：<strong>对运动和音乐都无所谓</strong></p>
+                            <p>向量 \(\begin{bmatrix} 1 \\ 1 \end{bmatrix}\) 代表：<strong>喜欢运动，也喜欢音乐</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Operations Section -->
+        <section id="operations" class="section">
+            <h2>➕ 运算</h2>
+
+            <div class="highlight-box">
+                <p>向量的运算分为两大类：<strong>线性运算</strong>和<strong>点积运算</strong></p>
+            </div>
+
+            <h3>1️⃣ 线性运算</h3>
+
+            <button class="accordion">① 加法运算</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <p><strong>定义：</strong>向量的对应分量相加</p>
+                    <div class="math-block">
+                        $$\vec{a} + \vec{b} = \begin{bmatrix} a_1 \\ a_2 \end{bmatrix} + \begin{bmatrix} b_1 \\ b_2 \end{bmatrix} = \begin{bmatrix} a_1 + b_1 \\ a_2 + b_2 \end{bmatrix}$$
+                    </div>
+                    <div class="example-box">
+                        <div class="example-title">📝 示例</div>
+                        <div class="math-block">
+                            $$\begin{bmatrix} 2 \\ 3 \end{bmatrix} + \begin{bmatrix} 5 \\ 1 \end{bmatrix} = \begin{bmatrix} 7 \\ 4 \end{bmatrix}$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="accordion">② 数乘运算</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <p><strong>定义：</strong>用一个标量乘以向量的每个分量</p>
+                    <div class="math-block">
+                        $$k\vec{a} = k \begin{bmatrix} a_1 \\ a_2 \end{bmatrix} = \begin{bmatrix} ka_1 \\ ka_2 \end{bmatrix}$$
+                    </div>
+                    <div class="example-box">
+                        <div class="example-title">📝 示例：线性运算组合</div>
+                        <p>计算 \(2 \times 3 + 5\) 的意义：</p>
+                        <div class="math-block">
+                            $$2 \times 3 + 5 = 6 + 5 = 11$$
+                        </div>
+                        <p>这本质上是<strong>加法</strong>和<strong>数乘</strong>的组合。</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>2️⃣ 点积运算</h3>
+            
+            <div class="info-box">
+                <p><strong>点积定义：</strong>\((\alpha, \beta)\) 称为向量 \(\alpha\) 与向量 \(\beta\) 的点积运算，即将 \(\alpha, \beta\) 的所有分量<strong>对应相乘再相加</strong>。</p>
+                <div class="example-box">
+                    <div class="example-title">📝 基础示例</div>
+                    <p>如 \(\alpha = \begin{bmatrix} -1 \\ 1 \end{bmatrix}\)，\(\beta = \begin{bmatrix} 0 \\ -1 \end{bmatrix}\)，则：</p>
+                    <div class="math-block">
+                        $$(\alpha, \beta) = (-1) \times 0 + 1 \times (-1) = -1$$
+                    </div>
+                </div>
+            </div>
+
+            <button class="accordion">① 一行乘一列</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <p>这是最基本的矩阵乘法形式：</p>
+                    <div class="math-block">
+                        $$\begin{bmatrix} a_1 & a_2 \end{bmatrix} \begin{bmatrix} b_1 \\ b_2 \end{bmatrix} = a_1b_1 + a_2b_2$$
+                    </div>
+                    <p>或者写成：</p>
+                    <div class="math-block">
+                        $$\begin{bmatrix} a_1 & a_2 \end{bmatrix} \begin{bmatrix} c_1 \\ c_2 \end{bmatrix} = a_1c_1 + a_2c_2$$
+                    </div>
+                </div>
+            </div>
+
+            <button class="accordion">② 一行乘多列</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <p>行向量与矩阵相乘：</p>
+                    <div class="math-block">
+                        $$\begin{bmatrix} a_1 & a_2 \end{bmatrix} \begin{bmatrix} b_1 & c_1 \\ b_2 & c_2 \end{bmatrix} = \begin{bmatrix} a_1b_1 + a_2b_2 & a_1c_1 + a_2c_2 \end{bmatrix}$$
+                    </div>
+                    <div class="info-box">
+                        <p><strong>注意：</strong>本质还是<em>加法</em>（对应项相加）和<em>数乘</em>（标量乘以分量）的组合。</p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="accordion">③ 多行乘一列</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <p>矩阵与列向量相乘：</p>
+                    <div class="math-block">
+                        $$\begin{bmatrix} a_1 & a_2 \\ b_1 & b_2 \end{bmatrix} \begin{bmatrix} c_1 \\ c_2 \end{bmatrix} = \begin{bmatrix} a_1c_1 + a_2c_2 \\ b_1c_1 + b_2c_2 \end{bmatrix}$$
+                    </div>
+                </div>
+            </div>
+
+            <button class="accordion">④ 多行乘多列</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <p>完整的矩阵乘法：</p>
+                    <div class="math-block">
+                        $$\begin{bmatrix} a_1 & a_2 \\ b_1 & b_2 \end{bmatrix} \begin{bmatrix} c_1 & d_1 \\ c_2 & d_2 \end{bmatrix} = \begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{bmatrix}$$
+                    </div>
+                    <p>其中：</p>
+                    <div class="matrix-example">
+                        <ul>
+                            <li>\(a_{11} = a_1c_1 + a_2c_2\)（第1行，第1列）</li>
+                            <li>\(a_{12} = a_1d_1 + a_2d_2\)（第1行，第2列）</li>
+                            <li>\(a_{21} = b_1c_1 + b_2c_2\)（第2行，第1列）</li>
+                            <li>\(a_{22} = b_1d_1 + b_2d_2\)（第2行，第2列）</li>
+                        </ul>
+                    </div>
+                    <div class="highlight-box">
+                        <p><strong>规律总结：</strong>\(a_{ij} = (\text{第}i\text{行}, \text{第}j\text{列})\)</p>
+                        <p style="text-align: center; margin-top: 0.5rem;">
+                            <span style="color: var(--primary-orange);">左边多行</span> × 
+                            <span style="color: var(--primary-cyan);">右边多列</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transformations Section -->
+        <section id="transformations" class="section">
+            <h2>🔄 线性变换</h2>
+
+            <h3>📋 预备知识：矩阵</h3>
+            <div class="info-box">
+                <p><strong>矩阵的作用：</strong>用于表达系统信息</p>
+                <div class="example-box">
+                    <div class="example-title">📝 示例：矩阵信息表达</div>
+                    <p>如矩阵 \(\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}\) 可以表达多种信息：</p>
+                    
+                    <h4>信息解读1（按行理解）：</h4>
+                    <ul>
+                        <li>\([1, 0]\) 可代表一个人<strong>喜欢运动，对音乐无所谓</strong></li>
+                        <li>\([0, -1]\) 可代表一个人<strong>对运动无所谓，不喜欢音乐</strong></li>
+                    </ul>
+
+                    <h4>信息解读2（投篮示例）：</h4>
+                    <p>假设一个人投篮两次：</p>
+                    <ul>
+                        <li><strong>投中</strong>记为 1</li>
+                        <li><strong>未投中</strong>记为 0</li>
+                        <li><strong>卡在篮筐上</strong>记为 -1</li>
+                    </ul>
+                    <p>则：</p>
+                    <ul>
+                        <li>\([1, 0]\) 代表：第一次投中，第二次未投中</li>
+                        <li>\([0, -1]\) 代表：第一次未投中，第二次卡在篮筐上</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <p><strong>⚠️ 重要提示：</strong>矩阵中数的<strong>位置不能随便改动</strong>，否则会影响信息的表达！</p>
+                <div class="example-box" style="background: #fff;">
+                    <div class="example-title">🔄 位置改变的影响</div>
+                    <p><strong>原矩阵：</strong></p>
+                    <div class="math-block">
+                        $$\begin{bmatrix} 40 & 15 \\ 12 & 8 \end{bmatrix} \quad \begin{array}{l} \text{商品价格 卡路里} \\ \text{[40, 15]：价格40，卡路里15} \\ \text{[12, 8]：价格12，卡路里8} \end{array}$$
+                    </div>
+                    <p><strong>调整后：</strong></p>
+                    <div class="math-block">
+                        $$\begin{bmatrix} 40 & 12 \\ 15 & 8 \end{bmatrix} \quad \begin{array}{l} \text{商品价格 卡路里} \\ \text{[40, 12]：价格40，卡路里12} \\ \text{[15, 8]：价格15，卡路里8} \end{array}$$
+                    </div>
+                    <p style="color: var(--primary-orange);"><strong>信息含义完全改变了！</strong></p>
+                </div>
+            </div>
+
+            <h3>🔄 线性变换举例</h3>
+            <div class="info-box">
+                <p><strong>线性变换的理解：</strong>\(A\alpha = \beta\)</p>
+                <p>可以理解为：把矩阵 \(A\) 作用在向量 \(\alpha\) 上，输出一个新向量 \(\beta\)</p>
+                <div class="math-block">
+                    $$\underbrace{\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}}_{A \text{ (矩阵)}} \underbrace{\begin{bmatrix} 1 \\ 1 \end{bmatrix}}_{\alpha \text{ (向量)}} = \underbrace{\begin{bmatrix} 1 \\ -1 \end{bmatrix}}_{\beta \text{ (向量)}}$$
+                </div>
+                <p style="text-align: center; margin-top: 1rem;">
+                    <span style="color: var(--primary-orange);">矩阵 A</span> × 
+                    <span style="color: var(--primary-cyan);">向量 α</span> = 
+                    <span style="color: var(--primary-yellow); background: #343434; padding: 0.3rem 0.8rem; border-radius: 5px;">向量 β</span>
+                </p>
+                <p>类似于函数关系：\(f(x) = y\)</p>
+            </div>
+
+            <button class="accordion">① 对称变换</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <h4>a. 关于x轴对称</h4>
+                    <div class="math-block">
+                        $$A = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}$$
+                    </div>
+                    <div class="example-box">
+                        <p>变换过程：</p>
+                        <div class="math-block">
+                            $$\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix} \begin{bmatrix} 0 & 1 & 1 & 0 \\ 1 & 1 & 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & 1 & 1 & 0 \\ -1 & -1 & 0 & 0 \end{bmatrix}$$
+                        </div>
+                        <p>图像关于<strong>x轴</strong>对称翻转</p>
+                    </div>
+
+                    <h4>b. 关于y轴对称</h4>
+                    <div class="math-block">
+                        $$A = \begin{bmatrix} -1 & 0 \\ 0 & 1 \end{bmatrix}$$
+                    </div>
+                    <div class="example-box">
+                        <p>变换过程：</p>
+                        <div class="math-block">
+                            $$\begin{bmatrix} -1 & 0 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 0 & 1 & 1 & 0 \\ 1 & 1 & 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & -1 & -1 & 0 \\ 1 & 1 & 0 & 0 \end{bmatrix}$$
+                        </div>
+                        <p>图像关于<strong>y轴</strong>对称翻转</p>
+                    </div>
+
+                    <h4>c. 关于原点对称</h4>
+                    <div class="math-block">
+                        $$A = \begin{bmatrix} -1 & 0 \\ 0 & -1 \end{bmatrix}$$
+                    </div>
+                    <div class="example-box">
+                        <p>变换过程：</p>
+                        <div class="math-block">
+                            $$\begin{bmatrix} -1 & 0 \\ 0 & -1 \end{bmatrix} \begin{bmatrix} 0 & 1 & 1 & 0 \\ 1 & 1 & 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & -1 & -1 & 0 \\ -1 & -1 & 0 & 0 \end{bmatrix}$$
+                        </div>
+                        <p>图像关于<strong>原点</strong>对称翻转（180°旋转）</p>
+                    </div>
+
+                    <h4>d. 关于y=x对称</h4>
+                    <div class="math-block">
+                        $$A = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}$$
+                    </div>
+                    <p>图像关于直线 <strong>y = x</strong> 对称</p>
+
+                    <h4>e. 关于y=-x对称</h4>
+                    <div class="math-block">
+                        $$A = \begin{bmatrix} 0 & -1 \\ -1 & 0 \end{bmatrix}$$
+                    </div>
+                    <p>图像关于直线 <strong>y = -x</strong> 对称</p>
+                </div>
+            </div>
+
+            <button class="accordion">② 伸缩变换</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <h4>a. 横向拉伸</h4>
+                    <div class="math-block">
+                        $$A = \begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix}$$
+                    </div>
+                    <div class="example-box">
+                        <p>变换过程：</p>
+                        <div class="math-block">
+                            $$\begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 0 & 1 & 1 & 0 \\ 1 & 1 & 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & 2 & 2 & 0 \\ 1 & 1 & 0 & 0 \end{bmatrix}$$
+                        </div>
+                        <p>图像在<strong>x方向</strong>拉伸为原来的<strong>2倍</strong></p>
+                    </div>
+
+                    <h4>b. 纵向拉伸</h4>
+                    <div class="math-block">
+                        $$A = \begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix}$$
+                    </div>
+                    <p>图像在<strong>y方向</strong>拉伸为原来的<strong>2倍</strong></p>
+
+                    <h4>c. 横向压缩</h4>
+                    <div class="math-block">
+                        $$A = \begin{bmatrix} \frac{1}{2} & 0 \\ 0 & 1 \end{bmatrix}$$
+                    </div>
+                    <p>图像在<strong>x方向</strong>压缩为原来的<strong>1/2</strong></p>
+
+                    <h4>d. 纵向压缩</h4>
+                    <div class="math-block">
+                        $$A = \begin{bmatrix} 1 & 0 \\ 0 & \frac{1}{2} \end{bmatrix}$$
+                    </div>
+                    <p>图像在<strong>y方向</strong>压缩为原来的<strong>1/2</strong></p>
+                </div>
+            </div>
+
+            <button class="accordion">③ 剪切变换</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <h4>a. 水平剪切</h4>
+                    <div class="math-block">
+                        $$A = \begin{bmatrix} 1 & k \\ 0 & 1 \end{bmatrix}$$
+                    </div>
+                    <div class="example-box">
+                        <p>当 \(k = -1\) 时：</p>
+                        <div class="math-block">
+                            $$\begin{bmatrix} 1 & -1 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 0 & 1 & 1 & 0 \\ 1 & 1 & 0 & 0 \end{bmatrix} = \begin{bmatrix} -1 & 0 & 1 & 0 \\ 1 & 1 & 0 & 0 \end{bmatrix}$$
+                        </div>
+                        <p>图像发生<strong>水平剪切</strong>，类似平行四边形变形</p>
+                    </div>
+
+                    <h4>b. 垂直剪切</h4>
+                    <div class="math-block">
+                        $$A = \begin{bmatrix} 1 & 0 \\ k & 1 \end{bmatrix}$$
+                    </div>
+                    <div class="example-box">
+                        <p>当 \(k = -1\) 时：</p>
+                        <div class="math-block">
+                            $$\begin{bmatrix} 1 & 0 \\ -1 & 1 \end{bmatrix} \begin{bmatrix} 0 & 1 & 1 & 0 \\ 1 & 1 & 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & 1 & 1 & 0 \\ -1 & 0 & -1 & 0 \end{bmatrix}$$
+                        </div>
+                        <p>图像发生<strong>垂直剪切</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="accordion">④ 旋转变换</button>
+            <div class="panel">
+                <div class="panel-content">
+                    <h4>旋转45°变换</h4>
+                    <div class="math-block">
+                        $$A = \begin{bmatrix} \frac{\sqrt{2}}{2} & -\frac{\sqrt{2}}{2} \\ \frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2} \end{bmatrix}$$
+                    </div>
+                    <div class="example-box">
+                        <p>变换过程：</p>
+                        <div class="math-block">
+                            $$\begin{bmatrix} \frac{\sqrt{2}}{2} & -\frac{\sqrt{2}}{2} \\ \frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2} \end{bmatrix} \begin{bmatrix} 0 & 1 & 1 & 0 \\ 1 & 1 & 0 & 0 \end{bmatrix} = \begin{bmatrix} -\frac{\sqrt{2}}{2} & 0 & \frac{\sqrt{2}}{2} & 0 \\ \frac{\sqrt{2}}{2} & \sqrt{2} & \frac{\sqrt{2}}{2} & 0 \end{bmatrix}$$
+                        </div>
+                        <p>图像逆时针旋转<strong>45°</strong></p>
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>一般旋转公式（旋转θ角）：</strong></p>
+                        <div class="math-block">
+                            $$R(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Applications Section -->
+        <section id="applications" class="section">
+            <h2>💡 实际应用：方程组求解</h2>
+
+            <div class="highlight-box">
+                <p><strong>核心思想：</strong>线性代数主要是运用<strong>线性变换</strong>这样一个对应法则来作运算。事实上，线性变换相当于高等数学中的<em>对应法则</em>（函数），对应到线性代数里就是<strong>矩阵 A</strong>。</p>
+            </div>
+
+            <h3>🔍 例子：解方程组</h3>
+            <div class="example-box">
+                <div class="example-title">📝 方程组示例</div>
+                <div class="math-block">
+                    $$\begin{cases} x_1 + 2x_2 = 3 \\ 4x_1 + 7x_2 = 10 \end{cases}$$
+                </div>
+
+                <h4>中学阶段解法：高斯消元法</h4>
+                <p>通过加减消元逐步求解。</p>
+
+                <h4>大学阶段解法：线性变换法</h4>
+                <p>将方程组改写为矩阵形式：</p>
+                <div class="math-block">
+                    $$\underbrace{\begin{bmatrix} 1 & 2 \\ 4 & 7 \end{bmatrix}}_{A} \underbrace{\begin{bmatrix} x_1 \\ x_2 \end{bmatrix}}_{\alpha} = \underbrace{\begin{bmatrix} 3 \\ 10 \end{bmatrix}}_{\beta}$$
+                </div>
+                <p style="text-align: center; margin: 1rem 0;">
+                    即：<strong style="color: var(--primary-orange);">Aα = β</strong>
+                </p>
+            </div>
+
+            <h3>🎯 如何求解？</h3>
+            <div class="info-box">
+                <p><strong>问题：</strong>已知矩阵 \(A\)，作用在某个向量 \(\alpha\) 上，得到向量 \(\beta\)，如何<strong>反求</strong>出 \(\alpha\)？</p>
+
+                <h4>类比中学方法：</h4>
+                <p>求解 \(2x = 3\)：</p>
+                <ul>
+                    <li>两边乘以 \(2^{-1}\)（即 \(\frac{1}{2}\)）</li>
+                    <li>得：\(2^{-1} \cdot 2x = 2^{-1} \cdot 3\)</li>
+                    <li>即：\(x = \frac{3}{2}\)</li>
+                </ul>
+
+                <h4>大学阶段方法：</h4>
+                <p>求解 \(A\vec{x} = \vec{\beta}\)：</p>
+                <div class="highlight-box">
+                    <p><strong>前提条件：</strong>\(A\) 可逆（即 \(A^{-1}\) 存在）</p>
+                    <ul>
+                        <li>等式两端同时左乘 \(A^{-1}\)</li>
+                        <li>得：\(A^{-1}A\vec{x} = A^{-1}\vec{\beta}\)</li>
+                        <li>即：\(\vec{x} = A^{-1}\vec{\beta}\)</li>
+                    </ul>
+                </div>
+
+                <div class="example-box">
+                    <div class="example-title">🔄 函数类比</div>
+                    <p>如果 \(f(x) = y\)，在 \(f^{-1}\) 存在时：</p>
+                    <ul>
+                        <li>两边复合 \(f^{-1}\)</li>
+                        <li>得：\(f^{-1}[f(x)] = f^{-1}(y)\)</li>
+                        <li>即：\(x = f^{-1}(y)\)</li>
+                    </ul>
+                    <p style="margin-top: 1rem;"><strong>这与矩阵求解的逻辑完全一致！</strong></p>
+                </div>
+            </div>
+
+            <button class="interactive-btn" onclick="showSummary()">📚 查看全章总结</button>
+            <div id="summaryCont" style="display:none; margin-top: 1.5rem;">
+                <div class="highlight-box">
+                    <h3 style="color: var(--primary-orange); margin-bottom: 1rem;">✨ 全章核心要点</h3>
+                    <ol style="line-height: 2;">
+                        <li><strong>向量</strong>：有序数组，用于表达信息</li>
+                        <li><strong>线性运算</strong>：加法和数乘</li>
+                        <li><strong>点积运算</strong>：对应相乘再相加</li>
+                        <li><strong>矩阵</strong>：表达系统信息的工具</li>
+                        <li><strong>线性变换</strong>：矩阵作用于向量，产生新向量</li>
+                        <li><strong>变换类型</strong>：对称、伸缩、剪切、旋转</li>
+                        <li><strong>方程组求解</strong>：利用矩阵逆实现</li>
+                    </ol>
+                    <p style="margin-top: 1rem; font-size: 1.1rem; color: var(--primary-orange);">
+                        <strong>记住：</strong>线性代数的核心是研究<em>向量空间</em>中<em>向量与向量的关系</em>！
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Quiz Section -->
+        <section class="section">
+            <h2>🎮 互动测验</h2>
+            <div class="example-box">
+                <div class="example-title">测试你的理解</div>
+                <p><strong>问题：</strong>向量 \(\begin{bmatrix} 1 \\ -1 \end{bmatrix}\) 在兴趣表达中代表什么？</p>
+                <button class="interactive-btn" onclick="checkAnswer('A')">A. 喜欢运动，不喜欢音乐</button>
+                <button class="interactive-btn" onclick="checkAnswer('B')">B. 不喜欢运动，喜欢音乐</button>
+                <button class="interactive-btn" onclick="checkAnswer('C')">C. 都喜欢</button>
+                <div id="quizResult" style="margin-top: 1rem;"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button onclick="scrollToTop()" id="scrollTopBtn" title="返回顶部">↑</button>
+
+    <!-- Footer -->
+    <footer>
+        <p>📚 考研数学基础30讲 · 线性代数分册</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">零基础课 第0讲 - 线性代数入门</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+            💡 提示：本网页使用 <strong>MathJax</strong> 渲染数学公式，<strong>交互式设计</strong>帮助你更好地学习线性代数！
+        </p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Accordion functionality
+        const accordions = document.getElementsByClassName("accordion");
+        for (let i = 0; i < accordions.length; i++) {
+            accordions[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        }
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll to top button
+        window.onscroll = function() {
+            const scrollBtn = document.getElementById("scrollTopBtn");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollBtn.style.display = "block";
+            } else {
+                scrollBtn.style.display = "none";
+            }
+        };
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Show interest examples
+        function showInterestExample() {
+            const examples = document.getElementById("interestExamples");
+            if (examples.style.display === "none" || examples.style.display === "") {
+                examples.style.display = "block";
+                examples.style.animation = "fadeIn 0.5s ease-out";
+            } else {
+                examples.style.display = "none";
+            }
+        }
+
+        // Show summary
+        function showSummary() {
+            const summary = document.getElementById("summaryCont");
+            if (summary.style.display === "none" || summary.style.display === "") {
+                summary.style.display = "block";
+                summary.style.animation = "fadeIn 0.5s ease-out";
+            } else {
+                summary.style.display = "none";
+            }
+        }
+
+        // Quiz functionality
+        function checkAnswer(answer) {
+            const resultDiv = document.getElementById("quizResult");
+            if (answer === 'A') {
+                resultDiv.innerHTML = '<div class="highlight-box" style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-color: #28a745;"><strong>✅ 正确！</strong><br>向量第一个元素是1（喜欢运动），第二个元素是-1（不喜欢音乐）。</div>';
+            } else {
+                resultDiv.innerHTML = '<div class="highlight-box" style="background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); border-color: #dc3545;"><strong>❌ 再想想！</strong><br>提示：第一个数字代表对运动的态度，第二个数字代表对音乐的态度。1=喜欢，-1=不喜欢。</div>';
+            }
+        }
+
+        // Add fade-in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeIn 0.6s ease-out';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Console message
+        console.log('%c📚 欢迎学习线性代数！', 'color: #f27d00; font-size: 20px; font-weight: bold;');
+        console.log('%c本网页使用交互式设计，点击按钮和折叠面板来探索更多内容！', 'color: #343434; font-size: 14px;');
+    </script>
+</body>
+</html>

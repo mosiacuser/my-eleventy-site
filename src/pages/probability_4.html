@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大数定律与中心极限定理 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": { 
+                scale: 100,
+                styles: {
+                    ".MathJax": { color: "#343434" }
+                }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 100%);
+            color: #343434;
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+            min-height: 100vh;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: #ffffff;
+            padding: 40px 30px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: #a6d6c9;
+            padding: 15px 30px;
+            position: sticky;
+            top: 130px;
+            z-index: 99;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        nav a {
+            color: #343434;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f7d117;
+        }
+        
+        h3 {
+            color: #f27d00;
+            font-size: 1.5em;
+            margin: 25px 0 15px;
+        }
+        
+        .concept-box {
+            background: linear-gradient(135deg, #a6d6c9 0%, #f7d117 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #f27d00;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .theorem-box {
+            background: #fff5e6;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #f27d00;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .note-box {
+            background: #e6f7ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #a6d6c9;
+        }
+        
+        .example {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #a6d6c9;
+        }
+        
+        .example h4 {
+            color: #f27d00;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .formula {
+            background: #ffffff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px dashed #f7d117;
+            overflow-x: auto;
+        }
+        
+        .accordion {
+            margin: 20px 0;
+        }
+        
+        .accordion-header {
+            background: #f27d00;
+            color: #ffffff;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+            user-select: none;
+        }
+        
+        .accordion-header:hover {
+            background: #d96d00;
+            transform: translateX(5px);
+        }
+        
+        .accordion-header::after {
+            content: ' ▼';
+            float: right;
+            transition: transform 0.3s;
+        }
+        
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #ffffff;
+            border: 2px solid #f27d00;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 20px;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        table th {
+            background: #f27d00;
+            color: #ffffff;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        table tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .interactive-btn {
+            background: #f27d00;
+            color: #ffffff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+        
+        .interactive-btn:hover {
+            background: #d96d00;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.4);
+        }
+        
+        .quiz-container {
+            background: linear-gradient(135deg, #ffffff 0%, #a6d6c9 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #f27d00;
+        }
+        
+        .quiz-option {
+            background: #ffffff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .quiz-option:hover {
+            border-color: #f27d00;
+            transform: translateX(10px);
+        }
+        
+        .quiz-option.correct {
+            background: #c8e6c9;
+            border-color: #4caf50;
+        }
+        
+        .quiz-option.incorrect {
+            background: #ffcdd2;
+            border-color: #f44336;
+        }
+        
+        footer {
+            background: #343434;
+            color: #ffffff;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8em; }
+            nav ul { flex-direction: column; }
+            .content { padding: 20px 15px; }
+            h2 { font-size: 1.5em; }
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: #ffffff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .back-to-top:hover {
+            background: #d96d00;
+            transform: translateY(-5px);
+        }
+        
+        .back-to-top.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第5讲 大数定律与中心极限定理</h1>
+            <p>考研数学基础30讲 · 概率论与数理统计分册</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#structure">知识结构</a></li>
+                <li><a href="#convergence">依概率收敛</a></li>
+                <li><a href="#law-of-large-numbers">大数定律</a></li>
+                <li><a href="#central-limit">中心极限定理</a></li>
+                <li><a href="#examples">例题解析</a></li>
+                <li><a href="#quiz">互动测验</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <section id="structure">
+                <h2>📊 基础知识结构</h2>
+                
+                <div class="concept-box">
+                    <h3>整体框架</h3>
+                    <p>本讲主要涵盖概率论中的两大核心定理体系：</p>
+                    <ul style="margin-left: 30px; margin-top: 15px;">
+                        <li><strong>依概率收敛</strong> - 第6讲会进一步涉及</li>
+                        <li><strong>大数定律</strong>
+                            <ul style="margin-left: 25px;">
+                                <li>切比雪夫大数定律</li>
+                                <li>伯努利大数定律</li>
+                                <li>辛钦大数定律</li>
+                            </ul>
+                        </li>
+                        <li><strong>中心极限定理</strong>
+                            <ul style="margin-left: 25px;">
+                                <li>列维-林德伯格定理</li>
+                                <li>莫弗-拉普拉斯定理</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="note-box">
+                    <p style="font-size: 1.2em; text-align: center; font-weight: bold; color: #f27d00;">
+                        核心思想：无论原来服从什么分布，只要加起来就近似服从正态分布
+                    </p>
+                </div>
+            </section>
+            
+            <section id="convergence">
+                <h2>🎯 依概率收敛</h2>
+                
+                <div class="theorem-box">
+                    <h3>定义对比</h3>
+                    <p><strong>数列收敛：</strong></p>
+                    <div class="formula">
+                        若 $x_n \to a$，则对于任意的 $\varepsilon > 0$，当 $n \to \infty$ 时，有 $|x_n - a| < \varepsilon$
+                    </div>
+                    
+                    <p style="margin-top: 20px;"><strong>依概率收敛：</strong></p>
+                    <div class="formula">
+                        若 $X_n \xrightarrow{P} a$，则对于任意的 $\varepsilon > 0$，当 $n \to \infty$ 时，有 $P\{|X_n - a| < \varepsilon\} \to 1$
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        依概率收敛的严格定义
+                    </div>
+                    <div class="accordion-content">
+                        <p>设随机变量 $X$ 与随机变量序列 $\{X_n\}$ ($n=1, 2, \cdots$)，如果对任意的 $\varepsilon > 0$，有</p>
+                        <div class="formula">
+                            $$\lim_{n \to \infty} P\{|X_n - X| \geq \varepsilon\} = 0 \quad \text{或} \quad \lim_{n \to \infty} P\{|X_n - X| < \varepsilon\} = 1$$
+                        </div>
+                        <p>则称随机变量序列 $\{X_n\}$ <span class="highlight">依概率收敛</span>于随机变量 $X$，记为</p>
+                        <div class="formula">
+                            $$\lim_{n \to \infty} X_n = X(P) \quad \text{或} \quad X_n \xrightarrow{P} X \quad (n \to \infty)$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note-box">
+                    <h4>📌 重要注记</h4>
+                    <p><strong>(1)</strong> 以上定义中将随机变量 $X$ 写成数 $a$ 也成立</p>
+                    <p><strong>(2)</strong> 设 $X_n \xrightarrow{P} X$，$Y_n \xrightarrow{P} Y$，$g(x, y)$ 是二元连续函数，则</p>
+                    <div class="formula">
+                        $$g(X_n, Y_n) \xrightarrow{P} g(X, Y)$$
+                    </div>
+                    <p>一般地，对 $m$ 元连续函数 $g(x_1, x_2, \cdots, x_m)$，上述结论亦成立。</p>
+                </div>
+            </section>
+            
+            <section id="law-of-large-numbers">
+                <h2>📈 大数定律</h2>
+                
+                <div class="concept-box">
+                    <h3 style="color: #343434;">总体思想</h3>
+                    <div class="formula">
+                        $$\overline{X} \xrightarrow{P} E\overline{X} \quad \text{(随机变量的平均值依概率收敛到期望的均值)}$$
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        定理1：切比雪夫大数定律
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>条件：</strong></p>
+                        <ul style="margin-left: 25px;">
+                            <li>① 随机变量序列 $\{X_i\}$ ($i=1, 2, \cdots$) <span class="highlight">相互独立</span></li>
+                            <li>② 方差 $DX_i$ ($i \geq 1$) 存在且<span class="highlight">一致有上界</span>，即存在常数 $C$，使 $DX_i \leq C$ 对一切 $i \geq 1$ 均成立</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>结论：</strong></p>
+                        <div class="formula">
+                            $$\frac{1}{n}\sum_{i=1}^{n} X_i \xrightarrow{P} \frac{1}{n}\sum_{i=1}^{n} EX_i$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        定理2：伯努利大数定律 ⭐
+                    </div>
+                    <div class="accordion-content">
+                        <p>假设 $\mu_n$ 是 $n$ 重伯努利试验中事件 $A$ 发生的次数，在每次试验中事件 $A$ 发生的概率为 $p$ ($0 < p < 1$)，则</p>
+                        <div class="formula">
+                            $$\frac{\mu_n}{n} \xrightarrow{P} p$$
+                        </div>
+                        <p>即对任意 $\varepsilon > 0$，有</p>
+                        <div class="formula">
+                            $$\lim_{n \to \infty} P\left\{\left|\frac{\mu_n}{n} - p\right| < \varepsilon\right\} = 1$$
+                        </div>
+                        <div class="note-box" style="margin-top: 20px;">
+                            <p><strong>实际意义：</strong>若 $\mu_n$ 表示投篮投中的次数，$n$ 表示投篮总次数，则 $\frac{\mu_n}{n}$ 表示投中的频率。当 $n$ 足够大时，<span class="highlight">频率依概率收敛到概率本身</span>。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        定理3：辛钦大数定律 ⭐⭐
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>条件：</strong></p>
+                        <ul style="margin-left: 25px;">
+                            <li>① 随机变量序列 $\{X_i\}$ ($i=1, 2, \cdots$) <span class="highlight">独立同分布</span></li>
+                            <li>② 数学期望 $EX_i = \mu$ ($i=1, 2, \cdots$) 存在</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>结论：</strong></p>
+                        <div class="formula">
+                            $$\frac{1}{n}\sum_{i=1}^{n} X_i \xrightarrow{P} \mu$$
+                        </div>
+                        <p>即对任意 $\varepsilon > 0$，有</p>
+                        <div class="formula">
+                            $$\lim_{n \to \infty} P\left\{\left|\frac{1}{n}\sum_{i=1}^{n} X_i - \mu\right| < \varepsilon\right\} = 1$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="theorem-box" style="margin-top: 30px;">
+                    <h3>经验分布函数（仅数学三）</h3>
+                    <p>若 $(x_1, x_2, \cdots, x_n)$ 为总体样本 $(X_1, X_2, \cdots, X_n)$ 的一个观测值，按大小顺序排列为 $x_{(1)} \leq x_{(2)} \leq \cdots \leq x_{(n)}$，对任意实数 $x$，称函数</p>
+                    <div class="formula">
+                        $$F_n(x) = \frac{\text{样本中小于等于 } x \text{ 的样本值个数}}{n}$$
+                    </div>
+                    <p>为样本的<span class="highlight">经验分布函数</span>。</p>
+                    <p style="margin-top: 15px;">事实上，$F_n(x)$ 就是事件 $\{X \leq x\}$ 在 $n$ 次试验中出现的频率，由伯努利大数定律可知，当 $n$ 充分大时，$F_n(x)$ 可作为未知分布函数 $F(x)$ 的一个近似，$n$ 越大，近似效果越好。</p>
+                </div>
+            </section>
+            
+            <section id="central-limit">
+                <h2>🔔 中心极限定理</h2>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        定理4：列维-林德伯格定理 ⭐⭐⭐
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>条件：</strong></p>
+                        <ul style="margin-left: 25px;">
+                            <li>① 随机变量序列 $\{X_i\}$ ($i=1, 2, \cdots$) <span class="highlight">独立同分布</span></li>
+                            <li>② $EX_i = \mu$，$DX_i = \sigma^2 > 0$ ($i=1, 2, \cdots$) 存在</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>结论：</strong>对任意的实数 $x$，有</p>
+                        <div class="formula">
+                            $$\lim_{n \to \infty} P\left\{\frac{\sum_{i=1}^{n} X_i - n\mu}{\sqrt{n}\sigma} \leq x\right\} = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{x} e^{-\frac{t^2}{2}} dt = \Phi(x)$$
+                        </div>
+                        <div class="note-box" style="margin-top: 20px;">
+                            <h4>📌 重要注记</h4>
+                            <p><strong>(1)</strong> 定理的三个条件<span class="highlight">"独立、同分布、期望和方差存在"</span>，缺一不可</p>
+                            <p><strong>(2)</strong> 只要满足定理条件，那么当 $n$ 很大时，独立同分布随机变量的和 $\sum_{i=1}^{n} X_i$ 近似服从正态分布 $N(n\mu, n\sigma^2)$。由此可知，当 $n$ 很大时，有</p>
+                            <div class="formula">
+                                $$P\left\{a < \sum_{i=1}^{n} X_i < b\right\} \approx \Phi\left(\frac{b - n\mu}{\sqrt{n}\sigma}\right) - \Phi\left(\frac{a - n\mu}{\sqrt{n}\sigma}\right)$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        定理5：莫弗-拉普拉斯定理
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>条件：</strong>假设随机变量 $Y_n \sim B(n, p)$ ($0 < p < 1$，$n \geq 1$)</p>
+                        <p><strong>结论：</strong>对任意实数 $x$，有</p>
+                        <div class="formula">
+                            $$\lim_{n \to \infty} P\left\{\frac{Y_n - np}{\sqrt{np(1-p)}} \leq x\right\} = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{x} e^{-\frac{t^2}{2}} dt = \Phi(x)$$
+                        </div>
+                        <div class="note-box" style="margin-top: 20px;">
+                            <p><strong>推导关系：</strong>如果记 $X_i \sim B(1, p)$ ($0 < p < 1$，$i=1, 2, \cdots$)，即 $X_i \sim \begin{pmatrix} 1 & 0 \\ p & 1-p \end{pmatrix}$ 且相互独立，则</p>
+                            <div class="formula">
+                                $$Y_n = \sum_{i=1}^{n} X_i \sim B(n, p)$$
+                            </div>
+                            <p>由列维-林德伯格定理可推出莫弗-拉普拉斯定理。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="theorem-box" style="margin-top: 30px;">
+                    <h3>二项分布概率计算的三种方法</h3>
+                    <p>设 $X \sim B(n, p)$</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>方法</th>
+                                <th>适用条件</th>
+                                <th>公式</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>① 直接计算</strong></td>
+                                <td>$n$ 不太大 ($n \leq 10$)</td>
+                                <td>$P\{X = k\} = C_n^k p^k (1-p)^{n-k}$，$k=0, 1, \cdots, n$</td>
+                            </tr>
+                            <tr>
+                                <td><strong>② 泊松近似</strong></td>
+                                <td>$n$ 较大且 $p$ 较小 ($n > 10$，$p < 0.1$)，$\lambda = np$ 适中</td>
+                                <td>$P\{X = k\} \approx \frac{\lambda^k}{k!} e^{-\lambda}$</td>
+                            </tr>
+                            <tr>
+                                <td><strong>③ 正态近似</strong></td>
+                                <td>$n$ 较大而 $p$ 不太小 ($p < 0.1$，$np \geq 10$)</td>
+                                <td>$P\{a < X < b\} \approx \Phi\left(\frac{b - np}{\sqrt{np(1-p)}}\right) - \Phi\left(\frac{a - np}{\sqrt{np(1-p)}}\right)$</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <section id="examples">
+                <h2>📝 例题解析</h2>
+                
+                <div class="example">
+                    <h4>例5.1 切比雪夫大数定律的应用</h4>
+                    <p><strong>题目：</strong>设 $X_1, X_2, \cdots, X_n, \cdots$ 是相互独立的随机变量序列，$X_n$ 服从参数为 $n$ ($n \geq 1$) 的指数分布，则下列随机变量序列中不服从切比雪夫大数定律的是（ ）</p>
+                    <p>(A) $X_1, \frac{1}{2}X_2, \cdots, \frac{1}{n}X_n, \cdots$</p>
+                    <p>(B) $X_1, X_2, \cdots, X_n, \cdots$</p>
+                    <p>(C) $X_1, 2X_2, \cdots, nX_n, \cdots$</p>
+                    <p>(D) $X_1, 2^2X_2, \cdots, n^2X_n, \cdots$</p>
+                    
+                    <button class="interactive-btn" onclick="showSolution('sol1')">查看解析</button>
+                    <div id="sol1" style="display: none; margin-top: 20px; padding: 20px; background: #f0f0f0; border-radius: 8px;">
+                        <p><strong>答案：(D)</strong></p>
+                        <p><strong>解析：</strong></p>
+                        <p>切比雪夫大数定律要求 $\{X_i\}$ 相互独立，方差存在且一致有界，即 $DX_i \leq C$。</p>
+                        <p>由题设知 $\{X_i\}$ 相互独立，且 $DX_n = \frac{1}{n^2} \leq 1$，所以选项 (B) 满足条件。</p>
+                        <p>又 $D\left(\frac{1}{n}X_n\right) = \frac{1}{n^2}DX_n = \frac{1}{n^4} \leq 1$，选项 (A) 满足。</p>
+                        <p>$D(nX_n) = n^2DX_n = 1 \leq 2$，选项 (C) 满足。</p>
+                        <p>然而 $D(n^2X_n) = n^4DX_n = n^2$，不满足一致有界条件，故选 (D)。</p>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <h4>例5.3 辛钦大数定律的应用 ⭐</h4>
+                    <p><strong>题目：</strong>设随机变量序列 $X_1, X_2, \cdots, X_n, \cdots$ 独立同分布，且 $X_i$ 的概率密度为</p>
+                    <div class="formula">
+                        $$f(x) = \begin{cases} 1 - |x|, & |x| < 1 \\ 0, & \text{其他} \end{cases}$$
+                    </div>
+                    <p>则当 $n \to \infty$ 时，$\frac{1}{n}\sum_{i=1}^{n} X_i^2$ 依概率收敛于（ ）</p>
+                    <p>(A) $\frac{1}{8}$ &nbsp;&nbsp; (B) $\frac{1}{6}$ &nbsp;&nbsp; (C) $\frac{1}{3}$ &nbsp;&nbsp; (D) $\frac{1}{2}$</p>
+                    
+                    <button class="interactive-btn" onclick="showSolution('sol3')">查看解析</button>
+                    <div id="sol3" style="display: none; margin-top: 20px; padding: 20px; background: #f0f0f0; border-radius: 8px;">
+                        <p><strong>答案：(B)</strong></p>
+                        <p><strong>解析：</strong></p>
+                        <p>首先计算 $E(X_i^2)$：</p>
+                        <div class="formula">
+                            $$E(X_i^2) = \int_{-\infty}^{+\infty} x^2 f(x) dx = \int_{-1}^{1} x^2(1 - |x|) dx = 2\int_{0}^{1} x^2(1 - x) dx = \frac{1}{6}$$
+                        </div>
+                        <p>依题意知随机变量序列 $X_1, X_2, \cdots, X_n, \cdots$ 独立同分布，从而由辛钦大数定律知，当 $n \to \infty$ 时，$\frac{1}{n}\sum_{i=1}^{n} X_i^2$ 依概率收敛于 $E(X_i^2) = \frac{1}{6}$。</p>
+                        <p>这也可以表示为：$\frac{1}{n}\sum_{i=1}^{n} X_i^2 \xrightarrow{P} E\left(\frac{1}{n}\sum_{i=1}^{n} X_i^2\right) = \frac{1}{6}$</p>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <h4>例5.4 列维-林德伯格定理的条件判断</h4>
+                    <p><strong>题目：</strong>设随机变量 $X_1, X_2, \cdots, X_n$ 相互独立，$S_n = X_1 + X_2 + \cdots + X_n$，则根据列维-林德伯格定理，当 $n$ 充分大时，$S_n$ 近似服从正态分布，只要 $X_1, X_2, \cdots, X_n$（ ）</p>
+                    <p>(A) 有相同的期望和方差</p>
+                    <p>(B) 服从同一离散型分布</p>
+                    <p>(C) 服从同一指数分布</p>
+                    <p>(D) 服从同一连续型分布</p>
+                    
+                    <button class="interactive-btn" onclick="showSolution('sol4')">查看解析</button>
+                    <div id="sol4" style="display: none; margin-top: 20px; padding: 20px; background: #f0f0f0; border-radius: 8px;">
+                        <p><strong>答案：(C)</strong></p>
+                        <p><strong>解析：</strong></p>
+                        <p>列维-林德伯格定理的条件：随机变量 $X_1, X_2, \cdots, X_n$ <span class="highlight">独立同分布</span>，并且其<span class="highlight">数学期望和方差均存在</span>。</p>
+                        <ul style="margin-left: 25px; margin-top: 10px;">
+                            <li>(A) 有相同的数学期望和方差未必服从相同的分布，不满足定理条件</li>
+                            <li>(B) 和 (D) 满足的随机变量的数学期望或方差未必存在，不满足定理条件</li>
+                            <li>(C) 指数分布的数学期望和方差都存在，满足定理条件</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <h4>例5.5 莫弗-拉普拉斯定理的应用</h4>
+                    <p><strong>题目：</strong>设 $X_n$ 表示将一枚硬币随意投掷 $n$ 次出现"正面"的次数，则（ ）</p>
+                    <p>(A) $\lim_{n \to \infty} P\left\{\frac{X_n}{\sqrt{n}} \leq x\right\} = \Phi(x)$</p>
+                    <p>(B) $\lim_{n \to \infty} P\left\{\frac{2X_n - n}{\sqrt{n}} \leq x\right\} = \Phi(x)$</p>
+                    <p>(C) $\lim_{n \to \infty} P\left\{\frac{X_n - 2n}{\sqrt{n}} \leq x\right\} = \Phi(x)$</p>
+                    <p>(D) $\lim_{n \to \infty} P\left\{\frac{2X_n - 2n}{\sqrt{n}} \leq x\right\} = \Phi(x)$</p>
+                    
+                    <button class="interactive-btn" onclick="showSolution('sol5')">查看解析</button>
+                    <div id="sol5" style="display: none; margin-top: 20px; padding: 20px; background: #f0f0f0; border-radius: 8px;">
+                        <p><strong>答案：(B)</strong></p>
+                        <p><strong>解析：</strong></p>
+                        <p>投掷硬币出现正面的次数 $X_n \sim B(n, \frac{1}{2})$</p>
+                        <p>根据莫弗-拉普拉斯定理：</p>
+                        <div class="formula">
+                            $$\lim_{n \to \infty} P\left\{\frac{X_n - np}{\sqrt{np(1-p)}} \leq x\right\} = \Phi(x)$$
+                        </div>
+                        <p>将 $p = \frac{1}{2}$ 代入，得：</p>
+                        <div class="formula">
+                            $$\lim_{n \to \infty} P\left\{\frac{X_n - \frac{n}{2}}{\sqrt{\frac{n}{4}}} \leq x\right\} = \lim_{n \to \infty} P\left\{\frac{2X_n - n}{\sqrt{n}} \leq x\right\} = \Phi(x)$$
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="quiz">
+                <h2>🎮 互动测验</h2>
+                
+                <div class="quiz-container">
+                    <h3>测验题：依概率收敛与大数定律</h3>
+                    <p style="margin-bottom: 20px;"><strong>问题：</strong>辛钦大数定律要求的三个条件是什么？</p>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        A. 独立、期望存在、方差一致有界
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">
+                        B. 独立、同分布、期望存在
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        C. 独立、同分布、期望和方差都存在
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">
+                        D. 独立、方差存在且一致有界
+                    </div>
+                    <div id="quiz-result" style="margin-top: 20px; padding: 15px; border-radius: 8px; display: none;"></div>
+                </div>
+                
+                <button class="interactive-btn" onclick="resetQuiz()">重置测验</button>
+            </section>
+        </div>
+        
+        <footer>
+            <p>&copy; 2024 考研数学基础教程 | 大数定律与中心极限定理</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">本教程为交互式学习材料，祝您学习愉快！</p>
+        </footer>
+    </div>
+    
+    <div class="back-to-top" onclick="scrollToTop()">↑</div>
+    
+    <script>
+        // Accordion toggle
+        function toggleAccordion(element) {
+            element.classList.toggle('active');
+            const content = element.nextElementSibling;
+            content.classList.toggle('active');
+        }
+        
+        // Show solution
+        function showSolution(id) {
+            const solution = document.getElementById(id);
+            if (solution.style.display === 'none') {
+                solution.style.display = 'block';
+                event.target.textContent = '隐藏解析';
+            } else {
+                solution.style.display = 'none';
+                event.target.textContent = '查看解析';
+            }
+        }
+        
+        // Quiz functionality
+        function checkAnswer(element, isCorrect) {
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            const result = document.getElementById('quiz-result');
+            if (isCorrect) {
+                element.classList.add('correct');
+                result.innerHTML = '<strong style="color: #4caf50;">✓ 正确！</strong> 辛钦大数定律的三个条件是：<br>① 独立<br>② 同分布<br>③ 期望存在';
+                result.style.background = '#c8e6c9';
+            } else {
+                element.classList.add('incorrect');
+                result.innerHTML = '<strong style="color: #f44336;">✗ 不正确</strong> 请再想想，辛钦大数定律不要求方差存在。';
+                result.style.background = '#ffcdd2';
+            }
+            result.style.display = 'block';
+        }
+        
+        function resetQuiz() {
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.classList.remove('correct', 'incorrect');
+                opt.style.pointerEvents = 'auto';
+            });
+            document.getElementById('quiz-result').style.display = 'none';
+        }
+        
+        // Back to top button
+        window.onscroll = function() {
+            const backToTop = document.querySelector('.back-to-top');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        };
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Smooth scroll for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

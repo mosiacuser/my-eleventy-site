@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第2讲：余子式和代数余子式的计算 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": { 
+                scale: 100,
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --primary-green: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --bg-white: #ffffff;
+            --text-dark: #343434;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-dark);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+        
+        /* Navigation Bar */
+        nav {
+            background: linear-gradient(90deg, var(--primary-orange), #ff9933);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        nav h1 {
+            color: var(--bg-white);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: var(--bg-white);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-yellow));
+            padding: 3rem;
+            border-radius: 20px;
+            color: var(--bg-white);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        /* Content Cards */
+        .card {
+            background: var(--bg-white);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.8s ease;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .card h2 {
+            color: var(--primary-orange);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-green);
+        }
+        
+        .card h3 {
+            color: var(--primary-orange);
+            font-size: 1.4rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Flowchart */
+        .flowchart {
+            background: linear-gradient(135deg, var(--primary-green), #d4f1e8);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1.5rem 0;
+        }
+        
+        .flowchart-title {
+            text-align: center;
+            color: var(--primary-orange);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .flow-box {
+            background: var(--bg-white);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary-orange);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .flow-box h4 {
+            color: var(--primary-orange);
+            margin-bottom: 0.5rem;
+        }
+        
+        .flow-arrow {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--primary-orange);
+            margin: 0.5rem 0;
+        }
+        
+        /* Example Boxes */
+        .example {
+            background: linear-gradient(135deg, #fff9e6, var(--primary-yellow));
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            border-left: 5px solid var(--primary-orange);
+        }
+        
+        .example-title {
+            color: var(--primary-orange);
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Note Boxes */
+        .note {
+            background: linear-gradient(135deg, var(--primary-green), #e0f7f0);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 5px solid #4a9b7f;
+        }
+        
+        .note::before {
+            content: "📝 注意：";
+            font-weight: 700;
+            color: #4a9b7f;
+        }
+        
+        /* Interactive Accordion */
+        .accordion {
+            background: var(--bg-white);
+            border-radius: 10px;
+            margin: 1rem 0;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .accordion-header {
+            background: linear-gradient(90deg, var(--primary-orange), #ff9933);
+            color: var(--bg-white);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(90deg, #ff9933, var(--primary-orange));
+        }
+        
+        .accordion-icon {
+            transition: transform 0.3s;
+        }
+        
+        .accordion-header.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 0 1.5rem;
+        }
+        
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 1.5rem;
+        }
+        
+        /* Math Display */
+        .math-display {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            overflow-x: auto;
+            border: 2px solid var(--primary-green);
+        }
+        
+        /* Button */
+        .btn {
+            background: linear-gradient(90deg, var(--primary-orange), var(--primary-yellow));
+            color: var(--bg-white);
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* Interactive Quiz */
+        .quiz {
+            background: linear-gradient(135deg, #e8f4f8, var(--primary-green));
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+        }
+        
+        .quiz-question {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .quiz-options {
+            margin: 1rem 0;
+        }
+        
+        .quiz-option {
+            display: block;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            background: var(--bg-white);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quiz-option:hover {
+            background: var(--primary-yellow);
+            transform: translateX(5px);
+        }
+        
+        .quiz-feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .quiz-feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .quiz-feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        /* Back to Top Button */
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-orange);
+            color: var(--bg-white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        #backToTop:hover {
+            background: var(--primary-yellow);
+            transform: translateY(-5px);
+        }
+        
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+        
+        /* Matrix Display */
+        .matrix {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: var(--bg-white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <h1>📚 线性代数交互式教程</h1>
+        <div class="nav-links">
+            <a href="#overview">课程概览</a>
+            <a href="#method1">方法一：行列式</a>
+            <a href="#method2">方法二：矩阵</a>
+            <a href="#method3">方法三：特征值</a>
+            <a href="#examples">例题解析</a>
+            <a href="#quiz">互动测验</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>第2讲：余子式和代数余子式的计算</h1>
+        <p>掌握三种解题方法，轻松应对行列式计算</p>
+    </div>
+
+    <div class="container">
+        <!-- Overview Section -->
+        <section id="overview" class="card">
+            <h2>📖 课程概览</h2>
+            <p>本讲介绍余子式（Minor）和代数余子式（Cofactor）的三种计算方法。这些概念在线性代数中至关重要，特别是在计算行列式、求逆矩阵和求解线性方程组时。</p>
+            
+            <div class="flowchart">
+                <div class="flowchart-title">三问解题法</div>
+                <div class="flow-box">
+                    <h4>目标识别</h4>
+                    <p>余子式和代数余子式的计算（0（肝住目标））</p>
+                </div>
+                <div class="flow-arrow">⬇️</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <div class="flow-box">
+                        <h4>方法一：用行列式</h4>
+                        <p>$D_1$（常规操作）+ $D_{21}$（观察研究对象）</p>
+                    </div>
+                    <div class="flow-box">
+                        <h4>方法二：用矩阵</h4>
+                        <p>$D_1$（常规操作）+ $D_{22}$（转换等价表达）</p>
+                    </div>
+                    <div class="flow-box">
+                        <h4>方法三：用特征值</h4>
+                        <p>$D_1$（常规操作）+ $D_{22}$（转换等价表达）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note">
+                <strong>核心概念：</strong>
+                <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
+                    <li><strong>余子式 $M_{ij}$</strong>：去掉矩阵第$i$行第$j$列后的行列式</li>
+                    <li><strong>代数余子式 $A_{ij}$</strong>：$A_{ij} = (-1)^{i+j}M_{ij}$</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Method 1: Using Determinants -->
+        <section id="method1" class="card">
+            <h2>方法一：用行列式（$D_1$（常规操作）+ $D_{21}$（观察研究对象））</h2>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>理论基础</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <p>当 $|A| \neq 0$ 时，可以通过行列式的性质来计算余子式和代数余子式。</p>
+                    
+                    <div class="math-display">
+                        设有行列式：
+                        $$\begin{vmatrix} 
+                        a_{i1} & a_{i2} & \cdots & a_{in} \\
+                        \vdots & \vdots & \ddots & \vdots \\
+                        k_1 A_{i1} + k_2 A_{i2} + \cdots + k_n A_{in} & = & \begin{vmatrix} k_1 & k_2 & \cdots & k_n \end{vmatrix}
+                        \end{vmatrix}$$
+                        
+                        <p style="margin-top: 1rem;">其中 $*$ 表示元素不变，上面两式的区别仅在于第$i$行的元素 $a_{i1}, a_{i2}, \cdots, a_{in}$ 换成了 $k_1, k_2, \cdots, k_n$。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="example">
+                <div class="example-title">🔍 例2.1</div>
+                <p>设 $$\begin{vmatrix} 
+                2 & 1 & 0 & -1\\
+                -1 & 2 & -5 & 3\\
+                3 & 0 & a & b\\
+                1 & -3 & 5 & 0
+                \end{vmatrix} = A_{41} - A_{42} + A_{43} + 10$$</p>
+                <p>其中 $A_{ij}$ 为元素 $a_{ij}$ 的代数余子式，则 $a, b$ 的值为（）</p>
+                <p><strong>A.</strong> $a=4, b=1$ &nbsp;&nbsp; <strong>B.</strong> $a=1, b=4$ &nbsp;&nbsp; <strong>C.</strong> $a=4, b$ 为任意数 &nbsp;&nbsp; <strong>D.</strong> $a=1, b$ 为任意数</p>
+
+                <button class="btn" onclick="toggleSolution('solution1')">查看详解</button>
+                
+                <div id="solution1" style="display:none; margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.7); border-radius: 10px;">
+                    <p><strong>【解】应选（C）</strong></p>
+                    
+                    <div class="math-display">
+                        $$A_{41} - A_{42} + A_{43} = 1 \cdot A_{41} + (-1) \cdot A_{42} + 1 \cdot A_{43} + 0 \cdot A_{44}$$
+                        
+                        $$= \begin{vmatrix} 
+                        2 & 1 & 0 & -1\\
+                        -1 & 2 & -5 & 3\\
+                        3 & 0 & a & b\\
+                        1 & -1 & 1 & 0
+                        \end{vmatrix}$$
+                    </div>
+                    
+                    <p style="margin-top: 1rem;">通过行列式的计算（第4行对应的元素与其代数余子式相乘）：</p>
+                    
+                    <div class="math-display">
+                        $$\begin{vmatrix} 
+                        2 & 1 & 0 & -1\\
+                        -1 & 2 & -5 & 3\\
+                        3 & 0 & a & b\\
+                        1 & -3 & 5 & 0
+                        \end{vmatrix} - (A_{41} - A_{42} + A_{43}) = \begin{vmatrix} 
+                        2 & 1 & 0 & -1\\
+                        -1 & 2 & -5 & 3\\
+                        3 & 0 & a & b\\
+                        1 & -1 & 1 & 0
+                        \end{vmatrix} - \begin{vmatrix} 
+                        2 & 1 & 0 & -1\\
+                        -1 & 2 & -5 & 3\\
+                        3 & 0 & a & b\\
+                        0 & -2 & 4 & 0
+                        \end{vmatrix}$$
+                    </div>
+                    
+                    <p>经过化简（按第4行展开，再按第1行展开）：</p>
+                    
+                    <div class="math-display">
+                        $$= (-2) \begin{vmatrix} 
+                        2 & 2 & -1\\
+                        -1 & -1 & 3\\
+                        3 & a & b
+                        \end{vmatrix} = (-2) \begin{vmatrix} 
+                        0 & 0 & 5\\
+                        -1 & -1 & 3\\
+                        0 & a-3 & b+9
+                        \end{vmatrix} = 10(a-3) = 10$$
+                    </div>
+                    
+                    <p><strong>因此 $a=4$，$b$ 为任意数。故选（C）。</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Method 2: Using Matrices -->
+        <section id="method2" class="card">
+            <h2>方法二：用矩阵（$D_1$（常规操作）+ $D_{22}$（转换等价表达））</h2>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>理论基础</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <p>当 $|A| \neq 0$ 时，有重要关系式：</p>
+                    <div class="math-display">
+                        $$A^* = |A|A^{-1}$$
+                    </div>
+                    <p>其中 $A^*$ 是矩阵 $A$ 的伴随矩阵（由代数余子式组成）。</p>
+                    <p>由于 $A^*$ 由 $A_{ij}$ 组成，用上式求出 $A^*$，即得到所有有的 $A_{ij}$。但要注意，此方法要求 $|A| \neq 0$，这既是前提，也是一种限制。</p>
+                </div>
+            </div>
+
+            <div class="example">
+                <div class="example-title">🔍 例2.2</div>
+                <p>设 $$A = \begin{bmatrix} 
+                0 & 0 & 0 & 5 & 6\\
+                0 & 0 & 0 & 7 & 8\\
+                1 & 2 & 3 & 0 & 0\\
+                0 & 1 & 4 & 0 & 0\\
+                0 & 0 & 1 & 0 & 0
+                \end{bmatrix}$$</p>
+                <p>则 $|A|$ 中所有元素的代数余子式之和为 _______。</p>
+
+                <button class="btn" onclick="toggleSolution('solution2')">查看详解</button>
+                
+                <div id="solution2" style="display:none; margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.7); border-radius: 10px;">
+                    <p><strong>【解】应填 -4</strong></p>
+                    
+                    <p>令 $$B = \begin{bmatrix} 5 & 6\\ 7 & 8 \end{bmatrix}, \quad C = \begin{bmatrix} 1 & 2 & 3\\ 0 & 1 & 4\\ 0 & 0 & 1 \end{bmatrix}$$</p>
+                    
+                    <p>则可以将矩阵 $A$ 表示为分块矩阵形式：</p>
+                    
+                    <div class="math-display">
+                        $$A = \begin{bmatrix} O & B\\ C & O \end{bmatrix}, \quad A^{-1} = \begin{bmatrix} O & C^{-1}\\ B^{-1} & O \end{bmatrix}$$
+                    </div>
+                    
+                    <p>其中：</p>
+                    <div class="math-display">
+                        $$B^{-1} = \begin{bmatrix} -4 & 3\\ \frac{7}{2} & -\frac{5}{2} \end{bmatrix}, \quad C^{-1} = \begin{bmatrix} 1 & -2 & 5\\ 0 & 1 & -4\\ 0 & 0 & 1 \end{bmatrix}$$
+                    </div>
+                    
+                    <p>并且 $|A| = (-1)^{2 \times 3} |B||C| = (-2) \times 1 = -2$，且</p>
+                    
+                    <div class="math-display">
+                        $$A^* = |A|A^{-1} = -2 \begin{bmatrix} O & C^{-1}\\ B^{-1} & O \end{bmatrix} = -2 \begin{bmatrix} 
+                        0 & 0 & 1 & -2 & 5\\
+                        0 & 0 & 0 & 1 & -4\\
+                        0 & 0 & 0 & 0 & 1\\
+                        -4 & 3 & 0 & 0 & 0\\
+                        \frac{7}{2} & -\frac{5}{2} & 0 & 0 & 0
+                        \end{bmatrix}$$
+                    </div>
+                    
+                    <p><strong>因此 $|A|$ 中所有元素的代数余子式之和为 $\sum_{i=1}^{5}\sum_{j=1}^{5} A_{ij} = -2 \times 2 = -4$。</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Method 3: Using Eigenvalues -->
+        <section id="method3" class="card">
+            <h2>方法三：用特征值（$D_1$（常规操作）+ $D_{22}$（转换等价表达））</h2>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>理论基础</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <p>设 $A$ 为3阶方阵，当 $A$ 为可逆矩阵时，记其特征值为 $\lambda_1, \lambda_2, \lambda_3$，则 $A^*$ 的特征值为 $\lambda_1^*, \lambda_2^*, \lambda_3^*$。</p>
+                    
+                    <p>由 $A^* = |A|A^{-1} = \lambda_1\lambda_2\lambda_3 A^{-1}$，可知 $A^*$ 的特征值为：</p>
+                    
+                    <div class="math-display">
+                        $$\lambda_1^* = \lambda_1\lambda_2\lambda_3 \cdot \lambda_1^{-1} = \lambda_2\lambda_3$$
+                        $$\lambda_2^* = \lambda_1\lambda_2\lambda_3 \cdot \lambda_2^{-1} = \lambda_1\lambda_3$$
+                        $$\lambda_3^* = \lambda_1\lambda_2\lambda_3 \cdot \lambda_3^{-1} = \lambda_1\lambda_2$$
+                    </div>
+                    
+                    <p>由 $A^* = \begin{bmatrix} A_{11} & A_{21} & A_{31}\\ A_{12} & A_{22} & A_{32}\\ A_{13} & A_{23} & A_{33} \end{bmatrix}$（注意是转置），</p>
+                    
+                    <p>知 $A_{11} + A_{22} + A_{33} = \text{tr}(A^*) = \lambda_1^* + \lambda_2^* + \lambda_3^* = \lambda_2\lambda_3 + \lambda_1\lambda_3 + \lambda_1\lambda_2$。</p>
+                    
+                    <div class="note">
+                        <strong>这些公式易记、好用，考生应熟知。</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="example">
+                <div class="example-title">🔍 例2.3</div>
+                <p>已知3阶方阵 $A$ 的特征值为 $-1, 2, 3$，则 $A_{11} + A_{22} + A_{33} = $ _______。</p>
+
+                <button class="btn" onclick="toggleSolution('solution3')">查看详解</button>
+                
+                <div id="solution3" style="display:none; margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.7); border-radius: 10px;">
+                    <p><strong>【解】应填 1</strong></p>
+                    
+                    <p>记 $\lambda_1 = -1, \lambda_2 = 2, \lambda_3 = 3$，由上述公式，有</p>
+                    
+                    <div class="math-display">
+                        $$A_{11} + A_{22} + A_{33} = \text{tr}(A^*) = \lambda_1^* + \lambda_2^* + \lambda_3^*$$
+                        $$= \lambda_2\lambda_3 + \lambda_1\lambda_3 + \lambda_1\lambda_2$$
+                        $$= 2 \times 3 + (-1) \times 3 + (-1) \times 2$$
+                        $$= 6 - 3 - 2 = 1$$
+                    </div>
+                </div>
+            </div>
+
+            <div class="example">
+                <div class="example-title">🔍 例2.4</div>
+                <p>设 $A = (a_{ij})$ 为3阶矩阵，$A_{ij}$ 为元素 $a_{ij}$ 的代数余子式。若 $A^*$ 的每行元素之和均为2，且 $|A|=3$，则 $A_{11} + A_{22} + A_{33} = $ _______。</p>
+
+                <button class="btn" onclick="toggleSolution('solution4')">查看详解</button>
+                
+                <div id="solution4" style="display:none; margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.7); border-radius: 10px;">
+                    <p><strong>【解】应填 6</strong></p>
+                    
+                    <p>由 $A^* \begin{bmatrix} 1\\ 1\\ 1 \end{bmatrix} = 2 \begin{bmatrix} 1\\ 1\\ 1 \end{bmatrix}$，得 $A^*$ 的一个特征值为2，故 $A$ 的一个特征值为 $\lambda_1 = \frac{1}{2}$，其对应的特征向量为 $\alpha = \begin{bmatrix} 1\\ 1\\ 1 \end{bmatrix}$。</p>
+                    
+                    <p>则 $A^*$ 的一个特征值为 $\frac{|A|}{\lambda} = 6$，其对应的特征向量也是 $\alpha = \begin{bmatrix} 1\\ 1\\ 1 \end{bmatrix}$。由 $A^* \alpha = \frac{|A|}{\lambda} \alpha$，$A^* = \begin{bmatrix} A_{11} & A_{21} & A_{31}\\ A_{12} & A_{22} & A_{32}\\ A_{13} & A_{23} & A_{33} \end{bmatrix}$，得</p>
+                    
+                    <div class="math-display">
+                        $$A^* \begin{bmatrix} 1\\ 1\\ 1 \end{bmatrix} = \begin{bmatrix} A_{11} + A_{21} + A_{31}\\ A_{12} + A_{22} + A_{32}\\ A_{13} + A_{23} + A_{33} \end{bmatrix} = 6 \begin{bmatrix} 1\\ 1\\ 1 \end{bmatrix} = \begin{bmatrix} 6\\ 6\\ 6 \end{bmatrix}$$
+                    </div>
+                    
+                    <p><strong>即 $A_{11} + A_{22} + A_{33} = 6$。</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Quiz Section -->
+        <section id="quiz" class="card">
+            <h2>🎯 互动测验</h2>
+            <p>测试你对余子式和代数余子式的理解！</p>
+            
+            <div class="quiz">
+                <div class="quiz-question">
+                    <strong>问题：</strong>对于3×3矩阵A，如果 $|A| = 5$，且某个元素的余子式 $M_{12} = 2$，那么对应的代数余子式 $A_{12}$ 等于多少？
+                </div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="quiz1" value="A" onchange="checkQuiz1(this)"> A. 2
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="quiz1" value="B" onchange="checkQuiz1(this)"> B. -2
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="quiz1" value="C" onchange="checkQuiz1(this)"> C. 10
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="quiz1" value="D" onchange="checkQuiz1(this)"> D. -10
+                    </label>
+                </div>
+                <div id="quiz1-feedback" class="quiz-feedback"></div>
+            </div>
+
+            <div class="quiz" style="margin-top: 2rem;">
+                <div class="quiz-question">
+                    <strong>问题：</strong>如果3阶矩阵A的特征值为 1, 2, 3，那么 $|A^*|$ 等于多少？
+                </div>
+                <div class="quiz-options">
+                    <label class="quiz-option">
+                        <input type="radio" name="quiz2" value="A" onchange="checkQuiz2(this)"> A. 6
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="quiz2" value="B" onchange="checkQuiz2(this)"> B. 11
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="quiz2" value="C" onchange="checkQuiz2(this)"> C. 36
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="quiz2" value="D" onchange="checkQuiz2(this)"> D. 216
+                    </label>
+                </div>
+                <div id="quiz2-feedback" class="quiz-feedback"></div>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="card" style="background: linear-gradient(135deg, var(--primary-green), #e0f7f0);">
+            <h2>📌 要点总结</h2>
+            <ol style="margin-left: 1.5rem; line-height: 2;">
+                <li><strong>方法一（行列式法）</strong>：适用于直接观察行列式结构，通过替换某一行或列来计算代数余子式。</li>
+                <li><strong>方法二（矩阵法）</strong>：利用 $A^* = |A|A^{-1}$ 关系，特别适合分块矩阵或特殊结构的矩阵。前提是 $|A| \neq 0$。</li>
+                <li><strong>方法三（特征值法）</strong>：通过特征值快速计算伴随矩阵的迹，适用于已知特征值的情况。记住关键公式：$A_{11} + A_{22} + A_{33} = \lambda_2\lambda_3 + \lambda_1\lambda_3 + \lambda_1\lambda_2$。</li>
+                <li><strong>灵活选择</strong>：根据题目特点选择最合适的方法，有时需要结合多种方法。</li>
+            </ol>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn" onclick="scrollToTop()">返回顶部 ↑</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 线性代数交互式教程 | 余子式和代数余子式的计算</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">使用 MathJax 渲染数学公式</p>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Toggle Accordion
+        function toggleAccordion(element) {
+            element.classList.toggle('active');
+            const content = element.nextElementSibling;
+            content.classList.toggle('active');
+        }
+
+        // Toggle Solution
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            if (solution.style.display === 'none') {
+                solution.style.display = 'block';
+            } else {
+                solution.style.display = 'none';
+            }
+        }
+
+        // Quiz 1 Check
+        function checkQuiz1(element) {
+            const feedback = document.getElementById('quiz1-feedback');
+            if (element.value === 'B') {
+                feedback.className = 'quiz-feedback correct';
+                feedback.innerHTML = '✅ 正确！代数余子式 $A_{ij} = (-1)^{i+j}M_{ij}$。由于 $i+j=1+2=3$ 为奇数，所以 $A_{12} = (-1)^3 \\times 2 = -2$。';
+            } else {
+                feedback.className = 'quiz-feedback incorrect';
+                feedback.innerHTML = '❌ 不正确。请回忆代数余子式的定义公式 $A_{ij} = (-1)^{i+j}M_{ij}$。';
+            }
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, feedback]);
+        }
+
+        // Quiz 2 Check
+        function checkQuiz2(element) {
+            const feedback = document.getElementById('quiz2-feedback');
+            if (element.value === 'C') {
+                feedback.className = 'quiz-feedback correct';
+                feedback.innerHTML = '✅ 正确！由于 $|A| = \\lambda_1 \\lambda_2 \\lambda_3 = 1 \\times 2 \\times 3 = 6$，而 $|A^*| = |A|^{n-1} = 6^2 = 36$（对于3阶矩阵）。';
+            } else {
+                feedback.className = 'quiz-feedback incorrect';
+                feedback.innerHTML = '❌ 不正确。对于$n$阶矩阵，$|A^*| = |A|^{n-1}$。这里$n=3$，所以$|A^*| = |A|^2$。';
+            }
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, feedback]);
+        }
+
+        // Scroll to Top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Show/Hide Back to Top Button
+        window.onscroll = function() {
+            const backToTop = document.getElementById('backToTop');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTop.style.display = 'block';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        };
+
+        // Smooth Scroll for Navigation Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

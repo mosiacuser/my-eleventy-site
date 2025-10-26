@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第2讲 矩阵 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": {
+                styles: {
+                    ".MathJax": {
+                        color: "#343434"
+                    }
+                }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #a6d6c9 0%, #ffffff 50%, #f7d117 100%);
+            color: #343434;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: #ffffff;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            opacity: 0.95;
+        }
+        
+        /* Navigation */
+        nav {
+            background: #343434;
+            padding: 1rem;
+            position: sticky;
+            top: 120px;
+            z-index: 99;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s;
+            background: rgba(166, 214, 201, 0.2);
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            transform: translateY(-2px);
+        }
+        
+        /* Main container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* Section styling */
+        section {
+            background: #ffffff;
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 5px solid #f27d00;
+        }
+        
+        section h2 {
+            color: #f27d00;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        section h3 {
+            color: #343434;
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem 0;
+            padding-left: 1rem;
+            border-left: 4px solid #f7d117;
+        }
+        
+        section h4 {
+            color: #f27d00;
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+        
+        /* Collapsible sections */
+        .collapsible {
+            background: linear-gradient(135deg, #a6d6c9 0%, #ffffff 100%);
+            color: #343434;
+            cursor: pointer;
+            padding: 1rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2rem;
+            font-weight: 500;
+            border-radius: 5px;
+            margin: 0.5rem 0;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .collapsible:hover {
+            background: linear-gradient(135deg, #f7d117 0%, #f27d00 100%);
+            color: #ffffff;
+        }
+        
+        .collapsible:after {
+            content: '\\002B'; /* + symbol */
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .collapsible.active:after {
+            content: "\\2212"; /* - symbol */
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            padding: 0 1rem;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .content.active {
+            padding: 1rem;
+        }
+        
+        /* Math boxes */
+        .math-box {
+            background: linear-gradient(135deg, #ffffff 0%, #a6d6c9 100%);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border: 2px solid #f27d00;
+            overflow-x: auto;
+        }
+        
+        /* Important notes */
+        .note {
+            background: #f7d117;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            border-left: 5px solid #f27d00;
+        }
+        
+        .note strong {
+            color: #343434;
+        }
+        
+        /* Example boxes */
+        .example {
+            background: #ffffff;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border: 2px dashed #a6d6c9;
+        }
+        
+        .example-title {
+            color: #f27d00;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: #ffffff;
+        }
+        
+        th {
+            background: #f27d00;
+            color: #ffffff;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        
+        td {
+            padding: 0.75rem;
+            border: 1px solid #a6d6c9;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        /* Code blocks */
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background: #343434;
+            color: #f7d117;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+        }
+        
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+        }
+        
+        /* Interactive button */
+        .btn {
+            background: #f27d00;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            background: #f7d117;
+            color: #343434;
+            transform: scale(1.05);
+        }
+        
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #f27d00;
+            color: #ffffff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .back-to-top:hover {
+            background: #f7d117;
+            transform: scale(1.1);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            section {
+                padding: 1rem;
+            }
+            
+            section h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Matrix display */
+        .matrix-display {
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        /* Highlight important formulas */
+        .highlight-formula {
+            background: linear-gradient(135deg, #f7d117 0%, #ffffff 100%);
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            border: 2px solid #f27d00;
+        }
+        
+        /* Footer */
+        footer {
+            background: #343434;
+            color: #ffffff;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📊 第2讲 矩阵</h1>
+        <p>考研数学基础30讲 · 线性代数分册</p>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#intro">矩阵本质</a></li>
+            <li><a href="#definition">定义与运算</a></li>
+            <li><a href="#inverse">矩阵的逆</a></li>
+            <li><a href="#adjoint">伴随矩阵</a></li>
+            <li><a href="#elementary">初等变换</a></li>
+            <li><a href="#equations">矩阵方程</a></li>
+            <li><a href="#rank">矩阵的秩</a></li>
+            <li><a href="#exercises">习题</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <!-- Section: Introduction -->
+        <section id="intro">
+            <h2>一、矩阵的本质</h2>
+            
+            <div class="note">
+                <strong>💡 核心思想：</strong>矩阵是系统信息的表达工具。$n$维向量空间中的一个基可以表达所有的信息。
+            </div>
+            
+            <button class="collapsible">📌 矩阵信息表达的例子</button>
+            <div class="content">
+                <p>假如英语系有98个女生、2个男生；机械系有95个男生、5个女生。你能把这个系统信息表达出来吗？</p>
+                
+                <div class="math-box">
+                    <p>这个数表可以表示为一个$2 \times 2$矩阵：</p>
+                    $$\begin{bmatrix} 2 & 95 \\ 98 & 5 \end{bmatrix}_{2\times 2}$$
+                    <p>其中：</p>
+                    <ul>
+                        <li>第1列表达了英语系的男、女生人数</li>
+                        <li>第2列表达了机械系的男、女生人数</li>
+                        <li>第1行表达了不同系的男生人数</li>
+                        <li>第2行表达了不同系的女生人数</li>
+                    </ul>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">🤔 思考：如何体现"系统"二字？</div>
+                    <p>已知 $A = \begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{bmatrix}$，则 $kA = \begin{bmatrix} ka_{11} & ka_{12} \\ ka_{21} & ka_{22} \end{bmatrix}$</p>
+                    
+                    <div class="note">
+                        <strong>注意：</strong>数乘矩阵要将矩阵中的每一个元素都乘$k$，保证系统性不变，即两行、两列间比例未发生变化。
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">🎯 Gram矩阵与向量关系</button>
+            <div class="content">
+                <p>矩阵的转置与矩阵本身相乘（$A^TA$），属于易考点，它能够反映向量之间的关系。</p>
+                
+                <div class="math-box">
+                    <p>对于矩阵 $A = [\alpha, \alpha_2]$，有：</p>
+                    $$A^T A = \begin{bmatrix} \alpha^T \\ \alpha_2^T \end{bmatrix} [\alpha, \alpha_2] = \begin{bmatrix} \|\alpha\|^2 & \alpha^T\alpha_2 \\ \alpha_2^T\alpha & \|\alpha_2\|^2 \end{bmatrix}$$
+                    
+                    <p>其中：</p>
+                    <ul>
+                        <li>对角线元素 $\|\alpha\|^2$ 表示向量的模（大小）</li>
+                        <li>非对角线元素 $\alpha^T\alpha_2 = \|\alpha\|\|\alpha_2\|\cos\theta$ 表示向量间的相关程度（余弦相似度）</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-formula">
+                    <strong>★★★ 重要公式：</strong>
+                    $$\alpha^T\alpha_2 = \|\alpha\|\|\alpha_2\|\cos\theta$$
+                    <p>其中$\theta$是两向量的夹角，$\cos\theta$表示向量间的相关程度或相依程度。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Definition and Operations -->
+        <section id="definition">
+            <h2>二、矩阵的定义及其基本运算</h2>
+            
+            <h3>1. 矩阵的定义</h3>
+            <div class="math-box">
+                <p>由$m \times n$个数$a_{ij}$ ($i=1,2,\ldots,m$; $j=1,2,\ldots,n$)排成的$m$行$n$列的矩形表格：</p>
+                $$A = \begin{bmatrix} 
+                a_{11} & a_{12} & \cdots & a_{1n} \\
+                a_{21} & a_{22} & \cdots & a_{2n} \\
+                \vdots & \vdots & \ddots & \vdots \\
+                a_{m1} & a_{m2} & \cdots & a_{mn}
+                \end{bmatrix}_{m\times n}$$
+                <p>称为一个$m \times n$矩阵，简记为$A$或$(a_{ij})_{m\times n}$。</p>
+                <p>当$m=n$时，称$A$为$n$阶方阵。</p>
+            </div>
+            
+            <h3>2. 基本运算</h3>
+            
+            <button class="collapsible">➕ 矩阵相等与加法</button>
+            <div class="content">
+                <h4>(1) 相等</h4>
+                <div class="math-box">
+                    <p>$A=(a_{ij})_{m\times n} = B=(b_{ij})_{s\times k}$ 当且仅当：</p>
+                    <ul>
+                        <li>$m=s, n=k$（同型矩阵）</li>
+                        <li>$a_{ij} = b_{ij}$ 对所有$i,j$成立（对应元素相等）</li>
+                    </ul>
+                </div>
+                
+                <h4>(2) 加法</h4>
+                <div class="math-box">
+                    <p>两个同型矩阵才能相加：</p>
+                    $$C = A + B = (a_{ij})_{m\times n} + (b_{ij})_{m\times n} = (c_{ij})_{m\times n}$$
+                    <p>其中 $c_{ij} = a_{ij} + b_{ij}$（对应元素相加）</p>
+                </div>
+                
+                <div class="note">
+                    <strong>运算律：</strong>
+                    <ul>
+                        <li>交换律：$A+B = B+A$</li>
+                        <li>结合律：$(A+B)+C = A+(B+C)$</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <button class="collapsible">✖️ 数乘矩阵与矩阵乘法</button>
+            <div class="content">
+                <h4>(3) 数乘矩阵</h4>
+                <div class="math-box">
+                    <p>设$k$是一个数，$A$是一个$m \times n$矩阵：</p>
+                    $$kA = Ak = k\begin{bmatrix} 
+                    a_{11} & \cdots & a_{1n} \\
+                    \vdots & \ddots & \vdots \\
+                    a_{m1} & \cdots & a_{mn}
+                    \end{bmatrix} = \begin{bmatrix} 
+                    ka_{11} & \cdots & ka_{1n} \\
+                    \vdots & \ddots & \vdots \\
+                    ka_{m1} & \cdots & ka_{mn}
+                    \end{bmatrix}$$
+                </div>
+                
+                <h4>(4) 矩阵的乘法 ⭐⭐⭐</h4>
+                <div class="math-box">
+                    <p>设$A$是$m \times s$矩阵，$B$是$s \times n$矩阵（<strong>A的列数必须等于B的行数</strong>）：</p>
+                    $$C = AB = (c_{ij})_{m\times n}$$
+                    <p>其中：</p>
+                    $$c_{ij} = \sum_{k=1}^{s} a_{ik}b_{kj} = a_{i1}b_{1j} + a_{i2}b_{2j} + \cdots + a_{is}b_{sj}$$
+                    <p>即$C$的第$i$行第$j$列元素$c_{ij}$是$A$的第$i$行与$B$的第$j$列对应元素两两乘积之和（<strong>内积</strong>）。</p>
+                </div>
+                
+                <div class="highlight-formula">
+                    <strong>⚠️ 重要提示：</strong>
+                    <p>矩阵乘法一般<strong>不满足交换律</strong>，即 $AB \neq BA$</p>
+                    <p>但满足：</p>
+                    <ul>
+                        <li>结合律：$(AB)C = A(BC)$</li>
+                        <li>分配律：$A(B+C) = AB+AC$，$(A+B)C = AC+BC$</li>
+                        <li>数乘结合律：$k(AB) = (kA)B = A(kB)$</li>
+                    </ul>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">🔍 例：矩阵乘法不满足交换律</div>
+                    <p>设 $A = \begin{bmatrix} 1 & 1 \\ -1 & -1 \end{bmatrix}$，$B = \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix}$</p>
+                    <p>则：</p>
+                    $$AB = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix}, \quad BA = \begin{bmatrix} 2 & 2 \\ -2 & -2 \end{bmatrix}$$
+                    <p>显然 $AB \neq BA$ ✓</p>
+                    
+                    <div class="note">
+                        <strong>★★★ 重要结论：</strong>
+                        <p>由上面的例子可知，存在$A \neq O, B \neq O$，而$AB = O$的情况。</p>
+                        <p>因此：$AB = O \not\Rightarrow A=O$或$B=O$</p>
+                        <p>同样：$AB = AC \not\Rightarrow B=C$（不满足消去律）</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">🔄 转置矩阵与方阵的幂</button>
+            <div class="content">
+                <h4>(5) 转置矩阵</h4>
+                <div class="math-box">
+                    <p>将$m \times n$矩阵$A=(a_{ij})_{m\times n}$的行与列互换得到的$n \times m$矩阵，称为矩阵$A$的<strong>转置矩阵</strong>，记为$A^T$：</p>
+                    $$A^T = (a_{ji})_{n\times m}$$
+                </div>
+                
+                <div class="note">
+                    <strong>转置矩阵的运算规律：⭐⭐⭐</strong>
+                    <ul>
+                        <li>$(A^T)^T = A$</li>
+                        <li>$(kA)^T = kA^T$</li>
+                        <li>$(A+B)^T = A^T + B^T$</li>
+                        <li><strong>$(AB)^T = B^TA^T$</strong>（"穿脱"原则：先穿内再穿外，先脱外再脱内）</li>
+                    </ul>
+                </div>
+                
+                <h4>(6) 方阵的幂</h4>
+                <div class="math-box">
+                    <p>设$A$是一个$n$阶方阵，$A^m = \underbrace{AA\cdots A}_{m个}$称为$A$的$m$次幂。</p>
+                </div>
+                
+                <div class="note">
+                    <strong>注意：</strong>
+                    <p>因矩阵乘法不满足交换律，故一般地：</p>
+                    <ul>
+                        <li>$(A+B)^2 = A^2+AB+BA+B^2 \neq A^2+2AB+B^2$</li>
+                        <li>$(A-B)^2 = A^2-AB-BA+B^2 \neq A^2-2AB+B^2$</li>
+                        <li>$(A+B)(A-B) = A^2+BA-AB-B^2 \neq A^2-B^2$</li>
+                        <li>$(AB)^m = (AB)(AB)\cdots(AB) \neq A^mB^m$</li>
+                    </ul>
+                    
+                    <p><strong>特殊情况：</strong>若$f(x) = a_0 + a_1x + \cdots + a_mx^m$，则：</p>
+                    $$f(A) = a_0E + a_1A + \cdots + a_mA^m$$
+                    <p>因为$AE = EA = A$，满足交换律。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">📐 方阵的行列式与几种重要矩阵</button>
+            <div class="content">
+                <h4>(7) 方阵的行列式</h4>
+                <div class="math-box">
+                    <p>当用$n$阶方阵$A$计算行列式时，记成$|A|$。</p>
+                </div>
+                
+                <div class="highlight-formula">
+                    <strong>重要性质：</strong>
+                    <ul>
+                        <li>$|kA| = k^n|A|$ (对$n$阶方阵，$n\geq 2$)</li>
+                        <li>一般地：$|A+B| \neq |A|+|B|$</li>
+                        <li>$|A^T| = |A|$</li>
+                        <li><strong>$|AB| = |A||B| = |B||A|$</strong></li>
+                        <li>$A \neq O \not\Rightarrow |A| \neq 0$</li>
+                    </ul>
+                </div>
+                
+                <h4>(8) 几种重要矩阵</h4>
+                
+                <table>
+                    <tr>
+                        <th>矩阵类型</th>
+                        <th>定义</th>
+                        <th>记号</th>
+                    </tr>
+                    <tr>
+                        <td>零矩阵</td>
+                        <td>每个元素均为零的矩阵</td>
+                        <td>$O$</td>
+                    </tr>
+                    <tr>
+                        <td>单位矩阵</td>
+                        <td>主对角线元素均为1，其余元素全为零的$n$阶方阵</td>
+                        <td>$E$或$I$</td>
+                    </tr>
+                    <tr>
+                        <td>数量矩阵</td>
+                        <td>数$k$和单位矩阵的乘积：$kE$</td>
+                        <td>$kE$</td>
+                    </tr>
+                    <tr>
+                        <td>对角矩阵</td>
+                        <td>非主对角线元素均为零的矩阵</td>
+                        <td>$\text{diag}(\lambda_1,\ldots,\lambda_n)$</td>
+                    </tr>
+                    <tr>
+                        <td>上（下）三角矩阵</td>
+                        <td>主对角线下（上）方元素全为零</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>对称矩阵⭐⭐⭐</td>
+                        <td>满足$A^T = A$的矩阵，即$a_{ij} = a_{ji}$</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>反对称矩阵</td>
+                        <td>满足$A^T = -A$的矩阵，主对角线元素都是零</td>
+                        <td>-</td>
+                    </tr>
+                </table>
+                
+                <div class="note">
+                    <strong>★ 重要性质：</strong>
+                    <p>$AA^T$必为对称矩阵，无论$A$是不是方阵！</p>
+                    <p>证明：$(AA^T)^T = (A^T)^TA^T = AA^T$ ✓</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Inverse Matrix -->
+        <section id="inverse">
+            <h2>三、矩阵的逆</h2>
+            
+            <h3>1. 逆矩阵的定义</h3>
+            <div class="math-box">
+                <p>设$A, B$是$n$阶方阵，$E$是$n$阶单位矩阵。若$AB = BA = E$，则称$A$是<strong>可逆矩阵</strong>，并称$B$是$A$的<strong>逆矩阵</strong>，且逆矩阵是唯一的，记作$A^{-1}$。</p>
+                
+                <p class="highlight-formula">
+                    <strong>充要条件：</strong>$A$可逆 $\Leftrightarrow$ $|A| \neq 0$
+                </p>
+            </div>
+            
+            <h3>2. 逆矩阵的性质与重要公式</h3>
+            <div class="math-box">
+                <p>设$A, B$是同阶可逆方阵，则：</p>
+                <ul>
+                    <li>$(A^{-1})^{-1} = A$</li>
+                    <li>若$k \neq 0$，则$(kA)^{-1} = \frac{1}{k}A^{-1}$</li>
+                    <li><strong>$(AB)^{-1} = B^{-1}A^{-1}$</strong>（"穿脱"原则）⭐⭐⭐</li>
+                    <li><strong>$(A^T)^{-1} = (A^{-1})^T$</strong></li>
+                    <li>$|A^{-1}| = |A|^{-1} = \frac{1}{|A|}$</li>
+                </ul>
+            </div>
+            
+            <div class="note">
+                <strong>⚠️ 注意：</strong>
+                <ul>
+                    <li>$A+B$不一定可逆</li>
+                    <li>$(A+B)^{-1} \neq A^{-1} + B^{-1}$</li>
+                </ul>
+            </div>
+            
+            <h3>3. 求逆矩阵的方法</h3>
+            
+            <button class="collapsible">📝 方法一：定义法</button>
+            <div class="content">
+                <p>依定义进行求解，即求一个矩阵$B$，使$AB=E$，则$A$可逆，且$A^{-1}=B$。</p>
+                
+                <div class="example">
+                    <div class="example-title">例：用定义法求逆矩阵</div>
+                    <p>设$A, B$均是$n$阶矩阵，且$AB = A+B$，求证$A-E$为可逆矩阵。</p>
+                    
+                    <p><strong>解：</strong></p>
+                    <p>由$AB = A+B$，有：</p>
+                    $$AB - A - B = O$$
+                    $$A(B-E) - B = O$$
+                    $$A(B-E) - (B-E) = E$$
+                    $$(A-E)(B-E) = E$$
+                    
+                    <p>故$A-E$可逆，且$(A-E)^{-1} = B-E$ ✓</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">📝 方法二：伴随矩阵法（下节详述）</button>
+            <div class="content">
+                <p>当$|A| \neq 0$时，有：</p>
+                <div class="highlight-formula">
+                    $$A^{-1} = \frac{1}{|A|}A^*$$
+                </div>
+                <p>其中$A^*$是$A$的伴随矩阵。</p>
+            </div>
+            
+            <button class="collapsible">📝 方法三：初等变换法（最常用）⭐⭐⭐</button>
+            <div class="content">
+                <p>对增广矩阵$[A : E]$进行初等行变换，将$A$化为$E$：</p>
+                <div class="highlight-formula">
+                    $$[A : E] \xrightarrow{\text{初等行变换}} [E : A^{-1}]$$
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例：用初等变换法求逆矩阵</div>
+                    <p>设 $A = \begin{bmatrix} 0 & 2 & -1 \\ 1 & 1 & 2 \\ -1 & -1 & -1 \end{bmatrix}$，求$A^{-1}$。</p>
+                    
+                    <p><strong>解：</strong></p>
+                    <div class="math-box">
+                        $$[A:E] = \begin{bmatrix} 0 & 2 & -1 & | & 1 & 0 & 0 \\ 1 & 1 & 2 & | & 0 & 1 & 0 \\ -1 & -1 & -1 & | & 0 & 0 & 1 \end{bmatrix}$$
+                        
+                        <p>交换第1、2行：</p>
+                        $$\to \begin{bmatrix} 1 & 1 & 2 & | & 0 & 1 & 0 \\ 0 & 2 & -1 & | & 1 & 0 & 0 \\ -1 & -1 & -1 & | & 0 & 0 & 1 \end{bmatrix}$$
+                        
+                        <p>第1行的1倍加到第3行：</p>
+                        $$\to \begin{bmatrix} 1 & 1 & 2 & | & 0 & 1 & 0 \\ 0 & 2 & -1 & | & 1 & 0 & 0 \\ 0 & 0 & 1 & | & 0 & 1 & 1 \end{bmatrix}$$
+                        
+                        <p>继续化简...</p>
+                        
+                        <p>最终得到：</p>
+                        $$A^{-1} = \begin{bmatrix} -\frac{1}{2} & -\frac{3}{2} & \frac{5}{2} \\ \frac{1}{2} & \frac{1}{2} & \frac{1}{2} \\ 0 & 1 & 1 \end{bmatrix}$$
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Adjoint Matrix -->
+        <section id="adjoint">
+            <h2>四、伴随矩阵 ⭐⭐⭐</h2>
+            
+            <h3>1. 伴随矩阵的定义</h3>
+            <div class="math-box">
+                <p>将行列式$|A|$的$n^2$个元素的<strong>代数余子式</strong>按如下形式排成的矩阵称为$A$的<strong>伴随矩阵</strong>，记作$A^*$：</p>
+                
+                $$A^* = \begin{bmatrix} 
+                A_{11} & A_{21} & \cdots & A_{n1} \\
+                A_{12} & A_{22} & \cdots & A_{n2} \\
+                \vdots & \vdots & \ddots & \vdots \\
+                A_{1n} & A_{2n} & \cdots & A_{nn}
+                \end{bmatrix}$$
+                
+                <div class="note">
+                    <strong>注意：</strong>
+                    <ul>
+                        <li>$A_{ij} = (-1)^{i+j}M_{ij}$，其中$M_{ij}$是去掉第$i$行第$j$列的行列式</li>
+                        <li>$A_{ij}$在$A^*$中的位置：$A$的第$i$行元素的代数余子式写在$A^*$的第$i$列上</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3>2. 伴随矩阵的性质与重要公式</h3>
+            <div class="highlight-formula">
+                <p><strong>核心公式：</strong></p>
+                $$AA^* = A^*A = |A|E$$
+            </div>
+            
+            <div class="math-box">
+                <p>对任意$n$阶方阵$A$，都有伴随矩阵$A^*$，且：</p>
+                <ul>
+                    <li>当$|A| \neq 0$时（$A$可逆）：
+                        $$A^{-1} = \frac{1}{|A|}A^* = \frac{A^*}{|A|}$$
+                        $$|A^*| = |A|^{n-1}$$
+                    </li>
+                    <li>$|A^*| = |A|^{n-1}$</li>
+                    <li>$(A^*)^T = (A^T)^*$</li>
+                    <li>$(AB)^* = B^*A^*$</li>
+                    <li>$(kA)^* = k^{n-1}A^*$</li>
+                    <li>$(A^{-1})^* = (A^*)^{-1}$</li>
+                </ul>
+            </div>
+            
+            <div class="note">
+                <strong>★★★ 重要结论：</strong>
+                <p>对于$n$($n \geq 2$)阶方阵$A$：</p>
+                $$r(A^*) = \begin{cases}
+                n, & r(A) = n \\
+                1, & r(A) = n-1 \\
+                0, & r(A) < n-1
+                \end{cases}$$
+            </div>
+            
+            <button class="collapsible">🧮 伴随矩阵的计算示例</button>
+            <div class="content">
+                <div class="example">
+                    <div class="example-title">例：求2阶矩阵的伴随矩阵</div>
+                    <p>设 $A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}$，求$A^*$。</p>
+                    
+                    <p><strong>解：</strong></p>
+                    <div class="math-box">
+                        <p>计算各元素的代数余子式：</p>
+                        <ul>
+                            <li>$A_{11} = (-1)^{1+1}|d| = d$</li>
+                            <li>$A_{12} = (-1)^{1+2}|c| = -c$</li>
+                            <li>$A_{21} = (-1)^{2+1}|b| = -b$</li>
+                            <li>$A_{22} = (-1)^{2+2}|a| = a$</li>
+                        </ul>
+                        
+                        <p>因此：</p>
+                        $$A^* = \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}$$
+                        
+                        <p>当$|A| = ad-bc \neq 0$时：</p>
+                        $$A^{-1} = \frac{1}{|A|}A^* = \frac{1}{ad-bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}$$
+                    </div>
+                    
+                    <div class="note">
+                        <strong>口诀：</strong>对于2阶矩阵求伴随矩阵——"主对调，副变号"
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Elementary Operations -->
+        <section id="elementary">
+            <h2>五、初等变换与初等矩阵</h2>
+            
+            <h3>1. 初等变换</h3>
+            <div class="math-box">
+                <p>矩阵的初等变换有三种：</p>
+                <ol>
+                    <li><strong>倍乘变换：</strong>一个非零常数乘矩阵的某一行（列）</li>
+                    <li><strong>互换变换：</strong>互换矩阵中某两行（列）的位置</li>
+                    <li><strong>倍加变换：</strong>将矩阵的某一行（列）的$k$倍加到另一行（列）</li>
+                </ol>
+            </div>
+            
+            <h3>2. 初等矩阵 ⭐⭐⭐</h3>
+            <div class="math-box">
+                <p>由<strong>单位矩阵</strong>经过<strong>一次</strong>初等变换得到的矩阵称为<strong>初等矩阵</strong>。</p>
+                
+                <p>以3阶矩阵为例：</p>
+                
+                <h4>(1) 倍乘初等矩阵 $E_i(k)$</h4>
+                $$E_2(k) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & k & 0 \\ 0 & 0 & 1 \end{bmatrix}, \quad k \neq 0$$
+                <p>表示单位矩阵$E$的第2行（或第2列）乘以$k$倍。</p>
+                
+                <h4>(2) 互换初等矩阵 $E_{ij}$</h4>
+                $$E_{12} = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+                <p>表示单位矩阵$E$交换第1行与第2行（或第1列与第2列）。</p>
+                
+                <h4>(3) 倍加初等矩阵 $E_{ij}(k)$</h4>
+                $$E_{31}(k) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ k & 0 & 1 \end{bmatrix}$$
+                <p>表示单位矩阵$E$的第1行的$k$倍加到第3行（或第3列的$k$倍加到第1列）。</p>
+            </div>
+            
+            <div class="note">
+                <strong>重要性质：</strong>
+                <ul>
+                    <li>对$n$阶矩阵$A$进行<strong>初等行变换</strong>，相当于在矩阵$A$的<strong>左边乘</strong>相应的初等矩阵</li>
+                    <li>对$A$进行<strong>初等列变换</strong>，相当于在矩阵$A$的<strong>右边乘</strong>相应的初等矩阵</li>
+                    <li>初等矩阵都是可逆矩阵，且：
+                        <ul>
+                            <li>$[E_i(k)]^{-1} = E_i(\frac{1}{k})$</li>
+                            <li>$E_{ij}^{-1} = E_{ij}$</li>
+                            <li>$[E_{ij}(k)]^{-1} = E_{ij}(-k)$</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <h3>3. 用初等变换求逆矩阵</h3>
+            <div class="highlight-formula">
+                <p>对增广矩阵进行初等行变换：</p>
+                $$[A : E] \xrightarrow{\text{初等行变换}} [E : A^{-1}]$$
+                <p>或对增广矩阵进行初等列变换：</p>
+                $$\begin{bmatrix} A \\ E \end{bmatrix} \xrightarrow{\text{初等列变换}} \begin{bmatrix} E \\ A^{-1} \end{bmatrix}$$
+            </div>
+        </section>
+        
+        <!-- Section: Matrix Equations -->
+        <section id="equations">
+            <h2>六、矩阵方程</h2>
+            
+            <div class="note">
+                <p><strong>定义：</strong>含有未知矩阵的方程称为<strong>矩阵方程</strong>。</p>
+            </div>
+            
+            <h3>求解方法</h3>
+            <div class="math-box">
+                <p>将方程进行恒等变形，化成$AX=B$、$XA=B$或$AXB=C$的形式，然后：</p>
+                
+                <ul>
+                    <li>若$A$可逆，$AX = B$ $\Rightarrow$ $X = A^{-1}B$（两边同时<strong>左乘</strong>$A^{-1}$）</li>
+                    <li>若$A$可逆，$XA = B$ $\Rightarrow$ $X = BA^{-1}$（两边同时<strong>右乘</strong>$A^{-1}$）</li>
+                    <li>若$A, B$均可逆，$AXB = C$ $\Rightarrow$ $X = A^{-1}CB^{-1}$</li>
+                </ul>
+            </div>
+            
+            <div class="note">
+                <strong>⚠️ 注意：</strong>
+                <p>矩阵乘法没有交换律，两边同时乘以某矩阵时，要注意左乘还是右乘！</p>
+            </div>
+            
+            <button class="collapsible">📌 典型例题</button>
+            <div class="content">
+                <div class="example">
+                    <div class="example-title">例：求解矩阵方程</div>
+                    <p>设$A, B$是同阶可逆方阵，且$A^{-1}+B^{-1}$可逆，证明$A+B$是可逆矩阵，并求$(A+B)^{-1}$。</p>
+                    
+                    <p><strong>解：</strong></p>
+                    <div class="math-box">
+                        <p>因$A, B$是可逆矩阵，故：</p>
+                        $$A+B = A(E+A^{-1}B) = A(B^{-1}+A^{-1})B$$
+                        
+                        <p>又因$A, A^{-1}+B^{-1}, B$可逆，故$A+B$可逆，且：</p>
+                        $$(A+B)^{-1} = [A(B^{-1}+A^{-1})B]^{-1}$$
+                        $$= B^{-1}(A^{-1}+B^{-1})^{-1}A^{-1}$$
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Rank -->
+        <section id="rank">
+            <h2>七、矩阵的秩</h2>
+            
+            <h3>1. 定义</h3>
+            <div class="math-box">
+                <p>设$A$是$m \times n$矩阵，若存在$k$阶子式不为零，而任意$k+1$阶子式（如果有的话）全为零，则$r(A) = k$。</p>
+                
+                <p>特别地，若$A$为$n \times n$矩阵，则：</p>
+                <div class="highlight-formula">
+                    $$r(A_{n\times n}) = n \Leftrightarrow |A| \neq 0 \Leftrightarrow A\text{可逆}$$
+                </div>
+            </div>
+            
+            <h3>2. 求法</h3>
+            <div class="math-box">
+                <p>将$A$用<strong>初等行变换</strong>化为<strong>行阶梯形矩阵</strong>，其非零行数便为$A$的秩。</p>
+            </div>
+            
+            <h3>3. 几个重要式子 ⭐⭐⭐</h3>
+            <div class="highlight-formula">
+                <p>设$A$是$m \times n$矩阵，$B$是满足有关矩阵运算要求的矩阵，则：</p>
+                <ul>
+                    <li>$0 \leq r(A) \leq \min(m,n)$；$r(A) = 0 \Leftrightarrow A = O$</li>
+                    <li>$r(kA) = r(A)$ ($k \neq 0$)</li>
+                    <li><strong>$r(AB) \leq \min\{r(A), r(B)\}$</strong></li>
+                    <li><strong>$r(A+B) \leq r(A) + r(B)$</strong></li>
+                    <li>若$A_{m\times s}B_{s\times n} = O$，则<strong>$r(A) + r(B) \leq s$</strong></li>
+                    <li>设$A$是$m \times n$矩阵，$P, Q$分别是$m$阶、$n$阶可逆矩阵，则：
+                        $$r(A) = r(PA) = r(AQ) = r(PAQ)$$
+                    </li>
+                    <li><strong>$r(A) = r(A^T) = r(A^TA) = r(AA^T)$</strong></li>
+                </ul>
+            </div>
+            
+            <button class="collapsible">🔍 秩的应用示例</button>
+            <div class="content">
+                <div class="example">
+                    <div class="example-title">例：利用秩的性质</div>
+                    <p>设$A$为$m \times n$矩阵，$B$为$n \times m$矩阵，$E$为$m$阶单位矩阵。若$AB = E$，求$r(A)$和$r(B)$。</p>
+                    
+                    <p><strong>解：</strong></p>
+                    <div class="math-box">
+                        <p>由已知可得：</p>
+                        <ul>
+                            <li>$r(A) \leq \min(m,n) \leq m$</li>
+                            <li>$r(B) \leq \min(m,n) \leq m$</li>
+                            <li>$m = r(E) = r(AB) \leq \min\{r(A), r(B)\}$</li>
+                        </ul>
+                        
+                        <p>即有$r(A) \geq m$及$r(B) \geq m$。</p>
+                        <p>所以$r(A) = r(B) = m$ ✓</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Exercises -->
+        <section id="exercises">
+            <h2>八、基础习题精练</h2>
+            
+            <div class="note">
+                <p><strong>说明：</strong>以下习题涵盖本讲的核心内容，建议认真完成。</p>
+            </div>
+            
+            <button class="collapsible">📝 习题 2.1-2.6（选择题）</button>
+            <div class="content">
+                <div class="example">
+                    <p><strong>2.1</strong> 设 $A = \begin{bmatrix} 3 & 4 \\ -1 & -2 \end{bmatrix}$, $B = \begin{bmatrix} 1 & 1 \\ -3 & -2 \end{bmatrix}$，则$A^2-B^2$，$(A-B)(A+B)$的结果分别是（）</p>
+                    
+                    <p>(A) $\begin{bmatrix} 7 & 5 \\ -4 & -1 \end{bmatrix}$, $\begin{bmatrix} 7 & 5 \\ -4 & -1 \end{bmatrix}$</p>
+                    
+                    <p>(B) $\begin{bmatrix} -4 & -2 \\ 8 & 10 \end{bmatrix}$, $\begin{bmatrix} -4 & -2 \\ 8 & 10 \end{bmatrix}$</p>
+                    
+                    <p>(C) $\begin{bmatrix} 7 & 5 \\ -4 & -1 \end{bmatrix}$, $\begin{bmatrix} -4 & -2 \\ 8 & 10 \end{bmatrix}$</p>
+                    
+                    <p>(D) $\begin{bmatrix} -4 & -2 \\ 8 & 10 \end{bmatrix}$, $\begin{bmatrix} 7 & 5 \\ -4 & -1 \end{bmatrix}$</p>
+                    
+                    <button class="btn" onclick="toggleAnswer('ans21')">显示答案</button>
+                    <div id="ans21" style="display:none; margin-top:1rem; padding:1rem; background:#a6d6c9; border-radius:5px;">
+                        <strong>答案：(C)</strong><br>
+                        提示：矩阵乘法不满足交换律，$(A-B)(A+B) = A^2+AB-BA-B^2 \neq A^2-B^2$
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <p><strong>2.3</strong> 设$n$阶方阵$A, B, C$满足关系式$ABC=E$，其中$E$是$n$阶单位阵，则必有（）</p>
+                    
+                    <p>(A) $ACB=E$ &nbsp; (B) $CBA=E$ &nbsp; (C) $BAC=E$ &nbsp; (D) $BCA=E$</p>
+                    
+                    <button class="btn" onclick="toggleAnswer('ans23')">显示答案</button>
+                    <div id="ans23" style="display:none; margin-top:1rem; padding:1rem; background:#a6d6c9; border-radius:5px;">
+                        <strong>答案：(D)</strong><br>
+                        提示：$ABC=E \Rightarrow A(BC)=E \Rightarrow (BC)A=E \Rightarrow BCA=E$
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">✍️ 习题 2.7-2.12（计算题）</button>
+            <div class="content">
+                <div class="example">
+                    <p><strong>2.7</strong> 设 $A = \begin{bmatrix} 1 & 2 & -1 \\ -2 & -4 & 2 \\ 3 & 6 & -3 \end{bmatrix}$，则$A^n =$____</p>
+                    
+                    <button class="btn" onclick="toggleAnswer('ans27')">显示答案</button>
+                    <div id="ans27" style="display:none; margin-top:1rem; padding:1rem; background:#a6d6c9; border-radius:5px;">
+                        <strong>答案：</strong>$(-6)^{n-1}\begin{bmatrix} 1 & 2 & -1 \\ -2 & -4 & 2 \\ 3 & 6 & -3 \end{bmatrix}$<br><br>
+                        <strong>提示：</strong>观察到$A$是秩为1的矩阵，可以写成$A = \alpha\beta^T$的形式，其中$\alpha = \begin{bmatrix} 1 \\ -2 \\ 3 \end{bmatrix}$, $\beta^T = [1, 2, -1]$。<br>
+                        则$A^n = (\beta^T\alpha)^{n-1}A = (-6)^{n-1}A$
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <p><strong>2.9</strong> 设矩阵$A$满足$A^2+A-4E=O$，其中$E$为单位矩阵，则$(A-E)^{-1}=$____</p>
+                    
+                    <button class="btn" onclick="toggleAnswer('ans29')">显示答案</button>
+                    <div id="ans29" style="display:none; margin-top:1rem; padding:1rem; background:#a6d6c9; border-radius:5px;">
+                        <strong>答案：</strong>$\frac{1}{2}(A+2E)$<br><br>
+                        <strong>解析：</strong>由$A^2+A-4E=O$，得$A^2+A-2E=2E$，即$(A-E)(A+2E)=2E$。<br>
+                        因此$(A-E)^{-1} = \frac{1}{2}(A+2E)$ ✓
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">🧮 习题 2.13-2.15（证明题）</button>
+            <div class="content">
+                <div class="example">
+                    <p><strong>2.13</strong> 设$A = E - 2\xi\xi^T$，其中$\xi = [x_1, x_2, \ldots, x_n]^T$，且$\xi^T\xi = 1$。证明：</p>
+                    <p>(1) $A$是对称矩阵；</p>
+                    <p>(2) $A^2 = E$。</p>
+                    
+                    <button class="btn" onclick="toggleAnswer('ans213')">显示提示</button>
+                    <div id="ans213" style="display:none; margin-top:1rem; padding:1rem; background:#f7d117; border-radius:5px;">
+                        <strong>提示：</strong><br>
+                        (1) 利用转置的性质：$A^T = (E - 2\xi\xi^T)^T = E^T - 2(\xi\xi^T)^T = E - 2\xi\xi^T = A$<br><br>
+                        (2) 计算$A^2$：$A^2 = (E - 2\xi\xi^T)(E - 2\xi\xi^T) = E - 4\xi\xi^T + 4\xi(\xi^T\xi)\xi^T$<br>
+                        由于$\xi^T\xi = 1$，所以$A^2 = E - 4\xi\xi^T + 4\xi\xi^T = E$ ✓
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Interactive Quiz Section -->
+        <section style="background: linear-gradient(135deg, #f7d117 0%, #f27d00 100%); color: #ffffff;">
+            <h2 style="color: #ffffff; border-bottom-color: #ffffff;">🎯 交互式测验</h2>
+            
+            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+                <p><strong>问题：矩阵乘法是否满足交换律？</strong></p>
+                <button class="btn" onclick="checkQuiz1('yes')" style="background: #ffffff; color: #f27d00;">是</button>
+                <button class="btn" onclick="checkQuiz1('no')" style="background: #ffffff; color: #f27d00;">否</button>
+                <p id="quiz1-result" style="margin-top: 1rem; font-weight: bold;"></p>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+                <p><strong>问题：若$AB = O$，能否推出$A = O$或$B = O$？</strong></p>
+                <button class="btn" onclick="checkQuiz2('yes')" style="background: #ffffff; color: #f27d00;">能</button>
+                <button class="btn" onclick="checkQuiz2('no')" style="background: #ffffff; color: #f27d00;">不能</button>
+                <p id="quiz2-result" style="margin-top: 1rem; font-weight: bold;"></p>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <p>© 2024 考研数学基础教程 | 用心制作，助力考研</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">本页面使用MathJax渲染数学公式，响应式设计适配各种设备</p>
+    </footer>
+    
+    <div class="back-to-top" onclick="scrollToTop()">
+        ↑
+    </div>
+    
+    <script>
+        // Collapsible sections
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    content.classList.remove("active");
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    content.classList.add("active");
+                }
+            });
+        }
+        
+        // Toggle answer visibility
+        function toggleAnswer(id) {
+            var element = document.getElementById(id);
+            if (element.style.display === "none") {
+                element.style.display = "block";
+            } else {
+                element.style.display = "none";
+            }
+        }
+        
+        // Quiz functions
+        function checkQuiz1(answer) {
+            var result = document.getElementById("quiz1-result");
+            if (answer === 'no') {
+                result.textContent = "✅ 正确！矩阵乘法一般不满足交换律，即 AB ≠ BA";
+                result.style.color = "#a6d6c9";
+            } else {
+                result.textContent = "❌ 错误！矩阵乘法一般不满足交换律";
+                result.style.color = "#ffffff";
+            }
+        }
+        
+        function checkQuiz2(answer) {
+            var result = document.getElementById("quiz2-result");
+            if (answer === 'no') {
+                result.textContent = "✅ 正确！存在 A≠O, B≠O 但 AB=O 的情况";
+                result.style.color = "#a6d6c9";
+            } else {
+                result.textContent = "❌ 错误！不能推出 A=O 或 B=O";
+                result.style.color = "#ffffff";
+            }
+        }
+        
+        // Back to top button
+        window.onscroll = function() {
+            var backToTop = document.querySelector('.back-to-top');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTop.style.display = "flex";
+            } else {
+                backToTop.style.display = "none";
+            }
+        };
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                var target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

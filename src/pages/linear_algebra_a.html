@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线性代数高级选学内容 - 交互式教程</title>
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            }
+        });
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-orange: #f27d00;
+            --primary-teal: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --primary-white: #ffffff;
+            --primary-dark: #343434;
+            --gradient-bg: linear-gradient(135deg, #a6d6c9 0%, #f7d117 50%, #f27d00 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--primary-dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        /* Header Styles */
+        header {
+            background: var(--gradient-bg);
+            color: var(--primary-white);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        /* Navigation */
+        nav {
+            background: var(--primary-dark);
+            padding: 1rem 0;
+            position: sticky;
+            top: 120px;
+            z-index: 999;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            padding: 0 1rem;
+        }
+        
+        .nav-container a {
+            color: var(--primary-white);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            margin: 0.25rem;
+        }
+        
+        .nav-container a:hover {
+            background: var(--primary-orange);
+            transform: translateY(-2px);
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--primary-white);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 180px;
+        }
+        
+        .sidebar h3 {
+            color: var(--primary-orange);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            padding: 0.5rem;
+            display: block;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar a:hover {
+            background: var(--primary-teal);
+            padding-left: 1rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            background: var(--primary-white);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Section Styles */
+        .section {
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary-orange);
+            background: linear-gradient(to right, rgba(166, 214, 201, 0.1), transparent);
+            border-radius: 5px;
+        }
+        
+        .section h2 {
+            color: var(--primary-orange);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section h2::before {
+            content: "▶";
+            margin-right: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .section h3 {
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem 0;
+            padding-left: 1rem;
+            border-left: 3px solid var(--primary-teal);
+        }
+        
+        /* Collapsible Content */
+        .collapsible {
+            background: var(--primary-teal);
+            color: var(--primary-dark);
+            cursor: pointer;
+            padding: 1rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 5px;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .collapsible:hover {
+            background: var(--primary-orange);
+            color: var(--primary-white);
+        }
+        
+        .collapsible.active {
+            background: var(--primary-orange);
+            color: var(--primary-white);
+        }
+        
+        .collapsible::after {
+            content: "▼";
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .collapsible.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .content-box {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(166, 214, 201, 0.1);
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .content-box.active {
+            max-height: 5000px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Math Formula Styles */
+        .MathJax {
+            color: var(--primary-dark) !important;
+        }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe6cc 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border: 2px solid var(--primary-yellow);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Code Blocks */
+        .code-block {
+            background: var(--primary-dark);
+            color: var(--primary-teal);
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        /* Example Boxes */
+        .example-box {
+            background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary-orange);
+        }
+        
+        .example-box h4 {
+            color: var(--primary-orange);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Note Boxes */
+        .note-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #ffeaa7 100%);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary-yellow);
+        }
+        
+        .note-box::before {
+            content: "💡 注意：";
+            font-weight: bold;
+            color: var(--primary-orange);
+        }
+        
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: var(--primary-white);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border: 1px solid var(--primary-teal);
+        }
+        
+        th {
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: rgba(166, 214, 201, 0.1);
+        }
+        
+        /* Interactive Quiz */
+        .quiz-container {
+            background: linear-gradient(135deg, #e6f7e6 0%, #b3e6b3 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        .quiz-question {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+        
+        .quiz-option {
+            display: block;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            background: var(--primary-white);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-option:hover {
+            background: var(--primary-teal);
+            transform: translateX(5px);
+        }
+        
+        .quiz-button {
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .quiz-button:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+        
+        .quiz-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .quiz-result.correct {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .quiz-result.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+                margin-bottom: 2rem;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+            }
+            
+            .section h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            color: var(--primary-white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .scroll-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-5px);
+        }
+        
+        .scroll-top.visible {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📐 线性代数高级选学内容</h1>
+        <p>为目标分数较高、学有余力或对代数内容有浓厚兴趣的考生设立</p>
+    </header>
+    
+    <nav>
+        <div class="nav-container">
+            <a href="#section1">行列式计算</a>
+            <a href="#section2">矩阵乘法</a>
+            <a href="#section3">初等变换</a>
+            <a href="#section4">方程组理论</a>
+            <a href="#section5">实对称矩阵</a>
+            <a href="#section6">二次型</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <aside class="sidebar">
+            <h3>📚 快速导航</h3>
+            <ul>
+                <li><a href="#section1">1. 行列式综合计算</a></li>
+                <li><a href="#section2">2. 矩阵乘法形状</a></li>
+                <li><a href="#section3">3. 初等变换应用</a></li>
+                <li><a href="#section4">4. AB=C综合结论</a></li>
+                <li><a href="#section5">5. 方程组理论</a></li>
+                <li><a href="#section6">6. 同解与公共解</a></li>
+                <li><a href="#section7">7. 实对称矩阵</a></li>
+                <li><a href="#section8">8. 二次型最值</a></li>
+                <li><a href="#section9">9. 矩阵合同</a></li>
+            </ul>
+        </aside>
+        
+        <main class="main-content">
+            <!-- Section 1: 行列式的综合计算 -->
+            <section id="section1" class="section">
+                <h2>一、行列式的综合计算</h2>
+                <p>计算行列式，有<strong>三大法宝</strong>：</p>
+                <ul>
+                    <li>① 观察特点</li>
+                    <li>② 初等变换</li>
+                    <li>③ 用好公式</li>
+                </ul>
+                
+                <button class="collapsible">🔹 分块矩阵的初等变换法（舒尔公式）</button>
+                <div class="content-box">
+                    <div class="formula-box">
+                        <p><strong>基本交换规则：</strong></p>
+                        <p>① 将分块矩阵的第1,2行互换：</p>
+                        $$\begin{vmatrix} O & E_r \\ E_s & O \end{vmatrix} \begin{vmatrix} A & B \\ C & D \end{vmatrix} = \begin{vmatrix} C & D \\ A & B \end{vmatrix}$$
+                        
+                        <p>② 将分块矩阵的第1,2列互换：</p>
+                        $$\begin{vmatrix} A & B \\ C & D \end{vmatrix} \begin{vmatrix} O & E_r \\ E_n-r & O \end{vmatrix} = \begin{vmatrix} B & A \\ D & C \end{vmatrix}$$
+                    </div>
+                    
+                    <div class="note-box">
+                        当$A$可逆时，舒尔公式可以把一般分块矩阵化成上三角形或下三角形分块矩阵，常用来观察分块矩阵的秩。
+                    </div>
+                    
+                    <div class="example-box">
+                        <h4>📝 关键公式：</h4>
+                        <p>当$A$可逆时，通过初等行变换：</p>
+                        $$\begin{vmatrix} E_r & 0 \\ -CA^{-1} & E_s \end{vmatrix} \begin{vmatrix} A & B \\ C & D \end{vmatrix} = \begin{vmatrix} A & B \\ O & D-CA^{-1}B \end{vmatrix}$$
+                        <p>因此：$$\begin{vmatrix} A & B \\ C & D \end{vmatrix} = |A| \cdot |D-CA^{-1}B|$$</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">🔹 $A+\alpha\beta^T$型行列式</button>
+                <div class="content-box">
+                    <div class="formula-box">
+                        <p><strong>核心定理：</strong></p>
+                        <p>设$A$可逆，$\alpha, \beta$是$n$维列向量，则：</p>
+                        $$|A+\alpha\beta^T| = |A| \cdot (1+\beta^T A^{-1}\alpha)$$
+                        
+                        <p><strong>特别地：</strong></p>
+                        $$|A+\alpha\alpha^T| = |A| \cdot (1+\alpha^T A^{-1}\alpha)$$
+                    </div>
+                    
+                    <div class="example-box">
+                        <h4>📝 例题1：计算行列式</h4>
+                        $$\begin{vmatrix} 
+                        2 & 1 & 1 & 1 & 1 \\
+                        1 & \frac{3}{2} & 1 & 1 & 1 \\
+                        1 & 1 & \frac{4}{3} & 1 & 1 \\
+                        1 & 1 & 1 & \frac{5}{4} & 1 \\
+                        1 & 1 & 1 & 1 & \frac{6}{5}
+                        \end{vmatrix}$$
+                        
+                        <p><strong>解：</strong>将其改写为 $A + \alpha\alpha^T$ 形式：</p>
+                        $$A = \begin{bmatrix} 1 & & & & \\ & \frac{1}{2} & & & \\ & & \frac{1}{3} & & \\ & & & \frac{1}{4} & \\ & & & & \frac{1}{5} \end{bmatrix}, \quad \alpha = \begin{bmatrix} 1 \\ 1 \\ 1 \\ 1 \\ 1 \end{bmatrix}$$
+                        
+                        <p>应用公式：</p>
+                        $$|B| = |A+\alpha\alpha^T| = |A| \cdot (1+\alpha^T A^{-1}\alpha) = \frac{1}{5!}(1+1+2+3+4+5) = \frac{16}{120} = \frac{2}{15}$$
+                    </div>
+                </div>
+                
+                <button class="collapsible">🔹 3类加边行列式</button>
+                <div class="content-box">
+                    <div class="formula-box">
+                        <p><strong>类型3：加边行列式</strong></p>
+                        <p>设$A$可逆，$\alpha, \beta$是$n$维列向量，则：</p>
+                        $$\begin{vmatrix} A & \alpha \\ \beta^T & b \end{vmatrix} = |A|(b-\beta^T A^{-1}\alpha)$$
+                        
+                        <p><strong>特别地：</strong></p>
+                        $$\begin{vmatrix} A & \alpha \\ \beta^T & 0 \end{vmatrix} = -\beta^T A^*\alpha = -\sum_{i=1}^{n}\sum_{j=1}^{n} A_{ij}x_i y_j$$
+                    </div>
+                </div>
+                
+                <div class="quiz-container">
+                    <div class="quiz-question">🎯 快速测验：以下哪个公式是正确的？</div>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="a"> A. $|A+\alpha\beta^T| = |A| + |\alpha||\beta|$
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="b"> B. $|A+\alpha\beta^T| = |A|(1+\beta^T A^{-1}\alpha)$
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="c"> C. $|A+\alpha\beta^T| = |A| + \alpha^T\beta$
+                    </label>
+                    <button class="quiz-button" onclick="checkQuiz('q1', 'b')">提交答案</button>
+                    <div id="q1-result" class="quiz-result"></div>
+                </div>
+            </section>
+            
+            <!-- Section 2: 矩阵乘法的各种形状 -->
+            <section id="section2" class="section">
+                <h2>二、矩阵乘法的各种形状</h2>
+                
+                <button class="collapsible">🔹 内积、列向量与行向量运算</button>
+                <div class="content-box">
+                    <div class="formula-box">
+                        <p><strong>（1）内积运算：</strong></p>
+                        <p>$(\alpha, \beta) = \alpha^T\beta = |\alpha||\beta|\cos\theta$（大小 + 角度）</p>
+                        
+                        <p><strong>（2）列1矩阵：行向求和</strong></p>
+                        $$\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}^T \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = x_1 + x_2 + x_3$$
+                        
+                        <p><strong>（3）行1矩阵：列向求和</strong></p>
+                        $$\begin{bmatrix} 1 & 1 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = x_1 + x_2 + x_3$$
+                        
+                        <p><strong>（4）列1矩阵：行向量复制</strong></p>
+                        $$\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} \begin{bmatrix} 1 & 2 & 3 \end{bmatrix} = \begin{bmatrix} 1 & 2 & 3 \\ 1 & 2 & 3 \\ 1 & 2 & 3 \end{bmatrix}$$
+                        
+                        <p><strong>（5）行1矩阵：列向量复制</strong></p>
+                        $$\begin{bmatrix} \alpha \end{bmatrix} \begin{bmatrix} 1 & 1 & 1 \end{bmatrix} = \begin{bmatrix} \alpha & \alpha & \alpha \end{bmatrix}$$
+                    </div>
+                    
+                    <div class="note-box">
+                        <strong>秩1矩阵：</strong>若$A = \alpha\beta^T$，则$A^n = [\text{tr}(A)]^{n-1}A$
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 3: 初等变换使用的各种场合 -->
+            <section id="section3" class="section">
+                <h2>三、初等变换使用的各种场合</h2>
+                
+                <button class="collapsible">🔹 初等变换的9大应用场景</button>
+                <div class="content-box">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>应用场景</th>
+                                <th>操作方法</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>联系行列式前后的关系</td>
+                                <td>$E_{ij}A=B \Rightarrow -|A|=|B|$</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>求逆矩阵</td>
+                                <td>$[A:E] \xrightarrow{行} [E:A^{-1}]$</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>求矩阵的秩</td>
+                                <td>可行可列，只要有一个$k$阶子式不为0即可</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>解线性方程组</td>
+                                <td>$[A:\beta] \xrightarrow{行} [PA:P\beta]$</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>解矩阵方程</td>
+                                <td>$AX=B \Rightarrow [A:B] \xrightarrow{行} [E:A^{-1}B]$</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>求极大线性无关组</td>
+                                <td>化为行阶梯形，按列找</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>求等价标准形及分解</td>
+                                <td>$PAQ = \begin{bmatrix} E_r & O \\ O & O \end{bmatrix}$</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>矩阵的满秩分解</td>
+                                <td>$A = P \begin{bmatrix} E_r \\ O \end{bmatrix} Q^{-1}$</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>求基和维数</td>
+                                <td>与(6)方法一致</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="note-box">
+                        <strong>重要提醒：</strong>初等变换可行、列混用的场合仅限于：计算行列式、求矩阵的秩、求向量组的秩、求矩阵的等价标准形、成对初等变换。其他情况一般按"列拼"作行变换，按"行拼"作列变换。
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 4: 关于AB=C的综合结论 -->
+            <section id="section4" class="section">
+                <h2>四、关于$AB=C$的综合结论</h2>
+                
+                <button class="collapsible">🔹 行列向量的线性组合关系</button>
+                <div class="content-box">
+                    <div class="formula-box">
+                        <p><strong>核心结论：</strong></p>
+                        <p>设矩阵$A_{m\times n}, B_{n\times s}$，若$AB=C$，则：</p>
+                        
+                        <p><strong>① $C$的列向量可由$A$的列向量组表示</strong></p>
+                        $$C = AB = A[b_1, b_2, \ldots, b_s] = [Ab_1, Ab_2, \ldots, Ab_s]$$
+                        
+                        <p><strong>② $C$的行向量可由$B$的行向量组表示</strong></p>
+                        
+                        <p><strong>推广应用：</strong></p>
+                        <ul>
+                            <li>横拼左同多化零：$[AB \; A] \rightarrow [O \; A]$</li>
+                            <li>竖拼右同多化零：$\begin{bmatrix} BA \\ B \end{bmatrix} \rightarrow \begin{bmatrix} O \\ B \end{bmatrix}$</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="example-box">
+                        <h4>📝 重要等价关系：</h4>
+                        <p>$r(AB) = r(B) \Leftrightarrow ABx=0$与$Bx=0$同解</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 5: 再谈线性方程组理论 -->
+            <section id="section5" class="section">
+                <h2>五、再谈线性方程组理论</h2>
+                
+                <button class="collapsible">🔹 齐次线性方程组$Ax=0$的解与系数的关系</button>
+                <div class="content-box">
+                    <div class="formula-box">
+                        <p><strong>核心性质：</strong></p>
+                        <p>若$\beta = [b_1, b_2, \ldots, b_n]^T$是齐次线性方程组的解，即：</p>
+                        $$a_{i1}b_1 + a_{i2}b_2 + \cdots + a_{in}b_n = 0 \quad (i=1,2,\ldots,m)$$
+                        
+                        <p>记系数矩阵$A$的行向量为$\alpha_i = [a_{i1}, a_{i2}, \ldots, a_{in}]$，则：</p>
+                        $$\alpha_i \beta = 0 \quad (i=1,2,\ldots,m)$$
+                        
+                        <p><strong>结论：</strong>系数矩阵$A$的行向量与$Ax=0$的解向量<span style="color: #f27d00; font-weight: bold;">正交</span></p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">🔹 非齐次线性方程组</button>
+                <div class="content-box">
+                    <div class="formula-box">
+                        <p><strong>重要结论：</strong></p>
+                        <p>设$\eta_1, \eta_2, \ldots, \eta_s$是非齐次方程组$Ax=\beta$（$\beta \neq 0$）的解，则：</p>
+                        
+                        <p><strong>a.</strong> 当$k_1\eta_1 + k_2\eta_2 + \cdots + k_s\eta_s = 0$时，$\sum_{i=1}^{s} k_i = 0$</p>
+                        
+                        <p><strong>b.</strong> 若$k_1\eta_1 + k_2\eta_2 + \cdots + k_s\eta_s$是$Ax=\beta$的解，则$\sum_{i=1}^{s} k_i = 1$</p>
+                    </div>
+                    
+                    <div class="note-box">
+                        若$\xi_1, \xi_2, \ldots, \xi_{n-r}$是$Ax=0$的基础解系，$\eta^*$是$Ax=\beta$的特解，则$\eta^*, \eta^*+\xi_1, \ldots, \eta^*+\xi_{n-r}$是$Ax=\beta$的广义基础解系。
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 6: 线性方程组公共解与同解 -->
+            <section id="section6" class="section">
+                <h2>六、线性方程组公共解与同解的综合问题</h2>
+                
+                <button class="collapsible">🔹 同解方程组的等价条件</button>
+                <div class="content-box">
+                    <div class="formula-box">
+                        <p><strong>齐次线性方程组同解的充要条件：</strong></p>
+                        <p>方程组$A_{m\times n}x=0$与$B_{s\times n}x=0$同解的充要条件是$A$的行向量组与$B$的行向量组等价，即：</p>
+                        $$r(A) = r(B) = r\begin{pmatrix} A \\ B \end{pmatrix}$$
+                        
+                        <p><strong>非齐次线性方程组同解的充要条件：</strong></p>
+                        <p>设$(I) A_{m\times n}x=\beta$与$(II) B_{s\times n}x=\gamma$均有解，则$(I)$与$(II)$同解 $\Leftrightarrow$</p>
+                        <ol>
+                            <li>$A_{m\times n}x=0$与$B_{s\times n}x=0$同解，且</li>
+                            <li>$(I)$与$(II)$有公共解</li>
+                        </ol>
+                        
+                        <p>等价于：</p>
+                        $$r\begin{pmatrix} A \\ B \end{pmatrix} = r\begin{pmatrix} A \\ \beta \end{pmatrix} = r(A) = r(B)$$
+                        
+                        <p>等价于：$[A:\beta]$与$[B:\gamma]$的行向量组等价</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 7: A为实对称矩阵的充要条件 -->
+            <section id="section7" class="section">
+                <h2>七、$A$为实对称矩阵的充要条件</h2>
+                
+                <button class="collapsible">🔹 实对称矩阵的判定</button>
+                <div class="content-box">
+                    <div class="formula-box">
+                        <p><strong>充要条件：</strong></p>
+                        <p>$A$为$n$阶实对称矩阵 $\Leftrightarrow$ $A$有$n$个相互正交的特征向量</p>
+                        
+                        <p><strong>证明要点：</strong></p>
+                        <ul>
+                            <li><strong>充分性（常用）：</strong>实对称矩阵必有$n$个正交特征向量</li>
+                            <li><strong>必要性：</strong>若$\beta_1, \beta_2, \ldots, \beta_n$是$A$的$n$个正交特征向量，则$A$为实对称矩阵</li>
+                        </ul>
+                        
+                        <p><strong>关键步骤：</strong></p>
+                        <p>将正交特征向量单位化：$\eta_1, \eta_2, \ldots, \eta_n$</p>
+                        <p>令$Q = [\eta_1, \eta_2, \ldots, \eta_n]$，则$Q^TAQ = \Lambda$</p>
+                        <p>因此$A = Q\Lambda Q^{-1} = Q\Lambda Q^T$</p>
+                        <p>从而$A^T = (Q\Lambda Q^T)^T = Q\Lambda Q^T = A$</p>
+                    </div>
+                    
+                    <div class="note-box">
+                        <strong>为什么非实对称矩阵不能用正交矩阵相似对角化？</strong><br>
+                        因为非实对称矩阵不满足$A = Q\Lambda Q^T$的形式，无法保证$A^T = A$。
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 8: 二次型的最值问题 -->
+            <section id="section8" class="section">
+                <h2>八、二次型的最值问题</h2>
+                
+                <button class="collapsible">🔹 二次型最值的求解</button>
+                <div class="content-box">
+                    <div class="formula-box">
+                        <p><strong>设$A$的特征值按大小排序为$\lambda_1 \leq \lambda_2 \leq \cdots \leq \lambda_n$，则：</strong></p>
+                        
+                        <p><strong>① 一般情形：</strong></p>
+                        $$\lambda_1 x^Tx \leq x^TAx \leq \lambda_n x^Tx$$
+                        
+                        <p><strong>② 约束条件下：</strong></p>
+                        <p>若$x^Tx = 1$，则：</p>
+                        $$f_{\min} = \lambda_1, \quad f_{\max} = \lambda_n$$
+                        
+                        <p><strong>③ 广义形式：</strong></p>
+                        <p>若$A, B$均为对称矩阵，$B$正定，则：</p>
+                        $$\mu_1 \leq \frac{x^TAx}{x^TBx} \leq \mu_n$$
+                        其中$\mu_1 \leq \mu_2 \leq \cdots \leq \mu_n$为$(C^{-1})^TAC^{-1}$的特征值，$B = C^TC$
+                    </div>
+                    
+                    <div class="example-box">
+                        <h4>📝 例题：二次型最值</h4>
+                        <p>已知二次型$f(x_1, x_2, x_3) = 3x_1^2 + 4x_2^2 + 3x_3^2 + 2x_1x_3$</p>
+                        <p><strong>(1)</strong> 求正交变换$x=Qy$将$f$化为标准形</p>
+                        <p><strong>(2)</strong> 证明：$\min\limits_{x \neq 0} \frac{f(x)}{x^Tx} = 2$</p>
+                        
+                        <p><strong>解：</strong></p>
+                        <p>二次型对应的矩阵为：</p>
+                        $$A = \begin{bmatrix} 3 & 0 & 1 \\ 0 & 4 & 0 \\ 1 & 0 & 3 \end{bmatrix}$$
+                        
+                        <p>特征值：$|\lambda E - A| = (\lambda - 2)(\lambda - 4)^2$，得$\lambda_1 = 2, \lambda_2 = \lambda_3 = 4$</p>
+                        
+                        <p>因此，标准形为：$f = 2y_1^2 + 4y_2^2 + 4y_3^2$</p>
+                        
+                        <p>最小值：$\frac{f(x)}{x^Tx} \geq \lambda_1 = 2$</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 9: 再谈实对称矩阵的合同 -->
+            <section id="section9" class="section">
+                <h2>九、再谈实对称矩阵的合同</h2>
+                
+                <button class="collapsible">🔹 合同的判定方法</button>
+                <div class="content-box">
+                    <div class="formula-box">
+                        <p><strong>同阶实对称矩阵$A, B$合同的判定：</strong></p>
+                        
+                        <p><strong>① 定义法：</strong>$A, B$合同 $\Leftrightarrow$ 存在可逆矩阵$C$，使得$C^TAC = B$</p>
+                        
+                        <p><strong>② 惯性指数法：</strong>$A, B$合同 $\Leftrightarrow$ $p_A = p_B, q_A = q_B$（相同的正、负惯性指数）</p>
+                        
+                        <p><strong>③ 传递性：</strong>$A$合同于$C$，$C$合同于$B$，则$A$合同于$B$</p>
+                        
+                        <p><strong>④ 相似必合同：</strong>同阶实对称矩阵$A, B$相似必合同</p>
+                    </div>
+                    
+                    <div class="note-box">
+                        事实上，$A$与$B$的正、负特征值的个数分别对应相同
+                    </div>
+                </div>
+                
+                <button class="collapsible">🔹 配方法与成对初等变换法</button>
+                <div class="content-box">
+                    <div class="example-box">
+                        <h4>📝 例题：已知$A$和$\Lambda$，求可逆矩阵$C$使得$C^TAC=\Lambda$</h4>
+                        
+                        <p><strong>方法一：配方法</strong></p>
+                        <p>通过配方将二次型$f = x^TAx$化为标准形，过程中记录变换矩阵即得$C$</p>
+                        
+                        <p><strong>方法二：成对初等变换法（推荐）</strong></p>
+                        <p>对$[A:E]$同时进行行变换和对应的列变换：</p>
+                        $$[A:E] \xrightarrow{\text{成对初等变换}} [\Lambda:C^T]$$
+                        
+                        <div class="code-block">
+步骤：
+1. 对[A:E]进行初等行变换E₁
+2. 对A进行对应的初等列变换E₁
+3. 重复直到A化为Λ
+4. 此时E部分即为C^T
+                        </div>
+                    </div>
+                    
+                    <div class="note-box">
+                        成对初等变换法比配方法或正交变换法简单，但需要注意：必须是<strong>连续的行、列配对操作</strong>，不能单独进行行或列变换。
+                    </div>
+                </div>
+                
+                <div class="quiz-container">
+                    <div class="quiz-question">🎯 综合测验：以下关于矩阵合同的说法，哪个是错误的？</div>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="a"> A. 合同矩阵有相同的秩
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="b"> B. 合同矩阵有相同的特征值
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="c"> C. 合同矩阵有相同的正、负惯性指数
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="d"> D. 实对称矩阵相似必合同
+                    </label>
+                    <button class="quiz-button" onclick="checkQuiz('q2', 'b')">提交答案</button>
+                    <div id="q2-result" class="quiz-result"></div>
+                </div>
+            </section>
+            
+            <!-- 总结部分 -->
+            <section class="section" style="background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); border-left: 4px solid var(--primary-orange);">
+                <h2 style="color: var(--primary-dark);">📌 学习要点总结</h2>
+                <ul style="line-height: 2;">
+                    <li><strong>行列式计算：</strong>掌握舒尔公式、$A+\alpha\beta^T$型、加边行列式等技巧</li>
+                    <li><strong>矩阵乘法：</strong>理解不同形状的乘法意义（内积、外积、秩1矩阵等）</li>
+                    <li><strong>初等变换：</strong>9大应用场景，注意可混用和不可混用的情况</li>
+                    <li><strong>方程组理论：</strong>解与系数的关系、同解与公共解的判定</li>
+                    <li><strong>实对称矩阵：</strong>正交特征向量的充要条件</li>
+                    <li><strong>二次型最值：</strong>利用特征值求最大最小值</li>
+                    <li><strong>矩阵合同：</strong>配方法与成对初等变换法</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+    
+    <footer>
+        <p>© 2024 线性代数高级教程 | 为考研学子精心制作</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">💡 建议反复阅读，配合习题练习，祝学习顺利！</p>
+    </footer>
+    
+    <button class="scroll-top" onclick="scrollToTop()">↑</button>
+    
+    <script>
+        // Collapsible functionality
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+        
+        // Scroll to top button
+        window.addEventListener('scroll', function() {
+            const scrollButton = document.querySelector('.scroll-top');
+            if (window.pageYOffset > 300) {
+                scrollButton.classList.add('visible');
+            } else {
+                scrollButton.classList.remove('visible');
+            }
+        });
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Quiz functionality
+        function checkQuiz(questionName, correctAnswer) {
+            const selected = document.querySelector(`input[name="${questionName}"]:checked`);
+            const resultDiv = document.getElementById(`${questionName}-result`);
+            
+            if (!selected) {
+                alert('请先选择一个答案！');
+                return;
+            }
+            
+            if (selected.value === correctAnswer) {
+                resultDiv.className = 'quiz-result correct';
+                resultDiv.textContent = '✅ 正确！你掌握得很好！';
+            } else {
+                resultDiv.className = 'quiz-result incorrect';
+                resultDiv.textContent = '❌ 不正确，请重新思考。提示：回顾相关公式和定理。';
+            }
+        }
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // MathJax rendering notification
+        window.addEventListener('load', function() {
+            console.log('MathJax is loading... Please wait for formulas to render.');
+        });
+    </script>
+</body>
+</html>

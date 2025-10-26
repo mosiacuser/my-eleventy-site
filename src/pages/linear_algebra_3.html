@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第3讲 向量组 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": {
+                styles: {
+                    ".MathJax": {
+                        color: "#343434"
+                    }
+                }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: #343434;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f8f5 100%);
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: #ffffff;
+            padding: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        header h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* Navigation */
+        nav {
+            background-color: #a6d6c9;
+            padding: 1rem 0;
+            position: sticky;
+            top: 80px;
+            z-index: 999;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0 2rem;
+        }
+        
+        nav a {
+            color: #343434;
+            text-decoration: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            background-color: rgba(255,255,255,0.7);
+        }
+        
+        nav a:hover {
+            background-color: #f27d00;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* Section Styling */
+        section {
+            background: #ffffff;
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #f27d00;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        h3 {
+            color: #343434;
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem 0;
+            padding-left: 1rem;
+            border-left: 4px solid #f7d117;
+        }
+        
+        h4 {
+            color: #f27d00;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+        
+        /* Text Styling */
+        p {
+            margin: 1rem 0;
+            text-align: justify;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #f7d117 0%, #fde68a 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        
+        .important {
+            background-color: #ffe8d6;
+            border-left: 4px solid #f27d00;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+        }
+        
+        /* Formula Box */
+        .formula-box {
+            background: linear-gradient(135deg, #e8f5f1 0%, #d4edda 100%);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            border: 2px solid #a6d6c9;
+            overflow-x: auto;
+        }
+        
+        /* Example Box */
+        .example {
+            background-color: #fff8e6;
+            border: 2px solid #f7d117;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+        }
+        
+        .example-title {
+            color: #f27d00;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Theorem Box */
+        .theorem {
+            background: linear-gradient(135deg, #ffe8d6 0%, #ffd4a8 100%);
+            border: 2px solid #f27d00;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+        }
+        
+        .theorem-title {
+            color: #f27d00;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        /* Collapsible Sections */
+        .collapsible {
+            background-color: #a6d6c9;
+            color: #343434;
+            cursor: pointer;
+            padding: 1rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            margin: 1rem 0;
+            transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .collapsible:hover {
+            background-color: #8bc4b3;
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background-color: #f9f9f9;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .content-inner {
+            padding: 1.5rem;
+        }
+        
+        /* Matrix Display */
+        .matrix {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+        }
+        
+        /* Code Blocks */
+        pre {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #f5f5f5;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        
+        /* Interactive Quiz */
+        .quiz {
+            background: linear-gradient(135deg, #e6f3ff 0%, #cce5ff 100%);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 10px;
+            border: 2px solid #a6d6c9;
+        }
+        
+        .quiz-question {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #343434;
+        }
+        
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .quiz-option {
+            padding: 0.8rem;
+            background-color: #ffffff;
+            border: 2px solid #a6d6c9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-option:hover {
+            background-color: #a6d6c9;
+            transform: translateX(10px);
+        }
+        
+        .quiz-option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .quiz-option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .quiz-feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .quiz-feedback.show {
+            display: block;
+        }
+        
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: #ffffff;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background-color: #ffffff;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #a6d6c9;
+            color: #343434;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #343434;
+            color: #ffffff;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            section {
+                padding: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Scroll to Top Button */
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        #scrollTopBtn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>📐 第3讲 向量组</h1>
+    </header>
+    
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#intro">基础知识</a></li>
+            <li><a href="#orthogonal">正交矩阵</a></li>
+            <li><a href="#linear-relation">线性相关性</a></li>
+            <li><a href="#maximal">极大无关组</a></li>
+            <li><a href="#vector-space">向量空间</a></li>
+            <li><a href="#exercises">习题精练</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Introduction Section -->
+        <section id="intro">
+            <h2>📖 基础内容精讲</h2>
+            
+            <div class="important">
+                <h3>线性代数中的一号人物——向量</h3>
+                <p>向量是线性代数的核心概念。在矩阵中，若干个行（列）都是向量，它们之间存在着某种联系——<span class="highlight">线性无关的向量个数（独立信息的个数）</span>的问题。</p>
+            </div>
+            
+            <h3>1. 向量的定义</h3>
+            <div class="formula-box">
+                <p><strong>n维向量：</strong>$n$个数构成的一个有序数组$[a_1, a_2, \ldots, a_n]$称为一个$n$维向量，记成：</p>
+                <p>$$\alpha = [a_1, a_2, \ldots, a_n]$$</p>
+                <p>并称$\alpha$为$n$维<span class="highlight">行向量</span>。</p>
+                <p>$$\alpha^T = \begin{bmatrix} a_1 \\ a_2 \\ \vdots \\ a_n \end{bmatrix}$$</p>
+                <p>称为$n$维<span class="highlight">列向量</span>，其中$a_i$称为向量$\alpha$（或$\alpha^T$）的第$i$个分量。</p>
+            </div>
+            
+            <h3>2. 向量的基本运算</h3>
+            <div class="formula-box">
+                <h4>相等</h4>
+                <p>若$\alpha = [a_1, a_2, \ldots, a_n]$，$\beta = [b_1, b_2, \ldots, b_n]$都是$n$维向量，则当且仅当$a_i = b_i$ ($i=1,2,\ldots,n$)时，$\alpha = \beta$。</p>
+                
+                <h4>加法</h4>
+                <p>$$\alpha + \beta = [a_1+b_1, a_2+b_2, \ldots, a_n+b_n]$$</p>
+                
+                <h4>数乘</h4>
+                <p>$$k\alpha = [ka_1, ka_2, \ldots, ka_n]$$</p>
+            </div>
+        </section>
+        
+        <!-- Orthogonal Matrix Section -->
+        <section id="orthogonal">
+            <h2>🔄 向量的内积与正交矩阵</h2>
+            
+            <button class="collapsible">向量内积的定义</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="formula-box">
+                        <p>设$\alpha = [a_1, a_2, \ldots, a_n]^T$，$\beta = [b_1, b_2, \ldots, b_n]^T$，则称：</p>
+                        <p>$$(\alpha, \beta) = \alpha^T\beta = \sum_{i=1}^{n} a_ib_i = a_1b_1 + a_2b_2 + \cdots + a_nb_n$$</p>
+                        <p>为向量$\alpha$，$\beta$的<span class="highlight">内积（或点积）</span>。</p>
+                    </div>
+                    
+                    <p><strong>重要性质：</strong></p>
+                    <p>$$\cos\theta = \frac{(\alpha, \beta)}{\|\alpha\| \|\beta\|}$$</p>
+                    <p>其中$\|\alpha\| = \sqrt{a_1^2 + a_2^2 + \cdots + a_n^2}$是向量的模（长度）。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">正交与正交矩阵</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定义：正交向量</div>
+                        <p>当$\alpha^T\beta = 0$时，称向量$\alpha$，$\beta$是<span class="highlight">正交向量</span>。</p>
+                        <p>在2维和3维空间中，正交意味着垂直；在更高维空间中，我们使用"正交"这个术语。</p>
+                    </div>
+                    
+                    <div class="theorem">
+                        <div class="theorem-title">定义：正交矩阵</div>
+                        <p>设$A$是$n$阶方阵，满足$A^TA = E$，则称$A$是<span class="highlight">正交矩阵</span>。</p>
+                        <p><strong>等价条件：</strong></p>
+                        <p>$$A\text{是正交矩阵} \Leftrightarrow A^TA = E \Leftrightarrow A^T = A^{-1} \Leftrightarrow A\text{的行（列）向量组是规范正交基}$$</p>
+                    </div>
+                    
+                    <div class="important">
+                        <p><strong>规范正交基：</strong>若列向量组$\alpha_1, \alpha_2, \ldots, \alpha_n$满足：</p>
+                        <p>$$\alpha_i^T\alpha_j = \begin{cases} 0, & i \neq j \\ 1, & i = j \end{cases}$$</p>
+                        <p>则称$\alpha_1, \alpha_2, \ldots, \alpha_n$为<span class="highlight">标准或单位正交向量组</span>（也叫规范正交基）。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">正交矩阵的几何意义</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="example">
+                        <div class="example-title">示例：旋转矩阵</div>
+                        <p>正交矩阵的作用是将数据进行旋转。考虑2阶正交矩阵：</p>
+                        <p>$$\begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}$$</p>
+                        <p>如果将此矩阵作用在向量上，则可以理解为将向量旋转$\theta$角。</p>
+                        <p><strong>关键性质：</strong>在正交矩阵作用下，向量的模长不变，形状不变，仅改变位置。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Linear Relation Section -->
+        <section id="linear-relation">
+            <h2>🔗 向量组的线性相关性</h2>
+            
+            <h3>核心概念</h3>
+            
+            <button class="collapsible">线性组合与线性表示</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="formula-box">
+                        <h4>线性组合</h4>
+                        <p>设有$m$个$n$维向量$\alpha_1, \alpha_2, \ldots, \alpha_m$及$m$个数$k_1, k_2, \ldots, k_m$，则向量：</p>
+                        <p>$$k_1\alpha_1 + k_2\alpha_2 + \cdots + k_m\alpha_m$$</p>
+                        <p>称为向量组$\alpha_1, \alpha_2, \ldots, \alpha_m$的<span class="highlight">线性组合</span>。</p>
+                    </div>
+                    
+                    <div class="formula-box">
+                        <h4>线性表示</h4>
+                        <p>若向量$\beta$能表示成向量组$\alpha_1, \alpha_2, \ldots, \alpha_m$的线性组合，即存在$m$个数$k_1, k_2, \ldots, k_m$，使得：</p>
+                        <p>$$\beta = k_1\alpha_1 + k_2\alpha_2 + \cdots + k_m\alpha_m$$</p>
+                        <p>则称向量$\beta$能被向量组$\alpha_1, \alpha_2, \ldots, \alpha_m$<span class="highlight">线性表示</span>。</p>
+                        <p><strong>几何意义：</strong>$\beta$就在由$\alpha_1, \alpha_2, \ldots, \alpha_m$张成的空间中。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">线性相关与线性无关</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定义：线性相关</div>
+                        <p>对于$m$个$n$维向量$\alpha_1, \alpha_2, \ldots, \alpha_m$，若存在一组<span class="highlight">不全为零</span>的数$k_1, k_2, \ldots, k_m$，使得：</p>
+                        <p>$$k_1\alpha_1 + k_2\alpha_2 + \cdots + k_m\alpha_m = \mathbf{0}$$</p>
+                        <p>则称向量组$\alpha_1, \alpha_2, \ldots, \alpha_m$<span class="highlight">线性相关</span>。</p>
+                        <p><strong>几何意义：</strong>至少有一个向量可由其他向量线性表示（存在"多余"的向量）。</p>
+                    </div>
+                    
+                    <div class="theorem">
+                        <div class="theorem-title">定义：线性无关</div>
+                        <p>若不存在不全为零的数$k_1, k_2, \ldots, k_m$，使得$k_1\alpha_1 + k_2\alpha_2 + \cdots + k_m\alpha_m = \mathbf{0}$成立，则称向量组$\alpha_1, \alpha_2, \ldots, \alpha_m$<span class="highlight">线性无关</span>。</p>
+                        <p><strong>等价表述：</strong>只有当$k_1 = k_2 = \cdots = k_m = 0$时，才有$k_1\alpha_1 + k_2\alpha_2 + \cdots + k_m\alpha_m = \mathbf{0}$成立。</p>
+                        <p><strong>几何意义：</strong>向量组中没有"多余"的向量，每个向量都对它们张成的空间有贡献。</p>
+                    </div>
+                    
+                    <div class="important">
+                        <p><strong>重要提示：</strong></p>
+                        <ul>
+                            <li>含有零向量或有成比例的向量的向量组必线性相关</li>
+                            <li>单个非零向量、两个不成比例的向量均线性无关</li>
+                            <li>向量组或线性相关或线性无关，二者必居其一且仅居其一</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>判别线性相关性的七大定理</h3>
+            
+            <button class="collapsible">定理1：部分相关，整体必相关</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定理1</div>
+                        <p>向量组$\alpha_1, \alpha_2, \ldots, \alpha_s$ ($s \geq 2$)线性相关的充要条件是向量组中至少有一个向量可由其余的$s-1$个向量线性表示。</p>
+                        <p><strong>逆否命题：</strong>向量组$\alpha_1, \alpha_2, \ldots, \alpha_s$ ($s \geq 2$)线性无关的充要条件是$\alpha_1, \alpha_2, \ldots, \alpha_s$中任一向量都不能由其余的$s-1$个向量线性表示。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">定理2：唯一性定理</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定理2</div>
+                        <p>若向量组$\alpha_1, \alpha_2, \ldots, \alpha_s$线性无关，而$\beta, \alpha_1, \alpha_2, \ldots, \alpha_s$线性相关，则$\beta$可由$\alpha_1, \alpha_2, \ldots, \alpha_s$线性表示，且<span class="highlight">表示法唯一</span>。</p>
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">几何解释</div>
+                        <p>如果在2维平面中，有两个线性无关的向量$\alpha_1, \alpha_2$（它们张成整个平面），那么平面内任何一个向量$\beta$都可以唯一地表示为$\beta = k_1\alpha_1 + k_2\alpha_2$，其中$k_1, k_2$是唯一确定的。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">定理3：以少表多，多的相关</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定理3</div>
+                        <p>如果向量组$\beta_1, \beta_2, \ldots, \beta_t$可由向量组$\alpha_1, \alpha_2, \ldots, \alpha_s$线性表示，且$t > s$，则$\beta_1, \beta_2, \ldots, \beta_t$线性相关。</p>
+                        <p><strong>逆否命题：</strong>如果向量组$\beta_1, \beta_2, \ldots, \beta_t$可由向量组$\alpha_1, \alpha_2, \ldots, \alpha_s$线性表示，且$\beta_1, \beta_2, \ldots, \beta_t$线性无关，则$t \leq s$。</p>
+                    </div>
+                    
+                    <div class="important">
+                        <p><strong>直观理解：</strong>高维空间能表示低维空间，但低维空间不能表示高维空间。如果用较少的向量（低维）去表示较多的向量（高维），那么被表示的向量组必然存在冗余（线性相关）。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">定理4：方程组判别法</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定理4</div>
+                        <p>设$m$个$n$维向量$\alpha_1, \alpha_2, \ldots, \alpha_m$，其中：</p>
+                        <p>$$\alpha_1 = [a_{11}, a_{21}, \ldots, a_{n1}]^T, \quad \alpha_2 = [a_{12}, a_{22}, \ldots, a_{n2}]^T, \quad \ldots, \quad \alpha_m = [a_{1m}, a_{2m}, \ldots, a_{nm}]^T$$</p>
+                        <p>向量组$\alpha_1, \alpha_2, \ldots, \alpha_m$线性相关$\Leftrightarrow$齐次线性方程组：</p>
+                        <p>$$\begin{cases} a_{11}x_1 + a_{12}x_2 + \cdots + a_{1m}x_m = 0 \\ a_{21}x_1 + a_{22}x_2 + \cdots + a_{2m}x_m = 0 \\ \vdots \\ a_{n1}x_1 + a_{n2}x_2 + \cdots + a_{nm}x_m = 0 \end{cases}$$</p>
+                        <p>有<span class="highlight">非零解</span>$\Leftrightarrow r([\alpha_1, \alpha_2, \ldots, \alpha_m]) < m$。</p>
+                    </div>
+                    
+                    <div class="important">
+                        <p><strong>推论：</strong></p>
+                        <ul>
+                            <li>如果$n < m$（方程个数小于未知数个数），则齐次线性方程组必有非零解，因此，<span class="highlight">任何$n+1$个$n$维向量都是线性相关的</span>。</li>
+                            <li>$n$个$n$维列向量$\alpha_1, \alpha_2, \ldots, \alpha_n$线性相关$\Leftrightarrow |\alpha_1, \alpha_2, \ldots, \alpha_n| = 0$</li>
+                            <li>$n$个$n$维列向量$\alpha_1, \alpha_2, \ldots, \alpha_n$线性无关$\Leftrightarrow |\alpha_1, \alpha_2, \ldots, \alpha_n| \neq 0$</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">定理5：线性表示判别法</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定理5</div>
+                        <p>向量$\beta$可由向量组$\alpha_1, \alpha_2, \ldots, \alpha_s$线性表示</p>
+                        <p>$\Leftrightarrow$非齐次线性方程组$[\alpha_1, \alpha_2, \ldots, \alpha_s]\mathbf{x} = \beta$有解</p>
+                        <p>$\Leftrightarrow r([\alpha_1, \alpha_2, \ldots, \alpha_s]) = r([\alpha_1, \alpha_2, \ldots, \alpha_s, \beta])$</p>
+                        <p><strong>理解：</strong>$\beta$的加入不影响$\alpha_1, \alpha_2, \ldots, \alpha_s$的秩，说明$\beta$在由$\alpha_1, \alpha_2, \ldots, \alpha_s$张成的空间中。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">定理6：部分相关</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定理6</div>
+                        <p>如果向量组$\alpha_1, \alpha_2, \ldots, \alpha_m$中有一部分向量线性相关，则整个向量组也线性相关。</p>
+                        <p><strong>逆否命题：</strong>如果$\alpha_1, \alpha_2, \ldots, \alpha_m$线性无关，则其任一部分向量组都线性无关。</p>
+                    </div>
+                    
+                    <div class="important">
+                        <p><strong>总结：</strong>部分相关，整体必相关；整体无关，部分必无关。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">定理7：延长与缩短</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定理7</div>
+                        <p>如果一组$n$维向量$\alpha_1, \alpha_2, \ldots, \alpha_s$线性无关，那么把这些向量各任意添加$m$个分量所得到的新向量（$n+m$维）组$\alpha_1^*, \alpha_2^*, \ldots, \alpha_s^*$也是线性无关的。</p>
+                        <p><strong>逆否命题：</strong>如果$\alpha_1^*, \alpha_2^*, \ldots, \alpha_s^*$线性相关，那么它们各去掉相同的若干个分量所得到的新向量组也是线性相关的。</p>
+                    </div>
+                    
+                    <div class="important">
+                        <p><strong>总结：</strong>原来无关，延长必无关；原来相关，缩短必相关。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">综合例题：判断线性相关性</div>
+                <p><strong>题目：</strong>已知4维列向量组$\alpha_1, \alpha_2, \alpha_3, \alpha_4$线性无关，则下列向量组中线性无关的是（）</p>
+                <p>(A) $\alpha_1 - \alpha_2, \alpha_2 - \alpha_3, \alpha_3 - \alpha_4, \alpha_4 - \alpha_1$</p>
+                <p>(B) $\alpha_1 + \alpha_2, \alpha_2 + \alpha_3, \alpha_3 + \alpha_4, \alpha_4 + \alpha_1$</p>
+                <p>(C) $\alpha_1 + \alpha_2, \alpha_2 + \alpha_3, \alpha_3 - \alpha_4, \alpha_4 - \alpha_1$</p>
+                <p>(D) $\alpha_1 + \alpha_2, \alpha_2 + \alpha_3, \alpha_3 + \alpha_4, \alpha_4 - \alpha_1$</p>
+                
+                <button class="btn" onclick="showSolution('solution1')">查看解答</button>
+                <div id="solution1" style="display:none; margin-top:1rem; padding:1rem; background-color:#f0f0f0; border-radius:8px;">
+                    <p><strong>解：</strong>应选(D)。</p>
+                    <p><strong>分析方法：排除法</strong></p>
+                    <p>选项(A)：$(\alpha_1 - \alpha_2) + (\alpha_2 - \alpha_3) + (\alpha_3 - \alpha_4) + (\alpha_4 - \alpha_1) = \mathbf{0}$</p>
+                    <p>选项(B)：$(\alpha_1 + \alpha_2) - (\alpha_2 + \alpha_3) + (\alpha_3 + \alpha_4) - (\alpha_4 + \alpha_1) = \mathbf{0}$</p>
+                    <p>选项(C)：$(\alpha_1 + \alpha_2) - (\alpha_2 + \alpha_3) + (\alpha_3 - \alpha_4) + (\alpha_4 - \alpha_1) = \mathbf{0}$</p>
+                    <p>故选项(A)、(B)、(C)均是线性相关的向量组。</p>
+                    <p><strong>方法二：</strong>记$[\alpha_1 + \alpha_2, \alpha_2 + \alpha_3, \alpha_3 + \alpha_4, \alpha_4 - \alpha_1] = [\alpha_1, \alpha_2, \alpha_3, \alpha_4]C$，其中：</p>
+                    <p>$$C = \begin{bmatrix} 1 & 0 & 0 & -1 \\ 1 & 1 & 0 & 0 \\ 0 & 1 & 1 & 0 \\ 0 & 0 & 1 & 1 \end{bmatrix}$$</p>
+                    <p>计算行列式$|C| = 2 \neq 0$，因此向量组$\alpha_1 + \alpha_2, \alpha_2 + \alpha_3, \alpha_3 + \alpha_4, \alpha_4 - \alpha_1$线性无关。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Maximal Linearly Independent Group Section -->
+        <section id="maximal">
+            <h2>🎯 极大线性无关组与向量组的秩</h2>
+            
+            <button class="collapsible">极大线性无关组的定义</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定义：极大线性无关组</div>
+                        <p>在向量组$\alpha_1, \alpha_2, \ldots, \alpha_s$中，若存在部分组$\alpha_{i_1}, \alpha_{i_2}, \ldots, \alpha_{i_r}$满足：</p>
+                        <ol>
+                            <li>$\alpha_{i_1}, \alpha_{i_2}, \ldots, \alpha_{i_r}$线性无关；</li>
+                            <li>向量组中任一向量$\alpha_i$ ($i=1,2,\ldots,s$)均可由$\alpha_{i_1}, \alpha_{i_2}, \ldots, \alpha_{i_r}$线性表示。</li>
+                        </ol>
+                        <p>则称向量组$\alpha_{i_1}, \alpha_{i_2}, \ldots, \alpha_{i_r}$是原向量组的<span class="highlight">极大线性无关组</span>。</p>
+                    </div>
+                    
+                    <div class="important">
+                        <p><strong>重要性质：</strong></p>
+                        <ul>
+                            <li>极大线性无关组是向量组的"代表"，它可以张成原向量组所张成的空间</li>
+                            <li>向量组的极大线性无关组一般<span class="highlight">不唯一</span></li>
+                            <li>只由一个零向量组成的向量组不存在极大线性无关组</li>
+                            <li>一个线性无关向量组的极大线性无关组就是该向量组本身</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">向量组的秩</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定义：向量组的秩</div>
+                        <p>向量组$\alpha_1, \alpha_2, \ldots, \alpha_s$的极大线性无关组$\alpha_{i_1}, \alpha_{i_2}, \ldots, \alpha_{i_r}$中所含向量的个数$r$称为向量组的<span class="highlight">秩</span>，记作：</p>
+                        <p>$$r(\alpha_1, \alpha_2, \ldots, \alpha_s) = r$$</p>
+                        <p><strong>理解：</strong>向量组的秩就是独立信息的个数，也是极大线性无关组张成的空间的维数。</p>
+                    </div>
+                    
+                    <div class="formula-box">
+                        <h4>三秩相等</h4>
+                        <p>对于矩阵$A$，有：</p>
+                        <p>$$r(A)\text{（矩阵的秩）} = A\text{的行秩} = A\text{的列秩}$$</p>
+                        <p>其中，行秩是$A$的行向量组的秩，列秩是$A$的列向量组的秩。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">求极大线性无关组的方法</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="important">
+                        <p><strong>求解步骤：</strong></p>
+                        <ol>
+                            <li>将列向量们组成矩阵$A$，作初等行变换，化为行阶梯形矩阵，并确定$r(A)$；</li>
+                            <li>按列找出一个秩为$r(A)$的子矩阵，即为一个极大线性无关组。</li>
+                        </ol>
+                        <p><strong>注意：</strong>求极大线性无关组时，只能都作初等行变换（或都作初等列变换），不能既作初等行变换又作初等列变换。</p>
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">例题：求极大线性无关组</div>
+                        <p><strong>题目：</strong>求向量组$\alpha_1 = [1, 2, -5]^T$，$\alpha_2 = [2, -1, 2]^T$，$\alpha_3 = [4, 3, -8]^T$，$\alpha_4 = [7, -1, 1]^T$的秩、极大线性无关组，并将其余向量由极大线性无关组线性表示。</p>
+                        
+                        <button class="btn" onclick="showSolution('solution2')">查看解答</button>
+                        <div id="solution2" style="display:none; margin-top:1rem; padding:1rem; background-color:#f0f0f0; border-radius:8px;">
+                            <p><strong>解：</strong></p>
+                            <p>将向量组合并成矩阵$A$，并作初等行变换：</p>
+                            <p>$$A = [\alpha_1, \alpha_2, \alpha_3, \alpha_4] = \begin{bmatrix} 1 & 2 & 4 & 7 \\ 2 & -1 & 3 & -1 \\ -5 & 2 & -8 & 1 \end{bmatrix}$$</p>
+                            <p>$$\rightarrow \begin{bmatrix} 1 & 2 & 4 & 7 \\ 0 & -5 & -5 & -15 \\ 0 & 12 & 12 & 36 \end{bmatrix} \rightarrow \begin{bmatrix} 1 & 2 & 4 & 7 \\ 0 & 1 & 1 & 3 \\ 0 & 0 & 0 & 0 \end{bmatrix}$$</p>
+                            <p>由此可知$r(\alpha_1, \alpha_2, \alpha_3, \alpha_4) = 2$。</p>
+                            <p>极大线性无关组为$\alpha_1, \alpha_2$（不唯一），且：</p>
+                            <p>$$\alpha_3 = 2\alpha_1 + \alpha_2, \quad \alpha_4 = 3\alpha_1 + \alpha_2$$</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>等价向量组</h3>
+            
+            <div class="theorem">
+                <div class="theorem-title">定义：等价向量组</div>
+                <p>设两个向量组：(I) $\alpha_1, \alpha_2, \ldots, \alpha_s$，(II) $\beta_1, \beta_2, \ldots, \beta_t$。若(I)中每个向量$\alpha_i$ ($i=1,2,\ldots,s$)均可由(II)线性表示，则称向量组(I)可由向量组(II)线性表示；若向量组(I)、(II)可以相互线性表示，则称向量组(I)与向量组(II)是<span class="highlight">等价向量组</span>，记作(I) $\cong$ (II)。</p>
+            </div>
+            
+            <div class="formula-box">
+                <h4>等价向量组的判别</h4>
+                <p>向量组(I) $\alpha_1, \alpha_2, \ldots, \alpha_s$与向量组(II) $\beta_1, \beta_2, \ldots, \beta_t$等价</p>
+                <p>$\Leftrightarrow$ (I)、(II)可以相互表示</p>
+                <p>$\Leftrightarrow r(\alpha_1, \alpha_2, \ldots, \alpha_s) = r(\beta_1, \beta_2, \ldots, \beta_t) = r(\alpha_1, \alpha_2, \ldots, \alpha_s, \beta_1, \beta_2, \ldots, \beta_t)$（三秩相同）</p>
+            </div>
+            
+            <div class="important">
+                <p><strong>注意区别：</strong></p>
+                <table>
+                    <tr>
+                        <th>概念</th>
+                        <th>要求</th>
+                        <th>判别法</th>
+                    </tr>
+                    <tr>
+                        <td>等价矩阵</td>
+                        <td>同型矩阵</td>
+                        <td>$A \cong B \Leftrightarrow r(A) = r(B) \Leftrightarrow PAQ = B$（$P$，$Q$可逆）</td>
+                    </tr>
+                    <tr>
+                        <td>等价向量组</td>
+                        <td>同维向量组</td>
+                        <td>(I) $\cong$ (II) $\Leftrightarrow r($I$) = r($II$) = r($I, II$)$</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Vector Space Section -->
+        <section id="vector-space">
+            <h2>🌌 向量空间（仅数学一）</h2>
+            
+            <div class="important">
+                <p><strong>说明：</strong>本节内容主要针对数学一考生。数学二、数学三的考生也可以阅读，有利于理解向量组的概念。</p>
+            </div>
+            
+            <button class="collapsible">基本概念</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定义：基与坐标</div>
+                        <p>若$\xi_1, \xi_2, \ldots, \xi_n$是$n$维向量空间$\mathbb{R}^n$中的线性无关的有序向量组，则任一向量$\alpha \in \mathbb{R}^n$均可由$\xi_1, \xi_2, \ldots, \xi_n$线性表示，记为：</p>
+                        <p>$$\alpha = a_1\xi_1 + a_2\xi_2 + \cdots + a_n\xi_n$$</p>
+                        <p>称有序向量组$\xi_1, \xi_2, \ldots, \xi_n$是$\mathbb{R}^n$的一个<span class="highlight">基</span>，基向量的个数$n$称为向量空间的<span class="highlight">维数</span>，而$[a_1, a_2, \ldots, a_n]$（或$[a_1, a_2, \ldots, a_n]^T$）称为向量$\alpha$在基$\xi_1, \xi_2, \ldots, \xi_n$下的<span class="highlight">坐标</span>。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">基变换与坐标变换</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="theorem">
+                        <div class="theorem-title">定理：基变换公式</div>
+                        <p>若$\eta_1, \eta_2, \ldots, \eta_n$和$\xi_1, \xi_2, \ldots, \xi_n$是$\mathbb{R}^n$中的两个基，且有关系：</p>
+                        <p>$$[\eta_1, \eta_2, \ldots, \eta_n] = [\xi_1, \xi_2, \ldots, \xi_n] C$$</p>
+                        <p>则上式称为由基$\xi_1, \xi_2, \ldots, \xi_n$到基$\eta_1, \eta_2, \ldots, \eta_n$的<span class="highlight">基变换公式</span>，矩阵$C$称为由基$\xi_1, \xi_2, \ldots, \xi_n$到基$\eta_1, \eta_2, \ldots, \eta_n$的<span class="highlight">过渡矩阵</span>，且过渡矩阵$C$是可逆矩阵。</p>
+                    </div>
+                    
+                    <div class="theorem">
+                        <div class="theorem-title">定理：坐标变换公式</div>
+                        <p>设$\alpha$在基$\xi_1, \xi_2, \ldots, \xi_n$下的坐标是$[x_1, x_2, \ldots, x_n]^T$，在基$\eta_1, \eta_2, \ldots, \eta_n$下的坐标是$[y_1, y_2, \ldots, y_n]^T$，且由基$\xi_1, \xi_2, \ldots, \xi_n$到基$\eta_1, \eta_2, \ldots, \eta_n$的过渡矩阵为$C$，则：</p>
+                        <p>$$\mathbf{x} = C\mathbf{y} \quad \text{或} \quad \mathbf{y} = C^{-1}\mathbf{x}$$</p>
+                        <p>此式称为<span class="highlight">坐标变换公式</span>。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">施密特正交化</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="important">
+                        <p><strong>施密特正交化过程：</strong></p>
+                        <p>设$\alpha_1, \alpha_2, \alpha_3$线性无关，构造规范正交向量组$\gamma_1, \gamma_2, \gamma_3$：</p>
+                        <ol>
+                            <li><strong>正交化：</strong>
+                                <p>$$\beta_1 = \alpha_1$$</p>
+                                <p>$$\beta_2 = \alpha_2 - \frac{(\alpha_2, \beta_1)}{(\beta_1, \beta_1)}\beta_1$$</p>
+                                <p>$$\beta_3 = \alpha_3 - \frac{(\alpha_3, \beta_1)}{(\beta_1, \beta_1)}\beta_1 - \frac{(\alpha_3, \beta_2)}{(\beta_2, \beta_2)}\beta_2$$</p>
+                            </li>
+                            <li><strong>单位化：</strong>
+                                <p>$$\gamma_1 = \frac{\beta_1}{\|\beta_1\|}, \quad \gamma_2 = \frac{\beta_2}{\|\beta_2\|}, \quad \gamma_3 = \frac{\beta_3}{\|\beta_3\|}$$</p>
+                            </li>
+                        </ol>
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">几何理解</div>
+                        <p>施密特正交化的过程可以理解为：从向量$\alpha_2$中减去它在$\alpha_1$方向上的投影，得到与$\alpha_1$正交的向量$\beta_2$；从向量$\alpha_3$中减去它在$\beta_1$和$\beta_2$方向上的投影，得到与$\beta_1$、$\beta_2$都正交的向量$\beta_3$。最后将这些正交向量单位化，得到规范正交基。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Exercises Section -->
+        <section id="exercises">
+            <h2>📝 基础习题精练</h2>
+            
+            <div class="quiz">
+                <div class="quiz-question">
+                    <strong>题目1：</strong>设$A$是4阶矩阵，且$|A| = 0$，则$A$中（）
+                </div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 'quiz1')">
+                        (A) 必有一列元素全为0
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 'quiz1')">
+                        (B) 必有两列元素对应成比例
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true, 'quiz1')">
+                        (C) 必有一列向量是其余列向量的线性组合
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 'quiz1')">
+                        (D) 任一列向量是其余列向量的线性组合
+                    </div>
+                </div>
+                <div id="quiz1" class="quiz-feedback"></div>
+            </div>
+            
+            <div class="quiz">
+                <div class="quiz-question">
+                    <strong>题目2：</strong>设$n(n \geq 3)$维向量组$\alpha_1, \alpha_2, \alpha_3$线性无关，若向量组$l\alpha_2 - \alpha_1, m\alpha_3 - 2\alpha_2, \alpha_1 - 3\alpha_3$线性相关，则$m$，$l$应满足条件（）
+                </div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, true, 'quiz2')">
+                        (A) $lm = 6$
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 'quiz2')">
+                        (B) $lm = -6$
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 'quiz2')">
+                        (C) $l + m = 6$
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 'quiz2')">
+                        (D) $l + m = -6$
+                    </div>
+                </div>
+                <div id="quiz2" class="quiz-feedback"></div>
+            </div>
+            
+            <h3>综合练习题</h3>
+            
+            <div class="example">
+                <div class="example-title">练习题3</div>
+                <p><strong>题目：</strong>已知$\alpha_1 = [1, 0, 2, 3]^T$，$\alpha_2 = [1, 1, 3, 5]^T$，$\alpha_3 = [1, 1, t+2, 1]^T$，$\alpha_4 = [1, 2, 4, a+8]^T$及$\beta_1 = [1, 1, b+3, 5]^T$。</p>
+                <p>(1) $a$，$b$为何值时，$\beta$不能表示成$\alpha_1, \alpha_2, \alpha_3, \alpha_4$的线性组合？</p>
+                <p>(2) $a$，$b$为何值时，$\beta$有$\alpha_1, \alpha_2, \alpha_3, \alpha_4$唯一的线性表示式？并写出该表示式。</p>
+                
+                <button class="btn" onclick="showSolution('solution3')">查看解答</button>
+                <div id="solution3" style="display:none; margin-top:1rem; padding:1rem; background-color:#f0f0f0; border-radius:8px;">
+                    <p><strong>解：</strong>设$\beta = x_1\alpha_1 + x_2\alpha_2 + x_3\alpha_3 + x_4\alpha_4$，即：</p>
+                    <p>$$\begin{cases} x_1 + x_2 + x_3 + x_4 = 1 \\ x_2 + x_3 + 2x_4 = 1 \\ 2x_1 + 3x_2 + (t+2)x_3 + 4x_4 = b+3 \\ 3x_1 + 5x_2 + x_3 + (a+8)x_4 = 5 \end{cases}$$</p>
+                    <p>对增广矩阵作初等行变换，化为行阶梯形矩阵，可得：</p>
+                    <p>$$\begin{bmatrix} 1 & 1 & 1 & 1 & 1 \\ 0 & 1 & 1 & 2 & 1 \\ 0 & 0 & t+1 & 0 & b \\ 0 & 0 & 0 & a+1 & 0 \end{bmatrix}$$</p>
+                    <p>(1) 当$a = -1$且$b \neq 0$时，方程组无解，此时$\beta$不能表示成$\alpha_1, \alpha_2, \alpha_3, \alpha_4$的线性组合。</p>
+                    <p>(2) 当$a \neq -1$时，方程组有唯一解，即$\beta$可由$\alpha_1, \alpha_2, \alpha_3, \alpha_4$线性表示，且表示式唯一。通过回代求解可得表示式。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Back to Top Button -->
+        <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 考研数学基础30讲·线性代数分册 | 第3讲 向量组</p>
+        <p>本网页由AI生成，仅供学习参考</p>
+    </footer>
+    
+    <script>
+        // Collapsible sections
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+        
+        // Show solution function
+        function showSolution(id) {
+            var solution = document.getElementById(id);
+            if (solution.style.display === "none") {
+                solution.style.display = "block";
+            } else {
+                solution.style.display = "none";
+            }
+        }
+        
+        // Quiz answer checking
+        function checkAnswer(element, isCorrect, feedbackId) {
+            var options = element.parentElement.children;
+            for (var i = 0; i < options.length; i++) {
+                options[i].style.pointerEvents = "none";
+            }
+            
+            var feedback = document.getElementById(feedbackId);
+            feedback.classList.add("show");
+            
+            if (isCorrect) {
+                element.classList.add("correct");
+                feedback.style.backgroundColor = "#d4edda";
+                feedback.style.color = "#155724";
+                feedback.innerHTML = "✓ 正确！";
+            } else {
+                element.classList.add("incorrect");
+                feedback.style.backgroundColor = "#f8d7da";
+                feedback.style.color = "#721c24";
+                feedback.innerHTML = "✗ 错误，请再想想。";
+            }
+        }
+        
+        // Scroll to top button
+        window.onscroll = function() {
+            var scrollTopBtn = document.getElementById("scrollTopBtn");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollTopBtn.style.display = "block";
+            } else {
+                scrollTopBtn.style.display = "none";
+            }
+        };
+        
+        function scrollToTop() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+        
+        // Smooth scroll for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第1讲：随机事件与概率 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true
+            },
+            "HTML-CSS": {
+                styles: {
+                    ".MathJax": {
+                        color: "#343434"
+                    }
+                }
+            }
+        });
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #a6d6c9 0%, #ffffff 50%, #f7d117 100%);
+            color: #343434;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            background: linear-gradient(90deg, #f27d00, #343434);
+            color: #ffffff;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .navbar h1 {
+            text-align: center;
+            font-size: 2em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        /* 容器 */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        /* 侧边导航 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 100px;
+            width: 250px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 0 15px 15px 0;
+            box-shadow: 4px 4px 15px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+            transition: transform 0.3s;
+        }
+        
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar h3 {
+            color: #f27d00;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin: 10px 0;
+        }
+        
+        .sidebar a {
+            color: #343434;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        
+        .sidebar a:hover {
+            background: #f7d117;
+            color: #343434;
+            transform: translateX(5px);
+        }
+        
+        /* 切换按钮 */
+        .toggle-btn {
+            position: fixed;
+            left: 260px;
+            top: 110px;
+            background: #f27d00;
+            color: #ffffff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 0 10px 10px 0;
+            cursor: pointer;
+            z-index: 999;
+            transition: left 0.3s;
+            font-size: 1.2em;
+        }
+        
+        .toggle-btn.hidden {
+            left: 10px;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            margin-left: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: margin-left 0.3s;
+        }
+        
+        .main-content.expanded {
+            margin-left: 20px;
+        }
+        
+        /* 章节样式 */
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #ffffff;
+            border-left: 5px solid #f27d00;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .section h2 {
+            color: #f27d00;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        .section h3 {
+            color: #343434;
+            font-size: 1.4em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid #f7d117;
+        }
+        
+        /* 折叠区域 */
+        .collapsible {
+            background: linear-gradient(135deg, #a6d6c9, #f7d117);
+            color: #343434;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            font-weight: 500;
+            border-radius: 10px;
+            margin: 15px 0;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .collapsible:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.active:after {
+            transform: rotate(-180deg);
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #ffffff;
+            padding: 0 20px;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .content.show {
+            max-height: 2000px;
+            padding: 20px;
+            border: 2px solid #a6d6c9;
+            border-top: none;
+        }
+        
+        /* 高亮框 */
+        .highlight-box {
+            background: linear-gradient(135deg, #f7d117, #ffffff);
+            border-left: 5px solid #f27d00;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(242, 125, 0, 0.2);
+        }
+        
+        .note-box {
+            background: linear-gradient(135deg, #a6d6c9, #ffffff);
+            border-left: 5px solid #343434;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        
+        /* 公式样式 */
+        .formula {
+            background: #f8f8f8;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #a6d6c9;
+            overflow-x: auto;
+            text-align: center;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        /* 图示占位符 */
+        .diagram {
+            background: #f8f8f8;
+            border: 2px dashed #a6d6c9;
+            padding: 40px;
+            margin: 20px 0;
+            text-align: center;
+            border-radius: 10px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            background: #f27d00;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(242, 125, 0, 0.3);
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            background: #d66d00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(242, 125, 0, 0.4);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .toggle-btn {
+                left: 10px;
+            }
+            
+            .main-content {
+                margin-left: 20px;
+                padding: 20px;
+            }
+            
+            .navbar h1 {
+                font-size: 1.5em;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #f27d00;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d66d00;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="navbar">
+        <h1>📊 第1讲：随机事件与概率</h1>
+    </div>
+    
+    <!-- 侧边导航 -->
+    <div class="sidebar" id="sidebar">
+        <h3>📑 目录导航</h3>
+        <ul>
+            <li><a href="#section1">事件的关系与运算</a></li>
+            <li><a href="#section2">文氏图</a></li>
+            <li><a href="#section3">运算法则</a></li>
+            <li><a href="#section4">概率的定义</a></li>
+            <li><a href="#section5">古典概型</a></li>
+            <li><a href="#section6">计数方法</a></li>
+        </ul>
+    </div>
+    
+    <!-- 切换按钮 -->
+    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">☰</button>
+    
+    <!-- 主内容区 -->
+    <div class="container">
+        <div class="main-content" id="mainContent">
+            
+            <!-- 第一部分：事件的关系与运算 -->
+            <div class="section" id="section1">
+                <h2>1️⃣ 事件的关系与运算</h2>
+                
+                <h3>基本概念</h3>
+                
+                <button class="collapsible">相容与互斥</button>
+                <div class="content">
+                    <p><strong>相容：</strong>若 $AB \neq \emptyset$，则称事件 $A$ 和 $B$ 相容。</p>
+                    <p><strong>互斥：</strong>若 $AB = \emptyset$，则称事件 $A$ 与 $B$ 互不相容，也叫互斥。</p>
+                    <div class="note-box">
+                        <p>💡 <strong>注意：</strong>如果一些事件中任意两个事件都互斥，则称这些事件是<strong>两两互斥</strong>的，或简称互斥的。</p>
+                        <div class="formula">
+                            $$P(A \cup B) = P(A) + P(B) \quad \text{（加法公式）}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">和（并）事件</button>
+                <div class="content">
+                    <p>称"事件 $A$ 与 $B$ 至少有一个发生"的事件为事件 $A$ 与 $B$ 的<strong>和事件</strong>（或<strong>并事件</strong>），记为 $A \cup B$。</p>
+                    <div class="highlight-box">
+                        <p><strong>推广：</strong>称"有限个（或可列个）事件 $A_1, A_2, \ldots, A_n, \ldots$ 至少有一个发生"的事件为这些事件的和事件，记为：</p>
+                        <div class="formula">
+                            $$\bigcup_{i=1}^{n} A_i \quad \text{或} \quad \bigcup_{i=1}^{\infty} A_i$$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">差事件与逆事件</button>
+                <div class="content">
+                    <p><strong>差：</strong>称"事件 $A$ 发生而事件 $B$ 不发生"的事件为事件 $A$ 与 $B$ 的<strong>差事件</strong>，记为 $A - B$。</p>
+                    <p><strong>逆（对立）：</strong>称"事件 $A$ 不发生"的事件为事件 $A$ 的<strong>逆事件</strong>或<strong>对立事件</strong>，记为 $\overline{A}$。</p>
+                    
+                    <div class="highlight-box">
+                        <p><strong>⚠️ 重要区别：</strong></p>
+                        <ul>
+                            <li>对立事件一定是互不相容事件</li>
+                            <li>但互不相容事件不一定是对立事件</li>
+                        </ul>
+                        <p><strong>例如：</strong>$A$ 与 $B$，$B$ 与 $C$，$A$ 与 $C$ 均为互斥事件，但 $B \cup C$ 才是 $A$ 的对立事件。</p>
+                    </div>
+                    
+                    <div class="formula">
+                        <p><strong>重要关系：</strong></p>
+                        $$A - B = A - AB = A\overline{B}$$
+                        $$\overline{B} = \overline{A} \Leftrightarrow AB = \emptyset \text{ 且 } A \cup B = \Omega$$
+                    </div>
+                </div>
+                
+                <button class="collapsible">完备事件组</button>
+                <div class="content">
+                    <p>如果 $\bigcup_{i=1}^{n} A_i = \Omega$（或 $\bigcup_{i=1}^{\infty} A_i = \Omega$），且 $A_i A_j = \emptyset$（对一切 $i \neq j$；$i, j = 1, 2, \ldots, n, \ldots$），称有限个（或可列个）事件 $A_1, A_2, \ldots, A_n, \ldots$ 构成一个<strong>完备事件组</strong>。</p>
+                    <div class="note-box">
+                        <p>💡 <strong>注：</strong>完备事件组也称为对样本空间的一种<strong>划分</strong>，也叫<strong>全集分解</strong>。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 第二部分：文氏图 -->
+            <div class="section" id="section2">
+                <h2>2️⃣ 文氏图（Venn Diagram）</h2>
+                <p>事件的关系与运算可以用文氏图形象地表示出来。图中的矩形表示必然事件 $\Omega$。</p>
+                
+                <div class="diagram">
+                    <p>📐 文氏图示例：</p>
+                    <p><strong>$A \cup B$</strong>（并集） | <strong>$A - B$</strong>（差集） | <strong>$AB$</strong>（交集）</p>
+                    <p><strong>$B \subset A$</strong>（包含） | <strong>$\overline{A}$</strong>（补集） | <strong>$AB = \emptyset$</strong>（互斥）</p>
+                    <p style="margin-top: 20px; font-size: 0.9em; color: #999;">
+                        💡 提示：这里应显示实际的文氏图，展示各种事件关系的图形表示
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 第三部分：运算法则 -->
+            <div class="section" id="section3">
+                <h2>3️⃣ 运算法则</h2>
+                
+                <button class="collapsible">吸收律</button>
+                <div class="content">
+                    <p>若 $A \subset B$，则：</p>
+                    <div class="formula">
+                        $$A \cup B = B, \quad A \cap B = A$$
+                    </div>
+                </div>
+                
+                <button class="collapsible">交换律</button>
+                <div class="content">
+                    <div class="formula">
+                        $$A \cup B = B \cup A$$
+                        $$A \cap B = B \cap A$$
+                    </div>
+                </div>
+                
+                <button class="collapsible">结合律</button>
+                <div class="content">
+                    <div class="formula">
+                        $$(A \cup B) \cup C = A \cup (B \cup C)$$
+                        $$(A \cap B) \cap C = A \cap (B \cap C)$$
+                    </div>
+                </div>
+                
+                <button class="collapsible">分配律</button>
+                <div class="content">
+                    <div class="formula">
+                        $$A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$$
+                        $$A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$$
+                        $$A \cap (B - C) = (A \cap B) - (A \cap C)$$
+                    </div>
+                </div>
+                
+                <button class="collapsible">★ 对偶律（德·摩根律）</button>
+                <div class="content">
+                    <div class="formula">
+                        $$\overline{A \cup B} = \overline{A} \cap \overline{B}$$
+                        $$\overline{A \cap B} = \overline{A} \cup \overline{B}$$
+                    </div>
+                    <div class="highlight-box">
+                        <p><strong>🎯 口诀：</strong>长杠变短杠；开口换方向</p>
+                        <p><strong>例如：</strong></p>
+                        $$\overline{A \cap B} = \overline{A} \cup \overline{B} \Rightarrow \overline{A \cup B}$$
+                    </div>
+                </div>
+                
+                <div class="note-box">
+                    <p>💡 <strong>注意事项：</strong></p>
+                    <ol>
+                        <li>事件运算顺序约定为：先进行<strong>逆运算</strong>，然后进行<strong>交运算</strong>，最后进行<strong>并或差运算</strong>。</li>
+                        <li>事件的关系、运算与集合的关系、运算相当，且具有相同的运算法则，所以可以对比着理解记忆，并要学会用集合关系去考虑事件关系。</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- 第四部分：概率的定义 -->
+            <div class="section" id="section4">
+                <h2>4️⃣ 概率的定义</h2>
+                
+                <h3>（1）描述性定义</h3>
+                <p>通常将随机事件 $A$ 发生的可能性大小的度量（非负值）称为事件 $A$ 发生的<strong>概率</strong>，记为 $P(A)$。</p>
+                
+                <div class="highlight-box">
+                    <p><strong>📌 例子：</strong>抛硬币 1000 次，正面朝上的次数为 527，那么 $\frac{527}{1000} = 0.527$ 称为这 1000 次试验中，硬币正面朝上的<strong>频率</strong>。</p>
+                </div>
+                
+                <h3>（2）统计性定义</h3>
+                <p>在相同条件下做重复试验，事件 $A$ 出现的次数 $k$ 和总的试验次数 $n$ 之比 $\frac{k}{n}$ 称为事件 $A$ 在这 $n$ 次试验中出现的<strong>频率</strong>。</p>
+                <p>当试验次数 $n$ 充分大时，频率将"稳定"于某常数 $p$。$n$ 越大，频率偏离这个常数 $p$ 的可能性越小。这个常数 $p$ 就称为事件 $A$ 的<strong>概率</strong>。</p>
+                
+                <div class="note-box">
+                    <p><strong>🤔 思考：</strong></p>
+                    <p>抛硬币正面朝上的频率是 0.527，但它是硬币正面朝上的概率吗？</p>
+                    <ul>
+                        <li>对于均匀的硬币，正面朝上的概率应该是 $\frac{1}{2}$ — 这是客观规律</li>
+                        <li>理想情况下，均匀硬币是真正的均匀，此时就说它的概率是客观上的 $\frac{1}{2}$</li>
+                        <li>频率只能是逐渐地靠近 $\frac{1}{2}$</li>
+                        <li>但在硬币不均匀的情况下，不清楚抛出硬币正面朝上的概率，不能直接说是 $\frac{1}{2}$</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-box">
+                    <p><strong>⚠️ 重要理解：</strong></p>
+                    <ol>
+                        <li>概率的统计性定义实质上是说，用频率 $\frac{k}{n}$ 作为事件 $A$ 的概率 $P(A)$ 的<strong>估计</strong>。其直观理解为某事件出现的可能性大小，可由其在多次重复试验中出现的频率去刻画。</li>
+                        <li>从上述可以看出，<strong>频率只是概率的估计</strong>，而非概率本身。统计性定义的重要性主要基于以下两点：
+                            <ul>
+                                <li>① 它提供了<strong>估计概率的方法</strong>（例如：在一批产品中抽取样品，来估计该批产品的合格率）</li>
+                                <li>② 它提供了一种<strong>检验某结论是否正确的准则</strong>（例如：你说某批产品的合格率是 95%，我们做试验抽取样品进行计算，得出的结果是合格率为 20%，远远低于你所说的 95%，于是拒绝你的结论）</li>
+                            </ul>
+                        </li>
+                        <li>统计性定义它没有理论上的价值，不能精确定义概率，但是从实践上来讲，它有时候是很有用的。</li>
+                    </ol>
+                </div>
+                
+                <h3>（3）公理化定义</h3>
+                <p>设随机试验的样本空间为 $\Omega$，如果对每一个事件 $A$ 都有一个确定的实数 $P(A)$，且事件函数 $P(\cdot)$ 满足：</p>
+                
+                <div class="formula">
+                    <p><strong>① 非负性：</strong>$P(A) \geq 0$</p>
+                    <p><strong>② 规范性：</strong>$P(\Omega) = 1$ <span style="color: #f27d00;">（归一性）</span></p>
+                    <p><strong>③ 可列可加性：</strong>对任意可列个两两互不相容事件 $A_1, A_2, \ldots, A_n, \ldots$（即 $A_i A_j = \emptyset$，$i \neq j$；$i, j = 1, 2, \ldots$），有</p>
+                    $$P\left(\bigcup_{i=1}^{\infty} A_i\right) = \sum_{i=1}^{\infty} P(A_i)$$
+                    <p style="color: #343434; margin-top: 10px;"><em>事件和的概率等于概率的和</em></p>
+                </div>
+                
+                <p>则称 $P(\cdot)$ 为<strong>概率</strong>，$P(A)$ 为事件 $A$ 的概率。</p>
+                
+                <div class="note-box">
+                    <p><strong>💡 注：</strong></p>
+                    <ol>
+                        <li>数学上所说的"公理"，就是一些不加证明而承认的前提。上述公理化定义只是界定了概率这个概念所必须满足的一些一般性质，<strong>它不解决具体场合下的概率计算</strong>。</li>
+                        <li>概率 $P$ 是事件的函数。</li>
+                        <li>虽然公理化定义不解决具体场合下的概率计算，但是我们却常常用它来<strong>判断某事件函数 $P(\cdot)$ 是不是概率</strong>，这种题型在考研试题中也是经常遇到的。</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- 第五部分：古典概型 -->
+            <div class="section" id="section5">
+                <h2>5️⃣ 古典概型与几何概型</h2>
+                
+                <h3>古典概型</h3>
+                
+                <h3>（1）概念</h3>
+                <p>如果随机试验的样本空间满足：</p>
+                <ol>
+                    <li><strong>只有有限个样本点（基本事件）</strong> <br>
+                        <span style="color: #f27d00;">→ 如掷骰子，$\Omega = \{\omega_1, \omega_2, \ldots, \omega_6\}$。一旦出现无穷个，就不是古典概型</span>
+                    </li>
+                    <li><strong>每个样本点（基本事件）发生的可能性都一样</strong> <br>
+                        <span style="color: #a6d6c9;">✓ 具有等可能性</span>
+                    </li>
+                </ol>
+                <p>则称随机试验的概率模型为<strong>古典概型</strong>。</p>
+                
+                <div class="highlight-box">
+                    <p><strong>📐 概率计算公式：</strong></p>
+                    <p>如果古典概型的基本事件总数为 $n$，事件 $A$ 包含 $k$ 个基本事件（也叫作有利于 $A$ 的基本事件有 $k$ 个），则：</p>
+                    <div class="formula">
+                        $$P(A) = \frac{k}{n} = \frac{\text{事件 } A \text{ 所含基本事件的个数}}{\text{基本事件总数}}$$
+                    </div>
+                    <p><strong>例：</strong>掷骰子，事件 $A = \{\text{掷出偶数点}\}$，则 $P(A) = \frac{3}{6} = \frac{1}{2}$</p>
+                </div>
+                
+                <p>由上式计算得出的概率称为 $A$ 的<strong>古典概率</strong>。</p>
+                
+                <div class="note-box">
+                    <p><strong>💡 注：</strong>计算的关键是基本事件、样本空间的选定以及基本事件数的计算。</p>
+                </div>
+            </div>
+            
+            <!-- 第六部分：计数方法 -->
+            <div class="section" id="section6">
+                <h2>6️⃣ 计数方法</h2>
+                <p>计数方法常用的有三种：</p>
+                
+                <button class="collapsible">（1）列举法（直接数数法）</button>
+                <div class="content">
+                    <p>基本事件数不多时常用这种方法。</p>
+                </div>
+                
+                <button class="collapsible">（2）集合对应法</button>
+                <div class="content">
+                    <h4>① 加法原理</h4>
+                    <p>完成一件事有 $n$ 类办法，第一类办法中有 $m_1$ 种方法，第二类办法中有 $m_2$ 种方法，…，第 $n$ 类办法中有 $m_n$ 种方法，则完成此事共有：</p>
+                    <div class="formula">
+                        $$\sum_{i=1}^{n} m_i \text{ 种方法}$$
+                    </div>
+                    
+                    <h4>② 乘法原理</h4>
+                    <p>完成一件事有 $n$ 个步骤，第一步有 $m_1$ 种方法，第二步有 $m_2$ 种方法，…，第 $n$ 步有 $m_n$ 种方法，则完成此事共有：</p>
+                    <div class="formula">
+                        $$\prod_{i=1}^{n} m_i \text{ 种方法}$$
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <p><strong>📌 例子：从 A 地到 B 地的方法</strong></p>
+                        <p><strong>方式1（加法原理）：</strong></p>
+                        <ul>
+                            <li>飞机：C919, C929, A330（3种）</li>
+                            <li>火车：复兴号, 和谐号（2种）</li>
+                            <li>总计：$m_1 + m_2 = 3 + 2 = 5$ 种交通方式</li>
+                        </ul>
+                        
+                        <p><strong>方式2（乘法原理）：</strong></p>
+                        <p>需要2个步骤：</p>
+                        <ul>
+                            <li>第1步：坐飞机（3种选择）</li>
+                            <li>第2步：坐火车（2种选择）</li>
+                            <li>总计：$m_1 \cdot m_2 = 3 \times 2 = 6$ 种交通方式</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <button class="collapsible">（3）排列组合</button>
+                <div class="content">
+                    <p><strong>排列数公式：</strong></p>
+                    <div class="formula">
+                        $$A_n^m = \frac{n!}{(n-m)!} = n(n-1)(n-2)\cdots(n-m+1)$$
+                    </div>
+                    
+                    <p><strong>组合数公式：</strong></p>
+                    <div class="formula">
+                        $$C_n^m = \binom{n}{m} = \frac{n!}{m!(n-m)!} = \frac{A_n^m}{m!}$$
+                    </div>
+                    
+                    <div class="note-box">
+                        <p><strong>🎯 记忆技巧：</strong></p>
+                        <ul>
+                            <li><strong>排列：</strong>有顺序要求（Arrangement）</li>
+                            <li><strong>组合：</strong>无顺序要求（Combination）</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; text-align: center;">
+                    <button class="btn" onclick="showQuiz()">🎯 开始练习</button>
+                    <button class="btn" onclick="scrollToTop()">⬆️ 返回顶部</button>
+                </div>
+            </div>
+            
+            <!-- 测验区域 -->
+            <div class="section" id="quiz" style="display: none;">
+                <h2>🎯 互动测验</h2>
+                <div class="highlight-box">
+                    <h3>问题1：互斥事件和对立事件的区别是什么？</h3>
+                    <button class="btn" onclick="showAnswer1()">显示答案</button>
+                    <div id="answer1" style="display: none; margin-top: 15px; padding: 15px; background: #fff; border-radius: 8px;">
+                        <p><strong>答案：</strong></p>
+                        <ul>
+                            <li>互斥事件：$AB = \emptyset$（两个事件不能同时发生）</li>
+                            <li>对立事件：$AB = \emptyset$ 且 $A \cup B = \Omega$（两个事件不能同时发生，但必有一个发生）</li>
+                            <li><strong>结论：</strong>对立事件一定是互斥事件，但互斥事件不一定是对立事件</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 20px;">
+                    <h3>问题2：德·摩根律的口诀是什么？</h3>
+                    <button class="btn" onclick="showAnswer2()">显示答案</button>
+                    <div id="answer2" style="display: none; margin-top: 15px; padding: 15px; background: #fff; border-radius: 8px;">
+                        <p><strong>答案：</strong>长杠变短杠；开口换方向</p>
+                        <p>即：$\overline{A \cup B} = \overline{A} \cap \overline{B}$ 和 $\overline{A \cap B} = \overline{A} \cup \overline{B}$</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <script>
+        // 折叠区域功能
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.classList.contains("show")) {
+                    content.classList.remove("show");
+                } else {
+                    content.classList.add("show");
+                }
+            });
+        }
+        
+        // 侧边栏切换
+        function toggleSidebar() {
+            var sidebar = document.getElementById("sidebar");
+            var mainContent = document.getElementById("mainContent");
+            var toggleBtn = document.getElementById("toggleBtn");
+            
+            sidebar.classList.toggle("hidden");
+            mainContent.classList.toggle("expanded");
+            toggleBtn.classList.toggle("hidden");
+        }
+        
+        // 显示测验
+        function showQuiz() {
+            var quiz = document.getElementById("quiz");
+            quiz.style.display = "block";
+            quiz.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 显示答案
+        function showAnswer1() {
+            var answer = document.getElementById("answer1");
+            answer.style.display = answer.style.display === "none" ? "block" : "none";
+        }
+        
+        function showAnswer2() {
+            var answer = document.getElementById("answer2");
+            answer.style.display = answer.style.display === "none" ? "block" : "none";
+        }
+        
+        // 返回顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+<!-- 
+使用说明：
+1. 将此代码保存为 .html 文件（例如：probability_tutorial.html）
+2. 在浏览器中打开该文件即可查看交互式教程
+3. 所有外部资源（Google Fonts和MathJax）通过CDN加载，需要网络连接
+4. 网页支持响应式设计，可在桌面和移动设备上良好显示
+5. 点击折叠区域可展开/收起内容
+6. 使用侧边导航快速跳转到不同章节
+7. 数学公式通过MathJax自动渲染
+
+技术特性：
+- 使用指定配色方案（#f27d00, #a6d6c9, #f7d117, #ffffff, #343434）
+- MathJax支持LaTeX数学公式渲染
+- 折叠/展开交互式内容区域
+- 侧边导航栏和平滑滚动
+- 响应式设计适配移动端
+- 互动测验功能
+- 自定义滚动条样式
+- 动画过渡效果
+-->
