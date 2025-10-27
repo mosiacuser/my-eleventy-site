@@ -1,0 +1,1007 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第5讲 多维随机变量函数的分布 - 交互式教程</title>
+<!-- MathJax 配置 - 完整版本 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            displayMath: [['$$','$$'], ['\\[','\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        "HTML-CSS": {
+            availableFonts: ["TeX"],
+            linebreaks: { automatic: true },
+            scale: 110
+        },
+        CommonHTML: {
+            scale: 110
+        }
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Noto Sans SC', sans-serif;
+        background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+        color: #343434;
+        line-height: 1.8;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    header {
+        background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 20px rgba(242, 125, 0, 0.3);
+    }
+    
+    header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    header p {
+        font-size: 1.2em;
+        opacity: 0.95;
+    }
+    
+    nav {
+        background: #a6d6c9;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        position: sticky;
+        top: 20px;
+        z-index: 100;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    nav h3 {
+        color: #343434;
+        margin-bottom: 15px;
+        font-size: 1.3em;
+    }
+    
+    nav ul {
+        list-style: none;
+    }
+    
+    nav li {
+        margin: 8px 0;
+    }
+    
+    nav a {
+        color: #343434;
+        text-decoration: none;
+        padding: 8px 15px;
+        display: block;
+        border-radius: 5px;
+        transition: all 0.3s;
+        background: rgba(255,255,255,0.5);
+    }
+    
+    nav a:hover {
+        background: #f27d00;
+        color: white;
+        transform: translateX(5px);
+    }
+    
+    section {
+        background: white;
+        padding: 30px;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+        color: #f27d00;
+        font-size: 2em;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #a6d6c9;
+    }
+    
+    h3 {
+        color: #343434;
+        font-size: 1.5em;
+        margin: 25px 0 15px 0;
+        padding-left: 15px;
+        border-left: 5px solid #f7d117;
+    }
+    
+    h4 {
+        color: #f27d00;
+        font-size: 1.2em;
+        margin: 20px 0 10px 0;
+    }
+    
+    .method-box {
+        background: linear-gradient(135deg, #a6d6c9 0%, #d4ede7 100%);
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border-left: 5px solid #f27d00;
+    }
+    
+    .formula-box {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px solid #a6d6c9;
+        overflow-x: auto;
+    }
+    
+    .highlight {
+        background: #f7d117;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-weight: 500;
+    }
+    
+    .example {
+        background: linear-gradient(135deg, #fff9e6 0%, #fffef0 100%);
+        padding: 25px;
+        border-radius: 10px;
+        margin: 25px 0;
+        border: 2px solid #f7d117;
+        box-shadow: 0 3px 10px rgba(247, 209, 23, 0.2);
+    }
+    
+    .example-header {
+        background: #f27d00;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        display: inline-block;
+    }
+    
+    .note {
+        background: #fff3cd;
+        border-left: 5px solid #f27d00;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 5px;
+    }
+    
+    .note strong {
+        color: #f27d00;
+    }
+    
+    details {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        border: 1px solid #dee2e6;
+    }
+    
+    summary {
+        cursor: pointer;
+        font-weight: bold;
+        color: #f27d00;
+        padding: 10px;
+        background: #a6d6c9;
+        border-radius: 5px;
+        margin: -15px -15px 15px -15px;
+        transition: all 0.3s;
+    }
+    
+    summary:hover {
+        background: #f27d00;
+        color: white;
+    }
+    
+    details[open] summary {
+        margin-bottom: 15px;
+    }
+    
+    .interactive-btn {
+        background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: bold;
+        transition: all 0.3s;
+        box-shadow: 0 4px 10px rgba(242, 125, 0, 0.3);
+    }
+    
+    .interactive-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(242, 125, 0, 0.4);
+    }
+    
+    .hidden-content {
+        display: none;
+        animation: fadeIn 0.5s;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: white;
+    }
+    
+    th {
+        background: #f27d00;
+        color: white;
+        padding: 12px;
+        text-align: center;
+    }
+    
+    td {
+        border: 1px solid #dee2e6;
+        padding: 12px;
+        text-align: center;
+    }
+    
+    tr:nth-child(even) {
+        background: #f8f9fa;
+    }
+    
+    .flow-chart {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+        text-align: center;
+    }
+    
+    .flow-box {
+        display: inline-block;
+        background: #a6d6c9;
+        padding: 15px 25px;
+        margin: 10px;
+        border-radius: 8px;
+        border: 2px solid #f27d00;
+        font-weight: bold;
+    }
+    
+    .arrow {
+        display: inline-block;
+        margin: 0 10px;
+        font-size: 1.5em;
+        color: #f27d00;
+    }
+    
+    footer {
+        background: #343434;
+        color: white;
+        text-align: center;
+        padding: 30px;
+        border-radius: 10px;
+        margin-top: 40px;
+    }
+    
+    .mjx-chtml {
+        font-size: 1.1em !important;
+    }
+    
+    @media (max-width: 768px) {
+        header h1 {
+            font-size: 1.8em;
+        }
+        
+        nav {
+            position: relative;
+            top: 0;
+        }
+        
+        section {
+            padding: 20px;
+        }
+        
+        .flow-box {
+            display: block;
+            margin: 10px 0;
+        }
+    }
+    
+    .scroll-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #f27d00;
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+    
+    .scroll-top:hover {
+        background: #ff9933;
+        transform: translateY(-5px);
+    }
+    
+    .tree-diagram {
+        margin: 30px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第5讲 多维随机变量函数的分布</h1>
+            <p>概率论与数理统计 - 交互式学习教程</p>
+        </header>
+    <nav id="navigation">
+        <h3>📚 目录导航</h3>
+        <ul>
+            <li><a href="#intro">概述与三向解题法</a></li>
+            <li><a href="#method1">一、多维→一维</a></li>
+            <li><a href="#method2">二、一维→多维</a></li>
+            <li><a href="#method3">三、多维→多维</a></li>
+            <li><a href="#summary">总结</a></li>
+        </ul>
+    </nav>
+    
+    <section id="intro">
+        <h2>📖 教学目标与解题框架</h2>
+        
+        <div class="method-box">
+            <h3>三向解题法</h3>
+            <p>本讲重点：<span class="highlight">求多维随机变量函数的数的分布</span></p>
+            
+            <div class="tree-diagram">
+                <div class="flow-box">求多维随机变量函数的数的分布<br>(O<sub>k</sub>II任目标)</div>
+                <div>↓</div>
+                <div style="display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px;">
+                    <div class="flow-box">1. 多维→一维<br>(O<sub>k</sub>II任目标1))</div>
+                    <div class="flow-box">2. 一维→多维<br>(O<sub>k</sub>II任目标2))</div>
+                    <div class="flow-box">3. 多维→多维<br>(O<sub>k</sub>II任目标3))</div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="interactive-btn" onclick="toggleContent('methodDetails')">
+            点击展开：三种方法详细说明
+        </button>
+        
+        <div id="methodDetails" class="hidden-content" style="margin-top: 20px;">
+            <div class="note">
+                <strong>【方法1】多维→一维：</strong><br>
+                已知 $(X,Y) \sim p_{ij}$ 或 $f(x,y)$，求 $Z = g(X,Y)$ 的分布律或概率密度
+            </div>
+            
+            <div class="note">
+                <strong>【方法2】一维→多维：</strong><br>
+                已知 $X$ 的分布，构造新的多维随机变量 $(U,V)$
+            </div>
+            
+            <div class="note">
+                <strong>【方法3】多维→多维：</strong><br>
+                已知 $(X,Y)$ 的分布，求 $(U,V)$ 的联合分布
+            </div>
+        </div>
+    </section>
+    
+    <section id="method1">
+        <h2>一、多维→一维 (O<sub>k</sub>(II任目标1))</h2>
+        
+        <h3>1. (离散型，离散型)→离散型 (D<sub>k</sub>(常规操作))</h3>
+        
+        <div class="method-box">
+            <h4>基本思路</h4>
+            <p>(1) 若 $(X,Y) \sim p_{ij}$，$Z = g(X,Y)$，有 $Z \sim q_l$</p>
+            <p>(2) 若 $X \sim p_i$，$Y \sim q_k$，$X, Y$ 独立且取值在某一集合，可考虑 $Z = X + Y$，$XY$，$\max\{X,Y\}$，$\min\{X,Y\}$ 等</p>
+        </div>
+        
+        <div class="formula-box">
+            <h4>重要公式：独立情况下的分布</h4>
+            
+            <p><strong>① 若 $Z = X + Y$，且 $X, Y$ 独立并取非负整数，则</strong></p>
+            $$P\{Z = k\} = P\{X + Y = k\}$$
+            <p style="margin: 10px 0; padding: 10px; background: #e8f5e9; border-radius: 5px;">
+                <strong>D<sub>2k</sub>(卷积等价表述)：</strong>
+                $$= P\{X = 0\}P\{Y = k\} + P\{X = 1\}P\{Y = k-1\} + \cdots + P\{X = k\}P\{Y = 0\}$$
+                $$= p_0q_k + p_1q_{k-1} + \cdots + p_kq_0, \quad k = 0, 1, 2, \cdots$$
+            </p>
+            
+            <p><strong>② 若 $Z = \max\{X,Y\}$，且 $X, Y$ 独立并取非负整数，则</strong></p>
+            $$P\{Z = k\} = P\{\max\{X,Y\} = k\}$$
+            <p style="margin: 10px 0; padding: 10px; background: #fff3e0; border-radius: 5px;">
+                <strong>D<sub>2k</sub>(卷积等价表述)：</strong>
+                $$= P\{X = k, Y = k\} + P\{X = k, Y = k-1\} + \cdots + P\{X = k, Y = 0\} +$$
+                $$P\{X = k-1, Y = k\} + P\{X = k-2, Y = k\} + \cdots + P\{X = 0, Y = k\}$$
+                $$= p_kq_k + p_kq_{k-1} + \cdots + p_kq_0 + p_{k-1}q_k + p_{k-2}q_k + \cdots + p_0q_k$$
+                $$k = 0, 1, 2, \cdots$$
+            </p>
+            
+            <p><strong>③ 若 $Z = \min\{X,Y\}$，且 $X, Y$ 独立，$0 \leq X, Y \leq l$，$l$ 为正整数，$X, Y$ 取整数时，则</strong></p>
+            $$P\{Z = k\} = P\{\min\{X,Y\} = k\}$$
+            <p style="margin: 10px 0; padding: 10px; background: #f3e5f5; border-radius: 5px;">
+                <strong>D<sub>2k</sub>(卷积等价表述)：</strong>
+                $$= P\{X = k, Y = k\} + P\{X = k, Y = k+1\} + \cdots + P\{X = k, Y = l\} +$$
+                $$P\{X = k+1, Y = k\} + P\{X = k+2, Y = k\} + \cdots + P\{X = l, Y = k\}$$
+                $$= p_kq_k + p_kq_{k+1} + \cdots + p_kq_l + p_{k+1}q_k + p_{k+2}q_k + \cdots + p_lq_k$$
+                $$k = 0, 1, 2, \cdots, l$$
+            </p>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">📌 例 5.1</div>
+            <p><strong>题目：</strong>设随机变量 $X$ 与 $Y$ 相互独立，且 $X$ 服从参数为 $\lambda$ 的泊松分布，</p>
+            $$Y \sim \begin{pmatrix} -1 & 1 \\ \frac{1}{4} & \frac{3}{4} \end{pmatrix}$$
+            <p>求 $Z = XY$ 的概率分布。</p>
+            
+            <details>
+                <summary>查看详细解答</summary>
+                <div class="formula-box">
+                    <p><strong>【解】</strong>已知 $P\{X = k\} = \frac{\lambda^k}{k!}e^{-\lambda}$ $(k = 0, 1, \cdots)$，$Y$ 可能取值为 $-1, 1$，$X$ 与 $Y$ 相互独立，故 $Z = XY$ 可能取值为 $0, \pm 1, \pm 2, \cdots, \pm k, \cdots$，其概率分布为</p>
+                    
+                    $$P\{Z = XY = 0\} = P\{X = 0\} = e^{-\lambda}$$
+                    
+                    $$P\{Z = XY = k\} = P\{X = k, Y = 1\} = P\{X = k\}P\{Y = 1\} = \frac{3\lambda^k}{4k!}e^{-\lambda}, \quad k = 1, 2, 3, \cdots$$
+                    
+                    $$P\{Z = XY = -k\} = P\{X = k\}P\{Y = -1\} = \frac{1\lambda^k}{4k!}e^{-\lambda}, \quad k = 1, 2, 3, \cdots$$
+                </div>
+            </details>
+        </div>
+        
+        <h3>2. (连续型，连续型)→连续型</h3>
+        
+        <div class="method-box">
+            <h4>三种方法</h4>
+            
+            <h4>(1) 分布函数法 (D<sub>k</sub>(常规操作))</h4>
+            <div class="formula-box">
+                <p>设 $(X,Y) \sim f(x,y)$，$Z = g(X,Y)$，则</p>
+                $$F_Z(z) = P\{g(X,Y) \leq z\} = \iint_{g(x,y)\leq z} f(x,y)\,\mathrm{d}x\mathrm{d}y$$
+                $$f_Z(z) = F'_Z(z)$$
+            </div>
+            
+            <h4>(2) 换元法 (D<sub>2k</sub>(观察研究对象))</h4>
+            <div class="formula-box">
+                <p>设 $(X,Y) \sim f(x,y)$，若 $\begin{cases} u = u(x,y) \\ v = v(x,y) \end{cases}$ 具有一阶连续偏导数，且存在唯一的反函数 $\begin{cases} x = x(u,v) \\ y = y(u,v) \end{cases}$，又</p>
+                
+                $$J = \frac{\partial(x,y)}{\partial(u,v)} = \begin{vmatrix} \frac{\partial x}{\partial u} & \frac{\partial x}{\partial v} \\ \frac{\partial u}{\partial u} & \frac{\partial v}{\partial v} \end{vmatrix} \neq 0$$
+                
+                <p>则 $(X,Y)$ 的函数 $\begin{cases} U = U(X,Y) \\ V = V(X,Y) \end{cases}$ 的联合概率密度为 $f_{U,V}(u,v) = f[x(u,v), y(u,v)]|J|$</p>
+                
+                <p>$U$ 的概率密度为 $f_U(u) = \int_{-\infty}^{+\infty} f_{U,V}(u,v)\,\mathrm{d}v$，$V$ 的概率密度为 $f_V(v) = \int_{-\infty}^{+\infty} f_{U,V}(u,v)\,\mathrm{d}u$</p>
+            </div>
+            
+            <div class="note">
+                <strong>【注】</strong>(1) 证明 $(U,V)$ 的联合分布函数为
+                $$F_{U,V}(u,v) = P\{U \leq u, V \leq v\} = P\{U(X,Y) \leq u, V(X,Y) \leq v\}$$
+                $$= \iint_{U(x,y)\leq u \atop V(x,y)\leq v} f_{U,V}(x,y)\,\mathrm{d}x\mathrm{d}y = \iint_{U(x,y)\leq u \atop V(x,y)\leq v} f[x(u,v), y(u,v)]|J|\,\mathrm{d}u\mathrm{d}v$$
+                
+                <p>故 $f_{U,V}(u,v) = \frac{\partial^2 F}{\partial u \partial v} = f[x(u,v), y(u,v)]|J|$</p>
+                
+                <p>(2) 在高等数学中，我们已经熟练掌握了二重积分的换元积分法，故在此给出换元法求 $f(u,v)$，这是十分有用且简便的方法。</p>
+            </div>
+            
+            <h4>(3) 最值函数的分布 (D<sub>2k</sub>(观察研究对象))</h4>
+            <div class="formula-box">
+                <p><strong>① $\max\{X,Y\}$ 的分布</strong></p>
+                <p>设 $(X,Y) \sim F(x,y)$，则 $Z = \max\{X,Y\}$ 的分布函数为</p>
+                $$F_{\max}(z) = P\{\max\{X,Y\} \leq z\} = P\{X \leq z, Y \leq z\} = F(z,z)$$
+                
+                <p>当 $X$ 与 $Y$ 相互独立时，</p>
+                $$F_{\max}(z) = F_X(z) \cdot F_Y(z)$$
+                
+                <p><strong>② $\min\{X,Y\}$ 的分布</strong></p>
+                <p>设 $(X,Y) \sim F(x,y)$，则 $Z = \min\{X,Y\}$ 的分布函数为</p>
+                $$F_{\min}(z) = P\{\min\{X,Y\} \leq z\} = P\{\{X \leq z\} \cup \{Y \leq z\}\}$$
+                $$= P\{X \leq z\} + P\{Y \leq z\} - P\{X \leq z, Y \leq z\}$$
+                $$= F_X(z) + F_Y(z) - F(z,z)$$
+                
+                <p>当 $X$ 与 $Y$ 相互独立时，</p>
+                $$F_{\min}(z) = F_X(z) + F_Y(z) - F_X(z)F_Y(z) = 1 - [1 - F_X(z)][1 - F_Y(z)]$$
+                
+                <p>推广到 $n$ 个相互独立的随机变量 $X_1, X_2, \cdots, X_n$ 的情况，即</p>
+                $$F_{\max}(z) = F_{X_1}(z)F_{X_2}(z)\cdots F_{X_n}(z)$$
+                $$F_{\min}(z) = 1 - [1 - F_{X_1}(z)][1 - F_{X_2}(z)]\cdots[1 - F_{X_n}(z)]$$
+                
+                <p>特别地，当 $X_i$ $(i = 1,2,\cdots,n)$ 相互独立且具有相同的分布函数 $F(x)$ 与概率密度 $f(x)$ 时，</p>
+                $$F_{\max}(z) = [F(z)]^n, \quad f_{\max}(z) = n[F(z)]^{n-1}f(z)$$
+                $$F_{\min}(z) = 1 - [1 - F(z)]^n, \quad f_{\min}(z) = n[1 - F(z)]^{n-1}f(z)$$
+            </div>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">📌 例 5.2</div>
+            <p><strong>题目：</strong>设随机变量 $X, Y$ 相互独立，且均服从参数为 $\lambda$ 的指数分布，令 $Z = |X - Y|$，则下列随机变量中与 $Z$ 同分布的是（&nbsp;&nbsp;）。</p>
+            <p>(A) $X + Y$ &nbsp;&nbsp;&nbsp; (B) $\frac{X + Y}{2}$ &nbsp;&nbsp;&nbsp; (C) $2X$ &nbsp;&nbsp;&nbsp; (D) $X$</p>
+            
+            <details>
+                <summary>查看详细解答</summary>
+                <div class="formula-box">
+                    <p><strong>【解】</strong>应选 (D)。</p>
+                    
+                    <p>$X$ 与 $Y$ 的联合概率密度为 $f(x,y) = f_X(x) \cdot f_Y(y) = \begin{cases} \lambda^2 e^{-\lambda(x+y)}, & x > 0, y > 0 \\ 0, & \text{其他} \end{cases}$</p>
+                    
+                    <p>设 $Z$ 的分布函数为 $F_Z(z)$，则 $F_Z(z) = P\{Z \leq z\} = P\{|X - Y| \leq z\}$</p>
+                    
+                    <p>当 $z < 0$ 时，$F_Z(z) = 0$；</p>
+                    
+                    <p>当 $z \geq 0$ 时，</p>
+                    $$F_Z(z) = P\{-z \leq X - Y \leq z\} = 2P\{0 \leq X - Y \leq z\}$$
+                    $$= 2\int_0^{+\infty} \lambda e^{-\lambda x}\,\mathrm{d}y \int_y^{y+z} \lambda e^{-\lambda x}\,\mathrm{d}x$$
+                    $$= 2\int_0^{+\infty} \lambda e^{-\lambda y}[e^{-\lambda y} - e^{-\lambda(y+z)}]\,\mathrm{d}y$$
+                    $$= 2\int_0^{+\infty} \lambda e^{-2\lambda y}\,\mathrm{d}y - 2e^{-\lambda z}\int_0^{+\infty} \lambda e^{-2\lambda y}\,\mathrm{d}y$$
+                    $$= 1 - e^{-\lambda z}$$
+                    
+                    <p>所以 $Z \sim E(\lambda)$，从而 $Z$ 与 $X$ 服从相同分布，选 (D)。</p>
+                </div>
+            </details>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">📌 例 5.3</div>
+            <p><strong>题目：</strong>设 $(X,Y) \sim f(x,y) = \begin{cases} 8xy, & 0 < x < y < 1 \\ 0, & \text{其他} \end{cases}$，记 $Z = \frac{X}{Y}$。</p>
+            <p>(1) 求 $Z$ 的概率密度 $f_Z(z)$；</p>
+            <p>(2) 求 $P\left\{Y < \frac{2}{3}\Big| X = \frac{1}{2}\right\}$。</p>
+            
+            <details>
+                <summary>查看详细解答</summary>
+                <div class="formula-box">
+                    <p><strong>【解】</strong>(1) 令 $\begin{cases} u = \frac{x}{y} \\ v = y \end{cases}$，即有 $\begin{cases} x = uv \\ y = v \end{cases}$，$J = \begin{vmatrix} v & u \\ 0 & 1 \end{vmatrix} = v$，于是 $f_{U,V}(u,v) = \begin{cases} 8uv \cdot v \cdot v, & 0 < uv < 1 \\ 0, & \text{其他} \end{cases} = \begin{cases} 8uv^3\,\mathrm{d}v, & 0 < u < 1 \\ 0, & \text{其他} \end{cases} = \begin{cases} 2u, & 0 < u < 1 \\ 0, & \text{其他} \end{cases}$</p>
+                    
+                    <p>故 $f_U(u) = \int_{-\infty}^{+\infty} f_{U,V}(u,v)\,\mathrm{d}v = \begin{cases} \int_0^1 v^3\,\mathrm{d}v, & 0 < u < 1 \\ 0, & \text{其他} \end{cases} = \begin{cases} 2u, & 0 < u < 1 \\ 0, & \text{其他} \end{cases}$</p>
+                    
+                    <p>故 $f_Z(z) = \begin{cases} 2z, & 0 < z < 1 \\ 0, & \text{其他} \end{cases}$</p>
+                    
+                    <p>(2) 由于 $P\left\{X = \frac{1}{2}\right\} = 0$，故不能直接用条件概率公式，</p>
+                    
+                    $$f_X(x) = \int_{-\infty}^{+\infty} 8xy\,\mathrm{d}y = \begin{cases} \int_x^1 8xy\,\mathrm{d}y, & 0 < x < 1 \\ 0, & \text{其他} \end{cases} = \begin{cases} 4x(1-x^2), & 0 < x < 1 \\ 0, & \text{其他} \end{cases}$$
+                    
+                    <p>故</p>
+                    $$f_{Y|X}\left(y\Big|x = \frac{1}{2}\right) = \frac{f\left(\frac{1}{2},y\right)}{f_X\left(\frac{1}{2}\right)} = \frac{4y}{\frac{3}{2}} = \frac{8}{3}y, \quad \frac{1}{2} < y < 1$$
+                    
+                    <p>于是 $P\left\{Y < \frac{2}{3}\Big| X = \frac{1}{2}\right\} = \int_{\frac{1}{2}}^{\frac{2}{3}} y\,\mathrm{d}y = \frac{8}{3} \times \frac{1}{2} \times \left(\frac{4}{9} - \frac{1}{4}\right) = \frac{7}{27}$</p>
+                </div>
+            </details>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">📌 例 5.4</div>
+            <p><strong>题目：</strong>设随机变量 $X_i$ 与 $X_j$ 相互独立且同分布，其概率密度为</p>
+            $$f(x) = \begin{cases} ax, & 0 < x < 1 \\ 0, & \text{其他} \end{cases}$$
+            <p>(1) 求 $a$ 的值；</p>
+            <p>(2) 求 $Z = \max\{X_1, X_2\} - \min\{X_1, X_2\}$ 的概率密度。</p>
+            
+            <details>
+                <summary>查看详细解答</summary>
+                <div class="formula-box">
+                    <p><strong>【解】</strong>(1) 由归一性，$\int_{-\infty}^{+\infty} f(x)\,\mathrm{d}x = \int_0^1 ax\,\mathrm{d}x = \frac{1}{2}a = 1$，做 $a = 2$</p>
+                    <p style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                        <strong>D<sub>2k</sub>(化归程典型式)</strong>
+                    </p>
+                    
+                    <p>(2) $Z = \max\{X_1, X_2\} - \min\{X_1, X_2\} = \frac{X_1 + X_2 + |X_1 - X_2|}{2} - \frac{X_1 + X_2 - |X_1 - X_2|}{2} = |X_1 - X_2|$</p>
+                    
+                    <p>令 $\begin{cases} x_1 - x_2 = u \\ x_2 = v \end{cases}$，即 $\begin{cases} x_1 = u + v \\ x_2 = v \end{cases}$，则 $J = \begin{vmatrix} 1 & 1 \\ 0 & 1 \end{vmatrix} = 1$，且 $\begin{cases} 0 < u + v < 1 \\ 0 < v < 1 \end{cases}$</p>
+                    
+                    <p>当 $0 < u + v < 1$，且 $0 < v < 1$ 时（见图），有</p>
+                    $$f_{U,V}(u,v) = f_X(u+v) \cdot f_Y(v) = 2(u+v) \cdot 2v$$
+                    
+                    <p>即有</p>
+                    $$f_U(u) = \int_{-\infty}^{+\infty} f_{U,V}(u,v)\,\mathrm{d}v$$
+                    
+                    <p>当 $0 < u < 1$ 时，$Z = |U|$ 的分布函数为</p>
+                    $$F_Z(z) = P\{|U| \leq z\} = P\{-z \leq U \leq z\}$$
+                    
+                    <p>故当 $0 < z < 1$ 时，$Z$ 的概率密度为</p>
+                    $$f_Z(z) = f_U(z) + f_U(-z) = \frac{2}{3}z^3 - 2z + \frac{4}{3} + \left(-\frac{2}{3}z^3\right) + 2(-z) + \frac{4}{3} = \frac{4}{3}z^3 - 4z + \frac{8}{3}$$
+                    
+                    <p>于是，$Z$ 的概率密度为</p>
+                    $$f_Z(z) = \begin{cases} \frac{4}{3}z^3 - 4z + \frac{8}{3}, & 0 < z < 1 \\ 0, & \text{其他} \end{cases}$$
+                </div>
+            </details>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">📌 例 5.5</div>
+            <p><strong>题目：</strong>设随机变量 $X \sim U(1,2)$，在 $X = x$ 的条件下，$Y$ 的条件分布为 $E(x)$，则 $D(XY)$ = (&nbsp;&nbsp;)。</p>
+            <p>(A) 1 &nbsp;&nbsp;&nbsp; (B) 2 &nbsp;&nbsp;&nbsp; (C) $x$ &nbsp;&nbsp;&nbsp; (D) $2x$</p>
+            
+            <details>
+                <summary>查看详细解答</summary>
+                <div class="formula-box">
+                    <p><strong>【解】</strong>应选 (A)。</p>
+                    
+                    <p>设 $f(x,y) = f_X(x) \cdot f_{Y|X}(y|x) = 1 \cdot xe^{-xy}, 1 < x < 2, y > 0$</p>
+                    
+                    <p>令 $\begin{cases} u = xy \\ v = y \end{cases}$，得 $J = \begin{vmatrix} \frac{u}{v} & -\frac{u}{v^2} \\ v & 1 \end{vmatrix} = \frac{1}{v}$，故</p>
+                    
+                    $$f_{U,V}(u,v) = \begin{cases} \frac{u}{v}e^{-u} \cdot \frac{1}{v}, & 1 < \frac{u}{v} < 2, v > 0 \\ 0, & \text{其他} \end{cases}$$
+                    
+                    <p>即有</p>
+                    $$f_U(u) = \int_{-\infty}^{+\infty} f_{U,V}(u,v)\,\mathrm{d}v$$
+                    $$= \begin{cases} \int_{\frac{u}{2}}^u ue^{-u} \cdot \frac{1}{v^2}\,\mathrm{d}v, & u > 0 \\ 0, & \text{其他} \end{cases} = \begin{cases} e^{-u}, & u > 0 \\ 0, & \text{其他} \end{cases}$$
+                    
+                    <p>故 $XY$ 服从 $E(1)$，于是 $D(XY) = 1$。</p>
+                </div>
+            </details>
+        </div>
+        
+        <h3>3. (离散型，连续型)→连续型</h3>
+        
+        <div class="method-box">
+            <h4>① $\max\{X,Y\}$ 的分布</h4>
+            <p>设 $(X,Y) \sim F(x,y)$，则 $Z = \max\{X,Y\}$ 的分布函数为</p>
+            $$F_{\max}(z) = P\{\max\{X,Y\} \leq z\} = P\{X \leq z, Y \leq z\} = F(z,z)$$
+            <p>当 $X$ 与 $Y$ 相互独立时，</p>
+            $$F_{\max}(z) = F_X(z) \cdot F_Y(z)$$
+            
+            <h4>② $\min\{X,Y\}$ 的分布</h4>
+            <p>设 $(X,Y) \sim F(x,y)$，则 $Z = \min\{X,Y\}$ 的分布函数为</p>
+            $$F_{\min}(z) = P\{\min\{X,Y\} \leq z\} = P\{\{X \leq z\} \cup \{Y \leq z\}\}$$
+        </div>
+        
+        <div class="example">
+            <div class="example-header">📌 例 5.6</div>
+            <p><strong>题目：</strong>设总体 $X$ 服从 $[0,\theta]$ 上的均匀分布，$\theta$ 为正常数，$X_1, X_2, X_3$ 是取自 $X$ 的一个样本，求 $Y = \max\{X_1, X_2, X_3\}$，$Z = \min\{X_1, X_2, X_3\}$ 的分布函数和概率密度。</p>
+            
+            <details>
+                <summary>查看详细解答</summary>
+                <div class="formula-box">
+                    <p><strong>【解】</strong>设 $F(x)$ 为 $X$ 的分布函数，$f(x)$ 为 $X$ 的概率密度，则</p>
+                    
+                    $$F(x) = \begin{cases} 1, & x \geq \theta \\ \frac{x}{\theta}, & 0 \leq x < \theta \\ 0, & x < 0 \end{cases}, \quad f(x) = \begin{cases} \frac{1}{\theta}, & 0 \leq x < \theta \\ 0, & \text{其他} \end{cases}$$
+                    
+                    <p>由 $Y = \max\{X_i\}$，$Z = \min\{X_i\}$，则 $Y$ 的分布函数与概率密度分别为</p>
+                    
+                    $$F_Y(y) = [F(y)]^3 = \begin{cases} 1, & y \geq \theta \\ \left(\frac{y}{\theta}\right)^3, & 0 \leq y < \theta \\ 0, & y < 0 \end{cases}$$
+                    
+                    $$f_Y(y; \theta) = 3[F(y)]^2 f(y) = \begin{cases} 3\left(\frac{y}{\theta}\right)^2 \cdot \frac{1}{\theta}, & 0 \leq y < \theta \\ 0, & \text{其他} \end{cases}$$
+                    
+                    <p>$Z$ 的分布函数与概率密度分别为</p>
+                    
+                    $$F_Z(z) = 1 - [1 - F(z)]^3 = \begin{cases} 1, & z \geq \theta \\ 1 - \left(1 - \frac{z}{\theta}\right)^3, & 0 \leq z < \theta \\ 0, & z < 0 \end{cases}$$
+                    
+                    $$f_Z(z; \theta) = 3[1 - F(z)]^2 f(z) = \begin{cases} 3\left(1 - \frac{z}{\theta}\right)^2 \cdot \frac{1}{\theta}, & 0 \leq z < \theta \\ 0, & \text{其他} \end{cases}$$
+                </div>
+            </details>
+        </div>
+    </section>
+    
+    <section id="method2">
+        <h2>二、一维→多维 (O<sub>k</sub>(II任目标2))</h2>
+        
+        <div class="method-box">
+            <h3>1. 离散型→(离散型，离散型) (D<sub>k</sub>(常规操作))</h3>
+            <div class="formula-box">
+                <p>已知 $X \sim p_i$，构造 $\begin{cases} U = g(X) \\ V = h(X) \end{cases} \Rightarrow (U,V) \sim q_{ij}$</p>
+                <p style="background: #e8f5e9; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                    <strong>（离散型、离散型）往往人为制造，恍恍惚惚计数某事</strong>
+                </p>
+            </div>
+            
+            <h3>2. 连续型→(离散型，离散型) (D<sub>k</sub>(常规操作))</h3>
+            <div class="formula-box">
+                $$X \sim f(x), \quad \begin{cases} U = g(X) \\ V = h(X) \end{cases} \Rightarrow (U,V) \sim p_{ij}$$
+            </div>
+        </div>
+    </section>
+    
+    <section id="method3">
+        <h2>三、多维→多维 (O<sub>k</sub>(II任目标3))</h2>
+        
+        <div class="method-box">
+            <h3>1. (离散型，离散型)→(离散型，离散型) (D<sub>k</sub>(常规操作))</h3>
+            <div class="formula-box">
+                $$(X,Y) \sim p_{ij}, \quad \begin{cases} U = g(X,Y) \\ V = h(X,Y) \end{cases} \Rightarrow (U,V) \sim q_{ij}$$
+            </div>
+            
+            <h3>2. (连续型，连续型)→(离散型，离散型) 或 (连续型，连续型) (D<sub>k</sub>(常规操作))</h3>
+            <div class="formula-box">
+                $$(X,Y) \sim f(x,y), \quad \begin{cases} U = g(X,Y) \\ V = h(X,Y) \end{cases} \Rightarrow (U,V) \sim p_{ij} \text{或} f_{U,V}(u,v)$$
+            </div>
+            
+            <h3>3. (离散型，连续型)→(离散型，离散型) (D<sub>k</sub>(常规操作))</h3>
+            <div class="formula-box">
+                $$X \sim p_i, \quad Y \sim f_Y(y), \quad \begin{cases} U = g(X,Y) \\ V = h(X,Y) \end{cases} \Rightarrow (U,V) \sim q_{ij}$$
+            </div>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">📌 例 5.7</div>
+            <p><strong>题目：</strong>设随机变量 $X_1, X_2, X_3$ 相互独立，其中 $X_1$ 与 $X_2$ 均服从标准正态分布，$X_3$ 的概率分布为</p>
+            $$P\{X_3 = 0\} = P\{X_3 = 1\} = \frac{1}{2}, \quad Y = X_1X_3 + (1-X_3)X_2$$
+            <p>(1) 求二维随机变量 $(X_1, Y)$ 的分布函数，结果用标准正态分布函数 $\Phi(x)$ 表示；</p>
+            <p>(2) 证明随机变量 $Y$ 服从标准正态分布。</p>
+            
+            <details>
+                <summary>查看详细解答</summary>
+                <div class="formula-box">
+                    <p><strong>【解】</strong>(1) 记 $(X_1, Y)$ 的分布函数为 $F(x,y)$，则对任意实数 $x$ 和 $y$，都有</p>
+                    
+                    $$F(x,y) = P\{X_1 \leq x, Y \leq y\}$$
+                    
+                    <p style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                        <strong>D<sub>2k</sub>(化归程典型式)</strong>
+                    </p>
+                    
+                    $$= P\{X_1 \leq x, X_1X_3 + (1-X_3)X_2 \leq y, \Omega\}$$
+                    $$= P\{X_1 \leq x, X_1X_3 + (1-X_3)X_2 \leq y, \{X_3 = 0\} \cup \{X_3 = 1\}\}$$
+                    $$= P\{X_1 \leq x, X_1X_3 + (1-X_3)X_2 \leq y\} P\{X_3 = 0\} +$$
+                    $$P\{X_1 \leq x, X_1X_3 + (1-X_3)X_2 \leq y | X_3 = 1\}$$
+                    
+                    $$= \frac{1}{2}P\{X_1 \leq x, X_2 \leq y | X_3 = 0\} + \frac{1}{2}P\{X_1 \leq x, X_1 \leq y | X_3 = 1\}$$
+                    
+                    $$= \frac{1}{2}P\{X_1 \leq x, X_2 \leq y\} + \frac{1}{2}P\{X_1 \leq x, X_1 \leq y\}$$
+                    
+                    $$= \frac{1}{2}P\{X_1 \leq x\}\Phi(y) + \frac{1}{2}P\{X_1 \leq \min\{x,y\}\}$$
+                    
+                    $$= \frac{1}{2}\Phi(x)\Phi(y) + \frac{1}{2}\Phi(\min\{x,y\})$$
+                    
+                    <p>(2) 【证】由(1)知，$Y$ 的分布函数为</p>
+                    $$F_Y(y) = \lim_{x \to +\infty} F(x,y)$$
+                    $$= \lim_{x \to +\infty} \left[\frac{1}{2}\Phi(x)\Phi(y) + \frac{1}{2}\Phi(\min\{x,y\})\right]$$
+                    $$= \frac{1}{2}\Phi(y) + \frac{1}{2}\Phi(y) = \Phi(y)$$
+                    
+                    <p>所以 $Y$ 服从标准正态分布。</p>
+                </div>
+            </details>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">📌 例 5.8</div>
+            <p><strong>题目：</strong>设随机变量 $X$ 满足 $|X| \leq 1, P\{X = -1\} = P\{X = 1\} = \frac{1}{4}$，当 $|X| < 1$ 时，$X$ 服从 $(-1,1)$ 上的均匀分布，$Y$ 服从参数为 1 的指数分布，$X, Y$ 独立，令 $Z = X + Y$，求：</p>
+            <p>(1) $X$ 的分布函数 $F_X(x)$；</p>
+            <p>(2) $Z$ 的分布函数 $F_Z(z)$。</p>
+            
+            <details>
+                <summary>查看详细解答</summary>
+                <div class="formula-box">
+                    <p><strong>【解】</strong>(1) 当 $x < -1$ 时，$F(x) = P\{X \leq x\} = 0$；</p>
+                    
+                    <p>当 $x = -1$ 时，$F(x) = P\{X \leq x\} = \frac{1}{4}$；</p>
+                    
+                    <p>当 $-1 < x < 1$ 时，</p>
+                    
+                    <p style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                        <strong>D<sub>2k</sub>(化归程典型式)</strong>
+                    </p>
+                    
+                    $$F(x) = P\{X \leq -1\} + P\{-1 < X \leq x\}$$
+                    $$P\{-1 < X \leq x\} = P\{-1 < X \leq x, \Omega\}$$
+                    $$= P\{-1 < X \leq x, -1 < X < 1\} + P\{-1 < X \leq x, -1 < X < 1\}$$
+                    $$= P\{-1 < X \leq x | -1 < X < 1\}P\{-1 < X < 1\} + P\{-1 < X \leq x | -1 < X < 1\}P\{-1 < X < 1\}$$
+                    $$= \frac{x+1}{1-(-1)} \cdot \frac{1}{2} + 0 = \frac{x+1}{4}$$
+                    
+                    <p>故 $F(x) = \frac{1}{4} + \frac{x+1}{4} = \frac{2+x}{4}$</p>
+                    
+                    <p>当 $x \geq 1$ 时，$F(x) = 1$</p>
+                    
+                    <p>综上，$X$ 的分布函数为</p>
+                    $$F_X(x) = \begin{cases} 0, & x < -1 \\ \frac{2+x}{4}, & -1 \leq x < 1 \\ 1, & x \geq 1 \end{cases}$$
+                    
+                    <p>(2) 记 $A = \{-1 < X < 1\}$，由(1)知</p>
+                    
+                    $$f_X(x) = f_X(x | A)P(A) = \begin{cases} \frac{1}{4}, & -1 < x < 1 \\ 0, & \text{其他} \end{cases}, \quad \left(\text{或} f_X(x) = F'_X(x) = \begin{cases} \frac{1}{4}, & -1 < x < 1 \\ 0, & \text{其他} \end{cases}\right)$$
+                    
+                    $$F_Z(z) = P\{Z \leq z\} = P\{X + Y \leq z\}$$
+                    
+                    <p style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                        <strong>D<sub>2k</sub>(化归程典型式)</strong>
+                    </p>
+                    
+                    $$= P\{X = -1\}P\{Y \leq z+1\} + P\{X = 1\}P\{Y \leq z-1\} + P\{X + Y \leq z, -1 < X < 1\}$$
+                    
+                    <p>其中</p>
+                    $$P\{Y \leq z+1\} = F_Y(z+1) = \begin{cases} 1 - e^{-(z+1)}, & z+1 \geq 0 \\ 0, & \text{其他} \end{cases}$$
+                    
+                    $$P\{Y \leq z-1\} = F_Y(z-1) = \begin{cases} 1 - e^{-(z-1)}, & z-1 \geq 0 \\ 0, & \text{其他} \end{cases}$$
+                    
+                    <p>① 当 $z < -1$ 时，$P\{X + Y \leq z, -1 < X < 1\} = 0$</p>
+                    
+                    <p>② 当 $-1 \leq z < 1$ 时，</p>
+                    $$P\{X + Y \leq z, -1 < X < 1\} = \int_{-1}^z \mathrm{d}x \int_0^{z-x} \frac{1}{4}e^{-y}\,\mathrm{d}y = \frac{1}{4}\int_{-1}^z (1-e^{z-x})\,\mathrm{d}x$$
+                    $$= \frac{1}{4}\int_{-1}^z (1-e^{z-x})\,\mathrm{d}x = \frac{1}{4}(z+1) - \frac{1}{4}e^{z-x}\Big|_{-1}^z$$
+                    $$= \frac{1}{4}(z+1) - \frac{1}{4}(1-e^{-1-z})$$
+                    $$= \frac{1}{4}(z + e^{-1-z})$$
+                    
+                    <p>③ 当 $z \geq 1$ 时，</p>
+                    $$P\{X + Y \leq z, -1 < X < 1\} = \int_{-1}^1 \mathrm{d}x \int_0^{z-x} \frac{1}{4}e^{-y}\,\mathrm{d}y$$
+                    $$= \frac{1}{4}\int_{-1}^1 (1-e^{z-x})\,\mathrm{d}x$$
+                    $$= \frac{1}{2} - \frac{1}{4}e^{1-z}\Big|_{-1}^1$$
+                    $$= \frac{1}{2} - \frac{1}{4}(e^{1-z} - e^{-1-z})$$
+                    
+                    <p>综上，</p>
+                    $$F_Z(z) = \begin{cases} 0, & z < -1 \\ \frac{1}{4}[1 - e^{-(z+1)}] + \frac{1}{4}[z + e^{-(z+1)}], & -1 \leq z < 1 \\ \frac{1}{4}[1 - e^{-(z+1)}] + \frac{1}{4}[1 - e^{-(z-1)}] + \frac{1}{2} - \frac{1}{4}(e^{1-z} - e^{-1-z}), & z \geq 1 \end{cases}$$
+                    
+                    $$= \begin{cases} 0, & z < -1 \\ \frac{1+z}{4}, & -1 \leq z < 1 \\ 1 - \frac{1}{2}e^{1-z}, & z \geq 1 \end{cases}$$
+                </div>
+            </details>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">📌 例 5.9</div>
+            <p><strong>题目：</strong>已知随机变量 $X$ 与 $Y$ 相互独立，$X \sim \begin{pmatrix} 0 & 1 \\ \frac{1}{4} & \frac{3}{4} \end{pmatrix}$，$Y$ 服从参数为 1 的指数分布，记</p>
+            $$U = \begin{cases} 0, & X < Y \\ 1, & X \geq Y \end{cases}, \quad V = \begin{cases} 0, & X < 2Y \\ 1, & X \geq 2Y \end{cases}$$
+            <p>求 $(U,V)$ 的分布律。</p>
+            
+            <details>
+                <summary>查看详细解答</summary>
+                <div class="formula-box">
+                    <p><strong>【解】</strong>由例 1.4 知，</p>
+                    
+                    $$P\{U = 0\} = \frac{1}{4} + \frac{3}{4}e^{-1}, \quad P\{V = 0\} = \frac{1}{4} + \frac{3}{4}e^{-\frac{1}{2}}$$
+                    
+                    <p>则有</p>
+                    $$P\{U = 1\} = 1 - P\{U = 0\} = \frac{3}{4} - \frac{3}{4}e^{-1}$$
+                    $$P\{V = 1\} = 1 - P\{V = 0\} = \frac{3}{4} - \frac{3}{4}e^{-\frac{1}{2}}$$
+                    
+                    <p>又 $P\{U = 0, V = 1\} = P\{X < Y, X \geq 2Y\} = 0$，所以 $(U,V)$ 的分布律为</p>
+                    
+                    <table>
+                        <tr>
+                            <th>$U$ \ $V$</th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>$p_{i \cdot}$</th>
+                        </tr>
+                        <tr>
+                            <td>0</td>
+                            <td>$\frac{1}{4} + \frac{3}{4}e^{-1}$</td>
+                            <td>$\frac{3}{4}e^{-\frac{1}{2}} - \frac{3}{4}e^{-1}$</td>
+                            <td>$\frac{1}{4} + \frac{3}{4}e^{-\frac{1}{2}}$</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>$\frac{3}{4} - \frac{3}{4}e^{-\frac{1}{2}}$</td>
+                            <td>$\frac{3}{4} - \frac{3}{4}e^{-\frac{1}{2}}$</td>
+                        </tr>
+                        <tr>
+                            <td>$p_{\cdot j}$</td>
+                            <td>$\frac{1}{4} + \frac{3}{4}e^{-1}$</td>
+                            <td>$\frac{3}{4} - \frac{3}{4}e^{-1}$</td>
+                            <td>1</td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+        </div>
+    </section>
+    
+    <section id="summary">
+        <h2>📝 本讲总结</h2>
+        
+        <div class="method-box">
+            <h3>核心要点</h3>
+            <ul style="line-height: 2;">
+                <li><strong>多维→一维：</strong>掌握分布函数法、换元法、最值函数分布的求解</li>
+                <li><strong>一维→多维：</strong>理解如何从单变量构造多变量分布</li>
+                <li><strong>多维→多维：</strong>熟练运用常规操作和化归典型式方法</li>
+                <li><strong>关键技巧：</strong>
+                    <ul>
+                        <li>离散型问题：注意卷积公式的应用</li>
+                        <li>连续型问题：善用换元法和雅可比行列式</li>
+                        <li>混合型问题：分情况讨论，利用全概率公式</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="note">
+            <strong>💡 学习建议</strong><br>
+            1. 熟记常用分布的性质和公式<br>
+            2. 多做练习，熟悉各种变换技巧<br>
+            3. 注意独立性条件的应用<br>
+            4. 掌握条件概率和条件分布的计算方法
+        </div>
+        
+        <button class="interactive-btn" onclick="alert('恭喜你完成本讲学习！\n\n建议：\n1. 复习重点公式\n2. 完成课后习题\n3. 总结解题规律')">
+            完成学习 ✓
+        </button>
+    </section>
+    
+    <footer>
+        <p><strong>概率论与数理统计 - 第5讲</strong></p>
+        <p>多维随机变量函数的分布</p>
+        <p style="margin-top: 15px; opacity: 0.8;">© 教程制作说明：本HTML文件包含完整的LaTeX数学公式支持，需要网络连接以加载MathJax库。</p>
+    </footer>
+</div>
+
+<div class="scroll-top" id="scrollTop" onclick="scrollToTop()">
+    ↑
+</div>
+
+<script>
+    // 显示/隐藏内容
+    function toggleContent(id) {
+        const element = document.getElementById(id);
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+    
+    // 回到顶部按钮
+    window.onscroll = function() {
+        const scrollTop = document.getElementById('scrollTop');
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            scrollTop.style.display = 'flex';
+        } else {
+            scrollTop.style.display = 'none';
+        }
+    };
+    
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+    
+    // 平滑滚动到锚点
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // 页面加载完成提示
+    window.addEventListener('load', function() {
+        console.log('✓ 页面加载完成');
+        console.log('✓ MathJax数学公式渲染中...');
+        
+        // 检查MathJax是否加载成功
+        if (typeof MathJax !== 'undefined') {
+            MathJax.Hub.Queue(function() {
+                console.log('✓ MathJax渲染完成');
+            });
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第4讲 多维随机变量及其分布 - 交互式教程</title>
+    
+    <!-- MathJax配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            CommonHTML: { scale: 110 },
+            SVG: { scale: 110 }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --primary-green: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --primary-white: #ffffff;
+            --primary-dark: #343434;
+            --light-bg: #fafafa;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--primary-dark);
+            background: linear-gradient(135deg, #fef9f3 0%, #fef5eb 100%);
+            padding-bottom: 50px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--primary-white);
+            padding: 40px 0;
+            box-shadow: 0 4px 20px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: var(--primary-dark);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        nav a {
+            color: var(--primary-white);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background: var(--primary-orange);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(242, 125, 0, 0.4);
+        }
+        
+        .main-content {
+            margin-top: 40px;
+        }
+        
+        section {
+            background: var(--primary-white);
+            margin: 30px 0;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px var(--shadow);
+            border-left: 5px solid var(--primary-orange);
+        }
+        
+        section h2 {
+            color: var(--primary-orange);
+            font-size: 2em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary-green);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        section h3 {
+            color: var(--primary-dark);
+            font-size: 1.5em;
+            margin: 30px 0 20px 0;
+            padding: 15px;
+            background: linear-gradient(90deg, var(--primary-green) 0%, transparent 100%);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-orange);
+        }
+        
+        .note-box {
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+            border-left: 5px solid var(--primary-yellow);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 15px rgba(247, 209, 23, 0.2);
+        }
+        
+        .note-box strong {
+            color: var(--primary-orange);
+            font-size: 1.1em;
+        }
+        
+        .example-box {
+            background: linear-gradient(135deg, #e8f5f3 0%, #d4ebe7 100%);
+            border-left: 5px solid var(--primary-green);
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 15px rgba(166, 214, 201, 0.3);
+        }
+        
+        .example-box h4 {
+            color: var(--primary-orange);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .example-box h4:before {
+            content: "📝";
+            font-size: 1.2em;
+        }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e3ebff 100%);
+            border: 2px solid var(--primary-green);
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(166, 214, 201, 0.2);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 3px 15px var(--shadow);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        table th {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--primary-white);
+            padding: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        table tr:nth-child(even) {
+            background: var(--light-bg);
+        }
+        
+        table tr:hover {
+            background: var(--primary-green);
+            transition: background 0.3s ease;
+        }
+        
+        .accordion {
+            margin: 20px 0;
+        }
+        
+        .accordion-item {
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, #8bc9ba 100%);
+            color: var(--primary-dark);
+            padding: 18px 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #8bc9ba 0%, var(--primary-green) 100%);
+            transform: translateX(5px);
+        }
+        
+        .accordion-header:after {
+            content: "▼";
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion-header.active:after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background: var(--primary-white);
+        }
+        
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 25px;
+        }
+        
+        .highlight {
+            background: linear-gradient(90deg, var(--primary-yellow) 0%, transparent 100%);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .btn-interactive {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--primary-white);
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 15px 10px 15px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(242, 125, 0, 0.3);
+            font-weight: 600;
+        }
+        
+        .btn-interactive:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(242, 125, 0, 0.4);
+        }
+        
+        .btn-interactive:active {
+            transform: translateY(-1px);
+        }
+        
+        .hidden-content {
+            display: none;
+            margin-top: 20px;
+            padding: 25px;
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+            border-radius: 8px;
+            border-left: 5px solid var(--primary-orange);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .mjx-chtml {
+            font-size: 1.15em !important;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: var(--primary-dark);
+            color: var(--primary-white);
+            margin-top: 50px;
+            border-top: 4px solid var(--primary-orange);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            section {
+                padding: 25px 20px;
+            }
+            
+            section h2 {
+                font-size: 1.5em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+        
+        .key-point {
+            background: linear-gradient(135deg, #ffe6e6 0%, #ffd1d1 100%);
+            border-left: 5px solid var(--primary-orange);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        .solution-step {
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-green);
+        }
+        
+        ul.content-list {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+        
+        ul.content-list li {
+            margin: 12px 0;
+            line-height: 1.8;
+        }
+        
+        .chapter-number {
+            display: inline-block;
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📊 第4讲 多维随机变量及其分布</h1>
+            <p>掌握二维随机变量的分布、独立性及其应用</p>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#intro">三向解题法</a></li>
+                <li><a href="#discrete">离散型问题</a></li>
+                <li><a href="#continuous">连续型问题</a></li>
+                <li><a href="#marginal">边缘分布</a></li>
+                <li><a href="#distribution">用分布求概率</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container main-content">
+        <section id="intro">
+            <h2><span class="chapter-number">📖</span>三向解题法</h2>
+            
+            <p>多维随机变量的问题可以通过三种主要方法来解决，每种方法对应不同的目标和问题类型。掌握这三种方法，能够系统地处理各类多维随机变量问题。</p>
+            
+            <div class="note-box">
+                <strong>核心框架：</strong>多维随机变量及其分布的学习围绕四大目标展开：
+                <ul class="content-list">
+                    <li><strong>目标1：</strong>离散型问题（概率分布）</li>
+                    <li><strong>目标2：</strong>连续型问题（概率密度）</li>
+                    <li><strong>目标3：</strong>求边缘分布、条件分布与独立性问题</li>
+                    <li><strong>目标4：</strong>用分布求概率及反问题</li>
+                </ul>
+            </div>
+            
+            <div class="formula-box">
+                <h4>三向解题法思维导图</h4>
+                <p style="margin: 20px 0; font-size: 1.1em; color: var(--primary-dark);">
+                    <strong>多维随机变量及其分布（O₀目标）</strong><br>
+                    ↓ 分解为三大方向 ↓<br><br>
+                    <span class="highlight">离散型问题 (O₁)</span> → 
+                    <span class="highlight">连续型问题 (O₂)</span> → 
+                    <span class="highlight">边缘、条件分布与独立性 (O₃)</span>
+                </p>
+            </div>
+        </section>
+        
+        <section id="discrete">
+            <h2><span class="chapter-number">1</span>离散型问题 (O₁目标)</h2>
+            
+            <p>离散型二维随机变量的问题主要涉及联合分布、边缘分布以及协方差的计算。关键在于理解概率表格和事件之间的关系。</p>
+            
+            <div class="example-box">
+                <h4>例 4.1 协方差计算</h4>
+                <p>设二维随机变量 $(X,Y)$ 的概率分布为：</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>$X \backslash Y$</th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>-1</td>
+                            <td>0.1</td>
+                            <td>0.1</td>
+                            <td>$b$</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>$a$</td>
+                            <td>0.1</td>
+                            <td>0.1</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p>若事件 $\{\max(X,Y) = 2\}$ 与事件 $\{\min(X,Y) = 1\}$ 相互独立，则 $\text{Cov}(X,Y) = $ ?</p>
+                
+                <p><strong>选项：</strong> (A) -0.6 &nbsp;&nbsp; (B) -0.36 &nbsp;&nbsp; (C) 0 &nbsp;&nbsp; (D) 0.48</p>
+                
+                <button class="btn-interactive" onclick="toggleSolution('sol1')">显示详细解答</button>
+                
+                <div id="sol1" class="hidden-content">
+                    <div class="solution-step">
+                        <h4>解答步骤：</h4>
+                        
+                        <p><strong>第一步：理解事件含义</strong></p>
+                        <p>根据题意，由独立性条件：</p>
+                        <div class="formula-box">
+                            $$P\{\max(X,Y) = 2, \min(X,Y) = 1\} = P\{\max(X,Y) = 2\} \cdot P\{\min(X,Y) = 1\}$$
+                        </div>
+                        
+                        <p><strong>第二步：计算各概率</strong></p>
+                        <p>从表格可得：</p>
+                        <ul class="content-list">
+                            <li>$P\{\max(X,Y) = 2\} = b + 0.1$</li>
+                            <li>$P\{\min(X,Y) = 1\} = 0.1 + 0.1 = 0.2$</li>
+                            <li>$P\{\max(X,Y) = 2, \min(X,Y) = 1\} = 0.1$</li>
+                        </ul>
+                        
+                        <p><strong>第三步：求解未知参数</strong></p>
+                        <p>由独立性：</p>
+                        <div class="formula-box">
+                            $$0.2(b + 0.1) = 0.1$$
+                            $$\Rightarrow b = 0.4$$
+                        </div>
+                        
+                        <p>又因为 $a + b = 1 - 0.4 = 0.6$，所以 $a = 0.2$。</p>
+                        
+                        <p><strong>第四步：计算协方差</strong></p>
+                        <p>协方差公式：$\text{Cov}(X,Y) = E(XY) - E(X) \cdot E(Y)$</p>
+                        
+                        <p>计算各期望值：</p>
+                        <ul class="content-list">
+                            <li>$E(X) = (-1)(0.1 + 0.1 + 0.4) + 1(0.2 + 0.1 + 0.1) = -0.6 + 0.4 = -0.2$</li>
+                            <li>$E(Y) = 0(0.1 + 0.2) + 1(0.1 + 0.1) + 2(0.4 + 0.1) = 0 + 0.2 + 1.0 = 1.2$</li>
+                            <li>$E(XY) = (-1)(0)(0.1) + (-1)(1)(0.1) + (-1)(2)(0.4) + 1(0)(0.2) + 1(1)(0.1) + 1(2)(0.1)$</li>
+                            <li>$= 0 - 0.1 - 0.8 + 0 + 0.1 + 0.2 = -0.6$</li>
+                        </ul>
+                        
+                        <p>因此：</p>
+                        <div class="formula-box">
+                            $$\text{Cov}(X,Y) = E(XY) - E(X) \cdot E(Y) = -0.6 - (-0.2)(1.2) = -0.6 + 0.24 = -0.36$$
+                        </div>
+                        
+                        <p class="key-point"><strong>答案：(B) -0.36</strong></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="continuous">
+            <h2><span class="chapter-number">2</span>连续型问题 (O₂目标)</h2>
+            
+            <h3>1. 二维均匀分布</h3>
+            
+            <p>如果 $(X,Y)$ 的概率密度为：</p>
+            <div class="formula-box">
+                $$f(x,y) = \begin{cases} 
+                \frac{1}{S_D}, & (x,y) \in D \\
+                0, & \text{其他}
+                \end{cases}$$
+            </div>
+            
+            <p>其中 $S_D$ 为区域 $D$ 的面积，则称 $(X,Y)$ 在平面有界区域 $D$ 上服从均匀分布。</p>
+            
+            <h3>2. 二维正态分布</h3>
+            
+            <p>如果 $(X,Y)$ 的概率密度为：</p>
+            <div class="formula-box">
+                $$f(x,y) = \frac{1}{2\pi\sigma_1\sigma_2\sqrt{1-\rho^2}} \exp\left\{-\frac{1}{2(1-\rho^2)}\left[\left(\frac{x-\mu_1}{\sigma_1}\right)^2 - 2\rho\left(\frac{x-\mu_1}{\sigma_1}\right)\left(\frac{y-\mu_2}{\sigma_2}\right) + \left(\frac{y-\mu_2}{\sigma_2}\right)^2\right]\right\}$$
+            </div>
+            
+            <p>其中 $\mu_1, \mu_2 \in \mathbb{R}$，$\sigma_1, \sigma_2 > 0$，$-1 < \rho < 1$，则称 $(X,Y)$ 服从参数为 $\mu_1, \mu_2, \sigma_1^2, \sigma_2^2, \rho$ 的二维正态分布，记为 $(X,Y) \sim N(\mu_1, \mu_2; \sigma_1^2, \sigma_2^2; \rho)$。</p>
+            
+            <div class="note-box">
+                <strong>【注】</strong> 含参概率密度的结构：设函数 $f(x,y) = k_0 e^{-(ax^2 + by^2 + cxy + dx + ey + f)}$，则通过配方可得：
+                <div class="formula-box">
+                    $$ax^2 + by^2 + cxy + dx + ey + f = a(x+m)^2 + b(y+n)^2 + c(x+m)(y+n)$$
+                </div>
+                
+                <p>其中需满足：</p>
+                <ul class="content-list">
+                    <li>$2am + cn = d$</li>
+                    <li>$2bn + cm = e$</li>
+                    <li>$am^2 + bn^2 + cmn = f$</li>
+                </ul>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">推导示例：从一般形式到标准形式的转换</div>
+                    <div class="accordion-content">
+                        <p>设参数满足：</p>
+                        <div class="formula-box">
+                            $$\begin{cases}
+                            a = \frac{1}{2(1-\rho^2)\sigma_1^2} \\
+                            b = \frac{1}{2(1-\rho^2)\sigma_2^2} \\
+                            c = \frac{-\rho}{(1-\rho^2)\sigma_1\sigma_2} \\
+                            k_0 = \frac{1}{2\pi\sigma_1\sigma_2\sqrt{1-\rho^2}}
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>则有 $\rho = -\frac{c}{2\sqrt{ab}}$，如果 $f(x,y) = \frac{1}{2\pi}e^{-\frac{1}{2}(x^2 + \frac{y^2}{2} + xy - 11x - 7y + \frac{65}{2})}$，则有：</p>
+                        
+                        <div class="formula-box">
+                            $$x^2 + \frac{y^2}{2} + xy - 11x - 7y + \frac{65}{2} = (x+m)^2 + \frac{1}{2}(y+n)^2 + (x+m)(y+n)$$
+                        </div>
+                        
+                        <p>解方程组可得：$\mu_1 = 4$, $\mu_2 = 3$, $\sigma_1 = 1$, $\sigma_2 = \sqrt{2}$, $\rho = -\frac{\sqrt{2}}{2}$</p>
+                        
+                        <p>因此 $(X,Y) \sim N(4, 3; 1, 2; -\frac{\sqrt{2}}{2})$。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>3. 重要结论</h3>
+            
+            <div class="key-point">
+                <strong>关键性质汇总：</strong>
+                <ol class="content-list">
+                    <li>若 $(X_1, X_2) \sim N(\mu_1, \mu_2; \sigma_1^2, \sigma_2^2; \rho)$，则：
+                        <ul>
+                            <li>$X_1 \sim N(\mu_1, \sigma_1^2)$，$X_2 \sim N(\mu_2, \sigma_2^2)$</li>
+                        </ul>
+                    </li>
+                    
+                    <li>若 $X_1 \sim N(\mu_1, \sigma_1^2)$，$X_2 \sim N(\mu_2, \sigma_2^2)$，且 $X_1$、$X_2$ 相互独立，则：
+                        <ul>
+                            <li>配合为零 $\Rightarrow$ 不相关</li>
+                            <li>联合分布为 $(X_1, X_2) \sim N(\mu_1, \mu_2; \sigma_1^2, \sigma_2^2; 0)$</li>
+                        </ul>
+                    </li>
+                    
+                    <li>$(X_1, X_2) \sim N \Rightarrow k_1X_1 + k_2X_2 \sim N$（$k_1, k_2$ 是不全为0的常数）</li>
+                    
+                    <li>$(X_1, X_2) \sim N$，$Y_1 = a_1X_1 + a_2X_2$，$Y_2 = b_1X_1 + b_2X_2$，且 $\begin{vmatrix} a_1 & a_2 \\ b_1 & b_2 \end{vmatrix} \neq 0 \Rightarrow (Y_1, Y_2) \sim N$</li>
+                    
+                    <li>设 $X_1$、$X_2$ 独立同分布于 $N(\mu, \sigma^2)$，$Y_1 = aX_1 + bX_2$，$Y_2 = aX_1 - bX_2$，且 $\begin{vmatrix} a_1 & a_2 \\ b_1 & b_2 \end{vmatrix} \neq 0$，则：
+                        <ul>
+                            <li>$EY_1 = (a+b)\mu$，$DY_1 = (a^2 + b^2)\sigma^2$</li>
+                            <li>$EY_2 = (a-b)\mu$，$DY_2 = (a^2 + b^2)\sigma^2$</li>
+                            <li>$\text{Cov}(Y_1, Y_2) = (a^2 - b^2)\sigma^2$，$\rho_{Y_1Y_2} = \frac{a^2 - b^2}{a^2 + b^2}$</li>
+                        </ul>
+                    </li>
+                    
+                    <li>$(X_1, X_2) \sim N$，则 $X_1$、$X_2$ 相互独立 $\Leftrightarrow$ $X_1$、$X_2$ 不相关</li>
+                    
+                    <li>$(X,Y) \sim N(\mu_1, \mu_2; \sigma_1^2, \sigma_2^2; \rho)$，则二维正态分布的条件分布仍是正态分布</li>
+                </ol>
+            </div>
+            
+            <div class="example-box">
+                <h4>例 4.2 二维正态分布的应用</h4>
+                <p>设随机变量 $X$、$Y$ 相互独立，且 $X$ 服从正态分布 $N(0,2)$，$Y$ 服从正态分布 $N(-2,2)$。若 $P\{2X + Y < a\} = P\{X > Y\}$，则 $a = $ ?</p>
+                
+                <p><strong>选项：</strong> (A) $-2-\sqrt{10}$ &nbsp;&nbsp; (B) $-2+\sqrt{10}$ &nbsp;&nbsp; (C) $-2-\sqrt{6}$ &nbsp;&nbsp; (D) $-2+\sqrt{6}$</p>
+                
+                <button class="btn-interactive" onclick="toggleSolution('sol2')">显示详细解答</button>
+                
+                <div id="sol2" class="hidden-content">
+                    <div class="solution-step">
+                        <h4>解答：</h4>
+                        
+                        <p><strong>步骤1：</strong>计算 $2X + Y$ 的分布</p>
+                        <p>由于 $X \sim N(0,2)$，$Y \sim N(-2,2)$，且 $X$、$Y$ 独立，所以：</p>
+                        <div class="formula-box">
+                            $$E(2X + Y) = 2E(X) + E(Y) = 2(0) + (-2) = -2$$
+                            $$D(2X + Y) = 4D(X) + D(Y) = 4(2) + 2 = 10$$
+                        </div>
+                        <p>因此 $2X + Y \sim N(-2, 10)$</p>
+                        
+                        <p><strong>步骤2：</strong>化简概率表达式</p>
+                        <div class="formula-box">
+                            $$P\{2X + Y < a\} = P\left\{\frac{2X + Y + 2}{\sqrt{10}} < \frac{a+2}{\sqrt{10}}\right\} = \Phi\left(\frac{a+2}{\sqrt{10}}\right)$$
+                        </div>
+                        
+                        <p><strong>步骤3：</strong>计算 $X - Y$ 的分布</p>
+                        <p>同理，$X - Y \sim N(2, 4)$，所以：</p>
+                        <div class="formula-box">
+                            $$P\{X > Y\} = P\left\{\frac{X - Y - 2}{2} > \frac{0-2}{2}\right\} = 1 - \Phi(-1) = \Phi(1)$$
+                        </div>
+                        
+                        <p><strong>步骤4：</strong>求解</p>
+                        <p>由 $P\{2X + Y < a\} = P\{X > Y\}$，得：</p>
+                        <div class="formula-box">
+                            $$\Phi\left(\frac{a+2}{\sqrt{10}}\right) = \Phi(1)$$
+                            $$\Rightarrow \frac{a+2}{\sqrt{10}} = 1$$
+                            $$\Rightarrow a = \sqrt{10} - 2 = -2 + \sqrt{10}$$
+                        </div>
+                        
+                        <p class="key-point"><strong>答案：(B) $-2+\sqrt{10}$</strong></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="marginal">
+            <h2><span class="chapter-number">3</span>求边缘分布、条件分布与独立性问题 (O₃目标)</h2>
+            
+            <h3>1. 边缘分布</h3>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">① 求边缘分布函数 $F_X(x)$, $F_Y(y)$</div>
+                    <div class="accordion-content">
+                        <div class="formula-box">
+                            $$F_X(x) = F(x, +\infty), \quad F_Y(y) = F(+\infty, y)$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">② 求边缘概率 $p_{i\cdot}$, $p_{\cdot j}$</div>
+                    <div class="accordion-content">
+                        <div class="formula-box">
+                            $$p_{i\cdot} = \sum_j p_{ij}, \quad p_{\cdot j} = \sum_i p_{ij}$$
+                        </div>
+                        <p>即对行或列求和。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">③ 求边缘密度 $f_X(x)$, $f_Y(y)$</div>
+                    <div class="accordion-content">
+                        <div class="formula-box">
+                            $$f_X(x) = \int_{-\infty}^{+\infty} f(x,y)dy = \int_{-\infty}^{+\infty} f_Y(y) f_{X|Y}(x|y)dy$$
+                            $$f_Y(y) = \int_{-\infty}^{+\infty} f(x,y)dx = \int_{-\infty}^{+\infty} f_X(x) f_{Y|X}(y|x)dx$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>2. 条件分布</h3>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">① 求 $F(x|y_j)$, $F(y|x_i)$（离散型）</div>
+                    <div class="accordion-content">
+                        <div class="formula-box">
+                            $$F(x|y_j) = \sum_{x_i \leq x} P\{X = x_i | Y = y_j\}$$
+                            $$F(y|x_i) = \sum_{y_j \leq y} P\{Y = y_j | X = x_i\}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">② 求 $F(x|y)$, $F(y|x)$（连续型）</div>
+                    <div class="accordion-content">
+                        <div class="formula-box">
+                            $$F(x|y) = \int_{-\infty}^{x} f(u|y)du = \int_{-\infty}^{x} \frac{f(u,y)}{f_Y(y)}du$$
+                            $$F(y|x) = \int_{-\infty}^{y} f(v|x)dv = \int_{-\infty}^{y} \frac{f(x,v)}{f_X(x)}dv$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">③ 求条件概率 $P\{Y = y_j | X = x_i\}$, $P\{X = x_i | Y = y_j\}$</div>
+                    <div class="accordion-content">
+                        <div class="formula-box">
+                            $$P\{Y = y_j | X = x_i\} = \frac{P\{X = x_i, Y = y_j\}}{P\{X = x_i\}} = \frac{p_{ij}}{p_{i\cdot}}$$
+                            $$P\{X = x_i | Y = y_j\} = \frac{P\{X = x_i, Y = y_j\}}{P\{Y = y_j\}} = \frac{p_{ij}}{p_{\cdot j}}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">④ 求条件密度 $f_{Y|X}(y|x)$, $f_{X|Y}(x|y)$</div>
+                    <div class="accordion-content">
+                        <div class="formula-box">
+                            $$f_{Y|X}(y|x) = \frac{f(x,y)}{f_X(x)}, \quad f_{X|Y}(x|y) = \frac{f(x,y)}{f_Y(y)}$$
+                        </div>
+                        <p class="note-box"><strong>【注】</strong>(1) 联合 = 边缘 × 条件，亦常考。如 $f(x,y) = f_{Y|X}(y|x)f_X(x)$<br>
+                        (2) 以上式子，所有分母均不为零。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>3. 判独立</h3>
+            
+            <div class="key-point">
+                <strong>① $X$ 与 $Y$ 相互独立的充要条件：</strong>
+                <p>对任意 $x, y$，$F(x,y) = F_X(x) \cdot F_Y(y)$</p>
+                <p class="highlight">即边缘乘积等于联合分布，则 $A \Leftrightarrow B$ 成立。反之 $B$ 成立，则 $A \Leftrightarrow B$ 成立。</p>
+            </div>
+            
+            <div class="key-point">
+                <strong>② $X$ 与 $Y$ 不独立的判断方法：</strong>
+                <p>存在 $x_0, y_0$，使得 $A = \{X \leq x_0\}$ 与 $B = \{Y \leq y_0\}$ 不独立，则 $F(x_0, y_0) \neq F_X(x_0) \cdot F_Y(y_0)$。</p>
+                <p>因此，证明不独立的常用方法：找 $x_0, y_0$，使得 $0 < P\{X \leq x_0\}, P\{Y \leq y_0\} < 1$，且 $\{X \leq x_0\} \subseteq \{Y \leq y_0\}$ 或 $\{Y \leq y_0\} \subseteq \{X \leq x_0\}$ 或 $\{X \leq x_0, Y \leq y_0\} = \emptyset$。</p>
+            </div>
+            
+            <div class="key-point">
+                <strong>③ 若 $(X,Y)$ 为二维离散型随机变量，$X$ 与 $Y$ 相互独立的充要条件：</strong>
+                <p>对任意 $i, j$，$p_{ij} = p_{i\cdot} \cdot p_{\cdot j}$</p>
+            </div>
+            
+            <div class="key-point">
+                <strong>④ 若 $(X,Y)$ 为二维连续型随机变量，$X$ 与 $Y$ 相互独立的充要条件：</strong>
+                <p>对任意 $x, y$，$f(x,y) = f_X(x) \cdot f_Y(y)$</p>
+            </div>
+            
+            <div class="note-box">
+                <strong>补充说明：</strong>
+                <ul class="content-list">
+                    <li>以上判别方法由②知，$(X,Y)$ 的分布律为下表形式：</li>
+                </ul>
+                
+                <table style="margin-top: 15px;">
+                    <thead>
+                        <tr>
+                            <th>$X \backslash Y$</th>
+                            <th>$y_1$</th>
+                            <th>$y_2$</th>
+                            <th>$y_3$</th>
+                            <th>$p_{i\cdot}$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>$x_1$</td>
+                            <td>$p_{11}$</td>
+                            <td>$p_{12}$</td>
+                            <td>$p_{13}$</td>
+                            <td>$p_{1\cdot}$</td>
+                        </tr>
+                        <tr>
+                            <td>$x_2$</td>
+                            <td>$p_{21}$</td>
+                            <td>$p_{22}$</td>
+                            <td>$p_{23}$</td>
+                            <td>$p_{2\cdot}$</td>
+                        </tr>
+                        <tr>
+                            <td>$p_{\cdot j}$</td>
+                            <td>$p_{\cdot 1}$</td>
+                            <td>$p_{\cdot 2}$</td>
+                            <td>$p_{\cdot 3}$</td>
+                            <td>1</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p style="margin-top: 15px;">其中 $p_{ij} \neq 0, i=1,2; j=1,2,3$，且满足：</p>
+                <div class="formula-box">
+                    $$\frac{p_{11}}{p_{21}} = \frac{p_{12}}{p_{22}} = \frac{p_{13}}{p_{23}}$$
+                </div>
+                
+                <p>以上过程可逆，故可有重要结论：当 $p_{ij} \neq 0$ 时，$X$、$Y$ 独立 $\Leftrightarrow$ 联合分布律的每行元素对应成比例或每列元素对应成比例来判断 $X$、$Y$ 是否独立。</p>
+            </div>
+            
+            <div class="example-box">
+                <h4>例 4.3 判断独立性</h4>
+                <p>设二维随机变量 $(X,Y)$ 的概率密度为：</p>
+                <div class="formula-box">
+                    $$f(x,y) = \begin{cases}
+                    \frac{2}{\pi}(x^2 + y^2), & x^2 + y^2 \leq 1 \\
+                    0, & \text{其他}
+                    \end{cases}$$
+                </div>
+                
+                <p>(1) 求 $X$ 与 $Y$ 的协方差。</p>
+                <p>(2) $X$ 与 $Y$ 是否相互独立？</p>
+                <p>(3) 求 $Z = X^2 + Y^2$ 的概率密度。</p>
+                
+                <button class="btn-interactive" onclick="toggleSolution('sol3')">显示详细解答</button>
+                
+                <div id="sol3" class="hidden-content">
+                    <div class="solution-step">
+                        <h4>(1) 求协方差</h4>
+                        <p>因为积分区域关于原点对称，且被积函数为奇函数，所以：</p>
+                        <div class="formula-box">
+                            $$EX = \iint_{x^2+y^2 \leq 1} x \cdot \frac{2}{\pi}(x^2 + y^2)dxdy = 0$$
+                            $$EY = \iint_{x^2+y^2 \leq 1} y \cdot \frac{2}{\pi}(x^2 + y^2)dxdy = 0$$
+                            $$E(XY) = \iint_{x^2+y^2 \leq 1} xy \cdot \frac{2}{\pi}(x^2 + y^2)dxdy = 0$$
+                        </div>
+                        <p>所以 $X$ 与 $Y$ 的协方差为：</p>
+                        <div class="formula-box">
+                            $$\text{Cov}(X,Y) = E(XY) - EX \cdot EY = 0$$
+                        </div>
+                        
+                        <h4>(2) 判断独立性</h4>
+                        <p>当 $x \geq 1$ 或 $x \leq -1$ 时，$f_X(x) = 0$。</p>
+                        <p>当 $-1 < x < 1$ 时：</p>
+                        <div class="formula-box">
+                            $$f_X(x) = \int_{-\sqrt{1-x^2}}^{\sqrt{1-x^2}} \frac{2}{\pi}(x^2 + y^2)dy = \frac{4}{3\pi}(1 + 2x^2)\sqrt{1-x^2}$$
+                        </div>
+                        
+                        <p>所以：</p>
+                        <div class="formula-box">
+                            $$f_X(x) = \begin{cases}
+                            \frac{4}{3\pi}(1 + 2x^2)\sqrt{1-x^2}, & -1 < x < 1 \\
+                            0, & \text{其他}
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>同理得：</p>
+                        <div class="formula-box">
+                            $$f_Y(y) = \begin{cases}
+                            \frac{4}{3\pi}(1 + 2y^2)\sqrt{1-y^2}, & -1 < y < 1 \\
+                            0, & \text{其他}
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>由于 $f(x,y) \neq f_X(x) \cdot f_Y(y)$，故 $X$ 与 $Y$ 不相互独立。</p>
+                        
+                        <h4>(3) 求 $Z$ 的分布函数</h4>
+                        <p>因为 $P\{0 \leq Z \leq 1\} = 1$，所以当 $z < 0$ 时，$F_Z(z) = 0$；当 $z \geq 1$ 时，$F_Z(z) = 1$。</p>
+                        <p>当 $0 \leq z < 1$ 时：</p>
+                        <div class="formula-box">
+                            $$\begin{aligned}
+                            F_Z(z) &= P\{Z \leq z\} = P\{X^2 + Y^2 \leq z\} \\
+                            &= \iint_{x^2+y^2 \leq z} \frac{2}{\pi}(x^2 + y^2)dxdy \\
+                            &= \int_0^{2\pi}d\theta \int_0^{\sqrt{z}} \frac{2}{\pi}r \cdot r \, dr = z^2
+                            \end{aligned}$$
+                        </div>
+                        
+                        <p>所以 $Z$ 的概率密度为：</p>
+                        <div class="formula-box">
+                            $$f_Z(z) = \begin{cases}
+                            2z, & 0 \leq z < 1 \\
+                            0, & \text{其他}
+                            \end{cases}$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="distribution">
+            <h2><span class="chapter-number">4</span>用分布求概率及反问题 (O₄目标)</h2>
+            
+            <div class="key-point">
+                <strong>解题策略：</strong>
+                <ol class="content-list">
+                    <li>$(X,Y) \sim p_{ij}$，则 $P\{(X,Y) \in D\} = \sum_{(x_i,y_j) \in D} p_{ij}$</li>
+                    <li>$(X,Y) \sim f(x,y)$，则 $P\{(X,Y) \in D\} = \iint_D f(x,y)dxdy$</li>
+                    <li>$(X,Y)$ 为混合型，则用全概率公式</li>
+                    <li>反问题：已知概率反求参数</li>
+                </ol>
+            </div>
+            
+            <div class="example-box">
+                <h4>例 4.4 用分布求概率</h4>
+                <p>设随机变量 $X$ 与 $Y$ 相互独立，且 $X \sim B\left(\frac{1}{3}\right)$，$Y \sim B\left(2, \frac{1}{2}\right)$，则 $P\{X = Y\} = $ ?</p>
+                
+                <button class="btn-interactive" onclick="toggleSolution('sol4')">显示详细解答</button>
+                
+                <div id="sol4" class="hidden-content">
+                    <div class="solution-step">
+                        <h4>解答：</h4>
+                        
+                        <p>由独立性和全概率公式：</p>
+                        <div class="formula-box">
+                            $$\begin{aligned}
+                            P\{X = Y\} &= P\{X = 0, Y = 0\} + P\{X = 1, Y = 1\} \\
+                            &= P\{X = 0\}P\{Y = 0\} + P\{X = 1\}P\{Y = 1\} \\
+                            &= \frac{2}{3} \times \left(\frac{1}{2}\right)^2 + \frac{1}{3} \times \left(\frac{1}{2}\right)^2 \times 2 \\
+                            &= \frac{1}{6} + \frac{1}{6} = \frac{1}{3}
+                            \end{aligned}$$
+                        </div>
+                        
+                        <p class="key-point"><strong>答案：$\frac{1}{3}$</strong></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="note-box" style="margin-top: 30px;">
+                <strong>💡 学习小贴士：</strong>
+                <ul class="content-list">
+                    <li>掌握离散型和连续型的区别，选择合适的方法</li>
+                    <li>理解边缘分布、条件分布和独立性之间的关系</li>
+                    <li>熟练运用二维正态分布的性质</li>
+                    <li>多做练习，巩固各种题型的解题技巧</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 概率论与数理统计教程 | 第4讲：多维随机变量及其分布</p>
+        <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">本页面使用 MathJax 渲染数学公式，需要网络连接</p>
+    </footer>
+    
+    <script>
+        // 手风琴功能
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+        
+        // 显示/隐藏解答
+        function toggleSolution(id) {
+            const element = document.getElementById(id);
+            if (element.style.display === 'none' || element.style.display === '') {
+                element.style.display = 'block';
+            } else {
+                element.style.display = 'none';
+            }
+        }
+        
+        // 平滑滚动
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 页面加载动画
+        window.addEventListener('load', function() {
+            document.querySelectorAll('section').forEach((section, index) => {
+                setTimeout(() => {
+                    section.style.opacity = '0';
+                    section.style.transform = 'translateY(20px)';
+                    section.style.transition = 'all 0.6s ease';
+                    setTimeout(() => {
+                        section.style.opacity = '1';
+                        section.style.transform = 'translateY(0)';
+                    }, 50);
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
+

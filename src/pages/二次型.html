@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第9讲：二次型 - 交互式教程</title>
+    
+    <!-- MathJax 配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            },
+            CommonHTML: { linebreaks: { automatic: true } },
+            SVG: { linebreaks: { automatic: true } }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #343434;
+            line-height: 1.8;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        header h1 {
+            font-size: 3em;
+            font-family: 'Noto Serif SC', serif;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #343434;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        nav li {
+            margin: 0;
+        }
+        
+        nav a {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            border-bottom-color: #f7d117;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: #f9f9f9;
+            border-radius: 15px;
+            border-left: 5px solid #f27d00;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(242, 125, 0, 0.2);
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            font-family: 'Noto Serif SC', serif;
+            border-bottom: 3px solid #a6d6c9;
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: #343434;
+            font-size: 1.5em;
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid #f7d117;
+        }
+        
+        .example {
+            background: linear-gradient(135deg, #a6d6c9 0%, #c2e9fb 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #a6d6c9;
+            position: relative;
+        }
+        
+        .example::before {
+            content: "例题";
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #f27d00;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .solution {
+            background: #fff8e1;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #f7d117;
+        }
+        
+        .solution::before {
+            content: "【解】";
+            font-weight: bold;
+            color: #f27d00;
+            margin-right: 10px;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border: 2px solid #f7d117;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .note::before {
+            content: "📌 注意";
+            display: block;
+            font-weight: bold;
+            color: #f27d00;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .formula-box {
+            background: white;
+            border: 2px solid #a6d6c9;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .mjx-chtml {
+            font-size: 1.15em !important;
+        }
+        
+        .collapsible {
+            background: #f27d00;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            border-radius: 10px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        
+        .collapsible:hover {
+            background: #d96d00;
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.active:after {
+            transform: rotate(-180deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .collapsible-content-inner {
+            padding: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        th {
+            background: #f27d00;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .matrix {
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 15px;
+        }
+        
+        li {
+            margin: 10px 0;
+            padding-left: 10px;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .important {
+            color: #f27d00;
+            font-weight: bold;
+        }
+        
+        footer {
+            background: #343434;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(242, 125, 0, 0.4);
+            transition: all 0.3s;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: #d96d00;
+            transform: translateY(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            section {
+                padding: 20px;
+            }
+        }
+        
+        .flowchart {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .flowchart-item {
+            display: inline-block;
+            background: #a6d6c9;
+            padding: 15px 25px;
+            margin: 10px;
+            border-radius: 10px;
+            border: 2px solid #f27d00;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .flowchart-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第9讲：二次型</h1>
+            <p>三大解题方法与应用</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#overview">总览</a></li>
+                <li><a href="#section1">矩阵表示</a></li>
+                <li><a href="#section2">配方法</a></li>
+                <li><a href="#section3">伪配方法</a></li>
+                <li><a href="#section4">正交变换</a></li>
+                <li><a href="#section5">合同判定</a></li>
+                <li><a href="#section6">合同与相似</a></li>
+                <li><a href="#section7">正定判定</a></li>
+                <li><a href="#section8">最值问题</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <section id="overview">
+                <h2>三大解题方法总览</h2>
+                <p>本讲介绍二次型 $f = \mathbf{x}^T A\mathbf{x}$ 的三种主要解题方法，其中 $\mathbf{x} = [x_1, x_2, \ldots, x_n]^T$，$A$ 为对称矩阵。</p>
+                
+                <div class="flowchart">
+                    <h3 style="color: #f27d00; border: none; margin-bottom: 20px;">二次型解题方法流程图</h3>
+                    <div class="flowchart-item">$O_1$ (旧住目标)</div>
+                    <br>
+                    <div class="flowchart-item">$D_1$ (常规操作)</div>
+                    <div class="flowchart-item">$D_{23}$ (化归经典形式)</div>
+                    <br>
+                    <div class="flowchart-item">配方法</div>
+                    <div class="flowchart-item">伪配方法</div>
+                    <div class="flowchart-item">正交变换</div>
+                </div>
+                
+                <table>
+                    <tr>
+                        <th>方法</th>
+                        <th>特点</th>
+                        <th>适用场景</th>
+                    </tr>
+                    <tr>
+                        <td><strong>配方法</strong></td>
+                        <td>通过配方化为标准形</td>
+                        <td>求矩阵 $C$ 使得 $C^T AC$ 为对角矩阵</td>
+                    </tr>
+                    <tr>
+                        <td><strong>正交变换法</strong></td>
+                        <td>求正交矩阵 $Q$ 对角化</td>
+                        <td>求正交矩阵 $Q$ 使得 $Q^T AQ$ 为对角矩阵</td>
+                    </tr>
+                    <tr>
+                        <td><strong>伪配方法</strong></td>
+                        <td>灵活变换，注意可逆性</td>
+                        <td>快速判定正定性等性质</td>
+                    </tr>
+                </table>
+            </section>
+            
+            <section id="section1">
+                <h2>一、$f = \mathbf{x}^T A\mathbf{x}$ 中 $A$ 的表示</h2>
+                
+                <h3>1. 通过对称矩阵表示</h3>
+                <p><strong>方法1：</strong>给出非对称矩阵 $B$，令 $A = \frac{B + B^T}{2}$，则 $A = A^T$。</p>
+                
+                <p><strong>方法2：</strong>通过题设或基本变形直接化出 $A$。</p>
+                
+                <div class="example">
+                    <p><strong>例9.1</strong> 已知三元二次型表示为 $f(\mathbf{x}) = \mathbf{x}^T \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \\ 0 & 0 & 1 \end{bmatrix} \mathbf{x}$，则 $f$ 的规范形为（　）。</p>
+                    <p>(A) $y_1^2 - y_2^2 + y_3^2$ 　　　(B) $y_1^2 + y_2^2 + y_3^2$</p>
+                    <p>(C) $-y_1^2 - y_2^2 - y_3^2$ 　　(D) $y_1^2 - y_2^2 - y_3^2$</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p>二次型的矩阵为：</p>
+                            <div class="formula-box">
+                                $$A = \begin{bmatrix} 1 & \frac{1}{2} & 0 \\ \frac{1}{2} & 1 & \frac{1}{2} \\ 0 & \frac{1}{2} & 1 \end{bmatrix}$$
+                            </div>
+                            <p>其各阶顺序主子式为：$\Delta_1 = 1 > 0$，$\Delta_2 = \begin{vmatrix} 1 & \frac{1}{2} \\ \frac{1}{2} & 1 \end{vmatrix} = \frac{3}{4} > 0$，</p>
+                            <p>$\Delta_3 = \begin{vmatrix} 1 & \frac{1}{2} & 0 \\ \frac{1}{2} & 1 & \frac{1}{2} \\ 0 & \frac{1}{2} & 1 \end{vmatrix} = \frac{1}{2} > 0$</p>
+                            <p>所以 $A$ 是正定矩阵，其正惯性指数 $p=3$，因此二次型的规范形为 $y_1^2 + y_2^2 + y_3^2$。</p>
+                            <p class="important">应选（B）。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example" style="margin-top: 30px;">
+                    <p><strong>例9.2</strong> 已知 $\alpha_1 = \begin{bmatrix} 1 \\ 2 \end{bmatrix}$，$\alpha_2 = \begin{bmatrix} a \\ 1 \end{bmatrix}$，$\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}$，若二次型 $f(x_1, x_2) = \sum_{i=1}^{2}(\alpha_i, \mathbf{x})^2$ 正定，其中 $(\alpha_i, \mathbf{x})$ 表示向量 $\alpha_i$、$\mathbf{x}$ 的内积，则 $a$ 的取值范围是_______。</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p>应填 $a \neq \frac{1}{2}$。</p>
+                            <p>展开计算：</p>
+                            $$\begin{align}
+                            f(x_1, x_2) &= (\alpha_1, \mathbf{x})^2 + (\alpha_2, \mathbf{x})^2 \\
+                            &= (\mathbf{x}, \alpha_1)(\alpha_1, \mathbf{x}) + (\mathbf{x}, \alpha_2)(\alpha_2, \mathbf{x}) \\
+                            &= \mathbf{x}^T \alpha_1 \alpha_1^T \mathbf{x} + \mathbf{x}^T \alpha_2 \alpha_2^T \mathbf{x} \\
+                            &= \mathbf{x}^T (\alpha_1 \alpha_1^T + \alpha_2 \alpha_2^T) \mathbf{x} \\
+                            &= \mathbf{x}^T \begin{bmatrix} 1+a^2 & 2+a \\ 2+a & 5 \end{bmatrix} \mathbf{x}
+                            \end{align}$$
+                            <p>由题意知，$f$ 正定，故 $1+a^2 > 0$，$\begin{vmatrix} 1+a^2 & 2+a \\ 2+a & 5 \end{vmatrix} > 0$，即 $(2a-1)^2 > 0$，于是只当 $a \neq \frac{1}{2}$ 时，$f$ 正定。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section2">
+                <h2>二、配方法与正交变换法的异同</h2>
+                
+                <h3>1. 命题语言</h3>
+                
+                <div class="note">
+                    <strong>(1) 配方法：</strong>
+                    <p>二次型语言：将 $f = \mathbf{x}^T A\mathbf{x}$ 通过配方法化为标准形，并求出可逆变换矩阵 $C$。</p>
+                    <p>矩阵语言：求可逆矩阵 $C$，使得 $C^T AC = \Lambda$ （$\Lambda$ 为对角矩阵）。</p>
+                </div>
+                
+                <div class="note">
+                    <strong>(2) 正交变换法：</strong>
+                    <p>二次型语言：将 $f = \mathbf{x}^T A\mathbf{x}$ 通过正交变换法化为标准形，并求出正交矩阵 $Q$。</p>
+                    <p>矩阵语言：求正交矩阵 $Q$，使得 $Q^T AQ = \Lambda$。</p>
+                </div>
+                
+                <h3>2. 过程与结果的异同</h3>
+                
+                <div class="flowchart">
+                    <p style="text-align: left; padding: 0 20px;">
+                        <strong style="color: #f27d00;">①配方法（可逆线性变换）：</strong>$\mathbf{x} = C\mathbf{y}$，$C$ 可逆。<br>
+                        使得 $\mathbf{y}^{=C\mathbf{y}} \mathbf{y}^T A\mathbf{y}$，其中 $C^T AC = \Lambda$（恰合同于对角矩阵）。<br>
+                        <span style="color: #f27d00;">注：$C$ 不一定是对角矩阵，$A$ 也不一定是对称矩阵</span>
+                    </p>
+                    <br>
+                    <p style="text-align: left; padding: 0 20px;">
+                        <strong style="color: #f27d00;">②正交变换法（可逆线性变换）：</strong>$\mathbf{x} = Q\mathbf{y}$（这里的 $Q$ 不仅可逆，还满足 $Q^{-1} = Q^T$）。<br>
+                        足 $Q^{-1} = Q^T$），使得 $\mathbf{y}^{=Q\mathbf{y}} \mathbf{y}^T A\mathbf{y}$，其中 $Q^T AQ = Q^{-1} AQ = \Lambda$。
+                    </p>
+                </div>
+                
+                <p class="important">二者区别：在配方法中，$C$ 只满足可逆，所以 $C^T$ 不一定等于 $C^{-1}$，但是在正交变换法中，变换矩阵 $Q$ 满足 $Q^{-1} = Q^T$。</p>
+                
+                <p>二者相同点：它们的正、负惯性指数是对应相等的。</p>
+                
+                <div class="example">
+                    <p><strong>例9.3</strong> 已知矩阵 $A = \begin{bmatrix} 4 & 1 & -2 \\ 1 & 1 & 1 \\ -2 & 1 & a \end{bmatrix}$ 与 $B = \begin{bmatrix} k & 0 & 0 \\ 0 & 6 & 0 \\ 0 & 0 & 0 \end{bmatrix}$ 合同。</p>
+                    <p>(1) 求 $a$ 的值及 $k$ 的取值范围；</p>
+                    <p>(2) 若存在正交矩阵 $Q$ 使得 $Q^T AQ = B$，求 $k$ 及 $Q$。</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p><strong>(1)</strong> 由已知，存在可逆矩阵 $P$ 使得 $P^T BP = A$，又 $|B| = 0$，故 $|A| = 3a - 12 = 0$，解得 $a = 4$。</p>
+                            <p>$A$ 对应的二次型为：</p>
+                            $$f(x_1, x_2, x_3) = 4x_1^2 + x_2^2 + 4x_3^2 + 2x_1x_2 - 4x_1x_3 + 2x_2x_3$$
+                            $$= \left(2x_1 + \frac{1}{2}x_2 - x_3\right)^2 + \frac{3}{4}(x_2 + 2x_3)^2$$
+                            <p>故经可逆线性变换：</p>
+                            $$\begin{cases} y_1 = 2x_1 + \frac{1}{2}x_2 - x_3, \\ y_2 = x_2 + 2x_3, \\ y_3 = x_3, \end{cases}$$
+                            <p>得 $f = y_1^2 + \frac{3}{4}y_2^2$。</p>
+                            <p>故 $f$ 的正惯性指数为 2，因为 $\Lambda$ 与 $B$ 合同，所以 $B$ 对应二次型的正惯性指数为 2，因此，$k$ 的取值范围是 $(0, +\infty)$。</p>
+                            
+                            <p><strong>(2)</strong> 因为 $|\lambda E - A| = \begin{vmatrix} \lambda-4 & -1 & 2 \\ -1 & \lambda-1 & -1 \\ 2 & -1 & \lambda-4 \end{vmatrix} = \lambda(\lambda-3)(\lambda-6)$，</p>
+                            <p>所以 $A$ 的特征值为 $\lambda_1 = 3$，$\lambda_2 = 6$，$\lambda_3 = 0$。</p>
+                            <p>因为存在正交矩阵 $Q$ 使得 $Q^T AQ = B$，所以 $A$ 与 $B$ 相似，它们有相同的特征值，于是 $k = 3$。</p>
+                            
+                            <p>当 $\lambda_1 = 3$ 时，解方程组 $(3E - A)\mathbf{x} = \mathbf{0}$，得单位特征向量 $\eta_1 = \frac{1}{\sqrt{3}}[1, 1, 1]^T$；</p>
+                            <p>当 $\lambda_2 = 6$ 时，解方程组 $(6E - A)\mathbf{x} = \mathbf{0}$，得单位特征向量 $\eta_2 = \frac{1}{\sqrt{2}}[-1, 0, 1]^T$；</p>
+                            <p>当 $\lambda_3 = 0$ 时，解方程组 $(0E - A)\mathbf{x} = \mathbf{0}$，得单位特征向量 $\eta_3 = \frac{1}{\sqrt{6}}[1, -2, 1]^T$。</p>
+                            
+                            <p>令 $Q = [\eta_1, \eta_2, \eta_3] = \begin{bmatrix} \frac{1}{\sqrt{3}} & -\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{6}} \\ \frac{1}{\sqrt{3}} & 0 & -\frac{2}{\sqrt{6}} \\ \frac{1}{\sqrt{3}} & \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{6}} \end{bmatrix}$，</p>
+                            <p>则 $Q$ 是正交矩阵，且 $Q^T AQ = \begin{bmatrix} 3 & 0 & 0 \\ 0 & 6 & 0 \\ 0 & 0 & 0 \end{bmatrix} = B$。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>3. 惯性指数</h3>
+                
+                <div class="example">
+                    <p><strong>例9.4</strong> $f(x_1, x_2, x_3) = -2x_1x_2 - 2x_1x_3 + 6x_2x_3$ 的正惯性指数为（　）。</p>
+                    <p>(A) 3 　　(B) 2 　　(C) 1 　　(D) 0</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p>应选（C）。</p>
+                            <p>令 $\begin{cases} x_1 = y_1 + y_2, \\ x_2 = y_1 - y_2, \\ x_3 = y_3, \end{cases}$ 则</p>
+                            $$f = -2y_1^2 + 2y_2^2 + 4y_1y_3 - 8y_2y_3$$
+                            $$= -2(y_1 - y_3)^2 + 2(y_2 - 2y_3)^2 - 6y_3^2$$
+                            <p>再令 $\begin{cases} z_1 = y_1 - y_3, \\ z_2 = y_2 - 2y_3, \\ z_3 = y_3, \end{cases}$ 则 $f = -2z_1^2 + 2z_2^2 - 6z_3^2$</p>
+                            <p>故 $f$ 的正惯性指数为 1。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section3">
+                <h2>三、伪配方法</h2>
+                
+                <div class="note">
+                    <p>"平方和式 $A^2 + B^2 + C^2$" 未必就是（拉格朗日）配方法得来的结果，故若非拉格朗日配方法，则称为伪配方法。要注意伪配方法的变换矩阵是否可逆。</p>
+                    <p>①如果变换没有可逆性，则有可能改变表达式的几何性质，如封闭性，此时不能得出平方和式正定；</p>
+                    <p>②如果变换是可逆的，则平方和式正定。</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.6</strong> 设二次型 $f(x_1, x_2, x_3) = (x_1 + x_2)^2 + (x_2 + x_3)^2 + (ax_3 + x_1)^2$ 正定，则 $a$ 的取值范围是_______。</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p>应填 $a = -1$。</p>
+                            <p>由于 $f(x_1, x_2, x_3) \geq 0$，且 $f(x_1, x_2, x_3) = 0 \Leftrightarrow \begin{cases} x_1 + x_2 = 0, \\ x_2 + x_3 = 0, \\ ax_3 + x_1 = 0, \end{cases}$</p>
+                            <p>则方程组的系数行列式为：</p>
+                            $$\begin{vmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \\ 1 & 0 & a \end{vmatrix} = \begin{vmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \\ 0 & -1 & a \end{vmatrix} = a + 1$$
+                            <p>①当 $a + 1 \neq 0$ 时，$f(x_1, x_2, x_3) = 0 \Leftrightarrow x_1 = x_2 = x_3 = 0$，故当</p>
+                            <p>$a \neq -1$ 时，$f(x_1, x_2, x_3)$ 正定（$f > 0 \Leftrightarrow \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} \neq \mathbf{0}$）。</p>
+                            <p>②当 $a = -1$ 时，存在 $\begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} \neq \mathbf{0}$，使得 $f \equiv 0$（与正定的定义相矛盾）。</p>
+                        </div>
+                        
+                        <div class="note">
+                            <p>对于 $f(x, y, x_3) = (a_1x_1 + a_2x_2 + a_3x_3)^2 + (b_1x_1 + b_2x_2 + b_3x_3)^2 + (c_1x_1 + c_2x_2 + c_3x_3)^2$ 的情形，可总结如下做题方法：</p>
+                            <p>令 $f = 0$，即 $\begin{cases} a_1x_1 + a_2x_2 + a_3x_3 = 0, \\ b_1x_1 + b_2x_2 + b_3x_3 = 0, \\ c_1x_1 + c_2x_2 + c_3x_3 = 0, \end{cases}$ 计算系数行列式 $|A| = \begin{vmatrix} a_1 & a_2 & a_3 \\ b_1 & b_2 & b_3 \\ c_1 & c_2 & c_3 \end{vmatrix}$。若 $|A| \neq 0$，则正定；若 $|A| = 0$，则不正定。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section4">
+                <h2>四、正交变换法的传递性</h2>
+                
+                <div class="note">
+                    <p>若 $A$ 相似于 $B$，$B$ 相似于 $C$，则 $A$ 相似于 $C$。这里 $B$ 常为 $\Lambda$。</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.7</strong> 二次型 $f(x_1, x_2, x_3) = x_1^2 - x_2x_3$ 经正交变换 $\mathbf{x} = Q\mathbf{y}$ 化为二次型</p>
+                    <p>$g(y_1, y_2, y_3) = y_1y_2 + ay_3^2$。</p>
+                    <p>(1) 求 $a$ 的值；</p>
+                    <p>(2) 求正交矩阵 $Q$。</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p><strong>(1)</strong> 二次型 $f(x_1, x_2, x_3)$ 与 $g(y_1, y_2, y_3)$ 的矩阵分别为：</p>
+                            $$A = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & -\frac{1}{2} \\ 0 & -\frac{1}{2} & 0 \end{bmatrix}, \quad B = \begin{bmatrix} 0 & \frac{1}{2} & 0 \\ \frac{1}{2} & 0 & 0 \\ 0 & 0 & a \end{bmatrix}$$
+                            <p>且 $Q^T AQ = B$。因为 $Q$ 为正交矩阵，所以矩阵 $A$ 与 $B$ 相似，故 $\text{tr}(A) = \text{tr}(B)$，从而 $a = 1$。</p>
+                            
+                            <p><strong>(2)</strong> 由于 $|\lambda E - A| = (\lambda-1)\left(\lambda-\frac{1}{2}\right)\left(\lambda+\frac{1}{2}\right)$，因此矩阵 $A$ 与 $B$ 的特征值均为 $1$、$\frac{1}{2}$、$-\frac{1}{2}$，易求得矩阵 $A$</p>
+                            <p>对应于特征值 $1$、$\frac{1}{2}$、$-\frac{1}{2}$ 的特征向量依次为 $\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}$、$\begin{bmatrix} 0 \\ -1 \\ 1 \end{bmatrix}$、$\begin{bmatrix} 0 \\ 1 \\ 1 \end{bmatrix}$。又因为实对称矩阵属于不同特征值的特征向量线性无关，</p>
+                            <p>基础互正交，故单位化即可，依次为 $\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}$、$\begin{bmatrix} 0 \\ -\frac{1}{\sqrt{2}} \\ \frac{1}{\sqrt{2}} \end{bmatrix}$、$\begin{bmatrix} 0 \\ \frac{1}{\sqrt{2}} \\ \frac{1}{\sqrt{2}} \end{bmatrix}$。</p>
+                            <p>令 $Q_1 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & -\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} \\ 0 & \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} \end{bmatrix}$，则 $Q_1$ 为正交矩阵，且 $Q_1^T AQ_1 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & \frac{1}{2} & 0 \\ 0 & 0 & -\frac{1}{2} \end{bmatrix}$。</p>
+                            <p>同理，可求得矩阵 $B$ 对应于特征值 $1$、$\frac{1}{2}$、$-\frac{1}{2}$ 的单位特征向量量依次为 $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$、$\begin{bmatrix} \frac{1}{\sqrt{2}} \\ \frac{1}{\sqrt{2}} \\ 0 \end{bmatrix}$、$\begin{bmatrix} -\frac{1}{\sqrt{2}} \\ \frac{1}{\sqrt{2}} \\ 0 \end{bmatrix}$。</p>
+                            <p>令 $Q_2 = \begin{bmatrix} 0 & \frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}} \\ 0 & \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} \\ 1 & 0 & 0 \end{bmatrix}$，则 $Q_2$ 为正交矩阵，且</p>
+                            $$Q_2^T BQ_2 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & \frac{1}{2} & 0 \\ 0 & 0 & -\frac{1}{2} \end{bmatrix}$$
+                            <p>由于 $Q_1^T AQ_1 = Q_2^T BQ_2$，因此 $Q_2Q_1^T AQ_1Q_2^T = B$，从而 $Q = Q_1Q_2^T = \begin{bmatrix} 0 & 0 & 1 \\ -1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix}$ 为所求正交矩阵。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section5">
+                <h2>五、合同的判定与手段</h2>
+                
+                <h3>1. 同阶实对称矩阵 $A$、$B$ 合同的判定</h3>
+                <p>用正、负惯性指数：$A$、$B$ 合同 $\Leftrightarrow$ $p_A = p_B$，$q_A = q_B$（相同的正、负惯性指数）。</p>
+                
+                <h3>2. 已知 $A$、$\Lambda$（$\Lambda$ 是对角矩阵），求可逆矩阵 $C$，使得 $C^T AC = \Lambda$</h3>
+                
+                <div class="example">
+                    <p><strong>例9.8</strong> 已知 $A = \begin{bmatrix} 3 & 2 & 1 \\ 2 & 2 & 1 \\ 1 & 1 & 1 \end{bmatrix}$，$\Lambda = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 3 & 0 \\ 0 & 0 & 1 \end{bmatrix}$，求可逆矩阵 $C$，使得 $C^T AC = \Lambda$。</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p><strong>①配方。</strong></p>
+                            $$\begin{align}
+                            f &= \mathbf{x}^T A\mathbf{x} = 3x_1^2 + 2x_2^2 + x_3^2 + 4x_1x_2 + 2x_1x_3 + 2x_2x_3 \\
+                            &= (x_1^2 + 2x_1x_2 + x_2^2 + 2x_1x_3 + 2x_2x_3 + x_3^2) + (x_1^2 + 2x_1x_2 + x_2^2) + x_3^2 \\
+                            &= x_1^2 + (x_1 + x_2)^2 + (x_1 + x_2 + x_3)^2 \\
+                            &= 2\left(\frac{x_1}{\sqrt{2}}\right)^2 + 3\left(\frac{x_1 + x_2}{\sqrt{3}}\right)^2 + 1 \cdot (x_1 + x_2 + x_3)^2
+                            \end{align}$$
+                            
+                            <p><strong>②换元。</strong></p>
+                            <p>令 $\begin{cases} y_1 = \frac{x_1}{\sqrt{2}}, \\ y_2 = \frac{x_1 + x_2}{\sqrt{3}}, \\ y_3 = x_1 + x_2 + x_3, \end{cases}$ 于是有 $\begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix} = \begin{bmatrix} \frac{1}{\sqrt{2}} & 0 & 0 \\ \frac{1}{\sqrt{3}} & \frac{1}{\sqrt{3}} & 0 \\ 1 & 1 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix}$。</p>
+                            
+                            <p><strong>③求逆。</strong></p>
+                            <p>记 $\mathbf{x} = C\mathbf{y}$，其中 $C = \begin{bmatrix} \frac{1}{\sqrt{2}} & 0 & 0 \\ \frac{1}{\sqrt{3}} & \frac{1}{\sqrt{3}} & 0 \\ 1 & 1 & 1 \end{bmatrix}^{-1} = \begin{bmatrix} \sqrt{2} & 0 & 0 \\ -\sqrt{2} & \sqrt{3} & 0 \\ 0 & -\sqrt{3} & 1 \end{bmatrix}$，则 $f = \mathbf{x}^T A\mathbf{x} = (C\mathbf{y})^T A(C\mathbf{y}) = \mathbf{y}^T C^T AC\mathbf{y} = \mathbf{y}^T \Lambda\mathbf{y}$，</p>
+                            <p>即矩阵 $C$ 可使得 $C^T AC = \Lambda$。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>3. 已知 $A$、$B$（$B$ 不是对角矩阵），求可逆矩阵 $C$，使得 $C^T AC = B$</h3>
+                
+                <div class="example">
+                    <p><strong>例9.9</strong> 已知实矩阵 $A = \begin{bmatrix} 2 & 2 \\ 2 & 1 \end{bmatrix}$，$B = \begin{bmatrix} 4 & 3 \\ 3 & 1 \end{bmatrix}$。且 $A$ 与 $B$ 合同，求可逆矩阵 $D$，使得 $A = D^T BD$。</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p><strong>①对 $f$ 配方、换元、写 $D_1$。</strong></p>
+                            <p>对于 $f(x_1, x_2) = \mathbf{x}^T A\mathbf{x} = 2(x_1 + x_2)^2 - x_2^2$，</p>
+                            <p>令 $\begin{cases} z_1 = x_1 + x_2, \\ z_2 = x_2, \end{cases}$ 即 $\begin{bmatrix} z_1 \\ z_2 \end{bmatrix} = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = D_1 \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}$，则 $f(x_1, x_2) = 2z_1^2 - z_2^2$。</p>
+                            
+                            <p><strong>②对 $g$ 配方、换元、写 $D_2$。</strong></p>
+                            <p>对于 $g(y_1, y_2) = \mathbf{y}^T B\mathbf{y} = 4\left(y_1 + \frac{3}{4}y_2\right)^2 - \frac{5}{4}y_2^2$，</p>
+                            <p>令 $\begin{cases} z_1 = \sqrt{2}y_1 + \frac{3\sqrt{2}}{4}y_2, \\ z_2 = \frac{\sqrt{5}}{2}y_2, \end{cases}$ 即 $\begin{bmatrix} z_1 \\ z_2 \end{bmatrix} = \begin{bmatrix} \sqrt{2} & \frac{3\sqrt{2}}{4} \\ 0 & \frac{\sqrt{5}}{2} \end{bmatrix} \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} = D_2 \begin{bmatrix} y_1 \\ y_2 \end{bmatrix}$，则 $g(y_1, y_2) = 2z_1^2 - z_2^2$。</p>
+                            
+                            <p><strong>③令 $D_1\mathbf{x} = D_2\mathbf{y}$，求 $D_2^{-1}D_1$。</strong></p>
+                            <p>于是有 $D_1\begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = D_2\begin{bmatrix} y_1 \\ y_2 \end{bmatrix}$，故 $\begin{bmatrix} y_1 \\ y_2 \end{bmatrix} = D_2^{-1}D_1\begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = D\begin{bmatrix} x_1 \\ x_2 \end{bmatrix}$，即</p>
+                            $$D = \begin{bmatrix} \sqrt{2} & \frac{3\sqrt{2}}{4} \\ 0 & \frac{\sqrt{5}}{2} \end{bmatrix}^{-1} \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} \frac{1}{\sqrt{2}} & -\frac{3\sqrt{5}}{10} \\ 0 & \frac{2}{\sqrt{5}} \end{bmatrix} \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} - \frac{3\sqrt{5}}{10} \\ 0 & \frac{2}{\sqrt{5}} \end{bmatrix}$$
+                            <p>则 $A = D^T BD$。</p>
+                        </div>
+                        
+                        <div class="note">
+                            <p>此处得到 $C^T AC = B$，即 $A$ 与 $B$ 合同，$C$ 可逆，但 $A$ 与 $B$ 未必相似，故不一定存在正交矩阵 $Q$，使得 $Q^T AQ = B$。例 9.11 会再次研究这个问题。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section6">
+                <h2>六、合同与相似的异同</h2>
+                
+                <p>对于实对称矩阵 $A$ 与 $B$，相似必合同，反之不成立。</p>
+                
+                <div class="example">
+                    <p><strong>例9.10</strong> 设矩阵 $A = \begin{bmatrix} 2 & -1 & -1 \\ -1 & 2 & -1 \\ -1 & -1 & 2 \end{bmatrix}$，$B = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 0 \end{bmatrix}$，则 $A$ 与 $B$（　）。</p>
+                    <p>(A) 合同且相似 　　　　(B) 合同，但不相似</p>
+                    <p>(C) 不合同，但相似 　　(D) 既不合同，也不相似</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p>应选（B）。</p>
+                            <p>因为 $|\lambda E - A| = \begin{vmatrix} \lambda-2 & 1 & 1 \\ 1 & \lambda-2 & 1 \\ 1 & 1 & \lambda-2 \end{vmatrix} = \lambda(\lambda-3)^2$，</p>
+                            <p>所以矩阵 $A$ 的特征值为 3、3、0，由此可知矩阵 $A$ 与 $B$ 不相似，从而选项（A）和（C）错误。</p>
+                            <p>又因为实对称矩阵 $A$ 相似且合同于对角矩阵</p>
+                            $$C = \begin{bmatrix} 3 & 0 & 0 \\ 0 & 3 & 0 \\ 0 & 0 & 0 \end{bmatrix}$$
+                            <p>而矩阵 $C$ 显然合同于矩阵 $B$，根据合同关系的传递性知矩阵 $A$ 合同于 $B$，即选项（B）正确。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example" style="margin-top: 30px;">
+                    <p><strong>例9.11</strong> 已知二次型</p>
+                    <p>$f(x_1, x_2, x_3) = x_1^2 + 2x_2^2 + 2x_3^2 + 2x_1x_2 - 2x_1x_3$，</p>
+                    <p>$g(y_1, y_2, y_3) = y_1^2 + y_2^2 + y_3^2 + 2y_2y_3$。</p>
+                    <p>(1) 求可逆变换 $\mathbf{x} = P\mathbf{y}$，将 $f(x_1, x_2, x_3)$ 化成 $g(y_1, y_2, y_3)$。</p>
+                    <p>(2) 是否存在正交变换 $\mathbf{x} = Q\mathbf{y}$，将 $f(x_1, x_2, x_3)$ 化成 $g(y_1, y_2, y_3)$？</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p><strong>(1)</strong> 由于</p>
+                            $$f(x_1, x_2, x_3) = x_1^2 + 2x_2^2 + 2x_3^2 + 2x_1x_2 - 2x_1x_3 = (x_1 + x_2 - x_3)^2 + (x_2 + x_3)^2$$
+                            <p>于是作可逆线性变换</p>
+                            $$\begin{bmatrix} z_1 \\ z_2 \\ z_3 \end{bmatrix} = \begin{bmatrix} 1 & 1 & -1 \\ 0 & 1 & 1 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix}$$
+                            <p>得 $f(x_1, x_2, x_3) = z_1^2 + z_2^2$。</p>
+                            <p>由于 $g(y_1, y_2, y_3) = y_1^2 + y_2^2 + y_3^2 + 2y_2y_3 = y_1^2 + (y_2 + y_3)^2$，于是作可逆线性变换</p>
+                            $$\begin{bmatrix} z_1 \\ z_2 \\ z_3 \end{bmatrix} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 1 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix}$$
+                            <p>得 $g(y_1, y_2, y_3) = z_1^2 + z_2^2$。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section7">
+                <h2>七、正定的判定与应用</h2>
+                
+                <h3>1. 前提</h3>
+                <p>$A = A^T$（$A$ 是实对称矩阵）。</p>
+                
+                <h3>2. 二次型 $f = \mathbf{x}^T A\mathbf{x}$ 正定的充要条件</h3>
+                
+                <div class="formula-box">
+                    <p>$n$ 元二次型 $f = \mathbf{x}^T A\mathbf{x}$ 正定</p>
+                    <p>$\Leftrightarrow$ 对任意的 $\mathbf{x} \neq \mathbf{0}$，有 $\mathbf{x}^T A\mathbf{x} > 0$（定义）</p>
+                    <p>$\Leftrightarrow$ $A$ 的特征值 $\lambda_i > 0$ ($i=1,2,\cdots,n$)</p>
+                    <p>$\Leftrightarrow$ $f$ 的正惯性指数 $p = n$</p>
+                    <p>$\Leftrightarrow$ 存在可逆矩阵 $D$，使得 $A = D^T D$</p>
+                    <p>$\Leftrightarrow$ $A$ 与 $E$ 合同</p>
+                    <p>$\Leftrightarrow$ $A$ 的各阶顺序主子式均大于 0</p>
+                </div>
+                
+                <h3>3. 二次型 $f = \mathbf{x}^T A\mathbf{x}$ 正定的必要条件</h3>
+                <p>①$a_{ii} > 0$ ($i=1,2,\cdots,n$)。</p>
+                <p>②$|A| > 0$。</p>
+                
+                <h3>4. 重要结论</h3>
+                <div class="note">
+                    <p>①若 $A$ 正定，则 $A^{-1}$、$A^*$、$A^m$ ($m$ 为正整数)、$kA$ ($k>0$)、$C^T AC$ ($C$ 可逆) 均正定。</p>
+                    <p>②若 $A,B$ 正定，则 $A+B$ 正定，$\begin{bmatrix} A & O \\ O & B \end{bmatrix}$ 正定。</p>
+                    <p>③若 $A,B$ 正定，则 $AB$ 正定的充要条件是 $AB = BA$。</p>
+                </div>
+                
+                <div class="example">
+                    <p><strong>例9.12</strong> 设矩阵 $A = \begin{bmatrix} 1 & 2 \\ -2 & -a \end{bmatrix}$，$B = \begin{bmatrix} 1 & 0 \\ 1 & a \end{bmatrix}$，若 $f(x,y) = |xA + yB|$ 是正定二次型，则 $a$ 的取值范围是（　）。</p>
+                    <p>(A) $(0,2-\sqrt{5})$ 　　　(B) $(2-\sqrt{5},2+\sqrt{3})$</p>
+                    <p>(C) $(2+\sqrt{3},4)$ 　　　(D) $(0,4)$</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p>应选（B）。</p>
+                            $$xA + yB = \begin{bmatrix} x & 2x \\ -2x & -ax \end{bmatrix} + \begin{bmatrix} y & 0 \\ y & ay \end{bmatrix} = \begin{bmatrix} x+y & 2x \\ -2x+y & -ax+ay \end{bmatrix}$$
+                            $$f(x,y) = |xA + yB| = \begin{vmatrix} x+y & 2x \\ -2x+y & -ax+ay \end{vmatrix} = -a(x+y)(x-y) - 2x(-2x+y)$$
+                            $$= (4-a)x^2 - 2xy + ay^2$$
+                            <p>二次型的矩阵为 $\begin{bmatrix} 4-a & -1 \\ -1 & a \end{bmatrix}$，若 $f(x,y) = |xA + yB|$ 是正定二次型，则</p>
+                            $$4-a > 0, \quad \begin{vmatrix} 4-a & -1 \\ -1 & a \end{vmatrix} = 4a - a^2 - 1 > 0$$
+                            <p>解得 $2-\sqrt{5} < a < 2+\sqrt{3}$，选（B）。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example" style="margin-top: 30px;">
+                    <p><strong>例9.13</strong> 若可逆矩阵 $D$ 满足 $D^T D = \begin{bmatrix} 1 & -1 & 1 \\ -1 & 2 & -3 \\ 1 & -3 & 6 \end{bmatrix}$，则 $D =$_______。</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p>应填 $\begin{bmatrix} 1 & -1 & 1 \\ 0 & 1 & -2 \\ 0 & 0 & 1 \end{bmatrix}$。</p>
+                            
+                            <p><strong>法一</strong> 记 $\begin{bmatrix} 1 & -1 & 1 \\ -1 & 2 & -3 \\ 1 & -3 & 6 \end{bmatrix} = A$，则其对应的二次型为</p>
+                            $$f(x_1, x_2, x_3) = \mathbf{x}^T A\mathbf{x} = x_1^2 + 2x_2^2 + 6x_3^2 - 2x_1x_2 + 2x_1x_3 - 6x_2x_3$$
+                            $$= (x_1 - x_2 + x_3)^2 + (x_2 - 2x_3)^2 + x_3^2$$
+                            $$= [x_1, x_2, x_3] \begin{bmatrix} 1 & 0 & 0 \\ -1 & 1 & 0 \\ 1 & -2 & 1 \end{bmatrix} \begin{bmatrix} 1 & -1 & 1 \\ 0 & 1 & -2 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix}$$
+                            <p>记 $[x_1, x_2, x_3]D^T D\begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix}$，</p>
+                            <p>其中 $A = D^T D$，$D = \begin{bmatrix} 1 & -1 & 1 \\ 0 & 1 & -2 \\ 0 & 0 & 1 \end{bmatrix}$。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section8">
+                <h2>八、二次型的最值</h2>
+                
+                <div class="example">
+                    <p><strong>例9.15</strong> 设二次型 $f(x_1, x_2) = x_1^2 - 4x_1x_2 + 4x_2^2$，$g(x_1, x_2)$ 的二次型矩阵为 $B = \begin{bmatrix} 1 & -1 \\ -1 & 2 \end{bmatrix}$。</p>
+                    <p>(1) 是否存在可逆矩阵 $D$，使 $B = D^T D$？若存在，求出矩阵 $D$，若不存在，说明理由。</p>
+                    <p>(2) 求 $\max\limits_{x \neq 0} \frac{f(\mathbf{x})}{g(\mathbf{x})}$，其中 $\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}$</p>
+                </div>
+                
+                <button class="collapsible">点击查看详解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="solution">
+                            <p><strong>(1)</strong> 由于 $B^T = B$，$1 > 0$，$\begin{vmatrix} 1 & -1 \\ -1 & 2 \end{vmatrix} > 0$，因此 $B$ 为正定矩阵。又 $g(x_1, x_2) = (x_1 - x_2)^2 + x_2^2$，令</p>
+                            $$\begin{cases} x_1 - x_2 = y_1, \\ x_2 = y_2, \end{cases}$$
+                            <p>于是有 $\begin{cases} x_1 = y_1 + y_2, \\ x_2 = y_2, \end{cases}$ 即 $\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} = C\mathbf{y}$，使 $\mathbf{x}^T B\mathbf{x} = \mathbf{y}^T C^T BC\mathbf{y} = \mathbf{y}^T \mathbf{y}$，即</p>
+                            $$C^T BC = E, \quad B = (C^{-1})^T C^{-1} = \begin{bmatrix} 1 & -1 \\ 0 & 1 \end{bmatrix}^T \begin{bmatrix} 1 & -1 \\ 0 & 1 \end{bmatrix} = D^T D$$
+                            <p>故存在可逆矩阵 $D = \begin{bmatrix} 1 & -1 \\ 0 & 1 \end{bmatrix}$，使 $B = D^T D$。</p>
+                            
+                            <p><strong>(2)</strong> 设 $f(x)$ 的二次型矩阵为 $A$，则</p>
+                            $$\frac{f(\mathbf{x})}{g(\mathbf{x})} = \frac{\mathbf{x}^T A\mathbf{x}}{\mathbf{x}^T B\mathbf{x}} = \frac{\mathbf{x}^T A\mathbf{x}}{\mathbf{x}^T D^T D\mathbf{x}} = \frac{\mathbf{x}^T A\mathbf{x}}{(D\mathbf{x})^T D\mathbf{x}} \overset{\text{令} D\mathbf{x} = \mathbf{z}}{=} \frac{(D^{-1}\mathbf{z})^T A D^{-1}\mathbf{z}}{\mathbf{z}^T \mathbf{z}} = \frac{\mathbf{z}^T (D^{-1})^T A D^{-1} \mathbf{z}}{\mathbf{z}^T \mathbf{z}}$$
+                            <p>其中 $\mathbf{z} = \begin{bmatrix} z_1 \\ z_2 \end{bmatrix}$</p>
+                            <p>又 $(D^{-1})^T A D^{-1} = C^T AC = \begin{bmatrix} 1 & 0 \\ 1 & 1 \end{bmatrix} \begin{bmatrix} 1 & -2 \\ -2 & 4 \end{bmatrix} \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 1 & -2 \\ -1 & 2 \end{bmatrix} \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix} \overset{\text{记}}{=} M$，</p>
+                            <p>其对应的二次型为 $h(z_1, z_2) = z_1^2 + z_2^2 - 2z_1z_2$，则由</p>
+                            $$|\lambda E - M| = \begin{vmatrix} \lambda-1 & 1 \\ 1 & \lambda-1 \end{vmatrix} = (\lambda-1)^2 - 1 = \lambda(\lambda-2) = 0$$
+                            <p>得 $\lambda_1 = 2$，$\xi_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} -1 \\ 1 \end{bmatrix}$；$\lambda_2 = 0$，$\xi_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$，今 $Q = \frac{1}{\sqrt{2}}\begin{bmatrix} -1 & 1 \\ 1 & 1 \end{bmatrix}$，$\mathbf{z} = Qr = Q\begin{bmatrix} r_1 \\ r_2 \end{bmatrix}$，则</p>
+                            $$\mathbf{z}^T M\mathbf{z} = r^T Q^T MQr = r^T \begin{bmatrix} 2 & 0 \\ 0 & 0 \end{bmatrix} r = 2r_1^2$$
+                            $$\leq 2(r_1^2 + r_2^2) \overset{\mathbf{z}^T \mathbf{z} = r^T Q^T Qr = r^T r}{=} 2(z_1^2 + z_2^2)$$
+                            <p>于是 $\mathbf{z}^T M\mathbf{z} \leq 2\mathbf{z}^T \mathbf{z}$，即 $\frac{\mathbf{z}^T M\mathbf{z}}{\mathbf{z}^T \mathbf{z}} \leq 2$，令 $z_0 = Q\begin{bmatrix} 1 \\ 0 \end{bmatrix}$，得 $\frac{[1,0]\begin{bmatrix} 2 & 0 \\ 0 & 0 \end{bmatrix} \begin{bmatrix} 1 \\ 0 \end{bmatrix}}{[1,0]\begin{bmatrix} 1 \\ 0 \end{bmatrix}} = 2$，此时 $x_0 = D^{-1}z_0 = D^{-1}Q = \begin{bmatrix} 0 \\ \frac{1}{\sqrt{2}} \end{bmatrix}$，</p>
+                            <p>于是 $\max\limits_{x \neq 0} \frac{f(\mathbf{x})}{g(\mathbf{x})} = 2$。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>© 2025 线性代数教程 | 第9讲：二次型</p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
+                💡 提示：需要网络连接以加载数学公式（MathJax CDN）<br>
+                保存为 .html 文件后，在浏览器中打开即可查看
+            </p>
+        </footer>
+    </div>
+    
+    <div class="back-to-top" onclick="scrollToTop()">↑</div>
+    
+    <script>
+        // 折叠/展开功能
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+        
+        // 返回顶部按钮
+        const backToTopButton = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 为section添加进入动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '0';
+                    entry.target.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        entry.target.style.transition = 'opacity 0.6s, transform 0.6s';
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, 100);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
+<!--
+使用说明：
+1. 将此代码保存为 .html 文件（如 "二次型教程.html"）
+2. 需要网络连接以加载MathJax库（用于渲染数学公式）
+3. 在任何现代浏览器中打开此文件
+4. 所有数学公式使用LaTeX语法编写，会自动渲染
+5. 点击"点击查看详解"按钮可展开/折叠答案
+6. 使用顶部导航栏快速跳转到不同章节
+7. 右下角的"返回顶部"按钮可快速回到页面顶部
+
+技术特点：
+- 完整的MathJax配置，支持所有LaTeX数学符号
+- 响应式设计，适配手机和平板
+- 交互式折叠面板
+- 平滑滚动和动画效果
+- 使用指定配色方案（橙色#f27d00、青绿色#a6d6c9、黄色#f7d117）
+-->

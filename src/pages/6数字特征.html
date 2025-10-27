@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第6讲 数字特征 - 交互式教程</title>
+    
+    <!-- 完整的MathJax配置 - 必需用于渲染数学公式 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 100
+            },
+            CommonHTML: { 
+                linebreaks: { automatic: true } 
+            },
+            SVG: { 
+                linebreaks: { automatic: true } 
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: #343434;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+        }
+        
+        /* 顶部导航栏 */
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: white;
+            padding: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        header h1 {
+            text-align: center;
+            font-size: 2.2em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header .subtitle {
+            text-align: center;
+            font-size: 1.1em;
+            margin-top: 8px;
+            opacity: 0.95;
+        }
+        
+        /* 容器布局 */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        /* 侧边栏导航 */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+        
+        .sidebar h3 {
+            color: #f27d00;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 3px solid #f7d117;
+            padding-bottom: 10px;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin: 12px 0;
+        }
+        
+        .sidebar a {
+            text-decoration: none;
+            color: #343434;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar a:hover {
+            background: #a6d6c9;
+            border-left-color: #f27d00;
+            transform: translateX(5px);
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        /* 章节样式 */
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            border-left: 5px solid #f27d00;
+        }
+        
+        .section h2 {
+            color: #f27d00;
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f7d117;
+        }
+        
+        .section h3 {
+            color: #343434;
+            font-size: 1.4em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid #a6d6c9;
+        }
+        
+        /* 例题样式 */
+        .example {
+            background: linear-gradient(135deg, #a6d6c9 0%, #c8e6d9 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 2px solid #7fc5ac;
+            position: relative;
+        }
+        
+        .example-header {
+            font-weight: 700;
+            color: #f27d00;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .example-header::before {
+            content: "📚 ";
+            margin-right: 10px;
+        }
+        
+        .toggle-btn {
+            margin-left: auto;
+            background: #f27d00;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-btn:hover {
+            background: #d96d00;
+            transform: scale(1.05);
+        }
+        
+        .example-content {
+            margin-top: 15px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px dashed #7fc5ac;
+        }
+        
+        .solution {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .solution.active {
+            max-height: 2000px;
+        }
+        
+        .solution-header {
+            background: #f7d117;
+            color: #343434;
+            padding: 12px 20px;
+            margin: 15px 0 10px 0;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        /* 重要提示框 */
+        .note {
+            background: linear-gradient(135deg, #f7d117 0%, #ffd700 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #f27d00;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .note::before {
+            content: "💡 注意：";
+            font-weight: 700;
+            color: #343434;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        /* 公式框 */
+        .formula-box {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 2px solid #a6d6c9;
+            text-align: center;
+            overflow-x: auto;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        tr:hover {
+            background: #a6d6c9;
+            transition: background 0.3s ease;
+        }
+        
+        /* 代码块样式 */
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background: #343434;
+            color: #f7d117;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background: #343434;
+            color: #a6d6c9;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #f27d00;
+        }
+        
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 10px 0;
+        }
+        
+        /* 返回顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: #d96d00;
+            transform: scale(1.1) translateY(-5px);
+        }
+        
+        /* 页脚 */
+        footer {
+            background: #343434;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        /* MathJax公式样式优化 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 968px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                position: relative;
+                top: 0;
+                max-height: none;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 1.5em;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section {
+            animation: fadeIn 0.6s ease;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>第6讲 数字特征</h1>
+        <p class="subtitle">概率论与数理统计 · 交互式教程</p>
+    </header>
+    
+    <div class="container">
+        <!-- 侧边栏导航 -->
+        <aside class="sidebar">
+            <h3>📖 目录导航</h3>
+            <ul>
+                <li><a href="#intro">三向解题法</a></li>
+                <li><a href="#expectation">一、数学期望</a></li>
+                <li><a href="#variance">二、方差</a></li>
+                <li><a href="#covariance">三、协方差与相关系数</a></li>
+                <li><a href="#independence">四、独立性与不相关性</a></li>
+                <li><a href="#chebyshev">五、切比雪夫不等式</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- 三向解题法 -->
+            <section id="intro" class="section">
+                <h2>三向解题法</h2>
+                <p>计算数字特征、判别独立与不相关、用切比雪夫不等式作概率估计</p>
+                <div class="formula-box">
+                    <p style="font-weight: 600; margin-bottom: 15px;">核心目标</p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>🎯 <strong>O₁</strong>: 数学期望</li>
+                        <li>🎯 <strong>O₂</strong>: 方差</li>
+                        <li>🎯 <strong>O₃</strong>: 协方差 $\text{Cov}(X,Y)$ 与相关系数 $\rho_{XY}$</li>
+                        <li>🎯 <strong>O₄</strong>: 独立性与不相关性的判定</li>
+                        <li>🎯 <strong>O₅</strong>: 切比雪夫不等式</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 一、数学期望 -->
+            <section id="expectation" class="section">
+                <h2>一、数学期望 (O₁)</h2>
+                <p>数学期望就是随机变量的取值与取值概率乘积的和。</p>
+                
+                <h3>1. 单个随机变量 $X$ 的期望</h3>
+                
+                <div class="formula-box">
+                    <p><strong>① 离散型：</strong></p>
+                    $$X \sim p_i \Rightarrow EX = \sum_{i} x_i p_i \begin{cases} \text{有限项相加,} \\ \text{无穷项相加(无穷级数).} \end{cases}$$
+                </div>
+                
+                <div class="formula-box">
+                    <p><strong>② 连续型：</strong></p>
+                    $$X \sim f(x) \Rightarrow EX = \int_{-\infty}^{+\infty} xf(x)dx \begin{cases} \text{有限区间积分(定积分),} \\ \text{无穷区间积分(反常积分).} \end{cases}$$
+                </div>
+                
+                <!-- 例题 6.1 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleSolution('sol61')">
+                        例题 6.1
+                        <button class="toggle-btn">显示/隐藏答案</button>
+                    </div>
+                    <div class="example-content">
+                        <p>设随机变量 $X$ 的概率密度为 $f(x) = \begin{cases} a^{-1}\ln a, & x > 0, \\ 0, & \text{其他} \end{cases}$ $(a > 0)$. 对 $X$ 进行独立重复观测，直到前 $2$ 个大于 $3$ 的观测值出现时停止，记 $Y$ 为观测次数，$P\{X > 3\} = \frac{1}{8}$.</p>
+                        <p>(1) 求 $a$ 的值；</p>
+                        <p>(2) 求 $EY$</p>
+                        
+                        <div id="sol61" class="solution">
+                            <span class="solution-header">【解】</span>
+                            <p><strong>(1)</strong> 当 $x > 0$ 时，$f(x) = a^{-1}\ln a = \ln a \cdot e^{-(\ln a)x}$，故 $X$ 服从参数为 $\lambda = \ln a$ 的指数分布，故</p>
+                            <div class="formula-box">
+                                $$P\{X > 3\} = 1 - F(3) = 1 - (1 - e^{-3\ln a}) = e^{-3\ln a} = \frac{1}{8},$$
+                            </div>
+                            <p>解得 $a = 2$.</p>
+                            
+                            <p><strong>(2)</strong> 依题意知 $Y$ 为满足随机试验直至成功概率为 $2, 3, \cdots$，$\Rightarrow p = P\{X > 3\}$，则 $Y$ 的概率分布为</p>
+                            <div class="formula-box">
+                                $$P\{Y = k\} = C_{k-1}^1 p(1-p)^{k-2} \cdot p = C_{k-1}^1 p^2(1-p)^{k-2} = (k-1)\left(\frac{1}{8}\right)^2 \left(\frac{7}{8}\right)^{k-2}, \quad k = 2, 3, \cdots$$
+                            </div>
+                            
+                            <p>因此：</p>
+                            <div class="formula-box">
+                                $$EY = \sum_{k=2}^{\infty} k \cdot (k-1)\left(\frac{1}{8}\right)^2 \left(\frac{7}{8}\right)^{k-2} = \frac{1}{64}\sum_{k=2}^{\infty} k(k-1)\left(\frac{7}{8}\right)^{k-2}$$
+                                
+                                $$= \frac{1}{64}\sum_{k=2}^{\infty}(x^k)'' \bigg|_{x=\frac{7}{8}} = \frac{1}{64}\left(\sum_{k=2}^{\infty}x^k\right)'' \bigg|_{x=\frac{7}{8}} = \frac{1}{64} \cdot \left(\frac{x^2}{1-x}\right)'' \bigg|_{x=\frac{7}{8}}$$
+                                
+                                $$= \frac{1}{64} \cdot \frac{2}{(1-x)^3} \bigg|_{x=\frac{7}{8}} = 16$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>2. 随机变量函数 $g(X)$ 的期望</h3>
+                <p>$g$ 为连续函数（或分段连续函数）。</p>
+                
+                <div class="formula-box">
+                    <p><strong>① 离散型：</strong> $X \sim p_i$，$Y = g(X) \Rightarrow EY = \sum_{i} g(x_i)p_i$</p>
+                </div>
+                
+                <div class="formula-box">
+                    <p><strong>② 连续型：</strong> $X \sim f(x)$，$Y = g(X) \Rightarrow EY = \int_{-\infty}^{+\infty} g(x)f(x)dx$</p>
+                </div>
+                
+                <h3>3. 二元随机变量函数 $g(X,Y)$ 的期望</h3>
+                
+                <div class="formula-box">
+                    <p><strong>① 离散型：</strong> $(X,Y) \sim p_{ij}$，$Z = g(X,Y) \Rightarrow EZ = \sum_{i}\sum_{j} g(x_i,y_j)p_{ij}$</p>
+                </div>
+                
+                <div class="formula-box">
+                    <p><strong>② 连续型：</strong> $(X,Y) \sim f(x,y)$，$Z = g(X,Y) \Rightarrow EZ = \int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty} g(x,y)f(x,y)dxdy$</p>
+                </div>
+                
+                <h3>4. 最值的期望</h3>
+                <p><strong>① </strong>若 $X_i (i=1,2,\cdots,n, \ n \geq 2)$ 独立同分布，其分布函数为 $F(x)$，概率密度为 $f(x)$，记</p>
+                <div class="formula-box">
+                    $$Y = \min\{X_1, X_2, \cdots, X_n\}, \quad Z = \max\{X_1, X_2, \cdots, X_n\}$$
+                </div>
+                <p>则</p>
+                <div class="formula-box">
+                    <p><strong>a.</strong> $F_Y(y) = 1 - [1-F(y)]^n$，$f_Y(y) = n[1-F(y)]^{n-1}f(y) \Rightarrow EY = \int_{-\infty}^{+\infty} yf_Y(y)dy$</p>
+                    <p><strong>b.</strong> $F_Z(z) = [F(z)]^n$，$f_Z(z) = n[F(z)]^{n-1}f(z) \Rightarrow EZ = \int_{-\infty}^{+\infty} zf_Z(z)dz$</p>
+                </div>
+                
+                <p><strong>② 用好转化公式：</strong></p>
+                <div class="formula-box">
+                    $$\max\{X,Y\} = \frac{X+Y+|X-Y|}{2}, \quad \min\{X,Y\} = \frac{X+Y-|X-Y|}{2}$$
+                    $$\max\{X,Y\} + \min\{X,Y\} = X + Y$$
+                    $$\max\{X,Y\} - \min\{X,Y\} = |X-Y|$$
+                    $$\max\{X,Y\} \cdot \min\{X,Y\} = XY$$
+                </div>
+                
+                <p><strong>③ 用好降维法：</strong>令 $Z = X - Y$</p>
+                <p><strong>④ 用好标准化：</strong>令 $U = \frac{X-\mu}{\sigma}$</p>
+                
+                <!-- 例题 6.2 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleSolution('sol62')">
+                        例题 6.2
+                        <button class="toggle-btn">显示/隐藏答案</button>
+                    </div>
+                    <div class="example-content">
+                        <p>设 $X$，$Y$ 独立同分布于 $N(0,1)$，求 $E(\max\{X,Y\})$ 和 $E(\min\{X,Y\})$.</p>
+                        
+                        <div id="sol62" class="solution">
+                            <span class="solution-header">【解】</span>
+                            <p>由题设，$X - Y \sim N(0,2)$，且 $\max\{X,Y\} = \frac{X+Y+|X-Y|}{2}$，故</p>
+                            <div class="formula-box">
+                                $$E(\max\{X,Y\}) = \frac{EX + EY + E(|X-Y|)}{2} = \frac{E(|X-Y|)}{2}$$
+                                
+                                $$\overset{Z = X-Y}{Z \sim N(0,2)} = \frac{1}{2}E(|Z|) = \frac{1}{2} \cdot \frac{1}{\sqrt{2\pi}} \cdot \sqrt{2} \int_{-\infty}^{+\infty} |z| e^{-\frac{z^2}{4}}dz$$
+                                
+                                $$= \frac{1}{\sqrt{2\pi}} \cdot \sqrt{2} \int_{0}^{+\infty} ze^{-\frac{z^2}{4}}dz = \frac{1}{\sqrt{2\pi}} \cdot \sqrt{2} \left(-2e^{-\frac{z^2}{4}}\right)\bigg|_{0}^{+\infty} = \frac{1}{\sqrt{\pi}}$$
+                            </div>
+                            
+                            <p>同理，$E(\min\{X,Y\}) = \frac{EX + EY - E(|X-Y|)}{2} = -\frac{E(|X-Y|)}{2} = -\frac{1}{\sqrt{\pi}}$.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note">
+                    因 $\max\{X,Y\} + \min\{X,Y\} = X + Y$，故
+                    $$E(\min\{X,Y\}) = EX + EY - E(\max\{X,Y\}) = 0 + 0 - \frac{1}{\sqrt{\pi}} = -\frac{1}{\sqrt{\pi}}$$
+                </div>
+                
+                <h3>5. 分解</h3>
+                <p>若 $X = X_1 + X_2 + \cdots + X_n$，则 $EX = EX_1 + EX_2 + \cdots + EX_n$.</p>
+                
+                <!-- 例题 6.3 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleSolution('sol63')">
+                        例题 6.3
+                        <button class="toggle-btn">显示/隐藏答案</button>
+                    </div>
+                    <div class="example-content">
+                        <p>设随机变量 $X$ 服从参数为 $\lambda$ 的指数分布，$Y = [X]$，$Z = \{X\}$ 分别是 $X$ 的整数部分和小数部分，求 $EY$ 和 $EZ$.</p>
+                        
+                        <div id="sol63" class="solution">
+                            <span class="solution-header">【解】</span>
+                            <p>由例 3.3 可知 $Y + 1$ 服从参数为 $1 - e^{-\lambda}$ 的几何分布，则</p>
+                            <div class="formula-box">
+                                $$E(Y+1) = \frac{1}{1-e^{-\lambda}}, \quad EY = \frac{1}{1-e^{-\lambda}} - 1 = \frac{1}{e^{\lambda}-1}$$
+                            </div>
+                            
+                            <p>由题意，有 $X = Y + Z$，</p>
+                            <p>于是</p>
+                            <div class="formula-box">
+                                $$EZ = EX - EY = \frac{1}{\lambda} - \frac{1}{e^{\lambda}-1} = \frac{e^{\lambda}-1-\lambda}{\lambda(e^{\lambda}-1)}$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note">
+                    由 $EX = EY + EZ$，巧妙地回避了求 $Z$ 的分布的难题，而 $Y$，$Z$ 满足也并非无独立性要求。
+                </div>
+                
+                <h3>6. 性质</h3>
+                <div class="formula-box">
+                    <p><strong>① </strong> $Ea = a$，$E(EX) = EX$</p>
+                    <p><strong>② </strong> $E(aX + bY) = aEX + bEY$，$E\left(\sum_{i=1}^{n}a_iX_i\right) = \sum_{i=1}^{n}a_iEX_i$</p>
+                    <p><strong>③ </strong> 若 $X$，$Y$ 相互独立，则 $E(XY) = EXEY$</p>
+                </div>
+            </section>
+            
+            <!-- 二、方差 -->
+            <section id="variance" class="section">
+                <h2>二、方差 (O₂)</h2>
+                
+                <h3>1. 定义</h3>
+                <div class="formula-box">
+                    <p><strong>(1) 定义：</strong></p>
+                    $$DX = E[(X - EX)^2]$$
+                    <p>$X$ 的方差就是 $Y = (X - EX)^2$ 的数学期望。</p>
+                </div>
+                
+                <h3>2. 定义法</h3>
+                <div class="formula-box">
+                    <p>① 离散型：$X \sim p_i \Rightarrow DX = E[(X-EX)^2] = \sum_{i}(x_i - EX)^2 p_i$</p>
+                    <p>② 连续型：$X \sim f(x) \Rightarrow DX = E[(X-EX)^2] = \int_{-\infty}^{+\infty}(x-EX)^2f(x)dx$</p>
+                </div>
+                
+                <h3>3. 公式法</h3>
+                <div class="formula-box">
+                    $$DX = E(X^2) - (EX)^2$$
+                </div>
+                
+                <!-- 例题 6.4 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleSolution('sol64')">
+                        例题 6.4
+                        <button class="toggle-btn">显示/隐藏答案</button>
+                    </div>
+                    <div class="example-content">
+                        <p>设随机变量 $X$ 的概率分布为 $P\{X = k\} = \frac{1}{2^k}$，$k = 1,2,3,\cdots$。$Y$ 表示 $X$ 被 $3$ 除的余数，则 $Y$ 的方差为______。</p>
+                        
+                        <div id="sol64" class="solution">
+                            <span class="solution-header">【解】</span>
+                            <p>应填 $\frac{20}{49}$。</p>
+                            
+                            <p>由例 3.1 可知，$Y$ 的概率分布为 $Y \sim \begin{pmatrix} 0 & 1 & 2 \\ \frac{1}{7} & \frac{4}{7} & \frac{2}{7} \end{pmatrix}$，所以</p>
+                            
+                            <div class="formula-box">
+                                $$EY = 0 \times \frac{1}{7} + 1 \times \frac{4}{7} + 2 \times \frac{2}{7} = \frac{8}{7}$$
+                                
+                                $$E(Y^2) = 0 \times \frac{1}{7} + 1^2 \times \frac{4}{7} + 2^2 \times \frac{2}{7} = \frac{12}{7}$$
+                                
+                                $$DY = E(Y^2) - (EY)^2 = \frac{12}{7} - \left(\frac{8}{7}\right)^2 = \frac{20}{49}$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>4. 最值的方差</h3>
+                <p>按 "一、数学期望" 的 "4. 最值"，有</p>
+                <div class="formula-box">
+                    $$E(Y^2) = \int_{-\infty}^{+\infty} y^2 f_Y(y)dy \Rightarrow DY = E(Y^2) - (EY)^2$$
+                    $$E(Z^2) = \int_{-\infty}^{+\infty} z^2 f_Z(z)dz \Rightarrow DZ = E(Z^2) - (EZ)^2$$
+                </div>
+                
+                <h3>5. 绝对值函数 $|aX + bY + c|$ 的方差</h3>
+                <p>若 $U = aX + bY + c$，则</p>
+                <div class="formula-box">
+                    $$EU = aEX + bEY + c$$
+                    $$DU = a^2DX + b^2DY(X,Y\text{相互独立})$$
+                    $$D(|U|) = E(U^2) - [E(|U|)]^2 = DU + (EU)^2 - [E(|U|)]^2$$
+                </div>
+                
+                <p>其中 $E(|U|) = \begin{cases} \int_{-\infty}^{+\infty}|u|f(u)du & (\text{连续型}), \\ \sum_{i}|u_i|p_i & (\text{离散型}). \end{cases}$</p>
+                
+                <!-- 例题 6.5 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleSolution('sol65')">
+                        例题 6.5
+                        <button class="toggle-btn">显示/隐藏答案</button>
+                    </div>
+                    <div class="example-content">
+                        <p>设 $X_1$，$X_2$ 为来自总体 $N(\mu,\sigma^2)$ 的简单随机样本，其中 $\sigma(\sigma > 0)$ 是未知参数，记 $\delta = a|X_1 - X_2|(a > 0)$，若 $D\delta = \sigma^2$，则 $a = $ ______。</p>
+                        
+                        <div id="sol65" class="solution">
+                            <span class="solution-header">【解】</span>
+                            <p>应填 $\sqrt{\frac{\pi}{2\pi-4}}$。</p>
+                            
+                            <p>令 $Z = X_1 - X_2$，则 $Z \sim N(0,2\sigma^2)$，故</p>
+                            <div class="formula-box">
+                                $$E(|Z|) = \int_{-\infty}^{+\infty}|z| \cdot \frac{1}{\sqrt{2\pi} \cdot \sqrt{2\sigma}}e^{-\frac{z^2}{4\sigma^2}}dz$$
+                                
+                                $$= 2\int_{0}^{+\infty} \frac{z}{2\sqrt{\pi\sigma}}e^{-\frac{z^2}{4\sigma^2}}dz = -\frac{2\sigma}{\sqrt{\pi}}e^{-\frac{z^2}{4\sigma^2}}\bigg|_{0}^{+\infty} = \frac{2\sigma}{\sqrt{\pi}}$$
+                            </div>
+                            
+                            <p>因此</p>
+                            <div class="formula-box">
+                                $$D(|Z|) = DZ + (EZ)^2 - [E(|Z|)]^2 = 2\sigma^2 - \frac{4\sigma^2}{\pi} = 2\sigma^2\left(1-\frac{2}{\pi}\right)$$
+                            </div>
+                            
+                            <p>故 $a^2 \cdot 2\sigma^2\left(1-\frac{2}{\pi}\right) = \sigma^2$，于是 $a = \sqrt{\frac{1}{2-\frac{4}{\pi}}} = \sqrt{\frac{\pi}{2\pi-4}}$.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>6. 分解随机变量后再求方差</h3>
+                <p>若 $X = X_1 + X_2 + \cdots + X_n$，则 $DX = DX_1 + DX_2 + \cdots + DX_n + 2\sum_{1 \leq i < j \leq n}\text{Cov}(X_i,X_j)$.</p>
+                <p>当 $X_1$，$X_2$，$\cdots$，$X_n$ 相互独立时，有 $DX = DX_1 + DX_2 + \cdots + DX_n$.</p>
+                
+                <h3>7. 性质</h3>
+                <div class="formula-box">
+                    <p><strong>① </strong> $DX \geq 0$，$E(X^2) = DX + (EX)^2 \geq (EX)^2$</p>
+                    <p><strong>② </strong> $Dc = 0$ ($c$ 为常数)</p>
+                    <p style="margin-left: 20px;">$DX = 0 \Leftrightarrow X$ 几乎处处为某个常数 $a$，即 $P\{X = a\} = 1$</p>
+                    <p><strong>③ </strong> $D(aX + b) = a^2DX$</p>
+                    <p><strong>④ </strong> $D(X \pm Y) = DX + DY \pm 2\text{Cov}(X,Y)$，$D\left(\sum_{i=1}^{n}a_iX_i\right) = \sum_{i=1}^{n}a_i^2DX_i + 2\sum_{1 \leq i < j \leq n}a_ia_j\text{Cov}(X_i,X_j)$</p>
+                </div>
+                
+                <h3>8. 常用分布的 $EX$，$DX$</h3>
+                <p>考生应记住如下常用分布的 $EX$，$DX$：</p>
+                
+                <table>
+                    <tr>
+                        <th>分布</th>
+                        <th>期望 $EX$</th>
+                        <th>方差 $DX$</th>
+                    </tr>
+                    <tr>
+                        <td>① 0-1分布</td>
+                        <td>$p$</td>
+                        <td>$p - p^2 = (1-p)p$</td>
+                    </tr>
+                    <tr>
+                        <td>② 二项分布 $X \sim B(n,p)$</td>
+                        <td>$np$</td>
+                        <td>$np(1-p)$</td>
+                    </tr>
+                    <tr>
+                        <td>③ 泊松分布 $X \sim P(\lambda)$</td>
+                        <td>$\lambda$</td>
+                        <td>$\lambda$</td>
+                    </tr>
+                    <tr>
+                        <td>④ 几何分布 $X \sim G(p)$</td>
+                        <td>$\frac{1}{p}$</td>
+                        <td>$\frac{1-p}{p^2}$</td>
+                    </tr>
+                    <tr>
+                        <td>⑤ 均匀分布 $X \sim U(a,b)$</td>
+                        <td>$\frac{a+b}{2}$</td>
+                        <td>$\frac{(b-a)^2}{12}$</td>
+                    </tr>
+                    <tr>
+                        <td>⑥ 指数分布 $X \sim E(\lambda)$</td>
+                        <td>$\frac{1}{\lambda}$</td>
+                        <td>$\frac{1}{\lambda^2}$</td>
+                    </tr>
+                    <tr>
+                        <td>⑦ 正态分布 $X \sim N(\mu,\sigma^2)$</td>
+                        <td>$\mu$</td>
+                        <td>$\sigma^2$</td>
+                    </tr>
+                    <tr>
+                        <td>⑧ 卡方分布 $X \sim \chi^2(n)$</td>
+                        <td>$n$</td>
+                        <td>$2n$</td>
+                    </tr>
+                </table>
+            </section>
+            
+            <!-- 三、协方差与相关系数 -->
+            <section id="covariance" class="section">
+                <h2>三、协方差 $\text{Cov}(X,Y)$ 与相关系数 $\rho_{XY}$ (O₃)</h2>
+                
+                <h3>1. $\text{Cov}(X,Y)$ 的定义</h3>
+                <div class="formula-box">
+                    <p><strong>(1) 定义：</strong></p>
+                    $$\text{Cov}(X,Y) \overset{\triangle}{=} E[(X-EX)(Y-EY)]$$
+                    <p style="margin-top: 10px; font-size: 0.95em; color: #666;">（$X,Y$ 偏差（波动）程度）</p>
+                </div>
+                
+                <div class="note">
+                    $$\text{Cov}(X,X) = E[(X-EX)(X-EX)] = E[(X-EX)^2] = DX$$
+                </div>
+                
+                <h3>2. 定义法</h3>
+                <div class="formula-box">
+                    <p><strong>① 离散型：</strong> $(X,Y) \sim p_{ij} \Rightarrow \text{Cov}(X,Y) = \sum_{i}\sum_{j}(x_i - EX)(y_j - EY)p_{ij}$</p>
+                    <p><strong>② 连续型：</strong> $(X,Y) \sim f(x,y) \Rightarrow \text{Cov}(X,Y) = \int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}(x-EX)(y-EY)f(x,y)dxdy$</p>
+                </div>
+                
+                <h3>3. 公式法</h3>
+                <div class="formula-box">
+                    $$\text{Cov}(X,Y) = E(XY) - EXEY$$
+                </div>
+                
+                <h3>4. $\rho_{XY}$ 定义（相关系数，表示线性相依程度）</h3>
+                <div class="formula-box">
+                    $$\rho_{XY} = \frac{\text{Cov}(X,Y)}{\sqrt{DX}\sqrt{DY}} \begin{cases} = 0 \Leftrightarrow X,Y\text{不相关,} \\ \neq 0 \Leftrightarrow X,Y\text{相关.} \end{cases}$$
+                    <p style="margin-top: 15px;">（量纲为 1，无单位）</p>
+                </div>
+                
+                <div class="note">
+                    <p><strong>$-1 \leq \rho \leq 1$</strong></p>
+                    <ul style="margin-top: 10px; list-style-position: inside;">
+                        <li>$\rho = 0$ 时，线性相依程度为 0，线两边距离，线性相依程度最弱</li>
+                        <li>在 $\rho = -1$ 或 $\rho = -1$ 时线性相依程度最强，在下面 "3.⑤" 处</li>
+                    </ul>
+                </div>
+                
+                <h3>5. 性质</h3>
+                <div class="formula-box">
+                    <p><strong>① </strong> $\text{Cov}(X,Y) = \text{Cov}(Y,X)$</p>
+                    <p><strong>② </strong> $\text{Cov}(aX,bY) = ab\text{Cov}(X,Y)$（量纲别忘倍数，要记得）</p>
+                    <p><strong>③ </strong> $\text{Cov}(X_1 + X_2, Y) = \text{Cov}(X_1,Y) + \text{Cov}(X_2,Y)$</p>
+                    <p><strong>④ </strong> $|\rho_{XY}| \leq 1$</p>
+                    <p><strong>⑤ </strong> $\rho_{XY} = 1 \Leftrightarrow P\{Y = aX + b\} = 1(a > 0)$</p>
+                    <p style="margin-left: 30px;">$\rho_{XY} = -1 \Leftrightarrow P\{Y = aX + b\} = 1(a < 0)$</p>
+                </div>
+                
+                <div class="note">
+                    <p><strong>(1)</strong> $Y = aX + b$，$a > 0 \Rightarrow \rho_{XY} = 1$；$Y = aX + b$，$a < 0 \Rightarrow \rho_{XY} = -1$</p>
+                    <p><strong>(2) 常见线性关系：</strong></p>
+                    <ul style="list-style-position: inside; margin-top: 10px;">
+                        <li>① 端 $n$ 次要面，正面次数为 $X$，反面次数为 $Y$，则 $X + Y = n$，$X$，$Y$ 为线性关系；</li>
+                        <li>② 原自单位圆边界上的点 $(X, \ Y)$，则 $X^2 + Y^2 = 1$，$X^2$，$Y^2$ 为线性关系；</li>
+                        <li>③ $\sin^2X + \cos^2X = 1$，$\sin^2X$ 与 $\cos^2X$ 为线性关系。</li>
+                    </ul>
+                </div>
+                
+                <h3>6. 互不充要条件</h3>
+                <p>$\rho_{XY} = 0 \Leftrightarrow \text{Cov}(X,Y) = 0 \Leftrightarrow E(XY) = EXEY$</p>
+                <div class="formula-box" style="text-align: center; padding: 30px;">
+                    <p style="font-size: 1.2em; margin-bottom: 15px;">$\Leftrightarrow D(X+Y) = DX + DY \Leftrightarrow D(X-Y) = DX + DY$</p>
+                    <p style="font-size: 0.95em; color: #666;">⬇️ 考作变这条决</p>
+                </div>
+                
+                <p><strong>⑦ </strong> $X$，$Y$ 独立 $\Rightarrow \rho_{XY} = 0$</p>
+                <p><strong>⑧ </strong> 若 $(X,Y) \sim N(\mu_1,\mu_2;\sigma_1^2,\sigma_2^2;\rho_{XY})$，则 $X$，$Y$ 独立 $\Leftrightarrow X$，$Y$ 不相关 $(\rho_{XY} = 0)$</p>
+                
+                <!-- 例题 6.6 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleSolution('sol66')">
+                        例题 6.6
+                        <button class="toggle-btn">显示/隐藏答案</button>
+                    </div>
+                    <div class="example-content">
+                        <p>设二维随机变量 $(X,Y)$ 服从正态分布 $N(0,0;1,1;\rho)$，其中 $\rho \in (-1,1)$，若 $a$，$b$ 为满足 $a^2 + b^2 = 1$ 的任意实数，则 $D(aX + bY)$ 的最大值为（）。</p>
+                        <p>(A) 1 &nbsp;&nbsp;&nbsp; (B) 2 &nbsp;&nbsp;&nbsp; (C) $1 + |\rho|$ &nbsp;&nbsp;&nbsp; (D) $1 + \rho^2$</p>
+                        
+                        <div id="sol66" class="solution">
+                            <span class="solution-header">【解】</span>
+                            <p>应选 (C)。</p>
+                            
+                            <div class="formula-box">
+                                $$D(aX + bY) = a^2DX + b^2DY + 2\text{Cov}(aX,bY) = a^2 + b^2 + 2ab\rho \cdot 1 = 1 + 2ab\rho$$
+                            </div>
+                            
+                            <p>又 $|ab\rho| \leq \left|\frac{a^2+b^2}{2}\right||\rho| = \frac{|\rho|}{2}$，所以 $D(aX+bY) = 1 + 2ab\rho \leq 1 + |\rho|$，故选 (C)。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 例题 6.7 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleSolution('sol67')">
+                        例题 6.7
+                        <button class="toggle-btn">显示/隐藏答案</button>
+                    </div>
+                    <div class="example-content">
+                        <p>设随机变量 $X$ 服从正态分布 $N(-1,1)$，$Y$ 服从正态分布 $N(1,2)$，若 $X$ 与 $X + 2Y$ 不相关，则 $X$ 与 $X - Y$ 的相关系数为（）。</p>
+                        <p>(A) $\frac{1}{3}$ &nbsp;&nbsp;&nbsp; (B) $\frac{1}{2}$ &nbsp;&nbsp;&nbsp; (C) $\frac{2}{3}$ &nbsp;&nbsp;&nbsp; (D) $\frac{3}{4}$</p>
+                        
+                        <div id="sol67" class="solution">
+                            <span class="solution-header">【解】</span>
+                            <p>应选 (D)。</p>
+                            
+                            <p>由 $\text{Cov}(X, X+2Y) \overset{化归轻易形式}{=} \text{Cov}(X,X) + 2\text{Cov}(X,Y) = DX + 2\text{Cov}(X,Y) = 0$，得</p>
+                            
+                            <div class="formula-box">
+                                $$\text{Cov}(X,Y) = -\frac{1}{2}DX = -\frac{1}{2}$$
+                            </div>
+                            
+                            <p>又 $\text{Cov}(X,X-Y) = \text{Cov}(X,X) - \text{Cov}(X,Y) = DX - \text{Cov}(X,Y) = 1 + \frac{1}{2} = \frac{3}{2}$，</p>
+                            
+                            <div class="formula-box">
+                                $$D(X-Y) = DX + DY - 2\text{Cov}(X,Y) = 1 + 2 - 2 \times \left(-\frac{1}{2}\right) = 4$$
+                            </div>
+                            
+                            <p>所以 $\rho_{X,(X-Y)} = \frac{\text{Cov}(X,X-Y)}{\sqrt{DX \cdot D(X-Y)}} = \frac{\frac{3}{2}}{1 \times 2} = \frac{3}{4}$</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 四、独立性与不相关性的判定 -->
+            <section id="independence" class="section">
+                <h2>四、独立性与不相关性的判定 (O₄)</h2>
+                
+                <h3>1. 用分布判独立</h3>
+                <div class="note" style="background: linear-gradient(135deg, #a6d6c9 0%, #c8e6d9 100%);">
+                    <p style="font-weight: 600;">查定义法：若 $F_{X_0,Y_0}(x_0,y_0) = F_X(x_0) \cdot F_Y(y_0) \Leftrightarrow X,Y$ 不独立</p>
+                </div>
+                
+                <p>随机变量 $X$ 与 $Y$ 相互独立，指对任意实数 $x$，$y$，事件 $\{X \leq x\}$ 与 $\{Y \leq y\}$ 相互独立，即 $X$ 和 $Y$ 的联合分布函数等于边缘分布相乘：$F(x,y) = F_X(x) \cdot F_Y(y)$.</p>
+                
+                <p><strong>① </strong>若 $(X,Y)$ 是连续型的，则 $X$ 与 $Y$ 相互独立的充要条件是 $f(x,y) = f_X(x) \cdot f_Y(y)$；</p>
+                <p><strong>② </strong>若 $(X,Y)$ 是离散型的，则 $X$ 与 $Y$ 相互独立的充要条件是</p>
+                <div class="formula-box">
+                    $$P\{X = x_i, Y = y_j\} = P\{X = x_i\} \cdot P\{Y = y_j\}$$
+                </div>
+                
+                <h3>2. 用数字特征判不相关</h3>
+                <p>随机变量 $X$ 与 $Y$ 不相关，意指 $X$ 与 $Y$ 之间不存在线性相依性，即 $\rho_{XY} = 0$，其充要条件是</p>
+                <div class="formula-box">
+                    $$\rho_{XY} = 0 \Leftrightarrow \text{Cov}(X,Y) = 0 \Leftrightarrow E(XY) = EXEY \Leftrightarrow D(X \pm Y) = DX + DY$$
+                </div>
+                
+                <h3>3. 步骤</h3>
+                <p>先计算 $\text{Cov}(X,Y)$，然后按下列步骤进行判断或再计算：</p>
+                <div class="formula-box">
+                    $$\text{Cov}(X,Y) = E(XY) - EXEY \begin{cases} \neq 0 \Leftrightarrow X\text{与}Y\text{相关} \Rightarrow X\text{与}Y\text{不独立,} \\ = 0 \Leftrightarrow X\text{与}Y\text{不相关，通过分布推断} \begin{cases} X, & Y\text{独立,} \\ X, & Y\text{不独立.} \end{cases} \end{cases}$$
+                </div>
+                
+                <h3>4. 重要结论</h3>
+                <p><strong>① </strong>如果 $X$ 与 $Y$ 独立，则 $X$，$Y$ 不相关，反之不然。</p>
+                <p><strong>② </strong>由 "①" 知，如果 $X$ 与 $Y$ 相关，则 $X$，$Y$ 不独立。</p>
+                <p><strong>③ </strong>如果 $(X,Y)$ 服从二维正态分布，则 $X$，$Y$ 独立 $\Leftrightarrow X$，$Y$ 不相关。</p>
+                <p><strong>④ </strong>如果 $X$ 与 $Y$ 均服从 0-1 分布，则 $X$，$Y$ 独立 $\Leftrightarrow X$，$Y$ 不相关。</p>
+                
+                <!-- 例题 6.8 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleSolution('sol68')">
+                        例题 6.8
+                        <button class="toggle-btn">显示/隐藏答案</button>
+                    </div>
+                    <div class="example-content">
+                        <p>设随机变量 $(X,Y)$ 服从二维正态分布 $N\left(0,0;1,4,-\frac{1}{2}\right)$，则下列随机变量中服从标准正态分布且与 $X$ 独立的是（）。</p>
+                        <p>(A) $\frac{\sqrt{5}}{5}(X+Y)$ &nbsp; (B) $\frac{\sqrt{5}}{5}(X-Y)$ &nbsp; (C) $\frac{\sqrt{5}}{3}(X+Y)$ &nbsp; (D) $\frac{\sqrt{5}}{3}(X-Y)$</p>
+                        
+                        <div id="sol68" class="solution">
+                            <span class="solution-header">【解】</span>
+                            <p>应选 (C)。</p>
+                            
+                            <p>由 $(X,Y)$ 服从二维正态分布 $N\left(0,0;1,4,-\frac{1}{2}\right)$，可知 $X \sim N(0,1)$，$Y \sim N(0,4)$，$\rho_{XY} = -\frac{1}{2}$，于是</p>
+                            
+                            <div class="formula-box">
+                                $$E(X+Y) = EX + EY = 0, \quad D(X+Y) = DX + DY + 2\text{Cov}(X,Y) = 5 + 2\rho_{XY} \cdot \sqrt{DX} \cdot \sqrt{DY} = 3$$
+                                $$E(X-Y) = EX - EY = 0, \quad D(X-Y) = DX + DY - 2\text{Cov}(X,Y) = 7$$
+                            </div>
+                            
+                            <p>故 $X + Y \sim N(0,3)$，$\frac{X+Y}{\sqrt{3}} = \frac{\sqrt{5}}{3}(X+Y) \sim N(0,1)$；$X - Y \sim N(0,7)$，$\frac{X-Y}{\sqrt{7}} = \frac{\sqrt{7}}{7}(X-Y) \sim N(0,1)$.</p>
+                            
+                            <p>综上，只能选 (C)。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note">
+                    事实上，$\begin{pmatrix} X \\ X+Y \end{pmatrix} = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}\begin{pmatrix} X \\ Y \end{pmatrix}$，这里矩阵 $\begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}$ 可逆，于是 $(X,X+Y)$ 仍是二维正态分布，且
+                    $$\text{Cov}(X,X+Y) = \text{Cov}(X,X) + \text{Cov}(X,Y) = DX + \rho_{XY} \cdot \sqrt{DX} \cdot \sqrt{DY} = 0$$
+                    于是 $X$ 与 $X + Y$ 独立。
+                </div>
+            </section>
+            
+            <!-- 五、切比雪夫不等式 -->
+            <section id="chebyshev" class="section">
+                <h2>五、切比雪夫不等式 (O₅)</h2>
+                
+                <div class="note" style="background: linear-gradient(135deg, #f7d117 0%, #ffd700 100%);">
+                    <p>化归轻易形式）。将 $EX$，$DX$ 多别是多少，考虑过去记别的差多少，将先发表公式即可。</p>
+                </div>
+                
+                <p>设随机变量 $X$ 的数学期望与方差均存在，则对任意 $\varepsilon > 0$，</p>
+                <div class="formula-box">
+                    $$P\{|X - EX| \geq \varepsilon\} \leq \frac{DX}{\varepsilon^2} \text{ 或 } P\{|X - EX| < \varepsilon\} \geq 1 - \frac{DX}{\varepsilon^2}$$
+                </div>
+                
+                <!-- 例题 6.9 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleSolution('sol69')">
+                        例题 6.9
+                        <button class="toggle-btn">显示/隐藏答案</button>
+                    </div>
+                    <div class="example-content">
+                        <p>设随机变量 $X_1$，$X_2$，$\cdots$，$X_n$ 独立同分布，记 $E(X_i^k) = \mu_k (k=1,2,3,4)$，则由切比雪夫不等式，对任意 $\varepsilon > 0$，有 $P\left\{\left|\frac{1}{n}\sum_{i=1}^{n}X_i^2 - \mu_2\right| \geq \varepsilon\right\} \leq$ （）。</p>
+                        <p>(A) $\frac{\mu_4 - \mu_2^2}{n\varepsilon^2}$ &nbsp; (B) $\frac{\mu_4 - \mu_2^2}{\sqrt{n\varepsilon^2}}$ &nbsp; (C) $\frac{\mu_2 - \mu_1^2}{n\varepsilon^2}$ &nbsp; (D) $\frac{\mu_2 - \mu_1^2}{\sqrt{n\varepsilon^2}}$</p>
+                        
+                        <div id="sol69" class="solution">
+                            <span class="solution-header">【解】</span>
+                            <p>应选 (A)。</p>
+                            
+                            <p>由 $\mu_k = E(X_i^k)$，知</p>
+                            <div class="formula-box">
+                                $$\mu_2 = E\left(\frac{1}{n}\sum_{i=1}^{n}X_i^2\right) = E(X_i^2)$$
+                            </div>
+                            
+                            <div class="formula-box">
+                                $$D\left(\frac{1}{n}\sum_{i=1}^{n}X_i^2\right) = \frac{1}{n^2} \cdot n \cdot \{E(X_i^4) - [E(X_i^2)]^2\} = \frac{1}{n}(\mu_4 - \mu_2^2)$$
+                            </div>
+                            
+                            <p>故</p>
+                            <div class="formula-box">
+                                $$P\left\{\left|\frac{1}{n}\sum_{i=1}^{n}X_i^2 - \mu_2\right| \geq \varepsilon\right\} \leq \frac{D\left(\frac{1}{n}\sum_{i=1}^{n}X_i^2\right)}{\varepsilon^2} = \frac{\mu_4 - \mu_2^2}{n\varepsilon^2}$$
+                            </div>
+                            
+                            <p>故选 (A)。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 页脚总结 -->
+            <section class="section" style="background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%); color: white; border-left: none;">
+                <h2 style="color: white; border-bottom-color: #f7d117;">📚 学习总结</h2>
+                <ul style="line-height: 2;">
+                    <li>✅ 掌握数学期望的计算方法（离散型、连续型、函数形式）</li>
+                    <li>✅ 理解方差的定义及其计算公式</li>
+                    <li>✅ 熟练运用协方差和相关系数判断变量关系</li>
+                    <li>✅ 区分独立性与不相关性的判定条件</li>
+                    <li>✅ 应用切比雪夫不等式进行概率估计</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+    
+    <!-- 返回顶部按钮 -->
+    <button class="back-to-top" onclick="scrollToTop()">↑</button>
+    
+    <!-- 页脚 -->
+    <footer>
+        <p>© 2025 概率论与数理统计交互式教程</p>
+        <p style="margin-top: 10px; font-size: 0.9em;">本页面使用 MathJax 渲染数学公式，请确保网络连接正常</p>
+    </footer>
+    
+    <script>
+        // 切换答案显示/隐藏
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            solution.classList.toggle('active');
+        }
+        
+        // 返回顶部功能
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 显示/隐藏返回顶部按钮
+        window.addEventListener('scroll', function() {
+            const backToTop = document.querySelector('.back-to-top');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('.sidebar a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 页面加载完成后的提示
+        window.addEventListener('load', function() {
+            console.log('✅ 页面加载完成！');
+            console.log('📚 交互式教程功能：');
+            console.log('  - 点击例题标题可展开/折叠答案');
+            console.log('  - 使用侧边栏导航快速跳转');
+            console.log('  - 滚动页面查看返回顶部按钮');
+            console.log('🔢 所有数学公式由 MathJax 渲染');
+        });
+    </script>
+</body>
+</html>
+

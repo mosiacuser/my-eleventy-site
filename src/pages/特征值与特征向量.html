@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第7讲 特征值与特征向量 - 交互式教程</title>
+    
+    <!-- 完整的MathJax配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            },
+            CommonHTML: { 
+                scale: 110 
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            color: #343434;
+            line-height: 1.8;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #f79d00 100%);
+            color: #ffffff;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        header h1 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: #343434;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        nav li {
+            margin: 5px 15px;
+        }
+        
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            transform: translateY(-2px);
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+        }
+        
+        h2 {
+            font-family: 'Noto Serif SC', serif;
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+            position: relative;
+        }
+        
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: #f27d00;
+        }
+        
+        h3 {
+            color: #343434;
+            font-size: 1.5em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 4px solid #f7d117;
+        }
+        
+        .theorem-box, .note-box, .example-box {
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .theorem-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            border-left: 5px solid #f7d117;
+        }
+        
+        .note-box {
+            background: linear-gradient(135deg, #e6f7f4 0%, #f0faf8 100%);
+            border-left: 5px solid #a6d6c9;
+        }
+        
+        .example-box {
+            background: linear-gradient(135deg, #fff0e6 0%, #fff8f0 100%);
+            border-left: 5px solid #f27d00;
+        }
+        
+        .box-title {
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #343434;
+        }
+        
+        .theorem-box .box-title {
+            color: #b89300;
+        }
+        
+        .note-box .box-title {
+            color: #2d9b7f;
+        }
+        
+        .example-box .box-title {
+            color: #f27d00;
+        }
+        
+        .collapsible {
+            background: #f27d00;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            font-weight: 500;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(242, 125, 0, 0.3);
+        }
+        
+        .collapsible:hover {
+            background: #d96d00;
+            box-shadow: 0 4px 12px rgba(242, 125, 0, 0.4);
+        }
+        
+        .collapsible:after {
+            content: '\\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: "\\2212";
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #fafafa;
+            border-radius: 0 0 8px 8px;
+            margin-top: -10px;
+        }
+        
+        .collapsible-content-inner {
+            padding: 20px;
+        }
+        
+        .formula-display {
+            background: #f8f8f8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: #f27d00;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        tr:hover {
+            background: #fff8f0;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #f7d117 0%, #f7d117 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 40%;
+            background-position: 0 85%;
+            padding: 2px 4px;
+            font-weight: 500;
+        }
+        
+        .important {
+            color: #f27d00;
+            font-weight: 600;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(242, 125, 0, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-to-top:hover {
+            background: #d96d00;
+            transform: translateY(-5px);
+        }
+        
+        footer {
+            background: #343434;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+        
+        .proof {
+            background: #f0f8ff;
+            padding: 20px;
+            border-left: 4px solid #a6d6c9;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .proof-title {
+            font-weight: 700;
+            color: #2d9b7f;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第7讲 特征值与特征向量</h1>
+            <p>线性代数核心内容 · 系统学习与深入理解</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#overview">解题概览</a></li>
+                <li><a href="#eigenvalue">特征值命题</a></li>
+                <li><a href="#eigenvector">特征向量命题</a></li>
+                <li><a href="#matrix-equation">矩阵方程命题</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <!-- 解题概览 -->
+            <section id="overview">
+                <h2>三向解题法概览</h2>
+                
+                <div class="theorem-box">
+                    <div class="box-title">📚 核心思路</div>
+                    <p style="text-align: center; font-size: 1.2em; margin: 20px 0;">
+                        <span class="highlight">求解/利用</span> $A$ 的特征值与特征向量（O（目标））
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px;">
+                        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <h4 style="color: #f27d00; margin-bottom: 10px;">方法一：利用特征值命题</h4>
+                            <p>$D_1$（常规操作）+ $D_{22}$（转换等价表达）</p>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <h4 style="color: #f27d00; margin-bottom: 10px;">方法二：利用特征向量命题</h4>
+                            <p>$D_1$（常规操作）+ $D_{22}$（转换等价表达）</p>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <h4 style="color: #f27d00; margin-bottom: 10px;">方法三：利用矩阵方程命题</h4>
+                            <p>$D_1$（常规操作）+ $D_{22}$（转换等价表达）+ $D_{23}$（化归经典形式）</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 特征值命题 -->
+            <section id="eigenvalue">
+                <h2>一、利用特征值命题</h2>
+                <p style="text-align: center; font-size: 1.15em; color: #f27d00; margin-bottom: 30px;">
+                    $D_1$（常规操作）+ $D_{22}$（转换等价表达）
+                </p>
+                
+                <button class="collapsible">📌 基本定义与判定</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="note-box">
+                            <p><strong>（1）核心定义：</strong></p>
+                            <ul>
+                                <li>$\lambda_0$ 是 $A$ 的特征值 $\Leftrightarrow |\lambda_0E - A| = 0$（建立方程求参数或证明行列式，$|\lambda_0E - A| = 0$）</li>
+                                <li>$\lambda_0$ 不是 $A$ 的特征值 $\Leftrightarrow |\lambda_0E - A| \neq 0$（矩阵可逆，满秩）</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <div class="box-title">⚠️ 重要注意</div>
+                            <p>这里常见的命题方法：若 $|aA + bE| = 0$（或 $aA + bE$ 不可逆），$a \neq 0$，则 $-\dfrac{b}{a}$ 是 $A$ 的特征值。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">📌 特征值的性质</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p><strong>（2）若 $\lambda_1, \lambda_2, \cdots, \lambda_n$ 是 $A$ 的 $n$ 个特征值，则</strong></p>
+                        <div class="formula-display">
+                            $$\begin{cases}
+                            |A| = \lambda_1\lambda_2\cdots\lambda_n, \\
+                            \text{tr}(A) = \lambda_1 + \lambda_2 + \cdots + \lambda_n.
+                            \end{cases}$$
+                        </div>
+                        <p>由 $D_{23}$（化归经典形式）知，$|bE - (aA)| = (-a)^n\left|\dfrac{b}{a}E - A\right| = 0$，即 $\lambda_i = -\dfrac{b}{a}$</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">📌 特征值变换关系表</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p><strong>（3）重要结论：</strong></p>
+                        <div class="note-box">
+                            <p style="margin-bottom: 15px;">设 $f(A) = A^3 + 2A^2 - A + 5E$，则 $f(\lambda) = \lambda^3 + 2\lambda^2 - \lambda + 5$</p>
+                            <p style="font-weight: 600;">多项式的关系尤其重要，见到仍要纠点的即那 $f(A) \leftrightarrow f(\lambda)$</p>
+                        </div>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>矩阵</th>
+                                    <th>$A$</th>
+                                    <th>$kA$</th>
+                                    <th>$A^k$</th>
+                                    <th>$f(A)$</th>
+                                    <th>$A^{-1}$</th>
+                                    <th>$A^*$</th>
+                                    <th>$P^{-1}AP \overset{\text{记}}{=} B$</th>
+                                    <th>$P^{-1}f(A)P \overset{\text{记}}{=} f(B)$</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>特征值</strong></td>
+                                    <td>$\lambda$</td>
+                                    <td>$k\lambda$</td>
+                                    <td>$\lambda^k$</td>
+                                    <td>$f(\lambda)$</td>
+                                    <td>$\dfrac{1}{\lambda}$</td>
+                                    <td>$\dfrac{|A|}{\lambda}$</td>
+                                    <td>$\lambda$</td>
+                                    <td>$f(\lambda)$</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>对应的特征向量</strong></td>
+                                    <td>$\xi$</td>
+                                    <td>$\xi$</td>
+                                    <td>$\xi$</td>
+                                    <td>$\xi$</td>
+                                    <td>$\xi$</td>
+                                    <td>$\xi$</td>
+                                    <td>$P^{-1}\xi$</td>
+                                    <td>$P^{-1}\xi$</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="margin-top: 15px;"><em>表中 $\lambda$ 在分母上时，设 $\lambda \neq 0$。</em></p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">💡 重要性质补充</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="note-box">
+                            <div class="box-title">【注】性质详解</div>
+                            <p><strong>（1）</strong> 若 $\alpha$ 是 $A$ 的属于特征值 $\lambda$ 的特征向量，则 $A^T\alpha = \lambda^T\alpha$，见到求 $A^n\alpha$，可想到此式。</p>
+                            
+                            <p style="margin-top: 15px;"><strong>（2）</strong> 进一步地，当 $\lambda \neq 0$ 时，$af(A) \pm bA^{-1} \pm cA^*$ 的特征值为 $af(\lambda) \pm b\dfrac{1}{\lambda} \pm c\dfrac{|A|}{\lambda}$，特征向量仍为 $\xi$。但 $f(A)$，$A^{-1}$，$A^*$ 与 $A^T$，$B$ 的线性组合因特征向量不同，无上述规律。</p>
+                        </div>
+                        
+                        <div class="theorem-box" style="margin-top: 20px;">
+                            <p><strong>②虽然 $A^T$ 的特征值与 $A$ 相同，但特征向量不再是 $\xi$，要单独计算才能得出。</strong></p>
+                            <ul style="margin-top: 10px;">
+                                <li>① $|\lambda E - A| = |(\lambda E - A)^T| = |\lambda E - A^T|$，这将仍有相同</li>
+                                <li>② 值 $(\lambda E - A)x = 0$ 与 $(\lambda E - A^T)x = 0$<br>不是同类方程组，故将仍可能不同</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="theorem-box" style="margin-top: 20px;">
+                            <div class="box-title">【注】$A^T$ 和 $A$ 属于不同特征值的特征向量正交</div>
+                            <div class="proof">
+                                <div class="proof-title">证明：</div>
+                                <p>设 $A$ 有特征值 $\lambda_1$，对应的特征向量为 $\alpha$；$A^T$ 有特征值 $\lambda_2$，对应的特征向量为 $\beta$，且 $\lambda_1 \neq \lambda_2$，则</p>
+                                <div class="formula-display">
+                                    $$A\alpha = \lambda_1\alpha, \quad A^T\beta = \lambda_2\beta,$$
+                                    $$\lambda_1\alpha^T\beta = \lambda_1\alpha^T\lambda_2\beta = \lambda_1(\alpha^T A^T)\beta = \lambda_1(A\alpha)^T\beta = \lambda_1(\lambda_1\alpha)^T\beta = \lambda_1^2\alpha^T\beta,$$
+                                </div>
+                                <p>即 $\lambda_1(\lambda_2 - \lambda_1)\alpha^T\beta = 0$。</p>
+                                <p>同理可得 $\lambda_2(\lambda_1 - \lambda_2)\beta^T\alpha = 0$，其中 $\beta^T\alpha = \alpha^T\beta$。两式相加得</p>
+                                <div class="formula-display">
+                                    $$(\lambda_1 - \lambda_2)^2\alpha^T\beta = 0,$$
+                                </div>
+                                <p>由于 $\lambda_1 \neq \lambda_2$，故 $\alpha^T\beta = 0$，即 $\alpha, \beta$ 正交。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">📝 零矩阵性质</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="note-box">
+                            <p><strong>③归零性则：</strong></p>
+                            <p><strong>a.</strong> 归零性则一：设 $f(x)$ 为多项式，若知阵 $A$ 满足 $f(A) = O$，$\lambda$ 是 $A$ 的任一特征值，则 $\lambda$ 满足 $f(\lambda) = 0$。</p>
+                        </div>
+                        
+                        <div class="example-box" style="margin-top: 20px;">
+                            <div class="box-title">【注】典型例题</div>
+                            <p>解得的 $\lambda$ 的值只代表范围，如 $A^2 - E = O$，则 $\lambda^2 = 1$，$\lambda = \pm 1$。只能说 $A$ 的特征值的取值范围是 $\{1, -1\}$，即 $A$ 的特征值可能全为 1，可能为 1 和 -1，也可能全为 -1，如</p>
+                            <div class="formula-display">
+                                $$\begin{bmatrix}1 & 0 & 0\\0 & 1 & 0\\0 & 0 & 1\end{bmatrix}, \begin{bmatrix}1 & 0 & 0\\0 & -1 & 0\\0 & 0 & 1\end{bmatrix}, \begin{bmatrix}-1 & 0 & 0\\0 & -1 & 0\\0 & 0 & -1\end{bmatrix}$$
+                            </div>
+                            <p>都满足 $A^2 - E = O$。故考生一定不要因为 $\lambda^2 = 1$，就武断地说 $\lambda_1 = 1$，$\lambda_2 = -1$。这是典型的错误。</p>
+                        </div>
+                        
+                        <p style="margin-top: 20px;"><strong>b.</strong> 归零性则二：设 $n$ 阶方阵 $A$ 的特征多项式为 $f(\lambda) = |\lambda E - A| = \lambda^n + a_{n-1}\lambda^{n-1} + \cdots + a_1\lambda + a_0$，则 $A$ 的多项式 $f(A) = A^n + a_{n-1}A^{n-1} + \cdots + a_1A + a_0E = O$。</p>
+                        
+                        <div class="example-box" style="margin-top: 20px;">
+                            <div class="box-title">【注】应用示例</div>
+                            <p>如 $A = \begin{bmatrix}3 & 0 & 1\\0 & 4 & 0\\1 & 0 & 3\end{bmatrix}$，因 $f(\lambda) = |\lambda E - A| = (\lambda - 2)(\lambda - 4)^2$，则有 $f(A) = (A - 2E)(A - 4E)^2 = O$。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>📊 例题精讲</h3>
+                
+                <div class="example-box">
+                    <div class="box-title">例 7.1</div>
+                    <p><strong>题目：</strong>设 $A$ 是 3 阶矩阵，$|A| = 3$，且满足 $|A^2 + 2A| = 0$，$|2A^* + A| = 0$，则 $A_{11} + A_{22} + A_{33} = $ ______。</p>
+                    
+                    <div class="proof">
+                        <div class="proof-title">【解】</div>
+                        <p>应填 $-\dfrac{13}{2}$。</p>
+                        <p>由题设知，$|A^2 + 2A| = |A(A + 2E)| = |A||A + 2E| = 0$，因 $|A| = 3 \neq 0$，则 $|A + 2E| = 0$，故 $A$ 有特征值 $\lambda_1 = -2$。</p>
+                        <p>又 $|2A^* + A| = |A\left(2A + \dfrac{1}{2}E\right)| = 8|A|\left|A + \dfrac{1}{2}E\right| = 0$，即 $\left|A + \dfrac{1}{2}E\right| = 0$，得 $A$ 有特征值 $\lambda_2 = -\dfrac{1}{2}$。</p>
+                        <p>因 $|A| = 3 = \lambda_1\lambda_2\lambda_3$，故 $\lambda_3 = 3$。</p>
+                        <p>由本讲的"一、（3）①"知，$A^*$ 的特征值为 $\dfrac{|A|}{\lambda}$，故 $A^*$ 有特征值 $\mu_1 = -\dfrac{3}{2}$，$\mu_2 = -6$，$\mu_3 = 1$，由本讲的"一、（2）"知，</p>
+                        <div class="formula-display">
+                            $$A_{11} + A_{22} + A_{33} = \text{tr}(A^*) = \mu_1 + \mu_2 + \mu_3 = -\dfrac{3}{2} - 6 + 1 = -\dfrac{13}{2}.$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <div class="box-title">例 7.2</div>
+                    <p><strong>题目：</strong>设 $A = \begin{bmatrix}1 & 2\\5 & 4\end{bmatrix}$，$P = \begin{bmatrix}1 & 1\\0 & 1\end{bmatrix}$，$B \equiv P^{-1}A^{100}P$，则 $B + E$ 的线性无关的特征向量可以为（ ）。</p>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
+                        <div>(A) $\begin{bmatrix}0\\1\end{bmatrix}$，$\begin{bmatrix}7\\5\end{bmatrix}$</div>
+                        <div>(B) $\begin{bmatrix}-2\\1\end{bmatrix}$，$\begin{bmatrix}-3\\5\end{bmatrix}$</div>
+                        <div>(C) $\begin{bmatrix}1\\-1\end{bmatrix}$，$\begin{bmatrix}2\\5\end{bmatrix}$</div>
+                        <div>(D) $\begin{bmatrix}0\\1\end{bmatrix}$，$\begin{bmatrix}3\\2\end{bmatrix}$</div>
+                    </div>
+                    
+                    <div class="proof">
+                        <div class="proof-title">【解】</div>
+                        <p>应选（B）。</p>
+                        <p>设 $A$ 的特征向量为 $\alpha$，因 $B = P^{-1}f(A)P$，故由本讲的"一、（3）①"知，$P^{-1}\alpha$ 是 $B$ 的特征向量，从而也是 $B + E$ 的特征向量。</p>
+                        <p>由于 $|\lambda E - A| = \begin{vmatrix}\lambda - 1 & -2\\-5 & \lambda - 4\end{vmatrix} = (\lambda + 1)(\lambda - 6) = 0$，故 $A$ 的特征值为 $\lambda_1 = -1$，$\lambda_2 = 6$，容易求得 $A$ 的</p>
+                        <p>对应于特征值 $\lambda_1 = -1$ 与 $\lambda_2 = 6$ 的线性无关的特征向量分别为 $\begin{bmatrix}-1\\1\end{bmatrix}$与$\begin{bmatrix}2\\5\end{bmatrix}$。由于 $P^{-1} = \begin{bmatrix}1 & -1\\0 & 1\end{bmatrix}$，故</p>
+                        <div class="formula-display">
+                            $$P^{-1}\begin{bmatrix}-1\\1\end{bmatrix} = \begin{bmatrix}1 & -1\\0 & 1\end{bmatrix}\begin{bmatrix}-1\\1\end{bmatrix} = \begin{bmatrix}-2\\1\end{bmatrix}, \quad P^{-1}\begin{bmatrix}2\\5\end{bmatrix} = \begin{bmatrix}1 & -1\\0 & 1\end{bmatrix}\begin{bmatrix}2\\5\end{bmatrix} = \begin{bmatrix}-3\\5\end{bmatrix},$$
+                        </div>
+                        <p>于是，$B + E$ 的线性无关的特征向量可以为 $\begin{bmatrix}-2\\1\end{bmatrix}$，$\begin{bmatrix}-3\\5\end{bmatrix}$。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 特征向量命题 -->
+            <section id="eigenvector">
+                <h2>二、利用特征向量命题</h2>
+                <p style="text-align: center; font-size: 1.15em; color: #f27d00; margin-bottom: 30px;">
+                    $D_1$（常规操作）+ $D_{22}$（转换等价表达）
+                </p>
+                
+                <button class="collapsible">📌 特征向量的基本性质</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p><strong>（1）</strong> $\xi(\neq 0)$ 是 $A$ 的属于 $\lambda_0$ 的特征向量 $\Leftrightarrow$ $\xi$ 是 $(\lambda_0E - A)x = 0$ 的非零解。</p>
+                        
+                        <div class="note-box" style="margin-top: 20px;">
+                            <p><strong>（2）重要结论：</strong></p>
+                            <ul>
+                                <li>① 单根恰有 1 个线性无关的特征向量。</li>
+                                <li>② $k$ 重特征值 $\lambda$ 至多只有 $k$ 个线性无关的特征向量 $(k \geq 2)$。</li>
+                                <li>③ 若 $\xi_1, \xi_2$ 是 $A$ 的属于不同特征值 $\lambda_1, \lambda_2$ 的特征向量，则 $\xi_1, \xi_2$ 线性无关。</li>
+                                <li>④ 若 $\xi_1, \xi_2$ 是 $A$ 的属于同一特征值 $\lambda$ 的特征向量，则当 $k_1k_2 \neq 0$ 时，非零向量 $k_1\xi_1 + k_2\xi_2$ 仍是 $A$ 的属于特征值 $\lambda$ 的特征向量（常考其中一个系数（如 $k_2$）等于 0 的情形）。</li>
+                                <li>⑤ 若 $\xi_1, \xi_2$ 是 $A$ 的属于不同特征值 $\lambda_1, \lambda_2$ 的特征向量，则当 $k_1 \neq 0, k_2 \neq 0$ 时，$k_1\xi_1 + k_2\xi_2$ 不是 $A$ 的任何特征值的特征向量（常考 $k_1 = k_2 = 1$ 的情形）。</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="proof" style="margin-top: 20px;">
+                            <div class="proof-title">【注】证明 反证法。假设 $k_1\xi_1 + k_2\xi_2$ 是 $A$ 的特征向量，则存在数 $\lambda$，有</div>
+                            <div class="formula-display">
+                                $$A(k_1\xi_1 + k_2\xi_2) = \lambda(k_1\xi_1 + k_2\xi_2),$$
+                            </div>
+                            <p>即</p>
+                            <div class="formula-display">
+                                $$k_1A\xi_1 + k_2A\xi_2 = k_1\lambda\xi_1 + k_2\lambda\xi_2,$$
+                            </div>
+                            <p>也即</p>
+                            <div class="formula-display">
+                                $$k_1\lambda_1\xi_1 + k_2\lambda_2\xi_2 = k_1\lambda\xi_1 + k_2\lambda\xi_2,$$
+                            </div>
+                            <p>移项，得</p>
+                            <div class="formula-display">
+                                $$k_1(\lambda_1 - \lambda)\xi_1 + k_2(\lambda_2 - \lambda)\xi_2 = 0.$$
+                            </div>
+                            <p>由于 $\xi_1, \xi_2$ 线性无关，则</p>
+                            <div class="formula-display">
+                                $$\begin{cases}
+                                k_1(\lambda_1 - \lambda) = 0, \\
+                                k_2(\lambda_2 - \lambda) = 0.
+                                \end{cases}$$
+                            </div>
+                            <p>又 $k_1 \neq 0, k_2 \neq 0$，则 $\lambda_1 = \lambda_2 = \lambda$，与 $\lambda_1 \neq \lambda_2$ 矛盾，故 $k_1\xi_1 + k_2\xi_2$ 不是 $A$ 的任何特征值的特征向量。</p>
+                        </div>
+                        
+                        <div class="theorem-box" style="margin-top: 20px;">
+                            <div class="box-title">⚠️ 重要推论</div>
+                            <p><strong>⑥</strong>若 $\xi$ 是 $A$ 的属于特征值 $\lambda_1$ 的特征向量，$\lambda_1 \neq \lambda_2$，则 $\xi$ 不是 $\lambda_2$ 的特征向量。</p>
+                            <div class="proof">
+                                <div class="proof-title">【注】证明</div>
+                                <p>已知 $A\xi = \lambda_1\xi$，若 $A\xi = \lambda_2\xi$，则有 $(\lambda_1 - \lambda_2)\xi = 0$，由 $\xi \neq 0$，得 $\lambda_1 = \lambda_2$，矛盾。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="note-box" style="margin-top: 20px;">
+                            <p><strong>⑦</strong>若 $A$ 只有 1 个线性无关的特征向量，即 $\displaystyle\sum_{i=1}^{m}[n - r(\lambda_iE - A)] = 1$，$\lambda_i(i = 1, 2, \cdots, m)$ 是 $A$ 的 $m$ 个不同</p>
+                            <p>特征值，则只能有一个 $\lambda_k(1 \leq k \leq m)$，使 $r(\lambda_kE - A) = n - 1$，而其余 $r(\lambda_iE - A) = n$，且与 $r(\lambda_kE - A) < n$ 矛盾，故 $A$ 只能有一个 $\lambda_k$，且此 $\lambda_k$ 为 $n$ 重特征值。<span class="highlight">其余 $\lambda_i$ 的特征值都是单重的，则 $\lambda$ 至多有 1 个线性无关的特征向量。</span></p>
+                        </div>
+                        
+                        <div class="note-box" style="margin-top: 20px;">
+                            <p><strong>⑧</strong>设 $n$ 阶矩阵 $A, B$ 满足 $AB = BA$，且 $A$ 有 $n$ 个互不相同的特征值，则 $A$ 的特征向量都是 $B$ 的特征向量。</p>
+                            <div class="proof">
+                                <div class="proof-title">【注】证明</div>
+                                <p>设 $\alpha(\neq 0)$ 是 $A$ 的对应特征值 $\lambda$ 的特征向量，则有 $A\alpha = \lambda\alpha$。由于 $AB = BA$，则</p>
+                                <div class="formula-display">
+                                    $$AB\alpha = BA\alpha = \lambda B\alpha,$$
+                                </div>
+                                <p>则 $A(B\alpha) = \lambda(B\alpha)$。</p>
+                                <p>若 $B\alpha \neq 0$，则 $B\alpha$ 也是 $A$ 的特征向量。由于 $A$ 的特征值全是单重的，故 $\lambda$ 所对应的特征向量均线性相关，所以存在数 $\mu \neq 0$，使得 $B\alpha = \mu\alpha$。这说明 $\alpha$ 也是 $B$ 的特征向量。</p>
+                                <p>若 $B\alpha = 0$，则有 $B\alpha = 0\alpha$，即 $\alpha$ 也是 $B$ 的特征向量。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">📌 秩的相关性质</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="theorem-box">
+                            <p><strong>⑨</strong>若 $r(A) + r(B) < n$，则 $Ax = 0$，$Bx = 0$ 至少有一个公共非零解 $\xi$。</p>
+                            <div class="proof">
+                                <div class="proof-title">【注】证明</div>
+                                <p>$r\left(\begin{bmatrix}A\\B\end{bmatrix}\right) \leq r\left(\begin{bmatrix}A & O\\O & B\end{bmatrix}\right) = r(A) + r(B) < n$，故 $\begin{cases}Ax = 0\\Bx = 0\end{cases}$ 有非零解 $\xi$，即 $A\xi = 0$，$B\xi = 0$，证毕。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>📊 例题精讲</h3>
+                
+                <div class="example-box">
+                    <div class="box-title">例 7.3</div>
+                    <p><strong>题目：</strong>已知 $P^{-1}AP = \begin{bmatrix}1 & 0 & 0\\0 & 3 & 0\\0 & 0 & 3\end{bmatrix}$，$\alpha_1$ 是矩阵 $A$ 属于特征值 $\lambda = 1$ 的特征向量，$\alpha_2, \alpha_3$ 是矩阵 $A$ 属于特征值 $\lambda = 3$ 的线性无关的特征向量，则矩阵 $P$ 不可以是（ ）。</p>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
+                        <div>(A) $[\alpha_1, -2\alpha_2, \alpha_3]$</div>
+                        <div>(B) $[\alpha_1, \alpha_2 + \alpha_3, \alpha_2 - 2\alpha_3]$</div>
+                        <div>(C) $[\alpha_1, \alpha_2, \alpha_3]$</div>
+                        <div>(D) $[\alpha_1 + \alpha_2, \alpha_1 - \alpha_2, \alpha_3]$</div>
+                    </div>
+                    
+                    <div class="proof">
+                        <div class="proof-title">【解】</div>
+                        <p>应选（D）。</p>
+                        <p>若 $P^{-1}AP = A = \begin{bmatrix}a_1 & & \\ & a_2 & \\ & & a_3\end{bmatrix}$，$P = [\gamma_1, \gamma_2, \gamma_3]$，则有 $AP = PA$，即</p>
+                        <div class="formula-display">
+                            $$A[\gamma_1, \gamma_2, \gamma_3] = [\gamma_1, \gamma_2, \gamma_3]\begin{bmatrix}a_1 & & \\ & a_2 & \\ & & a_3\end{bmatrix},$$
+                        </div>
+                        <p>也即 $[A\gamma_1, A\gamma_2, A\gamma_3] = [a_1\gamma_1, a_2\gamma_2, a_3\gamma_3]$。由此，$\gamma_i$ 是矩阵 $A$ 属于特征值 $a_i(i = 1, 2, 3)$ 的特征向量，又因矩阵 $P$ 可逆，因此，$\gamma_1, \gamma_2, \gamma_3$ 线性无关。</p>
+                        <p>若 $\alpha$ 是属于特征值 $\lambda$ 的特征向量，则 $-2\alpha$ 仍是属于特征值 $\lambda$ 的特征向量，故（A）正确。</p>
+                        <p>若 $\alpha, \beta$ 是属于特征值 $\lambda$ 的线性无关的特征向量，则非零向量 $k_1\alpha + k_2\beta$ 仍是属于特征值 $\lambda$ 的特征向量。本题中，$\alpha_2, \alpha_3$ 是属于 $\lambda = 3$ 的线性无关的特征向量，故 $\alpha_2 + \alpha_3, \alpha_2 - 2\alpha_3$ 仍是属于 $\lambda = 3$ 的特征向量，并且 $\alpha_2 + \alpha_3, \alpha_2 - 2\alpha_3$ 线性无关，故（B）正确。</p>
+                        <p>关于（C），因为 $\alpha_2, \alpha_3$ 均是属于 $\lambda = 3$ 的特征向量，所以在前准后均正确，即（C）正确。</p>
+                        <p>由于 $\alpha_1, \alpha_2$ 是不同特征值的特征向量，因此 $\alpha_1 + \alpha_2, \alpha_1 - \alpha_2$ 不再是矩阵 $A$ 的特征向量，故（D）不正确。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 矩阵方程命题 -->
+            <section id="matrix-equation">
+                <h2>三、利用矩阵方程命题</h2>
+                <p style="text-align: center; font-size: 1.15em; color: #f27d00; margin-bottom: 30px;">
+                    $D_1$（常规操作）+ $D_{22}$（转换等价表达）+ $D_{23}$（化归经典形式）
+                </p>
+                
+                <button class="collapsible">📌 核心命题与推论</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="note-box">
+                            <p><strong>（1）</strong> $AB = O \Rightarrow A[\beta_1, \beta_2, \cdots, \beta_n] = [0, 0, \cdots, 0]$，即 $A\beta_i = 0\beta_i(i = 1, 2, \cdots, n)$，若 $\beta_i$ 均为非零列向量，则 $\beta_i$ 为 $A$ 的属于特征值 $\lambda = 0$ 的特征向量。</p>
+                        </div>
+                        
+                        <div class="theorem-box" style="margin-top: 20px;">
+                            <p><strong>（2）</strong> 若任意 $n$ 维列向量 $\xi(\neq 0)$ 均为 $(\lambda E - A)x = 0$ 的解，则令 $e_i = \begin{bmatrix}1\\0\\\vdots\\0\\\vdots\\0\end{bmatrix}$，$e_2 = \begin{bmatrix}0\\1\\\vdots\\0\\\vdots\\0\end{bmatrix}, \cdots, e_n = \begin{bmatrix}0\\\vdots\\0\\1\end{bmatrix}$，</p>
+                        </div>
+                        
+                        <div class="note-box" style="margin-top: 20px;">
+                            <p>且 $B = [e_1, e_2, \cdots, e_n]$，于是 $(\lambda E - A)B = O$，由于 $B$ 可逆，因此有 $\lambda E - A = O$，即 $A = \lambda E$。</p>
+                        </div>
+                        
+                        <div class="theorem-box" style="margin-top: 20px;">
+                            <p><strong>（3）</strong> $AB = C \Rightarrow A[\beta_1, \beta_2, \cdots, \beta_n] = [\gamma_1, \gamma_2, \cdots, \gamma_n] \overset{\text{若}}{=} [\lambda_1\beta_1, \lambda_2\beta_2, \cdots, \lambda_n\beta_n]$，即 $A\beta_i = $</p>
+                            <p>$\lambda_i\beta_i(i = 1, 2, \cdots, n)$，其中 $\gamma_i = \lambda_i\beta_i$，$\beta_i$ 为非零列向量，则 $\beta_i$ 为 $A$ 的属于特征值 $\lambda_i$ 的特征向量。</p>
+                        </div>
+                        
+                        <p style="margin-top: 20px;"><strong>（4）</strong> $AP = PB$，$P$ 可逆 $\Rightarrow P^{-1}AP = B \Rightarrow A \sim B \Rightarrow \lambda_A = \lambda_B$。</p>
+                        
+                        <div class="note-box" style="margin-top: 20px;">
+                            <p><strong>（5）</strong> $A$ 的每行元素之和均为 $k \Rightarrow A\begin{bmatrix}1\\1\\\vdots\\1\end{bmatrix} = k\begin{bmatrix}1\\1\\\vdots\\1\end{bmatrix} \Rightarrow k$ 是特征值，$\begin{bmatrix}1\\1\\\vdots\\1\end{bmatrix}$ 是 $A$ 的属于特征值 $k$ 的特征向量。</p>
+                        </div>
+                        
+                        <p style="margin-top: 20px;"><strong>（6）</strong> 若 $A$ 可逆，$A$ 的每行元素之和均为 $k$，则 $A^{-1}$ 的每行元素之和均为 $\dfrac{1}{k}$。</p>
+                        
+                        <p style="margin-top: 20px;"><strong>（7）</strong> 若 $A$ 的每行元素之和均为 $k$，则 $A^n$ 的每行元素之和均为 $k^n$。</p>
+                    </div>
+                </div>
+                
+                <h3>📊 例题精讲</h3>
+                
+                <div class="example-box">
+                    <div class="box-title">例 7.4</div>
+                    <p><strong>题目：</strong>设 $A, B, C$ 均是 3 阶矩阵，且满足 $(A + 2E)B = O$，$CA^T = 2C$，其中</p>
+                    <div class="formula-display">
+                        $$B = \begin{bmatrix}1 & 2 & 3\\-1 & 1 & 0\\2 & -1 & 1\end{bmatrix}, \quad C = \begin{bmatrix}1 & -2 & 1\\-2 & 4 & -2\\-1 & 2 & -1\end{bmatrix},$$
+                    </div>
+                    <p>求矩阵 $A$ 的特征值与特征向量。</p>
+                    
+                    <div class="proof">
+                        <div class="proof-title">【解】</div>
+                        <p>由题设条件，①由 $(A + 2E)B = O$，得 $AB + 2B = O$，即 $AB = -2B$，将 $B$ 按列分块，设 $B = [\beta_1, \beta_2, \beta_3]$，则有</p>
+                        <div class="formula-display">
+                            $$A[\beta_1, \beta_2, \beta_3] = -2[\beta_1, \beta_2, \beta_3],$$
+                        </div>
+                        <p>即 $A\beta_i = -2\beta_i$，$i = 1, 2, 3$，故 $\beta_i(i = 1, 2, 3)$ 是 $A$ 的属于特征值 $\lambda = -2$ 的特征向量。</p>
+                        <p>又因 $\beta_1, \beta_2$ 线性无关，$\beta_3 = \beta_1 + \beta_2$，故 $\beta_1, \beta_2$ 是 $A$ 的属于特征值 $\lambda = -2$ 的线性无关的特征向量，且 $\lambda = -2$ 至少是二重根。因为当 $\lambda = -2$ 是单根，则其对应有一个线性无关的特征向量，矛盾。</p>
+                        <p>② $CA^T = 2C$，两边取转置得 $AC^T = 2C^T$，将 $C^T$ 按列分块，设 $C^T = [\alpha_1, \alpha_2, \alpha_3]$，则有</p>
+                        <div class="formula-display">
+                            $$A[\alpha_1, \alpha_2, \alpha_3] = 2[\alpha_1, \alpha_2, \alpha_3],$$
+                        </div>
+                        <p>即 $A\alpha_i = 2\alpha_i$，$i = 1, 2, 3$，故 $\alpha_i(i = 1, 2, 3)$ 是 $A$ 的属于特征值 $\lambda = 2$ 的特征向量。</p>
+                        <p>因 $\alpha_1, \alpha_2, \alpha_3$ 互成比例，故 $\alpha_1$ 是 $A$ 的属于特征值 $\lambda = 2$ 的特征向量，于是 $\lambda = -2$ 是二重根。</p>
+                        <p>综上，$A$ 的特征值为 $\lambda_1 = \lambda_2 = -2$，$\lambda_3 = 2$，对应于 $\lambda_1 = \lambda_2 = -2$ 的全部特征向量是 $k_1\begin{bmatrix}1\\-1\\2\end{bmatrix} + k_2\begin{bmatrix}2\\1\\-1\end{bmatrix}$，</p>
+                        <p>$k_1, k_2$ 不全为 0；对应于 $\lambda_3 = 2$ 的全部特征向量是 $k_3\begin{bmatrix}1\\-2\\1\end{bmatrix}$，$k_3 \neq 0$。</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>© 2024 线性代数交互式教程 | 用心学习，精进不止</p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">本教程基于原PDF教材制作，包含完整的数学公式渲染</p>
+        </footer>
+    </div>
+    
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">
+        ↑
+    </div>
+    
+    <script>
+        // 折叠内容功能
+        const collapsibles = document.getElementsByClassName("collapsible");
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+        
+        // 返回顶部按钮
+        window.onscroll = function() {
+            const backToTop = document.getElementById("backToTop");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTop.style.display = "flex";
+            } else {
+                backToTop.style.display = "none";
+            }
+        };
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 平滑滚动导航
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                const navHeight = document.querySelector('nav').offsetHeight;
+                const targetPosition = targetElement.offsetTop - navHeight - 20;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // 页面加载后重新渲染MathJax（确保所有公式正确显示）
+        window.addEventListener('load', function() {
+            if (typeof MathJax !== 'undefined') {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+            }
+        });
+    </script>
+</body>
+</html>
+
+<!--
+使用说明：
+1. 保存文件：将此代码复制并保存为 .html 文件（如 "eigenvalue_tutorial.html"）
+2. 网络要求：需要互联网连接以加载MathJax库和Google Fonts
+3. 浏览器打开：使用现代浏览器（Chrome、Firefox、Safari、Edge）打开文件
+4. 交互功能：
+   - 点击橙色按钮展开/折叠内容
+   - 点击顶部导航栏快速跳转到各章节
+   - 右下角"↑"按钮返回顶部
+5. 响应式设计：自适应桌面和移动设备
+6. 数学公式：所有公式使用MathJax渲染，确保显示清晰
+
+注意事项：
+- 如果数学公式未正确显示，请检查网络连接
+- 首次加载可能需要几秒钟以渲染所有公式
+- 建议使用最新版本的浏览器以获得最佳体验
+-->

@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第1讲：行列式 - 交互式教程</title>
+    
+    <!-- MathJax 完整配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            CommonHTML: {
+                scale: 110
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: #343434;
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #343434 100%);
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        
+        nav h3 {
+            color: #f27d00;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        nav li a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #a6d6c9, #f7d117);
+            color: #343434;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        nav li a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.4);
+            background: linear-gradient(135deg, #f27d00, #f7d117);
+            color: #ffffff;
+        }
+        
+        section {
+            background: #ffffff;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        h3 {
+            color: #343434;
+            font-size: 1.5em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 5px solid #f27d00;
+        }
+        
+        h4 {
+            color: #f27d00;
+            font-size: 1.2em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #f27d00;
+            overflow-x: auto;
+        }
+        
+        .example-box {
+            background: #a6d6c9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #343434;
+        }
+        
+        .example-box h4 {
+            color: #343434;
+            margin-top: 0;
+        }
+        
+        .note-box {
+            background: #f7d117;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #f27d00;
+        }
+        
+        .note-box strong {
+            color: #343434;
+            font-size: 1.1em;
+        }
+        
+        .accordion {
+            background: #f7f7f7;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: 0.4s;
+            border-radius: 8px;
+            margin: 10px 0;
+            color: #343434;
+            border-left: 5px solid #f27d00;
+        }
+        
+        .active-accordion, .accordion:hover {
+            background: linear-gradient(135deg, #f27d00, #f7d117);
+            color: #ffffff;
+        }
+        
+        .panel {
+            padding: 0 18px;
+            background: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .panel.show {
+            padding: 18px;
+            max-height: 2000px;
+            border: 2px solid #a6d6c9;
+            margin-bottom: 20px;
+        }
+        
+        ul {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        code {
+            background: #343434;
+            color: #f7d117;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        .interactive-button {
+            background: linear-gradient(135deg, #f27d00, #f7d117);
+            color: #ffffff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+        
+        .interactive-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(242, 125, 0, 0.5);
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 2px solid #a6d6c9;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #f27d00, #f7d117);
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: #f7f7f7;
+        }
+        
+        footer {
+            background: #343434;
+            color: #ffffff;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-radius: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            section {
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+        
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: #ffffff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5em;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .scroll-top:hover {
+            background: #f7d117;
+            transform: translateY(-5px);
+        }
+        
+        .method-card {
+            background: #ffffff;
+            border: 3px solid #a6d6c9;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s;
+        }
+        
+        .method-card:hover {
+            border-color: #f27d00;
+            box-shadow: 0 5px 20px rgba(242, 125, 0, 0.2);
+            transform: translateX(10px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📐 第1讲：行列式</h1>
+            <p>线性代数核心知识 - 三向解题法全面解析</p>
+        </header>
+        
+        <nav>
+            <h3>📑 快速导航</h3>
+            <ul>
+                <li><a href="#intro">解题策略</a></li>
+                <li><a href="#concrete">具体型计算</a></li>
+                <li><a href="#basic-forms">基本形式</a></li>
+                <li><a href="#methods">四大方法</a></li>
+                <li><a href="#abstract">抽象型计算</a></li>
+                <li><a href="#examples">典型例题</a></li>
+            </ul>
+        </nav>
+        
+        <section id="intro">
+            <h2>🎯 三向解题法概述</h2>
+            <p>行列式的计算是线性代数的基础，掌握系统的解题方法至关重要。本讲介绍<span class="highlight">三向解题法</span>，帮助你从两个维度攻克行列式问题：</p>
+            
+            <div class="method-card">
+                <h4>📊 目标导向分类</h4>
+                <ul>
+                    <li><strong>O₁目标（盯住目标1）</strong>：具体型行列式的计算 - $a_{ij}$已给出</li>
+                    <li><strong>O₂目标（盯住目标2）</strong>：抽象型行列式的计算 - $a_{ij}$未给出</li>
+                </ul>
+            </div>
+            
+            <div class="formula-box">
+                <h4>解题流程图：</h4>
+                <p style="text-align: center; font-weight: 500;">
+                    行列式 → 判断类型 → 选择方法 → 计算求解
+                </p>
+                <ul>
+                    <li><strong>具体型</strong>：化为基本形、加边法、递推法（高阶→低阶）、数学归纳法（低阶→高阶）</li>
+                    <li><strong>抽象型</strong>：用行列式性质、用矩阵知识、用相似理论</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section id="concrete">
+            <h2>📐 一、具体型行列式的计算</h2>
+            <p>当行列式的元素$a_{ij}$已经明确给出时，我们称之为<strong>具体型行列式</strong>。解决这类问题的核心思想是：</p>
+            <div class="note-box">
+                <strong>💡 核心思想：</strong>观察研究对象（D₀） → 化归经典形式（D₁） → 转换等价表述（D₂） → 常规操作求解
+            </div>
+        </section>
+        
+        <section id="basic-forms">
+            <h3>1. 化为基本形行列式</h3>
+            <p>所谓<strong>基本形行列式</strong>，是指化至此行列式即可得到结果。主要包括以下四种：</p>
+            
+            <button class="accordion">（1）主对角线行列式</button>
+            <div class="panel">
+                <div class="formula-box">
+                    <p><strong>定义与公式：</strong></p>
+                    $$\begin{vmatrix}
+                    a_{11} & a_{12} & \cdots & a_{1n} \\
+                    0 & a_{22} & \cdots & a_{2n} \\
+                    \vdots & \vdots & \ddots & \vdots \\
+                    0 & 0 & \cdots & a_{nn}
+                    \end{vmatrix} = 
+                    \begin{vmatrix}
+                    a_{11} & 0 & \cdots & 0 \\
+                    a_{21} & a_{22} & \cdots & 0 \\
+                    \vdots & \vdots & \ddots & \vdots \\
+                    a_{n1} & a_{n2} & \cdots & a_{nn}
+                    \end{vmatrix} = \prod_{i=1}^{n}a_{ii}$$
+                    <p>即：主对角线行列式的值等于主对角线元素的乘积。</p>
+                </div>
+            </div>
+            
+            <button class="accordion">（2）副对角线行列式</button>
+            <div class="panel">
+                <div class="formula-box">
+                    <p><strong>公式：</strong></p>
+                    $$\begin{vmatrix}
+                    a_{11} & a_{12} & \cdots & a_{1,n-1} & a_{1n} \\
+                    a_{21} & a_{22} & \cdots & a_{2,n-1} & 0 \\
+                    \vdots & \vdots & \ddots & \vdots & \vdots \\
+                    a_{n1} & 0 & \cdots & 0 & 0
+                    \end{vmatrix} = (-1)^{\frac{n(n-1)}{2}} a_{1n}a_{2,n-1}\cdots a_{n1}$$
+                    <p>注意符号：$(-1)^{\frac{n(n-1)}{2}}$</p>
+                </div>
+            </div>
+            
+            <button class="accordion">（3）拉普拉斯展开式</button>
+            <div class="panel">
+                <div class="formula-box">
+                    <p><strong>分块矩阵行列式：</strong></p>
+                    <p>设$A$为$m$阶矩阵，$B$为$n$阶矩阵，则：</p>
+                    $$\begin{vmatrix}
+                    A & O \\
+                    O & B
+                    \end{vmatrix} = \begin{vmatrix}
+                    A & C \\
+                    O & B
+                    \end{vmatrix} = |A||B|$$
+                    $$\begin{vmatrix}
+                    O & A \\
+                    B & O
+                    \end{vmatrix} = \begin{vmatrix}
+                    C & A \\
+                    B & O
+                    \end{vmatrix} = (-1)^{mn}|A||B|$$
+                    <p>其中$O$表示零矩阵，$C$表示任意矩阵。</p>
+                </div>
+            </div>
+            
+            <button class="accordion">（4）范德蒙德行列式</button>
+            <div class="panel">
+                <div class="formula-box">
+                    <p><strong>Vandermonde行列式：</strong></p>
+                    $$\begin{vmatrix}
+                    1 & 1 & \cdots & 1 \\
+                    x_1 & x_2 & \cdots & x_n \\
+                    x_1^2 & x_2^2 & \cdots & x_n^2 \\
+                    \vdots & \vdots & \ddots & \vdots \\
+                    x_1^{n-1} & x_2^{n-1} & \cdots & x_n^{n-1}
+                    \end{vmatrix} = \prod_{1\leq j < i \leq n}(x_i - x_j), \quad n\geq 2$$
+                    <p>这是所有两两之差的乘积！</p>
+                </div>
+            </div>
+            
+            <div class="note-box">
+                <strong>📝 重要提示：</strong>
+                <ul>
+                    <li>若所给行列式就是基本形或接近基本形，则直接套公式或经过简单处理后套公式</li>
+                    <li><strong>简单处理的手段</strong>（观察研究对象D₀）：
+                        <ol>
+                            <li>按零元素多的行或列展开</li>
+                            <li>用行列式性质对"对应位置元素"进行处理，尽可能多地化出零元素，再按此行或列展开</li>
+                            <li>对于行和或列和相等的情形，将所有列加到第1列或将所有行加到第1行，提出公因式，再用前述方法</li>
+                        </ol>
+                    </li>
+                    <li>具体型行列式的元素中若含$x$，则其为$x$的多项式</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section id="methods">
+            <h3>2. 加边法</h3>
+            <p>对于某些一开始不宜使用"互换""倍乘""倍加"性质的行列式，可以考虑使用<span class="highlight">加边法</span>：</p>
+            
+            <div class="formula-box">
+                <p><strong>加边法原理：</strong></p>
+                <p>$n$阶行列式中添加一行、一列升至$n+1$阶行列式。若添加在第1列，且添加的是$[1, 0, \ldots, 0]^T$，则第1行其余元素可以任意添加，行列式的值不变：</p>
+                $$D_n = \begin{vmatrix}
+                a_{11} & a_{12} & \cdots & a_{1n} \\
+                a_{21} & a_{22} & \cdots & a_{2n} \\
+                \vdots & \vdots & \ddots & \vdots \\
+                a_{n1} & a_{n2} & \cdots & a_{nn}
+                \end{vmatrix} = \begin{vmatrix}
+                1 & * & * & \cdots & * \\
+                0 & a_{11} & a_{12} & \cdots & a_{1n} \\
+                0 & a_{21} & a_{22} & \cdots & a_{2n} \\
+                \vdots & \vdots & \vdots & \ddots & \vdots \\
+                0 & a_{n1} & a_{n2} & \cdots & a_{nn}
+                \end{vmatrix}$$
+                <p>其中*处元素可以任意添加。观察原行列式元素的规律性，选择合适的元素填入*处，可以使行列式的计算更为简便。</p>
+            </div>
+            
+            <h3>3. 递推法（高阶→低阶）</h3>
+            <div class="method-card">
+                <p><strong>递推法步骤：</strong></p>
+                <ol>
+                    <li>建立递推公式，即建立$D_n$与$D_{n-1}$的关系（有些复杂的题甚至要建立$D_n, D_{n-1}$与$D_{n-2}$的关系）</li>
+                    <li>$D_n$与$D_{n-1}$要有完全相同的元素分布规律，只是$D_{n-1}$比$D_n$低了一阶</li>
+                </ol>
+                <p><strong>关键</strong>：观察$D_n$的元素分布规律，选择合适的行或列展开，使余子式为$D_{n-1}$</p>
+            </div>
+            
+            <h3>4. 数学归纳法（低阶→高阶）</h3>
+            <p>涉及$n$阶行列式的<strong>证明型</strong>计算问题，即告知行列式计算结果，让考生证明之，可考虑数学归纳法。</p>
+            
+            <button class="accordion">第一数学归纳法（适用于$F(D_n, D_{n-1})=0$）</button>
+            <div class="panel">
+                <div class="formula-box">
+                    <p><strong>步骤：</strong></p>
+                    <ol>
+                        <li>验证当$n=1$时，命题成立</li>
+                        <li>假设当$n=k$ ($k\geq 2$)时，命题成立</li>
+                        <li>证明当$n=k+1$时，命题成立</li>
+                    </ol>
+                    <p>则命题对任意正整数$n$成立。</p>
+                </div>
+            </div>
+            
+            <button class="accordion">第二数学归纳法（适用于$F(D_n, D_{n-1}, D_{n-2})=0$）</button>
+            <div class="panel">
+                <div class="formula-box">
+                    <p><strong>步骤：</strong></p>
+                    <ol>
+                        <li>验证当$n=1$和$n=2$时，命题成立</li>
+                        <li>假设当$n < k$时，命题成立</li>
+                        <li>证明当$n=k$ ($k\geq 3$)时，命题成立</li>
+                    </ol>
+                    <p>则命题对任意正整数$n$成立。</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="abstract">
+            <h2>📊 二、抽象型行列式的计算</h2>
+            <p>当行列式的元素$a_{ij}$<strong>未给出</strong>时，我们称之为抽象型行列式。这类问题需要利用行列式的性质、矩阵知识或相似理论来求解。</p>
+            
+            <h3>1. 用行列式的性质</h3>
+            <p>用行列式的性质将所求行列式进一步化成已知行列式。</p>
+            
+            <h3>2. 用矩阵知识</h3>
+            
+            <button class="accordion">（1）矩阵乘积的行列式：$|AB| = |A||B|$</button>
+            <div class="panel">
+                <div class="formula-box">
+                    <p><strong>核心公式：</strong></p>
+                    <p>设$C = AB$，$A$，$B$为同阶方阵，则：</p>
+                    $$|C| = |AB| = |A||B|$$
+                    <div class="note-box">
+                        <strong>💡 技巧：</strong>要善于发现$AB$形式！
+                        <p>例如：$A = [\alpha_1, \alpha_2, \alpha_3]$，$B = \begin{bmatrix}a & b & b\\b & a & b\\b & b & a\end{bmatrix}$，
+                        $C = \begin{bmatrix}1 & 2 & 3\\2 & 3 & 4\\3 & 4 & 5\end{bmatrix}$</p>
+                        <p>令$D_1 = [a\alpha_1 + b(\alpha_2 + \alpha_3), a\alpha_2 + b(\alpha_1 + \alpha_3), a\alpha_3 + b(\alpha_1 + \alpha_2)] = AB$</p>
+                        <p>令$D_2 = [\alpha_1 + 2\alpha_2 + 3\alpha_3, 2\alpha_1 + 3\alpha_2 + 4\alpha_3, 3\alpha_1 + 4\alpha_2 + 5\alpha_3] = AC$</p>
+                        <p>这样利于使用$|D_1| = |A||B|$和$|D_2| = |A||C|$</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="accordion">（2）矩阵和的行列式：$|A+B|$ 的处理</button>
+            <div class="panel">
+                <div class="formula-box">
+                    <p><strong>重要提示：</strong></p>
+                    <p>设$C = A + B$，$A$，$B$为同阶方阵，则$|C| = |A+B|$，但由于$|A+B|$<strong>不一定等于</strong>$|A| + |B|$，故需对$|A+B|$作恒等变形，转化为矩阵乘积的行列式。</p>
+                    <p><strong>恒等变形的一般方法：</strong></p>
+                    <ol>
+                        <li>由题设条件，如$B = A^{-1}$</li>
+                        <li>用$E = AA^{-1}$等</li>
+                    </ol>
+                    <p>关键：化归经典形式（D₁） → 转换等价表述（D₂）</p>
+                </div>
+            </div>
+            
+            <button class="accordion">（3）矩阵的幂的行列式：$|A^k| = |A|^k$</button>
+            <div class="panel">
+                <div class="formula-box">
+                    <p><strong>公式总结：</strong></p>
+                    <p>设$A$为$n$阶矩阵，则：</p>
+                    $$|A^k| = |A|^k, \quad k \neq \pm 1$$
+                    $$|kA| = k^n|A|, \quad (k \neq \pm 1)$$
+                    $$|(A^*)^k| = |A^*|^k = (|A|^{n-1})^k = |A|^{k(n-1)}$$
+                    <p>更全面的公式总结在第3讲的"四、2.(2)"处。</p>
+                </div>
+            </div>
+            
+            <h3>3. 用相似理论</h3>
+            <div class="formula-box">
+                <p><strong>核心原理：</strong></p>
+                <p>若$A$相似于$B$，则$|A| = |B|$，且$A \sim B \Rightarrow |A^T| = |B^T|$</p>
+                <p><strong>主要考点：</strong></p>
+                <ul>
+                    <li>用行列式$|\lambda E - A| = 0$求特征值</li>
+                    <li>用特征值求行列式：$|A| = \prod_{i=1}^{n}\lambda_i$（所有特征值的乘积）</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section id="examples">
+            <h2>🎓 典型例题精讲</h2>
+            
+            <div class="example-box">
+                <h4>例题 1.1 - 基本形行列式应用</h4>
+                <p><strong>题目：</strong>已知</p>
+                $$f(x) = \begin{vmatrix}
+                2x+1 & 3 & 2x+1 & 1 \\
+                2x & -3 & 4x & -2 \\
+                2x+1 & 2 & 2x+1 & 1 \\
+                2x & -4 & 4x & -2
+                \end{vmatrix}$$
+                <p>求$f(x) = g(x)$的不同的根的个数。</p>
+                
+                <button class="interactive-button" onclick="toggleSolution('solution1')">显示/隐藏解答</button>
+                <div id="solution1" style="display:none; margin-top:15px;">
+                    <p><strong>解：</strong>应填2。</p>
+                    <p><strong>步骤1</strong>：观察行列式，发现第1行与第3行相似，第2行与第4行相似，利用行列式性质简化。</p>
+                    <p><strong>步骤2</strong>：通过行变换（第3行减去第1行，第4行减去第2行），得到：</p>
+                    $$f(x) = \begin{vmatrix}
+                    2x+1 & 3 & 2x+1 & 1 \\
+                    2x & -3 & 4x & -2 \\
+                    0 & -1 & 0 & 0 \\
+                    0 & -1 & 0 & 0
+                    \end{vmatrix} = 0$$
+                    <p><strong>步骤3</strong>：进一步化简$g(x)$，最终得到：</p>
+                    $$g(x) = -x(8x+2)$$
+                    <p><strong>步骤4</strong>：求解$-x(8x+2) = 0$，得到$x = 0$或$x = -\frac{1}{4}$</p>
+                    <p><strong>结论</strong>：有两个不相等的根。</p>
+                </div>
+            </div>
+            
+            <div class="example-box">
+                <h4>例题 1.3 - 加边法应用</h4>
+                <p><strong>题目：</strong>设$\alpha = [x_1, x_2, \ldots, x_n]^T \neq 0$，则$|\alpha\alpha^T + E| = $ ？</p>
+                
+                <button class="interactive-button" onclick="toggleSolution('solution3')">显示/隐藏解答</button>
+                <div id="solution3" style="display:none; margin-top:15px;">
+                    <p><strong>解：</strong>应填$1 + \sum_{i=1}^{n}x_i^2$</p>
+                    <p><strong>方法一（加边法）：</strong></p>
+                    $$|\alpha\alpha^T + E| = \begin{vmatrix}
+                    1+x_1^2 & x_1x_2 & \cdots & x_1x_n \\
+                    x_2x_1 & 1+x_2^2 & \cdots & x_2x_n \\
+                    \vdots & \vdots & \ddots & \vdots \\
+                    x_nx_1 & x_nx_2 & \cdots & 1+x_n^2
+                    \end{vmatrix}$$
+                    <p>添加第一行$[1, x_1, x_2, \ldots, x_n]$和第一列$[1, 0, 0, \ldots, 0]^T$：</p>
+                    $$= \begin{vmatrix}
+                    1 & x_1 & x_2 & \cdots & x_n \\
+                    0 & 1+x_1^2 & x_1x_2 & \cdots & x_1x_n \\
+                    0 & x_2x_1 & 1+x_2^2 & \cdots & x_2x_n \\
+                    \vdots & \vdots & \vdots & \ddots & \vdots \\
+                    0 & x_nx_1 & x_nx_2 & \cdots & 1+x_n^2
+                    \end{vmatrix}$$
+                    <p>通过行变换，最终得到对角矩阵，其值为：$1 + \sum_{i=1}^{n}x_i^2$</p>
+                    
+                    <p><strong>方法二（特征值法）：</strong></p>
+                    <p>因为$\alpha\alpha^T$的特征值为$\sum_{i=1}^{n}x_i^2, 0, 0, \ldots, 0$（其中有$n-1$个特征值0），</p>
+                    <p>于是$\alpha\alpha^T + E$的特征值为$1+\sum_{i=1}^{n}x_i^2, 1, 1, \ldots, 1$（有$n-1$个特征值1）</p>
+                    <p>因此：$|\alpha\alpha^T + E| = (1+\sum_{i=1}^{n}x_i^2) \times 1^{n-1} = 1 + \sum_{i=1}^{n}x_i^2$</p>
+                </div>
+            </div>
+            
+            <div class="example-box">
+                <h4>例题 1.4 - 递推法</h4>
+                <p><strong>题目：</strong>计算$n$阶行列式</p>
+                $$D_n = \begin{vmatrix}
+                b & -1 & 0 & \cdots & 0 & 0 \\
+                0 & b & -1 & \cdots & 0 & 0 \\
+                \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+                0 & 0 & 0 & \cdots & b & -1 \\
+                a_n & a_{n-1} & a_{n-2} & \cdots & a_2 & b+a_1
+                \end{vmatrix}$$
+                
+                <button class="interactive-button" onclick="toggleSolution('solution4')">显示/隐藏解答</button>
+                <div id="solution4" style="display:none; margin-top:15px;">
+                    <p><strong>解：</strong>应填$b^n + a_1b^{n-1} + a_2b^{n-2} + \cdots + a_{n-1}b + a_n$</p>
+                    <p><strong>递推法步骤：</strong></p>
+                    <p><strong>步骤1</strong>：按第1列展开，得：</p>
+                    $$D_n = bD_{n-1} + a_n$$
+                    <p>其中$D_1 = b + a_1$</p>
+                    <p><strong>步骤2</strong>：建立递推关系：</p>
+                    $$D_n = bD_{n-1} + a_n = b(bD_{n-2} + a_{n-1}) + a_n = b^2D_{n-2} + a_{n-1}b + a_n$$
+                    <p><strong>步骤3</strong>：继续递推：</p>
+                    $$D_n = b^3D_{n-3} + a_{n-2}b^2 + a_{n-1}b + a_n = \cdots = b^nD_0 + a_1b^{n-1} + \cdots + a_n$$
+                    <p>其中$D_0 = 1$（约定）</p>
+                    <p><strong>结论：</strong>$D_n = b^n + a_1b^{n-1} + a_2b^{n-2} + \cdots + a_{n-1}b + a_n$</p>
+                </div>
+            </div>
+            
+            <div class="example-box">
+                <h4>例题 1.5 - 数学归纳法证明</h4>
+                <p><strong>题目：</strong>证明$n$阶行列式</p>
+                $$D_n = \begin{vmatrix}
+                2a & 1 & 0 & \cdots & 0 & 0 \\
+                a^2 & 2a & 1 & \cdots & 0 & 0 \\
+                0 & a^2 & 2a & \cdots & 0 & 0 \\
+                \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+                0 & 0 & 0 & \cdots & 2a & 1 \\
+                0 & 0 & 0 & \cdots & a^2 & 2a
+                \end{vmatrix} = (n+1)a^n$$
+                
+                <button class="interactive-button" onclick="toggleSolution('solution5')">显示/隐藏解答</button>
+                <div id="solution5" style="display:none; margin-top:15px;">
+                    <p><strong>证明：</strong>用第二数学归纳法。</p>
+                    <p><strong>步骤1</strong>：当$n=1$时，$D_1 = 2a = (1+1)a^1$，命题成立。</p>
+                    <p><strong>步骤2</strong>：当$n=2$时，$D_2 = \begin{vmatrix}2a & 1\\a^2 & 2a\end{vmatrix} = 4a^2 - a^2 = 3a^2 = (2+1)a^2$，命题成立。</p>
+                    <p><strong>步骤3</strong>：假设当$n < k$时，命题成立。</p>
+                    <p><strong>步骤4</strong>：当$n=k$ ($k\geq 3$)时，按第1列展开：</p>
+                    $$D_k = 2aD_{k-1} - a^2D_{k-2}$$
+                    <p>将归纳假设代入：</p>
+                    $$D_k = 2a \cdot ka^{k-1} - a^2 \cdot (k-1)a^{k-2} = 2ka^k - (k-1)a^k = (k+1)a^k$$
+                    <p><strong>结论：</strong>命题对任意正整数$n$成立。</p>
+                </div>
+            </div>
+            
+            <div class="example-box">
+                <h4>例题 1.6 - 抽象型：正交矩阵</h4>
+                <p><strong>题目：</strong>设$A$，$B$为$n$阶正交矩阵，则$n$为奇数时，$|(A-B)(A+B)| = $ ？</p>
+                
+                <button class="interactive-button" onclick="toggleSolution('solution6')">显示/隐藏解答</button>
+                <div id="solution6" style="display:none; margin-top:15px;">
+                    <p><strong>解：</strong>应填0。</p>
+                    <p><strong>关键</strong>：利用正交矩阵的性质$A^TA = E$（即$A^T = A^{-1}$）</p>
+                    <p><strong>步骤1</strong>：</p>
+                    $$|(A-B)(A+B)| = |(A-B)^T(A+B)|$$
+                    $$= |(A^T - B^T)(A + B)| = |A^TA - B^TA + A^TB - B^TB|$$
+                    $$= |E - B^TA + A^TB - E| = |A^TB - B^TA|$$
+                    <p><strong>步骤2</strong>：</p>
+                    $$|(A-B)(A+B)| = |(A+B)^T(A-B)| = |(A^T+B^T)(A-B)|$$
+                    $$= |A^TA - B^TA + A^TB - B^TB| = |A^TB - B^TA|$$
+                    <p><strong>步骤3</strong>：由于$|A^TB - B^TA| = |-(B^TA - A^TB)| = (-1)^n|A^TB - B^TA|$</p>
+                    <p>当$n$为奇数时，$(-1)^n = -1$，因此：</p>
+                    $$|A^TB - B^TA| = -|A^TB - B^TA|$$
+                    <p>这只有在$|A^TB - B^TA| = 0$时才成立。</p>
+                    <p><strong>结论：</strong>$|(A-B)(A+B)| = 0$</p>
+                </div>
+            </div>
+            
+            <div class="example-box">
+                <h4>例题 1.8 - 特征值法求最大特征值</h4>
+                <p><strong>题目：</strong>设</p>
+                $$A = k\begin{bmatrix}
+                1 & a & a & \cdots & a \\
+                a & 1 & a & \cdots & a \\
+                \vdots & \vdots & \vdots & \ddots & \vdots \\
+                a & a & a & \cdots & 1
+                \end{bmatrix}_{n\times n}$$
+                <p>其中$0 < a \leq 1$，$k > 0$，求$A$的最大特征值。</p>
+                
+                <button class="interactive-button" onclick="toggleSolution('solution8')">显示/隐藏解答</button>
+                <div id="solution8" style="display:none; margin-top:15px;">
+                    <p><strong>解：</strong></p>
+                    <p><strong>步骤1</strong>：计算特征多项式$|\lambda E - A| = 0$：</p>
+                    $$\begin{vmatrix}
+                    \lambda-k & -ka & \cdots & -ka \\
+                    -ka & \lambda-k & \cdots & -ka \\
+                    \vdots & \vdots & \ddots & \vdots \\
+                    -ka & -ka & \cdots & \lambda-k
+                    \end{vmatrix} = [\lambda-k+(n-1)ka][\lambda-k-ka]^{n-1} = 0$$
+                    <p><strong>步骤2</strong>：求解特征值：</p>
+                    $$\lambda_1 = k + (n-1)ka = k[1+(n-1)a] \text{ （单重）}$$
+                    $$\lambda_2 = k - ka = k(1-a) \text{ （$n-1$重）}$$
+                    <p><strong>步骤3</strong>：比较大小：</p>
+                    <p>由$1+(n-1)a > 1-a$（因为$a > 0$，$n \geq 1$），</p>
+                    <p><strong>结论：</strong>最大特征值为$\lambda_1 = k[1+(n-1)a]$</p>
+                </div>
+            </div>
+        </section>
+        
+        <section>
+            <h2>📝 知识点总结</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>方法类型</th>
+                        <th>适用场景</th>
+                        <th>关键要点</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>化为基本形</strong></td>
+                        <td>元素有规律性</td>
+                        <td>识别四种基本形式，灵活运用行列式性质</td>
+                    </tr>
+                    <tr>
+                        <td><strong>加边法</strong></td>
+                        <td>不宜直接运算</td>
+                        <td>添加$[1,0,\ldots,0]^T$，巧妙选择*处元素</td>
+                    </tr>
+                    <tr>
+                        <td><strong>递推法</strong></td>
+                        <td>计算型问题</td>
+                        <td>建立$D_n$与$D_{n-1}$关系，注意元素分布规律</td>
+                    </tr>
+                    <tr>
+                        <td><strong>数学归纳法</strong></td>
+                        <td>证明型问题</td>
+                        <td>验证初值，假设成立，证明$n=k$或$n=k+1$</td>
+                    </tr>
+                    <tr>
+                        <td><strong>矩阵乘积</strong></td>
+                        <td>抽象型</td>
+                        <td>$|AB|=|A||B|$，善于发现乘积形式</td>
+                    </tr>
+                    <tr>
+                        <td><strong>特征值法</strong></td>
+                        <td>相似矩阵</td>
+                        <td>$|A|=\prod \lambda_i$，所有特征值的乘积</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <section>
+            <h2>💡 学习建议</h2>
+            <div class="note-box">
+                <ul>
+                    <li><strong>观察</strong>：先观察行列式的结构特征（D₀），不要急于计算</li>
+                    <li><strong>分类</strong>：判断是具体型还是抽象型，选择对应方法</li>
+                    <li><strong>化归</strong>：将复杂问题转化为基本形式（D₁）</li>
+                    <li><strong>等价</strong>：寻找等价表述和恒等变形（D₂）</li>
+                    <li><strong>练习</strong>：多做例题，熟悉各种题型的套路</li>
+                    <li><strong>总结</strong>：建立自己的方法库和错题集</li>
+                </ul>
+            </div>
+        </section>
+        
+        <footer>
+            <p>📚 线性代数 · 第1讲：行列式</p>
+            <p>掌握三向解题法，攻克行列式难题！</p>
+            <p style="margin-top: 15px; opacity: 0.8;">© 2024 交互式数学教程 | 需要网络连接以加载数学公式</p>
+        </footer>
+    </div>
+    
+    <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</div>
+    
+    <script>
+        // 折叠面板功能
+        var acc = document.getElementsByClassName("accordion");
+        for (var i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active-accordion");
+                var panel = this.nextElementSibling;
+                panel.classList.toggle("show");
+            });
+        }
+        
+        // 显示/隐藏解答
+        function toggleSolution(id) {
+            var solution = document.getElementById(id);
+            if (solution.style.display === "none") {
+                solution.style.display = "block";
+            } else {
+                solution.style.display = "none";
+            }
+        }
+        
+        // 回到顶部按钮
+        window.onscroll = function() {
+            var scrollTop = document.getElementById("scrollTop");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollTop.style.display = "flex";
+            } else {
+                scrollTop.style.display = "none";
+            }
+        };
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 页面加载完成提示
+        window.addEventListener('load', function() {
+            console.log('页面加载完成！MathJax正在渲染数学公式...');
+        });
+    </script>
+</body>
+</html>
+
+<!--
+使用说明：
+1. 保存文件：将此代码复制并保存为 .html 文件（例如：行列式教程.html）
+2. 网络要求：需要互联网连接以加载MathJax（用于渲染数学公式）和Google Fonts
+3. 浏览器打开：使用Chrome、Firefox、Edge等现代浏览器打开文件
+4. 交互功能：
+   - 点击折叠面板查看详细内容
+   - 点击"显示/隐藏解答"按钮查看例题答案
+   - 使用顶部导航快速跳转到各个章节
+   - 右下角的↑按钮可快速回到页面顶部
+5. 响应式设计：支持桌面和移动设备浏览
+6. 数学公式：所有公式使用LaTeX格式，通过MathJax渲染
+
+注意事项：
+- 首次加载可能需要几秒钟来加载MathJax和字体
+- 如果数学公式显示异常，请检查网络连接
+- 建议使用最新版本的浏览器以获得最佳体验
+-->

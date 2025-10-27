@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第8讲 统计量及其分布 - 交互式教程</title>
+    
+    <!-- MathJax完整配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            CommonHTML: { scale: 110 }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 50%, #ffffff 100%);
+            color: #343434;
+            line-height: 1.8;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #a6d6c9, #f27d00, #a6d6c9);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #343434;
+            padding: 15px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            transform: translateY(-2px);
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 60px;
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        h3 {
+            color: #343434;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+            padding-left: 15px;
+            border-left: 5px solid #f7d117;
+        }
+        
+        .formula-box {
+            background: #f9f9f9;
+            border-left: 5px solid #f27d00;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffef0 100%);
+            border: 2px solid #f7d117;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .highlight-box::before {
+            content: '📌';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: white;
+            padding: 0 10px;
+            font-size: 1.5em;
+        }
+        
+        .note-box {
+            background: linear-gradient(135deg, #e6f7f1 0%, #f0fdf9 100%);
+            border: 2px solid #a6d6c9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        
+        .note-box::before {
+            content: '💡 注意';
+            display: block;
+            font-weight: bold;
+            color: #f27d00;
+            margin-bottom: 10px;
+        }
+        
+        .example {
+            background: white;
+            border: 2px solid #a6d6c9;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .example-title {
+            background: #f27d00;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .accordion {
+            background: white;
+            border: 2px solid #a6d6c9;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .accordion:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, #a6d6c9 0%, #b8e0d5 100%);
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #96ccbf 0%, #a8d6cb 100%);
+        }
+        
+        .accordion-header::after {
+            content: '▼';
+            transition: transform 0.3s;
+        }
+        
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 20px;
+        }
+        
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 20px;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin: 10px 0;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        .distribution-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .distribution-table th {
+            background: #f27d00;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .distribution-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .distribution-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .distribution-table tr:hover {
+            background: #fff9e6;
+        }
+        
+        .interactive-btn {
+            background: #f27d00;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+        
+        .interactive-btn:hover {
+            background: #d96d00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(242, 125, 0, 0.4);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        footer {
+            background: #343434;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+        
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .scroll-top.visible {
+            opacity: 1;
+        }
+        
+        .scroll-top:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第8讲 统计量及其分布</h1>
+            <div class="subtitle">三向解题法</div>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#section1">统计量及数字特征</a></li>
+                <li><a href="#section2">判别统计量分布</a></li>
+                <li><a href="#section3">正态总体常用结论</a></li>
+                <li><a href="#examples">例题精讲</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <!-- 第一部分：统计量及其数字特征 -->
+            <section id="section1">
+                <h2>一、统计量及其数字特征 (O₁(Ⅱ任目标1))</h2>
+                
+                <p>设 $X_1, X_2, \cdots, X_n$ 是来自总体 $X$ 的简单随机样本，则：</p>
+                
+                <div class="formula-box">
+                    <h3>基本统计量定义</h3>
+                    
+                    <p><strong>① 样本均值</strong></p>
+                    $$\overline{X} = \frac{1}{n}\sum_{i=1}^{n}X_i$$
+                    
+                    <p><strong>② 样本方差</strong></p>
+                    $$S^2 = \frac{1}{n-1}\sum_{i=1}^{n}(X_i - \overline{X})^2 = \frac{1}{n-1}\left(\sum_{i=1}^{n}X_i^2 - n\overline{X}^2\right)$$
+                    
+                    <p><strong>样本标准差</strong></p>
+                    $$S = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(X_i - \overline{X})^2}$$
+                    
+                    <p><strong>③ 样本 $k$ 阶原点矩</strong></p>
+                    $$A_k = \frac{1}{n}\sum_{i=1}^{n}X_i^k \quad (k = 1,2,\cdots)$$
+                    
+                    <p><strong>④ 样本 $k$ 阶中心矩</strong></p>
+                    $$B_k = \frac{1}{n}\sum_{i=1}^{n}(X_i - \overline{X})^k \quad (k = 2,3,\cdots)$$
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">⑤ 顺序统计量</div>
+                    <div class="accordion-content">
+                        <p>将样本 $X_1, X_2, \cdots, X_n$ 的 $n$ 个观测值按其取值从小到大的顺序排列，得</p>
+                        $$X_{(1)} \leq X_{(2)} \leq \cdots \leq X_{(n)}$$
+                        
+                        <p>随机变量 $X_{(k)}$ ($k = 1,2,\cdots,n$) 称作第 $k$ <strong>顺序统计量</strong>，其中 $X_{(1)}$ 是<strong>最小观测量</strong>，$X_{(n)}$ 是<strong>最大观测量</strong>，即</p>
+                        $$X_{(1)} = \min\{X_1, X_2, \cdots, X_n\}, \quad X_{(n)} = \max\{X_1, X_2, \cdots, X_n\}$$
+                    </div>
+                </div>
+                
+                <div class="note-box">
+                    <p><strong>常用的统计量的数字特征：</strong></p>
+                    <p>设总体 $X$（不论 $X$ 服从何种分布）的期望 $EX = \mu$，方差 $DX = \sigma^2$，$X_1, X_2, \cdots, X_n$ 为来自总体 $X$ 的一个简单随机样本，记样本均值 $\overline{X} = \frac{1}{n}\sum_{i=1}^{n}X_i$，样本方差 $S^2 = \frac{1}{n-1}\sum_{i=1}^{n}(X_i - \overline{X})^2$，则</p>
+                    
+                    $$E\overline{X} = EX = \mu, \quad D\overline{X} = \frac{1}{n}DX = \frac{\sigma^2}{n}, \quad E(S^2) = DX = \sigma^2$$
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例 8.1</div>
+                    <p>设随机变量 $X$ 的概率密度为 $f(x) = \begin{cases} 6x(1-x), & 0 \lt x \lt 1, \\ 0, & \text{其他}, \end{cases}$ 则 $X$ 的三阶中心矩 $E[(X - EX)^3] = $ ( )</p>
+                    
+                    <p>(A) $-\frac{1}{32}$ &nbsp;&nbsp; (B) $0$ &nbsp;&nbsp; (C) $\frac{1}{16}$ &nbsp;&nbsp; (D) $\frac{1}{2}$</p>
+                    
+                    <button class="interactive-btn" onclick="toggleSolution('sol1')">查看解答</button>
+                    
+                    <div id="sol1" class="hidden" style="margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+                        <p><strong>【解】应选 (B)</strong></p>
+                        
+                        $$EX = \int_0^1 6x^2(1-x)dx = 6 \times \left(\frac{1}{3} - \frac{1}{4}\right) = 6 \times \frac{1}{12} = \frac{1}{2}$$
+                        
+                        <p>则</p>
+                        $$E[(X - EX)^3] = E\left[\left(X - \frac{1}{2}\right)^3\right] = \int_0^1 6x(1-x)\left(x - \frac{1}{2}\right)^3 dx$$
+                        
+                        $$= \int_{-\frac{1}{2}}^{\frac{1}{2}} 6\left(t + \frac{1}{2}\right)\left(\frac{1}{2} - t\right) \cdot t^3 dt = 0$$
+                        
+                        <p>（由于被积函数是奇函数）</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第二部分：判别统计量的分布 -->
+            <section id="section2">
+                <h2>二、判别统计量的分布 (O₂(Ⅱ任目标2))</h2>
+                
+                <p><strong>定义：</strong>统计量的分布称为<strong>抽样分布</strong>。</p>
+                
+                <h3>1. 正态分布</h3>
+                
+                <div class="accordion">
+                    <div class="accordion-header">(1) 概念</div>
+                    <div class="accordion-content">
+                        <p>如果 $X$ 的概率密度为</p>
+                        $$f(x) = \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2} \quad (-\infty \lt x \lt +\infty)$$
+                        
+                        <p>其中 $-\infty \lt \mu \lt +\infty$，$\sigma \gt 0$，则称 $X$ 服从参数为 $(\mu, \sigma^2)$ 的正态分布或称 $X$ 为正态变量，记为 $X \sim N(\mu, \sigma^2)$。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">(2) 上 $\alpha$ 分位数</div>
+                    <div class="accordion-content">
+                        <p>若 $X \sim N(0,1)$，$P\{X \gt \mu_\alpha\} = \alpha(0 \lt \alpha \lt 1)$，则称 $\mu_\alpha$ 为标准正态分布的上 $\alpha$ 分位数（见图）。</p>
+                        
+                        <div class="highlight-box">
+                            <p><strong>【注】</strong>某分布上 $\alpha$ 分位数（亦称上 $\alpha$ 分位点）为 $\mu_\alpha$ 意指：点 $\mu_\alpha$ 上侧（即右侧）该概率密度曲线下方，$x$ 轴上方的图形的面积为 $\alpha$。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">(3) 性质</div>
+                    <div class="accordion-content">
+                        <p>$f(x)$ 的图形关于直线 $x = \mu$ 对称，即 $f(\mu - x) = f(\mu + x)$，并在 $x = \mu$ 处有唯一最大值</p>
+                        $$f(\mu) = \frac{1}{\sqrt{2\pi}\sigma}$$
+                        
+                        <p>通常称 $\mu = 0$，$\sigma = 1$ 时的正态分布 $N(0,1)$ 为<strong>标准正态分布</strong>，记标准正态分布的概率密度为</p>
+                        $$\varphi(x) = \frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}x^2}$$
+                        
+                        <p>分布函数为 $\Phi(x) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{x}e^{-\frac{1}{2}t^2}dt$。显然 $\varphi(x)$ 为偶函数，且有</p>
+                        $$\Phi(0) = \frac{1}{2}, \Phi(-x) = 1 - \Phi(x)$$
+                    </div>
+                </div>
+                
+                <h3>2. $\chi^2$ 分布</h3>
+                
+                <div class="accordion">
+                    <div class="accordion-header">(1) 概念</div>
+                    <div class="accordion-content">
+                        <p>若随机变量 $X_1, X_2, \cdots, X_n$ 相互独立，且都服从标准正态分布，则随机变量 $X = \sum_{i=1}^{n}X_i^2$ 服从自由度为 $n$ 的 $\chi^2$ 分布，记为 $X \sim \chi^2(n)$。</p>
+                        
+                        <div class="note-box">
+                            <p>和式中每位是随机变量<br>
+                            意味着每数为自由度</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">(2) 上 $\alpha$ 分位数</div>
+                    <div class="accordion-content">
+                        <p>对给定的 $\alpha(0 \lt \alpha \lt 1)$，称满足</p>
+                        $$P\{\chi^2 \gt \chi_\alpha^2(n)\} = \int_{\chi_\alpha^2(n)}^{+\infty}f(x)dx = \alpha$$
+                        
+                        <p>的 $\chi_\alpha^2(n)$ 为 $\chi^2(n)$ 分布的上 $\alpha$ 分位数（见图）。对于不同的 $\alpha$，$n$，$\chi^2(n)$ 分布上 $\alpha$ 分位数可通过查表求得。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header">(3) 性质</div>
+                    <div class="accordion-content">
+                        <p><strong>①</strong> 若 $X_1 \sim \chi^2(n_1)$，$X_2 \sim \chi^2(n_2)$，$X_1$ 与 $X_2$ 相互独立，则</p>
+                        $$X_1 + X_2 \sim \chi^2(n_1 + n_2)$$
+                        <p>此结论可推广至有限多个随机变量的和。</p>
+                        
+                        <div class="note-box">
+                            <p><strong>【注】</strong>常见分布的可加性：</p>
+                            <p>有些相互独立且服从同类型分布的随机变量，其和仍是同类型的，它们分别是二项分布、泊松分布、正态分布与 $\chi^2$ 分布。</p>
+                            
+                            <p>设随机变量 $X$ 与 $Y$ 相互独立，则</p>
+                            <ul>
+                                <li>若 $X \sim B(n,p)$，$Y \sim B(m,p)$，则 $X+Y \sim B(n+m,p)$（注意仅 $p$ 相同时成立）；</li>
+                                <li>若 $X \sim P(\lambda_1)$，$Y \sim P(\lambda_2)$，则 $X+Y \sim P(\lambda_1 + \lambda_2)$；</li>
+                                <li>若 $X \sim N(\mu_1, \sigma_1^2)$，$Y \sim N(\mu_2, \sigma_2^2)$，则 $X+Y \sim N(\mu_1 + \mu_2, \sigma_1^2 + \sigma_2^2)$；</li>
+                                <li>若 $X \sim \chi^2(n)$，$Y \sim \chi^2(m)$，则 $X+Y \sim \chi^2(n+m)$。</li>
+                            </ul>
+                            <p>上述结果对 $n$ 个相互独立的随机变量也成立。</p>
+                        </div>
+                        
+                        <p><strong>②</strong> 若 $X \sim \chi^2(n)$，则 $EX = n$，$DX = 2n$。</p>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例 8.3</div>
+                    <p>设 $X_1, X_2$ 是来自总体 $X$ 的简单随机样本，且 $X$ 的分布函数为 $F(x) = \int_{-\infty}^{x}\frac{1}{2}e^{-|u|}du$，</p>
+                    <p>$-\infty \lt x \lt +\infty$，则 $\left|\frac{X_1}{X_2}\right|$ 服从（&nbsp;&nbsp;）。</p>
+                    
+                    <p>(A) $F(1,2)$ &nbsp;&nbsp; (B) $F(2,1)$ &nbsp;&nbsp; (C) $F(2,2)$ &nbsp;&nbsp; (D) $F(0,2)$</p>
+                    
+                    <button class="interactive-btn" onclick="toggleSolution('sol3')">查看解答</button>
+                    
+                    <div id="sol3" class="hidden" style="margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+                        <p><strong>【解】应选 (C)</strong></p>
+                        
+                        <p>由题设知，$X$ 的概率密度为 $f(x) = \frac{1}{2}e^{-|x|}$，$-\infty \lt x \lt +\infty$，令 $Y = 2|X|$，则 $Y$ 的分布函数为</p>
+                        
+                        $$F_Y(y) = P\{Y \leq y\} = P\{2|X| \leq y\}$$
+                        
+                        <p>当 $y \lt 0$ 时，$F_Y(y) = 0$；</p>
+                        <p>当 $y \geq 0$ 时，</p>
+                        $$F_Y(y) = P\{2|X| \leq y\} = P\left\{|X| \leq \frac{y}{2}\right\}$$
+                        $$= P\left\{-\frac{y}{2} \leq X \leq \frac{y}{2}\right\} = \int_{-\frac{y}{2}}^{\frac{y}{2}}\frac{1}{2}e^{-|x|}dx = \int_0^{\frac{y}{2}}e^{-x}dx = 1 - e^{-\frac{y}{2}}$$
+                        
+                        <p>于是 $Y$ 的分布函数为 $F_Y(y) = \begin{cases} 1-e^{-\frac{y}{2}}, & y \geq 0, \\ 0, & \text{其他}, \end{cases}$ &nbsp;&nbsp; $Y$ 的概率密度为 $f_Y(y) = \begin{cases} \frac{1}{2}e^{-\frac{y}{2}}, & y \gt 0, \\ 0, & \text{其他}. \end{cases}$</p>
+                        
+                        <p>故 $2|X| \sim E\left(\frac{1}{2}\right)$，即 $2|X_i| \sim E\left(\frac{1}{2}\right)$，所以 $2|X_1|$ 与 $|X_1|$ 是相互独立的，因此</p>
+                        
+                        $$\left|\frac{X_1}{X_2}\right| = \frac{2|X_1|/2}{2|X_2|/2} \sim F(2,2)$$
+                        
+                        <p>故选 (C)。</p>
+                    </div>
+                </div>
+                
+                <h3>3. $t$ 分布</h3>
+                
+                <div class="formula-box">
+                    <p><strong>(1) 概念</strong></p>
+                    <p>设随机变量 $X \sim N(0,1)$，$Y \sim \chi^2(n)$，$X$ 与 $Y$ 相互独立，则随机变量 $t = \frac{X}{\sqrt{Y/n}}$ 服从自由度为 $n$ 的 $t$ 分布，记为 $t \sim t(n)$。</p>
+                    
+                    <p><strong>(2) 上 $\alpha$ 分位数</strong></p>
+                    <p>对给定的 $\alpha(0 \lt \alpha \lt 1)$，称满足 $P\{t \gt t_\alpha(n)\} = \alpha$ 的 $t_\alpha(n)$ 为 $t(n)$ 分布的上 $\alpha$ 分位数【见图 (a)】。</p>
+                    
+                    <p><strong>(3) 性质</strong></p>
+                    <p><strong>①</strong> $t$ 分布概率密度 $f(x)$ 的图形关于 $x = 0$ 对称【见图 (b)】，因此 $Et = 0(n \geq 2)$。</p>
+                    
+                    <div class="highlight-box">
+                        <p><strong>【注】</strong>当 $n = 1$ 时，即若 $X \sim N(0,1)$，$Y \sim \chi^2(1)$，则 $\frac{X}{\sqrt{Y}} \sim f(x) = \frac{1}{\pi(1+x^2)}$。</p>
+                    </div>
+                    
+                    <p><strong>②</strong> 由 $t$ 分布概率密度 $f(x)$ 图形的对称性，知 $P\{t \gt -t_\alpha(n)\} = P\{t \lt t_\alpha(n)\}$，故 $t_{1-\alpha}(n) = -t_\alpha(n)$。</p>
+                    <p>当 $\alpha$ 值在表中没有时，可用此式求上 $\alpha$ 分位数。</p>
+                </div>
+                
+                <h3>4. $F$ 分布</h3>
+                
+                <div class="formula-box">
+                    <p><strong>(1) 概念</strong></p>
+                    <p>设随机变量 $X \sim \chi^2(n_1)$，$Y \sim \chi^2(n_2)$，且 $X$ 与 $Y$ 相互独立，则 $F = \frac{X/n_1}{Y/n_2}$ 服从自由度为 $(n_1, n_2)$ 的 $F$ 分布，记为 $F \sim F(n_1, n_2)$。其中 $n_1$ 称为第一自由度，$n_2$ 称为第二自由度。$F$ 分布的概率密度 $f(x)$ 的图形如图所示。</p>
+                    
+                    <p><strong>(2) 上 $\alpha$ 分位数</strong></p>
+                    <p>对给定的 $\alpha(0 \lt \alpha \lt 1)$，称满足 $P\{F \gt F_\alpha(n_1, n_2)\} = \alpha$ 的 $F_\alpha(n_1, n_2)$ 为 $F(n_1, n_2)$ 分布的上 $\alpha$ 分位数（见图）。</p>
+                    
+                    <p><strong>(3) 性质</strong></p>
+                    <p><strong>①</strong> 若 $F \sim F(n_1, n_2)$，则 $\frac{1}{F} \sim F(n_2, n_1)$。</p>
+                </div>
+                
+                <div class="note-box">
+                    <p>证明：设 $F \sim F(n_1, n_2)$，则 $F = \frac{X/n_1}{Y/n_2}$，常用来求 $F$ 分布表中未列出的上 $\alpha$ 分</p>
+                    <p>位数，显然，有些特殊值可直接获得，如 $1-\alpha=\alpha$，$n_1 = n_2 = n$ 时，$P\left\{\frac{1}{F} \gt \frac{1}{F_\alpha(n_1, n_2)}\right\} = 1-\alpha$。</p>
+                    <p>有 $F_{0.5}(n,n) = \frac{1}{F_{0.5}(n,n)}$，且 $F_{0.5}(n,n) \gt 0$，故 $F_{0.5}(n,n) = 1$。</p>
+                    <p>因为 $\frac{1}{F} \sim F(n_2, n_1)$，故 $t_{1-\alpha}(n) = -t_\alpha(n)$。</p>
+                    <p>由定义 $\frac{1}{F} \sim F(n_2, n_1)$，结合上 $\alpha$ 分位数的意义，可知 $\frac{1}{F_\alpha(n_1, n_2)} = F_{1-\alpha}(n_2, n_1)$。</p>
+                </div>
+                
+                <div class="formula-box">
+                    <p><strong>②</strong> $F_{1-\alpha}(n_1, n_2) = \frac{1}{F_\alpha(n_2, n_1)}$，常用来求 $F$ 分布表中未列出的上 $\alpha$ 分位数，显然，有些特殊值可直接获得，如 $1-\alpha=\alpha$，$n_1 = n_2 = n$ 时，$P\left\{\frac{1}{F} \gt \frac{1}{F_\alpha(n_1, n_2)}\right\} = 1-\alpha$。</p>
+                    
+                    <p><strong>③</strong> 若 $t \sim t(n)$，则 $t^2 \sim F(1,n)$。</p>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例 8.4</div>
+                    <p>设随机变量 $X \sim t(n)$，$Y \sim F(1,n)$，给定 $\alpha(0 \lt \alpha \lt 0.5)$，常数 $c$ 满足 $P\{Y \gt c\} = \alpha$，则 $P\{Y \gt c^2\} = $ (&nbsp;&nbsp;)。</p>
+                    
+                    <p>(A) $\alpha$ &nbsp;&nbsp; (B) $1-\alpha$ &nbsp;&nbsp; (C) $2\alpha$ &nbsp;&nbsp; (D) $1-2\alpha$</p>
+                    
+                    <button class="interactive-btn" onclick="toggleSolution('sol4')">查看解答</button>
+                    
+                    <div id="sol4" class="hidden" style="margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+                        <p><strong>【解】应选 (C)</strong></p>
+                        
+                        <p>由 $X \sim t(n)$，可得 $X^2 \sim F(1,n)$，从而 $P\{Y \gt c^2\} = P\{X^2 \gt c^2\} = P\{X \gt c\} + P\{X \lt -c\} = 2\alpha$，故正确选项为 (C)。</p>
+                        
+                        <div class="note-box">
+                            <p><strong>【注】</strong>(1) 此题只能有概率 $P\{Y \gt c^2\}$ 与 $P\{X^2 \gt c^2\}$ 相等，而不能说 $Y = X^2$，因为服从相同分布的随机变量并不一定相同。</p>
+                            
+                            <p>(2) 若随机变量 $X \sim t(1)$，则 $X^2 \sim F(1,1)$，还可求</p>
+                            $$P\{|X| \leq 1\} = P\{X^2 \leq 1\} = 1 - P\{X^2 \gt 1\} = 1 - P\{X^2 \gt F_{0.5}(1,1)\} = 1 - 0.5 = 0.5$$
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第三部分：用正态总体下的常用结论判别分布、计算概率 -->
+            <section id="section3">
+                <h2>三、用正态总体下的常用结论判别分布、计算概率 (O₃(Ⅱ任目标3))</h2>
+                
+                <p>设 $X_1, X_2, \cdots, X_n$ 是取自正态总体 $N(\mu, \sigma^2)$ 的一个样本，$\overline{X}$，$S^2$ 分别是样本均值和样本方差，则</p>
+                
+                <div class="formula-box">
+                    <h3>正态总体下的重要结论</h3>
+                    
+                    <p><strong>①</strong> $\overline{X} \sim N\left(\mu, \frac{\sigma^2}{n}\right)$，即 $\frac{\overline{X} - \mu}{\sigma/\sqrt{n}} = \frac{\sqrt{n}(\overline{X} - \mu)}{\sigma} \sim N(0,1)$；</p>
+                    
+                    <p><strong>②</strong> $\frac{1}{\sigma^2}\sum_{i=1}^{n}(X_i - \mu)^2 \sim \chi^2(n)$；</p>
+                    
+                    <p><strong>③</strong> $\frac{(n-1)S^2}{\sigma^2} = \sum_{i=1}^{n}\left(\frac{X_i - \overline{X}}{\sigma}\right)^2 \sim \chi^2(n-1)$（$\mu$ 未知，在"②"中用 $\overline{X}$ 替代 $\mu$）；</p>
+                    
+                    <p><strong>④</strong> $\overline{X}$ 与 $S^2$ 相互独立，$\frac{\sqrt{n}(\overline{X} - \mu)}{S} \sim t(n-1)$（$\sigma$ 未知，在"①"中用 $S$ 替代 $\sigma$）。进一步有</p>
+                    $$\frac{n(\overline{X} - \mu)^2}{S^2} \sim F(1, n-1)$$
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例 8.5</div>
+                    <p>设总体 $X$ 和 $Y$ 相互独立，且都服从正态分布 $N(0, \sigma^2)$，$X_1, X_2, \cdots, X_n$ 和 $Y_1, Y_2, \cdots, Y_n$ 分别是来自总体 $X$ 和 $Y$ 的简单随机样本，样本均值、样本方差分别为 $\overline{X}$，$S_X^2$ 和 $\overline{Y}$，$S_Y^2$，则（&nbsp;&nbsp;）。</p>
+                    
+                    <p>(A) $\overline{X} - \overline{Y} \sim N(0, \sigma^2)$ &nbsp;&nbsp;&nbsp; (B) $S_X^2 + S_Y^2 \sim \chi^2(2n-2)$</p>
+                    <p>(C) $\frac{\overline{X} - \overline{Y}}{\sqrt{S_X^2 + S_Y^2}} \sim t(2n-2)$ &nbsp;&nbsp;&nbsp; (D) $\frac{S_X^2}{S_Y^2} \sim F(n-1, n-1)$</p>
+                    
+                    <button class="interactive-btn" onclick="toggleSolution('sol5')">查看解答</button>
+                    
+                    <div id="sol5" class="hidden" style="margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+                        <p><strong>【解】应选 (D)</strong></p>
+                        
+                        <p>由题设知 $\overline{X}$，$S_X^2$，$S_Y^2$ 相互独立，且</p>
+                        $$\overline{X} \sim N\left(0, \frac{\sigma^2}{n}\right), \quad \overline{Y} \sim N\left(0, \frac{\sigma^2}{n}\right),$$
+                        $$\frac{(n-1)S_X^2}{\sigma^2} \sim \chi^2(n-1), \quad \frac{(n-1)S_Y^2}{\sigma^2} \sim \chi^2(n-1),$$
+                        
+                        <p>由此可知 $\overline{X} - \overline{Y} \sim N\left(0, \frac{2\sigma^2}{n}\right)$，选项 (A) 不正确。</p>
+                        
+                        $$\frac{n-1}{\sigma^2}(S_X^2 + S_Y^2) \sim \chi^2(2n-2),$$
+                        
+                        <p>选项 (B) 不正确。</p>
+                        
+                        $$\frac{\sqrt{n}(\overline{X} - \overline{Y})/\sqrt{2}\sigma}{\sqrt{\frac{n-1}{\sigma^2}(S_X^2 + S_Y^2)/2(n-1)}} = \frac{\sqrt{n}(\overline{X} - \overline{Y})}{\sqrt{S_X^2 + S_Y^2}} \sim t(2n-2),$$
+                        
+                        <p>选项 (C) 不正确。</p>
+                        
+                        $$\frac{\frac{(n-1)S_X^2}{\sigma^2}/(n-1)}{\frac{(n-1)S_Y^2}{\sigma^2}/(n-1)} = \frac{S_X^2}{S_Y^2} \sim F(n-1, n-1),$$
+                        
+                        <p>选择 (D)。</p>
+                        
+                        <div class="note-box">
+                            <p><strong>【注】</strong>事实上，可以继续求相关的数字特征。</p>
+                            <p>由选项 (D) 可知，$\frac{S_X^2}{S_Y^2} \sim F(n-1, n-1)$，则</p>
+                            $$P\left\{\frac{S_X^2}{S_Y^2} \leq 1\right\} = 1 - P\left\{\frac{S_X^2}{S_Y^2} \gt 1\right\} = 1 - P\left\{\frac{S_X^2}{S_Y^2} \gt F_{0.5}(n-1, n-1)\right\} = 1 - 0.5 = 0.5$$
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 例题汇总 -->
+            <section id="examples">
+                <h2>📚 例题汇总</h2>
+                
+                <div class="accordion">
+                    <div class="accordion-header">例 8.2 - 独立同分布随机变量的协方差</div>
+                    <div class="accordion-content">
+                        <p><strong>题目：</strong>设 $X_1, X_2, \cdots, X_n$ ($n \gt 2$) 为独立同分布的随机变量，且均服从正态分布 $N(0,1)$，记</p>
+                        $$\overline{X} = \frac{1}{n}\sum_{i=1}^{n}X_i, Y_i = X_i - \overline{X}, i = 1,2,\cdots,n$$
+                        <p>则 $Y_1$ 与 $Y_n$ 的协方差 $\text{Cov}(Y_1, Y_n) = $ ______。</p>
+                        
+                        <p><strong>【解】</strong>应填 $-\frac{1}{n}$。</p>
+                        
+                        <p>$$DY_i = D(X_i - \overline{X})$$</p>
+                        $$= DX_i + D\overline{X} - 2\text{Cov}\left(X_i, \frac{1}{n}(X_1 + X_2 + \cdots + X_n)\right)$$
+                        $$= 1 + \frac{1}{n} - 2 \cdot \frac{1}{n}$$
+                        $$= 1 - \frac{1}{n}$$
+                        
+                        <p>故</p>
+                        $$\text{Cov}(Y_1, Y_n) = \text{Cov}(X_1 - \overline{X}, X_n - \overline{X}) = \text{Cov}(X_1, X_n - \overline{X}) - \text{Cov}(\overline{X}, X_n - \overline{X})$$
+                        $$= \text{Cov}(X_1, X_n) - \text{Cov}(X_1, \overline{X}) - \text{Cov}(\overline{X}, X_n) + \text{Cov}(\overline{X}, \overline{X})$$
+                        
+                        <p>其中，$\text{Cov}(X_1, X_n) = 0$，</p>
+                        $$\text{Cov}(X_1, \overline{X}) = \text{Cov}\left(X_1, \frac{X_1}{n}\right) + \text{Cov}\left(X_1, \frac{1}{n}\sum_{j=1}^{n}X_j\right)$$
+                        $$= \frac{1}{n}DX_1 = \frac{1}{n}, \quad i = 1,2,\cdots,n,$$
+                        $$\text{Cov}(\overline{X}, \overline{X}) = D\overline{X} = \frac{1}{n}$$
+                        
+                        <p>故 $\text{Cov}(Y_1, Y_n) = 0 - \frac{1}{n} - \frac{1}{n} + \frac{1}{n} = -\frac{1}{n}$。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 互动测验区 -->
+            <section>
+                <h2>🎯 互动测验</h2>
+                
+                <div class="example">
+                    <h3>快速测试：你掌握了吗？</h3>
+                    
+                    <p><strong>问题1：</strong>样本方差 $S^2$ 的公式中分母为什么是 $n-1$ 而不是 $n$？</p>
+                    <button class="interactive-btn" onclick="toggleSolution('quiz1')">查看解释</button>
+                    <div id="quiz1" class="hidden" style="margin-top: 15px; padding: 15px; background: #f0fdf9; border-radius: 8px;">
+                        <p>使用 $n-1$ 作为分母是为了使样本方差成为总体方差的<strong>无偏估计</strong>。如果用 $n$ 作为分母，会系统性地低估总体方差。这是因为在计算样本方差时，我们使用的是样本均值 $\overline{X}$ 而不是真实的总体均值 $\mu$，损失了一个自由度。</p>
+                    </div>
+                    
+                    <p style="margin-top: 20px;"><strong>问题2：</strong>什么时候使用 $t$ 分布，什么时候使用标准正态分布？</p>
+                    <button class="interactive-btn" onclick="toggleSolution('quiz2')">查看解释</button>
+                    <div id="quiz2" class="hidden" style="margin-top: 15px; padding: 15px; background: #f0fdf9; border-radius: 8px;">
+                        <p>关键在于<strong>总体方差是否已知</strong>：</p>
+                        <ul>
+                            <li>如果总体方差 $\sigma^2$ <strong>已知</strong>，使用 $\frac{\overline{X} - \mu}{\sigma/\sqrt{n}} \sim N(0,1)$（标准正态分布）</li>
+                            <li>如果总体方差 $\sigma^2$ <strong>未知</strong>，用样本标准差 $S$ 代替，使用 $\frac{\overline{X} - \mu}{S/\sqrt{n}} \sim t(n-1)$（$t$ 分布）</li>
+                        </ul>
+                        <p>当样本量很大时（通常 $n \gt 30$），$t$ 分布接近标准正态分布。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 总结表格 -->
+            <section>
+                <h2>📊 常用分布对照表</h2>
+                
+                <table class="distribution-table">
+                    <thead>
+                        <tr>
+                            <th>分布名称</th>
+                            <th>记号</th>
+                            <th>定义/构造</th>
+                            <th>期望</th>
+                            <th>方差</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>标准正态分布</td>
+                            <td>$N(0,1)$</td>
+                            <td>$\varphi(x) = \frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}$</td>
+                            <td>$0$</td>
+                            <td>$1$</td>
+                        </tr>
+                        <tr>
+                            <td>一般正态分布</td>
+                            <td>$N(\mu, \sigma^2)$</td>
+                            <td>$f(x) = \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(x-\mu)^2}{2\sigma^2}}$</td>
+                            <td>$\mu$</td>
+                            <td>$\sigma^2$</td>
+                        </tr>
+                        <tr>
+                            <td>卡方分布</td>
+                            <td>$\chi^2(n)$</td>
+                            <td>$X = \sum_{i=1}^{n}Z_i^2$，$Z_i \sim N(0,1)$</td>
+                            <td>$n$</td>
+                            <td>$2n$</td>
+                        </tr>
+                        <tr>
+                            <td>$t$ 分布</td>
+                            <td>$t(n)$</td>
+                            <td>$t = \frac{Z}{\sqrt{Y/n}}$，$Z \sim N(0,1)$，$Y \sim \chi^2(n)$</td>
+                            <td>$0$ ($n \geq 2$)</td>
+                            <td>$\frac{n}{n-2}$ ($n \gt 2$)</td>
+                        </tr>
+                        <tr>
+                            <td>$F$ 分布</td>
+                            <td>$F(n_1, n_2)$</td>
+                            <td>$F = \frac{X/n_1}{Y/n_2}$，$X \sim \chi^2(n_1)$，$Y \sim \chi^2(n_2)$</td>
+                            <td>$\frac{n_2}{n_2-2}$ ($n_2 \gt 2$)</td>
+                            <td>复杂公式</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- 关键公式卡片 -->
+            <section>
+                <h2>🔑 关键公式速查</h2>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div class="highlight-box">
+                        <h3 style="border: none; margin-top: 0;">样本均值</h3>
+                        $$\overline{X} = \frac{1}{n}\sum_{i=1}^{n}X_i$$
+                        <p>期望：$E\overline{X} = \mu$</p>
+                        <p>方差：$D\overline{X} = \frac{\sigma^2}{n}$</p>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h3 style="border: none; margin-top: 0;">样本方差</h3>
+                        $$S^2 = \frac{1}{n-1}\sum_{i=1}^{n}(X_i - \overline{X})^2$$
+                        <p>期望：$E(S^2) = \sigma^2$</p>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h3 style="border: none; margin-top: 0;">标准化统计量</h3>
+                        $$\frac{\overline{X} - \mu}{\sigma/\sqrt{n}} \sim N(0,1)$$
+                        <p>（$\sigma$ 已知时使用）</p>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h3 style="border: none; margin-top: 0;">t 统计量</h3>
+                        $$\frac{\overline{X} - \mu}{S/\sqrt{n}} \sim t(n-1)$$
+                        <p>（$\sigma$ 未知时使用）</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>© 2025 概率论与数理统计教程 | 第8讲：统计量及其分布</p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
+                本页面使用MathJax渲染数学公式，需要网络连接
+            </p>
+        </footer>
+    </div>
+    
+    <!-- 返回顶部按钮 -->
+    <div class="scroll-top" onclick="scrollToTop()">↑</div>
+    
+    <script>
+        // 折叠面板功能
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+        
+        // 显示/隐藏解答
+        function toggleSolution(id) {
+            const element = document.getElementById(id);
+            if (element.classList.contains('hidden')) {
+                element.classList.remove('hidden');
+                element.style.display = 'block';
+            } else {
+                element.classList.add('hidden');
+                element.style.display = 'none';
+            }
+        }
+        
+        // 返回顶部功能
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 显示/隐藏返回顶部按钮
+        window.addEventListener('scroll', function() {
+            const scrollTop = document.querySelector('.scroll-top');
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 页面加载完成提示
+        window.addEventListener('load', function() {
+            console.log('页面加载完成！所有数学公式应该已正确渲染。');
+            console.log('如果公式显示异常，请检查网络连接。');
+        });
+    </script>
+</body>
+</html>
+

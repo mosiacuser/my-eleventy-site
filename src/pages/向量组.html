@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第6讲 向量组 - 交互式教程</title>
+    
+    <!-- MathJax配置 - 完整版本 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            SVG: {
+                font: "TeX"
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --primary-green: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --primary-white: #ffffff;
+            --primary-dark: #343434;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--primary-dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        /* 顶部导航栏 */
+        header {
+            background: linear-gradient(135deg, var(--primary-orange), #ff9a3c);
+            color: var(--primary-white);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 6px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+        
+        /* 主容器 */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 2rem auto;
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+        
+        /* 侧边导航栏 */
+        .sidebar {
+            width: 280px;
+            background: var(--primary-white);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px var(--shadow);
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+        
+        .sidebar h3 {
+            color: var(--primary-orange);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--primary-green);
+            padding-bottom: 0.5rem;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin: 0.8rem 0;
+        }
+        
+        .sidebar a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar a:hover {
+            background: var(--primary-green);
+            color: var(--primary-dark);
+            transform: translateX(5px);
+        }
+        
+        /* 主内容区 */
+        main {
+            flex: 1;
+            background: var(--primary-white);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+        
+        /* 章节样式 */
+        section {
+            margin-bottom: 3rem;
+        }
+        
+        section h2 {
+            color: var(--primary-orange);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-green);
+        }
+        
+        section h3 {
+            color: var(--primary-orange);
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+        
+        section h4 {
+            color: var(--primary-dark);
+            font-size: 1.2rem;
+            margin: 1rem 0 0.8rem 0;
+            font-weight: 600;
+        }
+        
+        /* 折叠面板 */
+        .collapsible {
+            background: linear-gradient(135deg, var(--primary-green), #c9e4de);
+            color: var(--primary-dark);
+            cursor: pointer;
+            padding: 1rem 1.5rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+        
+        .collapsible:hover {
+            background: linear-gradient(135deg, #b8d9cf, var(--primary-green));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s ease;
+        }
+        
+        .collapsible.active:after {
+            transform: rotate(-180deg);
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #f9f9f9;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .content-inner {
+            padding: 1.5rem;
+        }
+        
+        /* 例题卡片 */
+        .example-card {
+            background: linear-gradient(135deg, #fff5e6, #ffffff);
+            border-left: 4px solid var(--primary-yellow);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+        
+        .example-header {
+            color: var(--primary-orange);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* 注意事项框 */
+        .note-box {
+            background: linear-gradient(135deg, #e6f7ff, #ffffff);
+            border-left: 4px solid var(--primary-green);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+        }
+        
+        .note-box strong {
+            color: var(--primary-orange);
+        }
+        
+        /* 定理框 */
+        .theorem-box {
+            background: linear-gradient(135deg, #fff0f0, #ffffff);
+            border: 2px solid var(--primary-orange);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+        
+        .theorem-title {
+            color: var(--primary-orange);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        /* 流程图框 */
+        .flowchart {
+            background: var(--primary-white);
+            border: 2px dashed var(--primary-green);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+        }
+        
+        /* 数学公式强化 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        /* 步骤列表 */
+        .steps {
+            counter-reset: step-counter;
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .steps li {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 3rem;
+            margin: 1.5rem 0;
+        }
+        
+        .steps li:before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 968px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                position: static;
+                max-height: none;
+            }
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-green);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-orange);
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            background: linear-gradient(135deg, var(--primary-orange), #ff9a3c);
+            color: var(--primary-white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+        
+        /* 公式块样式 */
+        .formula-block {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary-orange);
+            overflow-x: auto;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        
+        th, td {
+            border: 1px solid var(--primary-green);
+            padding: 0.8rem;
+            text-align: left;
+        }
+        
+        th {
+            background: var(--primary-green);
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📐 第6讲 向量组</h1>
+        <p>线性代数核心知识 · 交互式教程</p>
+    </header>
+    
+    <div class="container">
+        <!-- 侧边导航栏 -->
+        <aside class="sidebar">
+            <h3>📚 目录导航</h3>
+            <ul>
+                <li><a href="#overview">三向解题法概览</a></li>
+                <li><a href="#section1">一、研究具体型向量关系</a></li>
+                <li><a href="#section2">二、研究抽象型向量关系</a></li>
+                <li><a href="#section3">三、研究向量组等价</a></li>
+                <li><a href="#section4">四、向量空间（仅数学一）</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <main>
+            <!-- 概览部分 -->
+            <section id="overview">
+                <h2>三向解题法概览</h2>
+                
+                <div class="flowchart">
+                    <h3 style="color: var(--primary-orange);">向量组（$O_i$(Ⅲ住目标)）</h3>
+                    <p style="margin-top: 1rem;">四大研究目标：</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                        <div style="background: var(--primary-green); padding: 1rem; border-radius: 8px;">
+                            <strong>1. 研究具体型向量关系</strong><br>
+                            ($O_1$(Ⅲ住目标1))
+                        </div>
+                        <div style="background: var(--primary-yellow); padding: 1rem; border-radius: 8px;">
+                            <strong>2. 研究抽象型向量关系</strong><br>
+                            ($O_2$(Ⅲ住目标2))
+                        </div>
+                        <div style="background: #ffd4d4; padding: 1rem; border-radius: 8px;">
+                            <strong>3. 研究向量组等价</strong><br>
+                            ($O_3$(Ⅲ住目标3))
+                        </div>
+                        <div style="background: #d4e4ff; padding: 1rem; border-radius: 8px;">
+                            <strong>4. 向量空间（仅数学一）</strong><br>
+                            ($O_4$(Ⅲ住目标4))
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note-box">
+                    <strong>【注】</strong> 各未知参数的向量组是常考题型。本讲将系统介绍三种解题方法：常规操作、观察研究对象、化归经典形式。
+                </div>
+            </section>
+            
+            <!-- 第一部分 -->
+            <section id="section1">
+                <h2>一、研究具体型向量关系（$O_1$(Ⅲ住目标1)）</h2>
+                
+                <button class="collapsible">1. $\beta$与$\alpha_1, \alpha_2, \cdots, \alpha_n$（$D_1$(常规操作)）</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <h4>三种基本方法：</h4>
+                        
+                        <ol class="steps">
+                            <li><strong>建立方程组</strong>
+                                <div class="formula-block">
+                                    $$[\alpha_1, \alpha_2, \cdots, \alpha_n]\begin{bmatrix}x_1\\x_2\\\vdots\\x_n\end{bmatrix} = \beta$$
+                                </div>
+                            </li>
+                            
+                            <li><strong>化阶梯形</strong>
+                                <div class="formula-block">
+                                    $$[A, \beta] = [\alpha_1, \alpha_2, \cdots, \alpha_n, \beta] \xrightarrow{初等行变换} [\,\sqcap\,]$$
+                                </div>
+                            </li>
+                            
+                            <li><strong>讨论</strong>
+                                <ul>
+                                    <li>① $r(A) \neq r([A, \beta]) \Leftrightarrow$ 无解 $\Leftrightarrow$ 不能表示</li>
+                                    <li>② $r(A) = r([A, \beta]) = n \Leftrightarrow$ 唯一解 $\Leftrightarrow$ 唯一一种表示法</li>
+                                    <li>③ $r(A) = r([A, \beta]) < n \Leftrightarrow$ 无穷多解 $\Leftrightarrow$ 无穷多种表示法</li>
+                                </ul>
+                            </li>
+                        </ol>
+                        
+                        <div class="note-box">
+                            <strong>【注】</strong>含未知参数的向量组是常考题型。
+                        </div>
+                        
+                        <div class="example-card">
+                            <div class="example-header">📝 例6.1</div>
+                            <p>已知向量$\alpha_1=\begin{bmatrix}1\\2\\3\end{bmatrix}$，$\alpha_2=\begin{bmatrix}2\\1\\1\end{bmatrix}$，$\beta_1=\begin{bmatrix}2\\5\\9\end{bmatrix}$，$\beta_2=\begin{bmatrix}1\\0\\1\end{bmatrix}$，若$\beta_1$既可由$\alpha_1, \alpha_2$线性表示，也可由$\beta_1, \beta_2$线性表示，则$\gamma=$（&nbsp;&nbsp;&nbsp;）。</p>
+                            
+                            <p style="margin-top: 1rem;">
+                                (A) $k\begin{bmatrix}3\\3\\4\end{bmatrix}, k\in\mathbb{R}$ &nbsp;&nbsp;
+                                (B) $k\begin{bmatrix}3\\5\\10\end{bmatrix}, k\in\mathbb{R}$ &nbsp;&nbsp;
+                                (C) $k\begin{bmatrix}-1\\1\\2\end{bmatrix}, k\in\mathbb{R}$ &nbsp;&nbsp;
+                                (D) $k\begin{bmatrix}1\\5\\8\end{bmatrix}, k\in\mathbb{R}$
+                            </p>
+                            
+                            <button class="collapsible" style="margin-top: 1rem;">查看解答</button>
+                            <div class="content">
+                                <div class="content-inner">
+                                    <p><strong>解：</strong>应选（D）。</p>
+                                    <p>由题意，设$\gamma = k_1\alpha_1 + k_2\alpha_2 = l_1\beta_1 + l_2\beta_2$，即$k_1\alpha_1 + k_2\alpha_2 - l_1\beta_1 - l_2\beta_2 = \mathbf{0}$。</p>
+                                    <p>记$\begin{cases}x_1 = k_1,\\x_2 = k_2,\\x_3 = -l_1,\\x_4 = -l_2,\end{cases}$则$x_1\alpha_1 + x_2\alpha_2 + x_3\beta_1 + x_4\beta_2 = \mathbf{0}$。</p>
+                                    
+                                    <div class="formula-block">
+                                        $$x_4\beta_2 = \mathbf{0}, \text{解得}\begin{cases}x_1 = 3k,\\x_2 = -k,\end{cases}k\in\mathbb{R}, \text{故}x_1\beta_2 = 3k\begin{bmatrix}1\\2\\3\end{bmatrix} - k\begin{bmatrix}2\\1\\1\end{bmatrix} = k\begin{bmatrix}1\\5\\8\end{bmatrix}, k\in\mathbb{R}, \text{故选(D)}$$
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">2. $\alpha_1, \alpha_2, \cdots, \alpha_n$（$D_1$(常规操作) + $D_{23}$(观察研究对象)）</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <h4>判断线性相关性的方法：</h4>
+                        
+                        <ol class="steps">
+                            <li><strong>若向量个数大于维数</strong>，则必然线性相关。</li>
+                            
+                            <li><strong>若向量个数等于维数</strong>，则可用行列式讨论：
+                                <ul>
+                                    <li>① $|\alpha_1, \alpha_2, \cdots, \alpha_n| = 0 \Leftrightarrow$ 线性相关</li>
+                                    <li>② $|\alpha_1, \alpha_2, \cdots, \alpha_n| \neq 0 \Leftrightarrow$ 线性无关</li>
+                                </ul>
+                            </li>
+                            
+                            <li><strong>若向量个数小于维数</strong>，则化阶梯形$A = [\alpha_1, \alpha_2, \cdots, \alpha_n] \xrightarrow{初等行变换} [\,\sqcap\,]$：
+                                <ul>
+                                    <li>① $r(A) < n \Leftrightarrow$ 线性相关</li>
+                                    <li>② $r(A) = n \Leftrightarrow$ 线性无关</li>
+                                    <li>③ 若线性相关，问$\alpha_i$与$\alpha_1, \cdots, \alpha_{i-1}, \alpha_{i+1}, \cdots, \alpha_n$的表示关系，回到"1."即可。</li>
+                                </ul>
+                            </li>
+                        </ol>
+                        
+                        <div class="note-box">
+                            <strong>【注】</strong>各未知参数的向量组是常考题型。
+                        </div>
+                        
+                        <div class="example-card">
+                            <div class="example-header">📝 例6.2</div>
+                            <p>设向量$\alpha_1=\begin{bmatrix}a\\1\\-1\\1\end{bmatrix}$，$\alpha_2=\begin{bmatrix}1\\1\\b\\a\end{bmatrix}$，$\alpha_3=\begin{bmatrix}1\\a\\-1\\1\end{bmatrix}$，若$\alpha_1, \alpha_2, \alpha_3$线性相关，且其中任意两个向量均线性无关，则（&nbsp;&nbsp;&nbsp;）。</p>
+                            
+                            <p style="margin-top: 1rem;">
+                                (A) $a=1, b\neq-1$ &nbsp;&nbsp;
+                                (B) $a=1, b=-1$ &nbsp;&nbsp;
+                                (C) $a\neq-2, b=2$ &nbsp;&nbsp;
+                                (D) $a=-2, b=2$
+                            </p>
+                            
+                            <button class="collapsible" style="margin-top: 1rem;">查看解答</button>
+                            <div class="content">
+                                <div class="content-inner">
+                                    <p><strong>【解】</strong>应选（D）。</p>
+                                    
+                                    <div class="formula-block">
+                                        $$[\alpha_1, \alpha_2, \alpha_3] = \begin{bmatrix}a&1&1\\1&1&a\\-1&b&-1\\1&a&1\end{bmatrix} \to \begin{bmatrix}1&1&a\\0&1-a&1-a^2\\0&b+1&a-1\\0&a-1&1-a\end{bmatrix} \to \begin{bmatrix}1&1&a\\0&1-a&1-a^2\\0&b+1&a-1\\0&0&2-a^2-a\end{bmatrix}$$
+                                    </div>
+                                    
+                                    <p>因为$\alpha_1, \alpha_2, \alpha_3$线性相关，且其中任意两个向量均线性无关，则$r(\alpha_1, \alpha_2, \alpha_3)\leqslant 2$，又$r(\alpha_i, \alpha_j)=2(i\neq j)$。</p>
+                                    <p>于是$r(\alpha_1, \alpha_2, \alpha_3)=2$。</p>
+                                    
+                                    <p>① 当$a=1$时，$\alpha_1$与$\alpha_3$线性相关，不满足题意；</p>
+                                    <p>② 当$a\neq 1$时，要满足题意，则$a+2=0$且$-b(a+1)-2=0$，故$\begin{cases}a=-2,\\b=2.\end{cases}$</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">3. 求极大线性无关组（$D_1$(常规操作)）</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>给出列向量组$\alpha_1, \alpha_2, \cdots, \alpha_n$，可按以下步骤求其极大线性无关组：</p>
+                        
+                        <ol class="steps">
+                            <li>构造$A=[\alpha_1, \alpha_2, \cdots, \alpha_n]$；</li>
+                            <li>$A \xrightarrow{初等行变换} B$（行阶梯形）；</li>
+                            <li>算出台阶数$r$，按列挑出一个秩为$r$的子矩阵即可。</li>
+                        </ol>
+                        
+                        <div class="example-card">
+                            <div class="example-header">📝 例6.3</div>
+                            <p>设矩阵$A=\begin{bmatrix}1&-1&3&0&-1\\-1&0&-2&-a&-1\\1&1&a&2&3\end{bmatrix}$的秩为2。</p>
+                            
+                            <p>(1) 求$a$的值；</p>
+                            <p>(2) 求$A$的列向量组的一个极大线性无关组$\alpha, \beta$，并求矩阵$H$，使得$A=GH$，其中$G=[\alpha, \beta]$。</p>
+                            
+                            <button class="collapsible" style="margin-top: 1rem;">查看解答</button>
+                            <div class="content">
+                                <div class="content-inner">
+                                    <p><strong>【解】</strong>(1) 对$A$施以初等行变换，得</p>
+                                    
+                                    <div class="formula-block">
+                                        $$A = \begin{bmatrix}1&-1&3&0&-1\\-1&0&-2&-a&-1\\1&1&a&2&3\end{bmatrix} \to \begin{bmatrix}1&-1&3&0&-1\\0&-1&1&-a&-2\\0&0&a-1&2(1-a)&0\end{bmatrix}$$
+                                    </div>
+                                    
+                                    <p>由$r(A)=2$，得$a=1$。</p>
+                                    
+                                    <p>(2) 记$A=[\alpha_1,\alpha_2,\alpha_3,\alpha_4,\alpha_5]$，由(1)，对$A$施以初等行变换，得</p>
+                                    
+                                    <div class="formula-block">
+                                        $$A \to \begin{bmatrix}1&0&2&1&1\\0&1&-1&1&2\\0&0&0&0&0\end{bmatrix}$$
+                                    </div>
+                                    
+                                    <p>取$\alpha=\alpha_1, \beta=\alpha_2$，则$\alpha, \beta$为$A$的列向量组的一个极大线性无关组。</p>
+                                    
+                                    <p>因为$\alpha_3=2\alpha_1-\alpha_2, \alpha_4=\alpha_1+\alpha_2, \alpha_5=\alpha_1+2\alpha_2$，所以</p>
+                                    
+                                    <div class="formula-block">
+                                        $$A = [\alpha_1, \alpha_2, 2\alpha_1-\alpha_2, \alpha_1+\alpha_2, \alpha_1+2\alpha_2] = [\alpha, \beta]\begin{bmatrix}1&0&2&1&1\\0&1&-1&1&2\end{bmatrix}$$
+                                    </div>
+                                    
+                                    <p>取$H=\begin{bmatrix}1&0&2&1&1\\0&1&-1&1&2\end{bmatrix}$，则$A=GH$。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第二部分 -->
+            <section id="section2">
+                <h2>二、研究抽象型向量关系（$O_2$(Ⅲ住目标2)）</h2>
+                
+                <button class="collapsible">1. 定义法（$D_1$(常规操作)）</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>已知某些向量关系，研究另一些向量关系。</p>
+                        
+                        <div class="formula-block">
+                            <p>(1) 写定义式$k_1\alpha_1 + k_2\alpha_2 + \cdots + k_n\alpha_n = \mathbf{0}$</p>
+                            <p>(2) 考查$k_1=k_2=\cdots=k_n=0$是否成立。</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            <strong>【注】</strong>常用方法：
+                            <ul>
+                                <li>① 在"(1)"的(*)式两边同乘某些量，重新组合等。</li>
+                                <li>② 转化为证某齐次线性方程组只有零解。</li>
+                                <li>③ 常与特征值、基础解系、矩阵正定等综合。</li>
+                                <li>④ 以下定理常用。</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <div class="theorem-title">定理1</div>
+                            <p>如果向量组$\beta_1, \beta_2, \cdots, \beta_t$可由向量组$\alpha_1, \alpha_2, \cdots, \alpha_s$线性表示，且$t>s$，则$\beta_1, \beta_2, \cdots, \beta_t$线性相关。（此定理可简单表述为以少表多，多的相关。）</p>
+                            
+                            <p style="margin-top: 1rem;"><strong>其等价命题：</strong>如果向量组$\beta_1, \beta_2, \cdots, \beta_t$可由向量组$\alpha_1, \alpha_2, \cdots, \alpha_s$线性表示，且$\beta_1, \beta_2, \cdots, \beta_t$线性无关，则$t\leqslant s$。</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <div class="theorem-title">定理2</div>
+                            <p>设向量组$\beta_1, \beta_2, \cdots, \beta_t$能由向量组$\alpha_1, \alpha_2, \cdots, \alpha_s$线性表示，则$r(\beta_1, \beta_2, \cdots, \beta_t) \leqslant r(\alpha_1, \alpha_2, \cdots, \alpha_s)$。（此定理可简单表述为两向量组中被表示的向量组的秩不大。）</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <div class="theorem-title">定理3</div>
+                            <p>如果向量组$\alpha_1, \alpha_2, \cdots, \alpha_m$中有一部分向量组线性相关，则整个向量组也线性相关。</p>
+                            <p style="margin-top: 0.5rem;"><strong>其等价命题：</strong>如果$\alpha_1, \alpha_2, \cdots, \alpha_m$线性无关，则其任一部分向量组线性无关。</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <div class="theorem-title">定理4</div>
+                            <p>如果$n$维向量组$\alpha_1, \alpha_2, \cdots, \alpha_s$线性无关，那么这些向量对应相同位置各任意添加$m$个分量所得到的$(n+m)$维新向量组$\alpha'_1, \alpha'_2, \cdots, \alpha'_s$也线性无关；如果$\alpha_1, \alpha_2, \cdots, \alpha_s$线性相关，那么它们各去掉相同位置的若干个分量所得到的新向量组也线性相关。</p>
+                            
+                            <div style="background: #fff3cd; padding: 0.8rem; border-radius: 5px; margin-top: 1rem; font-size: 0.9rem;">
+                                记忆口诀：<strong>无关到无关，维数不减；相关到相关，维数不增；矩阵不增，矩阵不减；最长不减，顺链相关；换顺相关，烧杂相关。</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="example-card">
+                            <div class="example-header">📝 例6.4</div>
+                            <p>设$A$为$m$阶方阵，证明：</p>
+                            <p>(1) 若$A^{k-1}\alpha\neq\mathbf{0}, A^k\alpha=\mathbf{0}$，则$\alpha, A\alpha, \cdots, A^{k-1}\alpha$（$k$为正整数）线性无关；</p>
+                            <p>(2) $r(A^{n+1})=r(A^n)$。</p>
+                            
+                            <button class="collapsible" style="margin-top: 1rem;">查看解答</button>
+                            <div class="content">
+                                <div class="content-inner">
+                                    <p><strong>【证】</strong>(1) 设存在一组数$l_0, l_1, \cdots, l_{k-1}$，使得</p>
+                                    
+                                    <div class="formula-block">
+                                        $$l_0\alpha + l_1A\alpha + \cdots + l_{k-1}A^{k-1}\alpha = \mathbf{0}$$
+                                    </div>
+                                    
+                                    <p>在上式两端左边乘$A^{k-1}$，得$l_0A^{k-1}\alpha + l_1A^k\alpha + \cdots + l_{k-1}A^{2k-2}\alpha = \mathbf{0}$。由$A^k\alpha=\mathbf{0}$，得$l_0A^{k-1}\alpha=\mathbf{0}$。又$A^{k-1}\alpha\neq\mathbf{0}$，于是$l_0=0$。同理，得$l_1=\cdots=l_{k-1}=0$，故$\alpha, A\alpha, \cdots, A^{k-1}\alpha$线性无关。</p>
+                                    
+                                    <p style="margin-top: 1rem;">(2) 设$\eta$为$A^n x=\mathbf{0}$的任一解，则$A^n\eta=\mathbf{0}$。于是$A^{n+1}\eta=\mathbf{0}$。若$A^n\eta\neq\mathbf{0}$，则由(1)知，$\eta, A\eta, \cdots, A^n\eta$线性无关。又由$\eta^n+1=\mathbf{0}$得$A^n$向量必线性相关，矛盾，故$A^n\eta=\mathbf{0}$。即$A^{n+1}x=\mathbf{0}$的解均是$A^n x=\mathbf{0}$的解。两方程组同解，故$r(A^{n+1})=r(A^n)$。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">2. 综合问题（$D_1$(常规操作) + $D_{23}$(化归经典形式)）</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>这里的综合，一般指与方程组、特征值知识相结合。</p>
+                        
+                        <div class="example-card">
+                            <div class="example-header">📝 例6.5</div>
+                            <p>设矩阵$A=[\alpha_1, \alpha_2, \alpha_3, \alpha_4]$，若$\alpha_1, \alpha_2, \alpha_3$线性无关，且$\alpha_1+\alpha_2=\alpha_3+\alpha_4$，则方程组$Ax=\alpha_1+4\alpha_4$的通解为$x=$________。</p>
+                            
+                            <button class="collapsible" style="margin-top: 1rem;">查看解答</button>
+                            <div class="content">
+                                <div class="content-inner">
+                                    <p><strong>【解】</strong>应填$k\begin{bmatrix}1\\1\\-1\\-1\end{bmatrix}+\begin{bmatrix}1\\0\\0\\4\end{bmatrix}, k$为任意常数。</p>
+                                    
+                                    <div style="background: #e8f5e9; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                                        <p>→总思路:求通解先补齐，$D_{23}$(化归经典形式)。</p>
+                                        <p>① 求$Ax=\mathbf{0}$这题; ② 求$Ax=\beta$的特解</p>
+                                    </div>
+                                    
+                                    <p>由于$\alpha_1+\alpha_2=\alpha_3+\alpha_4$，故$\alpha_1, \alpha_2, \alpha_3, \alpha_4$线性相关，又$\alpha_1, \alpha_2, \alpha_3$线性无关，则$r(A)=3$。</p>
+                                    
+                                    <p>又$\alpha_1+\alpha_2=\alpha_3+\alpha_4$，即$\alpha_1+\alpha_2-\alpha_3-\alpha_4=\mathbf{0}$，则$[\alpha_1, \alpha_2, \alpha_3, \alpha_4]\begin{bmatrix}1\\1\\-1\\-1\end{bmatrix}=\mathbf{0}$，由$s=n-r(A)=4-3=1$得，$\begin{bmatrix}1\\1\\-1\\-1\end{bmatrix}$是$Ax=\mathbf{0}$的一个基础解系。</p>
+                                    
+                                    <p>由$[\alpha_1, \alpha_2, \alpha_3, \alpha_4]\begin{bmatrix}1\\0\\0\\4\end{bmatrix}=\alpha_1+4\alpha_4$，可得$\begin{bmatrix}1\\0\\0\\4\end{bmatrix}$是$Ax=\alpha_1+4\alpha_4$的一个特解。</p>
+                                    
+                                    <p>故$Ax=\alpha_1+4\alpha_4$的通解为$k\begin{bmatrix}1\\1\\-1\\-1\end{bmatrix}+\begin{bmatrix}1\\0\\0\\4\end{bmatrix}$，其中$k$为任意常数。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第三部分 -->
+            <section id="section3">
+                <h2>三、研究向量组等价（$O_3$(Ⅲ住目标3)）</h2>
+                
+                <div class="note-box">
+                    <p>给出向量组（Ⅰ）：$\alpha_1, \alpha_2, \cdots, \alpha_s$；向量组（Ⅱ）：$\beta_1, \beta_2, \cdots, \beta_t$，其中$\alpha_i$（$i=1, 2, \cdots, s$）与$\beta_j$（$j=1, 2, \cdots, t$）维数相同，若$\alpha_i$均可由$\beta_1, \beta_2, \cdots, \beta_t$线性表示，且$\beta_j$均可由$\alpha_1, \alpha_2, \cdots, \alpha_s$线性表示，则称向量组（Ⅰ）与向量组（Ⅱ）等价。</p>
+                </div>
+                
+                <div class="theorem-box">
+                    <div class="theorem-title">等价命题</div>
+                    <p><strong>(1)</strong> $r(\alpha_1, \alpha_2, \cdots, \alpha_s) = r(\beta_1, \beta_2, \cdots, \beta_t)$，且可单方向表示。</p>
+                </div>
+                
+                <div class="note-box">
+                    <strong>【注】</strong>所谓可单方向表示，是指$\alpha_1, \alpha_2, \cdots, \alpha_s$与$\beta_1, \beta_2, \cdots, \beta_t$这两个向量组中的某一个向量组可由另一个向量组线性表示。
+                </div>
+                
+                <div class="theorem-box">
+                    <p><strong>(2)</strong> $r(\alpha_1, \alpha_2, \cdots, \alpha_s) = r(\beta_1, \beta_2, \cdots, \beta_t) = r(\alpha_1, \alpha_2, \cdots, \alpha_s, \beta_1, \beta_2, \cdots, \beta_t)$（三秩相等）</p>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-header">📝 例6.6</div>
+                    <p>求常数$a$的值，使$\alpha_1=[1, 1, a]^T, \alpha_2=[1, a, 1]^T, \alpha_3=[a, 1, 1]^T$能由$\beta_1=[1, 1, a]^T, \beta_2=[-2, a, 4]^T, \beta_3=[-2, a, a]^T$线性表示，但$\beta_1, \beta_2, \beta_3$不能由$\alpha_1, \alpha_2, \alpha_3$线性表示。</p>
+                    
+                    <button class="collapsible" style="margin-top: 1rem;">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>【解】</strong>$\alpha_1, \alpha_2, \alpha_3$能由$\beta_1, \beta_2, \beta_3$线性表示，则$r(\alpha_1, \alpha_2, \alpha_3)\leqslant r(\beta_1, \beta_2, \beta_3)$。又$\beta_1, \beta_2, \beta_3$不能由$\alpha_1, \alpha_2, \alpha_3$线性表示，故$r(\alpha_1, \alpha_2, \alpha_3) < r(\beta_1, \beta_2, \beta_3)$。而$r(\beta_1, \beta_2, \beta_3)\leqslant 3$，于是$r(\alpha_1, \alpha_2, \alpha_3)<3$，从而$|\alpha_1, \alpha_2, \alpha_3|=0$，解得$a=1$或$a=-2$。</p>
+                            
+                            <div style="background: #fff3cd; padding: 0.8rem; border-radius: 5px; margin: 1rem 0;">
+                                <p>→答题自省法"二、各价自等"(1)</p>
+                                <p>$r(\alpha_1, \alpha_2, \alpha_3) < r(\beta_1, \beta_2, \beta_3)$ 等价</p>
+                            </div>
+                            
+                            <p>当$a=1$时，$\alpha_1=\alpha_2=\alpha_3=\beta_1=[1, 1, 1]^T$，显然$\alpha_1, \alpha_2, \alpha_3$可由$\beta_1, \beta_2, \beta_3$线性表示，而此时$\beta_2=[-2, 1, 4]^T$不能由$\alpha_1, \alpha_2, \alpha_3$线性表示，即$a=1$符合题意。</p>
+                            
+                            <p>当$a=-2$时，有</p>
+                            
+                            <div class="formula-block">
+                                $$[\beta_1, \beta_2, \beta_3, \alpha_1, \alpha_2, \alpha_3] = \begin{bmatrix}1&-2&-2&1&1&-2\\1&-2&-2&1&-2&1\\-2&4&-2&-2&1&1\end{bmatrix}$$
+                            </div>
+                            
+                            <div class="formula-block">
+                                $$\to \begin{bmatrix}1&-2&-2&1&1&-2\\0&0&0&0&-3&3\\0&0&-6&0&3&-3\end{bmatrix} \to \begin{bmatrix}1&-2&-2&1&1&-2\\0&0&-6&0&3&-3\\0&0&0&0&-3&3\end{bmatrix}$$
+                            </div>
+                            
+                            <p>可知$r(\beta_1, \beta_2, \beta_3)=2$，而$r(\beta_1, \beta_2, \beta_3, \alpha_3)=3$，故$\alpha_3$不能由向量组$\beta_1, \beta_2, \beta_3$线性表示，所以$a=-2$不符合题意。</p>
+                            
+                            <p>综上所述，$a=1$。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第四部分 -->
+            <section id="section4">
+                <h2>四、向量空间（仅数学一）（$O_4$(Ⅲ住目标4)）</h2>
+                
+                <button class="collapsible">1. 概念（$D_1$(常规操作) + $D_{22}$(转换等价表述)）</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>设$V$是向量空间，如果$V$中有$r$个向量$\alpha_1, \alpha_2, \cdots, \alpha_r$，满足</p>
+                        
+                        <ul style="margin-left: 2rem;">
+                            <li>① $\alpha_1, \alpha_2, \cdots, \alpha_r$线性无关；</li>
+                            <li>② $V$中任一向量都可由$\alpha_1, \alpha_2, \cdots, \alpha_r$线性表示。</li>
+                        </ul>
+                        
+                        <p>则称向量组$\alpha_1, \alpha_2, \cdots, \alpha_r$为向量空间$V$的一个基，称$r$为向量空间$V$的维数，并称$V$为$r$维向量空间。</p>
+                        
+                        <p>若$\alpha_1, \alpha_2, \cdots, \alpha_r$是$r$维向量空间$V$的一个基，则$V$中任一向量$\xi$都可由这$r$个基标，从而$V$可表示为</p>
+                        
+                        <div class="formula-block">
+                            $$\xi = x_1\alpha_1 + x_2\alpha_2 + \cdots + x_r\alpha_r$$
+                        </div>
+                        
+                        <p>称有序数组$x_1, x_2, \cdots, x_r$为向量$\xi$在基$\alpha_1, \alpha_2, \cdots, \alpha_r$下的坐标，从而$V$可表示为</p>
+                        
+                        <div class="formula-block">
+                            $$V = \{\xi = x_1\alpha_1 + x_2\alpha_2 + \cdots + x_r\alpha_r | x_1, x_2, \cdots, x_r \in \mathbb{R}\}$$
+                        </div>
+                        
+                        <div style="background: #e3f2fd; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                            <p>→将这里出现参念与方程组总结的知识点比较</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">2. 过渡矩阵（$D_1$(常规操作) + $D_{42}$(引入符号)）</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>设$V$的两个基$\eta_1, \eta_2, \cdots, \eta_n$；$\xi_1, \xi_2, \cdots, \xi_n$，若</p>
+                        
+                        <div class="formula-block">
+                            $$[\eta_1, \eta_2, \cdots, \eta_n] = [\xi_1, \xi_2, \cdots, \xi_n]C$$
+                        </div>
+                        
+                        <p>则称$C$为由基$\xi_1, \xi_2, \cdots, \xi_n$到基$\eta_1, \eta_2, \cdots, \eta_n$的过渡矩阵（注意$C$的位置）。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">3. 坐标变换（$D_1$(常规操作) + $D_{42}$(引入符号)）</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <div class="formula-block">
+                            $$\alpha = [\xi_1, \xi_2, \cdots, \xi_n]x = [\eta_1, \eta_2, \cdots, \eta_n]y = [\xi_1, \xi_2, \cdots, \xi_n]Cy$$
+                        </div>
+                        
+                        <p>其中$x=Cy$称为坐标变换公式。</p>
+                        
+                        <div class="example-card">
+                            <div class="example-header">📝 例6.7</div>
+                            <p>设$\mathbb{R}^3$中的基（Ⅰ）$\beta_1=[1, 0, 0]^T, \beta_2=[1, 1, 0]^T, \beta_3=[1, 1, 1]^T$到基（Ⅱ）$\alpha_1=[1, a, 0]^T, \alpha_2=[0, 1, b]^T, \alpha_3=[1, 0, 1]^T$的过渡矩阵为$\begin{bmatrix}0&-1&1\\1&0&-1\\0&1&1\end{bmatrix}$。</p>
+                            
+                            <p>(1) 求$a, b$的值；</p>
+                            <p>(2) 已知$\xi$在基（Ⅰ）$\beta_1, \beta_2, \beta_3$下的坐标为$[1, 0, 2]^T$，求$\xi$在基（Ⅱ）$\alpha_1, \alpha_2, \alpha_3$下的坐标。</p>
+                            
+                            <button class="collapsible" style="margin-top: 1rem;">查看解答</button>
+                            <div class="content">
+                                <div class="content-inner">
+                                    <p><strong>【解】</strong>(1) 设$[\alpha_1, \alpha_2, \alpha_3]=[\beta_1, \beta_2, \beta_3]C$，其中$C$是过渡矩阵，则</p>
+                                    
+                                    <div class="formula-block">
+                                        $$C = [\beta_1, \beta_2, \beta_3]^{-1}[\alpha_1, \alpha_2, \alpha_3] = \begin{bmatrix}1&1&1\\0&1&1\\0&0&1\end{bmatrix}^{-1}\begin{bmatrix}1&0&1\\a&1&0\\0&b&1\end{bmatrix}$$
+                                    </div>
+                                    
+                                    <div class="formula-block">
+                                        $$= \begin{bmatrix}1&-1&0\\0&1&-1\\0&0&1\end{bmatrix}\begin{bmatrix}1&0&1\\a&1&0\\0&b&1\end{bmatrix} = \begin{bmatrix}1-a&-1&1\\a&1-b&-1\\0&b&1\end{bmatrix}$$
+                                    </div>
+                                    
+                                    <p>故$a=b=1$。</p>
+                                    
+                                    <p style="margin-top: 1.5rem;">(2) 设$\xi=[\alpha_1, \alpha_2, \alpha_3]\begin{bmatrix}x_1\\x_2\\x_3\end{bmatrix}=[\beta_1, \beta_2, \beta_3]\begin{bmatrix}1\\0\\2\end{bmatrix}$，则</p>
+                                    
+                                    <div class="formula-block">
+                                        $$\begin{bmatrix}x_1\\x_2\\x_3\end{bmatrix} = [\alpha_1, \alpha_2, \alpha_3]^{-1}[\beta_1, \beta_2, \beta_3]\begin{bmatrix}1\\0\\2\end{bmatrix}$$
+                                    </div>
+                                    
+                                    <div class="formula-block">
+                                        $$= \begin{bmatrix}1&0&1\\1&1&0\\0&1&1\end{bmatrix}^{-1}\begin{bmatrix}1&1&1\\0&1&1\\0&0&1\end{bmatrix}\begin{bmatrix}1\\0\\2\end{bmatrix}$$
+                                    </div>
+                                    
+                                    <div class="formula-block">
+                                        $$= \frac{1}{2}\begin{bmatrix}1&1&-1\\-1&1&1\\1&-1&1\end{bmatrix}\begin{bmatrix}1&1&1\\0&1&1\\0&0&1\end{bmatrix}\begin{bmatrix}1\\0\\2\end{bmatrix} = \frac{1}{2}\begin{bmatrix}3\\1\\3\end{bmatrix}$$
+                                    </div>
+                                    
+                                    <p>得$\xi$在基（Ⅱ）$\alpha_1, \alpha_2, \alpha_3$下的坐标为$\left[\frac{3}{2}, \frac{1}{2}, \frac{3}{2}\right]^T$。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 总结部分 -->
+            <section style="background: linear-gradient(135deg, var(--primary-yellow), #ffe680); padding: 2rem; border-radius: 15px; margin-top: 3rem;">
+                <h2 style="color: var(--primary-dark); border-bottom: 3px solid var(--primary-orange);">📚 学习总结</h2>
+                
+                <div style="margin-top: 1.5rem;">
+                    <h3 style="color: var(--primary-orange);">核心知识点回顾：</h3>
+                    <ol style="margin-left: 2rem; line-height: 2;">
+                        <li><strong>具体型向量关系</strong>：建立方程组、化阶梯形、讨论解的情况</li>
+                        <li><strong>抽象型向量关系</strong>：定义法、利用定理（以少表多、秩的关系）</li>
+                        <li><strong>向量组等价</strong>：三秩相等、单方向表示</li>
+                        <li><strong>向量空间</strong>：基、维数、坐标、过渡矩阵</li>
+                    </ol>
+                </div>
+                
+                <div style="background: var(--primary-white); padding: 1.5rem; border-radius: 10px; margin-top: 1.5rem;">
+                    <h3 style="color: var(--primary-orange);">解题方法三原则：</h3>
+                    <ul style="margin-left: 2rem; line-height: 2;">
+                        <li><strong>$D_1$（常规操作）</strong>：按定义、按步骤</li>
+                        <li><strong>$D_{23}$（观察研究对象/化归经典形式）</strong>：分析问题特征，转化为熟悉问题</li>
+                        <li><strong>$D_{42}$（引入符号）</strong>：简化表示，清晰思路</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <footer style="text-align: center; padding: 2rem; color: var(--primary-dark); background: var(--primary-white); margin-top: 2rem; border-radius: 15px; box-shadow: 0 -4px 6px var(--shadow);">
+        <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">🎓 第6讲 向量组 · 交互式教程</p>
+        <p style="opacity: 0.8;">点击各章节标题展开/收起内容 · 使用侧边栏快速导航</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.7;">本教程需要网络连接以加载MathJax数学公式渲染引擎</p>
+    </footer>
+    
+    <script>
+        // 折叠面板功能
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight){
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 添加返回顶部按钮
+        window.onscroll = function() {
+            var backToTop = document.getElementById('backToTop');
+            if (!backToTop) {
+                backToTop = document.createElement('button');
+                backToTop.id = 'backToTop';
+                backToTop.innerHTML = '↑';
+                backToTop.style.cssText = 'position: fixed; bottom: 30px; right: 30px; background: var(--primary-orange); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: all 0.3s ease; z-index: 999;';
+                backToTop.onclick = function() {
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                };
+                document.body.appendChild(backToTop);
+            }
+            
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTop.style.display = 'block';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
+
+<!--
+使用说明：
+1. 保存方法：将本代码复制到文本编辑器中，保存为"向量组交互式教程.html"文件
+2. 网络要求：打开HTML文件需要网络连接，因为MathJax需要从CDN加载数学公式渲染引擎
+3. 浏览器支持：推荐使用Chrome、Firefox、Edge等现代浏览器打开
+4. 交互功能：
+   - 点击绿色按钮展开/收起各章节内容
+   - 使用左侧导航栏快速跳转到不同章节
+   - 点击右下角箭头按钮返回顶部
+5. 数学公式：所有数学公式使用LaTeX格式编写，由MathJax自动渲染
+6. 响应式设计：支持桌面和移动设备浏览
+
+注意事项：
+- 首次打开可能需要几秒钟加载MathJax
+- 如果公式显示不正常，请检查网络连接
+- 建议使用较新版本的浏览器以获得最佳体验
+-->

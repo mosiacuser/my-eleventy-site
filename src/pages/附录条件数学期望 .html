@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>条件数学期望 - 交互式教程</title>
+    
+    <!-- MathJax 配置 - 完整版 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            CommonHTML: {
+                scale: 110
+            },
+            TeX: {
+                equationNumbers: { autoNumber: "AMS" },
+                extensions: ["AMSmath.js", "AMSsymbols.js"]
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 50%, #f27d00 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #343434;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00, #f7d117);
+            padding: 40px;
+            text-align: center;
+            color: #ffffff;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        
+        header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #343434;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            transform: translateY(-2px);
+        }
+        
+        main {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        h3 {
+            color: #343434;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 5px solid #f7d117;
+        }
+        
+        p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #a6d6c9, #f7d117);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #f27d00;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .note-box {
+            background: #f7d117;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px dashed #f27d00;
+        }
+        
+        .note-box strong {
+            color: #f27d00;
+            font-size: 1.1em;
+        }
+        
+        .proof-box {
+            background: #a6d6c9;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #343434;
+        }
+        
+        .example-box {
+            background: linear-gradient(135deg, #ffffff, #a6d6c9);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 3px solid #f27d00;
+            box-shadow: 0 5px 20px rgba(242, 125, 0, 0.2);
+        }
+        
+        .example-box h3 {
+            color: #f27d00;
+            border-left-color: #f27d00;
+        }
+        
+        .property-list {
+            counter-reset: property-counter;
+            list-style: none;
+        }
+        
+        .property-list li {
+            counter-increment: property-counter;
+            margin: 15px 0;
+            padding: 15px;
+            background: #ffffff;
+            border-radius: 10px;
+            border-left: 4px solid #f27d00;
+            position: relative;
+            padding-left: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .property-list li::before {
+            content: "❖ " counter(property-counter);
+            position: absolute;
+            left: 15px;
+            color: #f27d00;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .accordion {
+            background: #343434;
+            color: #ffffff;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            transition: 0.3s;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        
+        .accordion:hover {
+            background: #f27d00;
+        }
+        
+        .accordion.active {
+            background: #f27d00;
+        }
+        
+        .accordion::after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s;
+        }
+        
+        .accordion.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .panel-content {
+            padding: 20px;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        code {
+            background: #343434;
+            color: #f7d117;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        footer {
+            background: #343434;
+            color: #ffffff;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: #ffffff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-top:hover {
+            background: #f7d117;
+            transform: translateY(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            main {
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 附录：条件数学期望</h1>
+            <div class="subtitle">Conditional Mathematical Expectation</div>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#intro">引言</a></li>
+                <li><a href="#definition">定义</a></li>
+                <li><a href="#adam">亚当公式</a></li>
+                <li><a href="#properties">性质</a></li>
+                <li><a href="#variance">条件方差</a></li>
+                <li><a href="#eve">夏娃公式</a></li>
+                <li><a href="#example">例题</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <section id="intro">
+                <h2>引言</h2>
+                <p>
+                    数据处理、往往是在某些条件下进行的，这既是现实问题，也可能来使性质，故条件数字特征的地位非常重要。且在考研真题中也多次考到，但由于该知识点的专业解法不在考纲内，故作为附录，供学有余力的读者参考。
+                </p>
+            </section>
+            
+            <section id="definition">
+                <h2>1. 条件数学期望</h2>
+                
+                <p>在 $Y=y$ 条件下 $X$ 的数学期望称为<span class="highlight">条件数学期望</span>。</p>
+                
+                <h3>① 离散型</h3>
+                <div class="formula-box">
+                    <p style="text-align: center;">$(X,Y) \sim p_{ij}$</p>
+                    <p style="text-align: center;">
+                        $$E(X|Y=y) = \sum_{i} x_i P(X=x_i|Y=y)$$
+                    </p>
+                </div>
+                
+                <h3>② 连续型</h3>
+                <div class="formula-box">
+                    <p style="text-align: center;">$(X,Y) \sim f(x,y)$</p>
+                    <p style="text-align: center;">
+                        $$E(X|Y=y) = \int_{-\infty}^{+\infty} xf(x|y)dx$$
+                    </p>
+                    <p style="margin-top: 15px;">同理，可定义 $E(Y|X=x)$。</p>
+                </div>
+                
+                <div class="note-box">
+                    <p><strong>【注】</strong></p>
+                    <p>(1) $E(X|Y=y)$ 是 $y$ 的函数，给出不同的 $y$ 值，对应不同的条件期望值。初学时可记：</p>
+                    <p style="text-align: center;">$g(y) = E(X|Y=y)$，提示其为 $y$ 的函数。</p>
+                    <p>(2) $E(X|Y)$ 是 $Y$ 的函数，即 $g(Y) = E(X|Y)$。</p>
+                </div>
+            </section>
+            
+            <section id="adam">
+                <h2>2. 亚当公式 (Adam's Law)</h2>
+                
+                <div class="formula-box" style="text-align: center;">
+                    <p style="font-size: 1.3em; color: #343434; font-weight: bold;">
+                        全期望公式 → 今非昔比总患思患之心→个集素应用
+                    </p>
+                    <p style="font-size: 1.5em; margin: 20px 0;">
+                        设 $(X,Y)$ 是二维随机变量，且 $EX$ 存在，则：
+                    </p>
+                    <p style="font-size: 1.8em; color: #f27d00;">
+                        $$EX = E[E(X|Y)]$$
+                    </p>
+                </div>
+                
+                <button class="accordion">证明过程（点击展开）</button>
+                <div class="panel">
+                    <div class="panel-content">
+                        <div class="proof-box">
+                            <p><strong>【注】</strong>(1) 证明：以连续型为例，设 $(X,Y) \sim f(x,y)$，$E(X|Y=y) = g(y)$，则</p>
+                            
+                            <p style="margin: 15px 0;">
+                                $$\begin{align}
+                                EX &= \int_{-\infty}^{+\infty} \int_{-\infty}^{+\infty} xf(x,y)dx dy \\
+                                &= \int_{-\infty}^{+\infty} \int_{-\infty}^{+\infty} xf_{X|Y}(x|y) f_Y(y) dx dy \\
+                                &= \int_{-\infty}^{+\infty} \left[\int_{-\infty}^{+\infty} xf_{X|Y}(x|y)dx\right] f_Y(y) dy \\
+                                &= \int_{-\infty}^{+\infty} E(X|Y=y) \cdot f_Y(y) dy \\
+                                &= \int_{-\infty}^{+\infty} g(y) f_Y(y) dy \\
+                                &= E[g(Y)] = E[E(X|Y)]
+                                \end{align}$$
+                            </p>
+                            
+                            <p>离散型同理可得。</p>
+                        </div>
+                        
+                        <div class="proof-box" style="margin-top: 20px;">
+                            <p>(2) 上述证明表明：</p>
+                            <ul style="margin-left: 30px; line-height: 2;">
+                                <li>连续型下，$EX = \int_{-\infty}^{+\infty} E(X|Y=y) f_Y(y) dy$；</li>
+                                <li>离散型下，$EX = \sum E(X|Y=y_i) P(Y=y_i)$。</li>
+                            </ul>
+                            <p style="margin-top: 15px;">用好这些公式，可能会为复杂条件下的期望计算带来方便。</p>
+                        </div>
+                        
+                        <div class="proof-box" style="margin-top: 20px;">
+                            <p>(3) 之所以称其为亚当公式，是因为它面还有一个复娃公式：</p>
+                            <p style="text-align: center; font-size: 1.3em; margin: 15px 0;">
+                                $$DX = E[D(X|Y)] + D[E(X|Y)]$$
+                            </p>
+                            <p>$D$ 可写成 Var，于是等号右边为 $E(V\cdots) + V(E\cdots)$，而 evve 的发音则好"夏娃" eve，$EX =$ $E[E(X|Y)]$ 中的 "$X|Y$" 也出现在 $DX = E[D(X|Y)] + D[E(X|Y)]$ 中，像曾是起源整个公式，而传说夏娃是由亚当的一根肋骨形成，所以</p>
+                            <p style="text-align: center; margin: 15px 0;">
+                                $EX = E[E(X|Y)]$ ————→ 称"亚当公式"
+                            </p>
+                            <p>这样便利于同等们记忆了。因内部元此地系称述及称呼，且回外文献称无此系统建述（确有国外文献描述及 eve's Law，但亚当公式多被称为代期望的<span class="highlight">助背形成</span>"夏娃"作为联系两个公式的记忆方法），此为本人方便考生记忆而做，考生在考场上勿写"亚当""夏娃"二词，而以"全期望""全方差"即可。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="properties">
+                <h2>3. 条件数学期望的性质</h2>
+                
+                <ul class="property-list">
+                    <li>$E(a|Y) = a$，$a$ 为常数。</li>
+                    
+                    <li>$E[(aX_1 + bX_2)|Y] = aE(X_1|Y) + bE(X_2|Y)$，$a$、$b$ 为常数。</li>
+                    
+                    <li>$E[g(Y)|Y] = g(Y)$。</li>
+                    
+                    <li>$X$、$Y$ 独立时，$E(X|Y) = EX$。</li>
+                    
+                    <li>$EX = E[E(X|Y)]$（亚当公式）。</li>
+                    
+                    <li>$E[g(Y) \cdot X|Y] = g(Y)E(X|Y)$。</li>
+                    
+                    <li>$E[g(Y) \cdot X] = E[g(Y) \cdot E(X|Y)]$。</li>
+                    
+                    <li>$E\{[X - E(X|Y)]^2\} \leq E\{[X - g(Y)]^2\}$，其中 $g(y)$ 取遍所有函数。</li>
+                </ul>
+                
+                <button class="accordion">性质证明示例（点击展开）</button>
+                <div class="panel">
+                    <div class="panel-content">
+                        <div class="proof-box">
+                            <p><strong>【注】</strong>③的证明，以离散型为例。</p>
+                            <p>当 $Y = y_i$ 时，</p>
+                            <p style="text-align: center;">
+                                $$h(y_i) = E[g(y_i)|Y=y_i] = g(y_i) \cdot E(1|Y=y_i) = g(y_i), \quad i=1,2,\cdots$$
+                            </p>
+                            <p>故 $h(Y) = E[g(Y)|Y] = g(Y)$。</p>
+                            
+                            <p style="margin-top: 20px;">⑥的证明：$E[g(Y) \cdot X|Y=y] = E[g(y) \cdot X|Y=y] = g(y)E(X|Y=y)$，故 $E[g(Y) \cdot X|Y] = g(Y)E(X|Y)$。</p>
+                            
+                            <p style="margin-top: 20px;">如 $E(Y \cdot X|Y) = YE(X|Y)$。</p>
+                            
+                            <p style="margin-top: 20px;">⑦的证明：$E[g(Y) \cdot X] = E\{E[g(Y) \cdot X|Y]\} \overset{⑥}{=} E[g(Y) \cdot E(X|Y)]$，如 $E(YX) = E[Y \cdot E(X|Y)]$。</p>
+                            
+                            <p style="margin-top: 20px;">⑧的证明：$E(X|Y)$ 表示在 $Y$ 的条件下，对 $X$ 作的 "最好" 预测，称为 $X$ 关于 $Y$ 的回归。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="variance">
+                <h2>4. 条件方差</h2>
+                
+                <div class="formula-box" style="text-align: center;">
+                    <p style="font-size: 1.5em; color: #343434;">
+                        $$D(X|Y) = E(X^2|Y) - [E(X|Y)]^2$$
+                    </p>
+                </div>
+            </section>
+            
+            <section id="eve">
+                <h2>5. 夏娃公式 (Eve's Law)</h2>
+                
+                <div class="formula-box" style="text-align: center;">
+                    <p style="font-size: 1.5em; margin: 20px 0; color: #f27d00; font-weight: bold;">
+                        $$DX = E[D(X|Y)] + D[E(X|Y)]$$
+                    </p>
+                </div>
+                
+                <button class="accordion">夏娃公式证明（点击展开）</button>
+                <div class="panel">
+                    <div class="panel-content">
+                        <div class="proof-box">
+                            <p><strong>【注】证明</strong></p>
+                            <p>
+                                $$\begin{align}
+                                E[D(X|Y)] &= E[E(X^2|Y)] - E\{[E(X|Y)]^2\} = E(X^2) - E\{[E(X|Y)]^2\}, \quad ①\\
+                                D[E(X|Y)] &= E\{[E(X|Y)]^2\} - \{E[E(X|Y)]\}^2 = E\{[E(X|Y)]^2\} - (EX)^2, \quad ②
+                                \end{align}$$
+                            </p>
+                            <p>①+②得证。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="example">
+                <h2>6. 综合例题</h2>
+                
+                <div class="example-box">
+                    <h3>📝 例题</h3>
+                    <p style="background: #fff; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        设 $X \sim N(0,1)$，在 $X=x$ 的条件下，$Y$ 服从 $N(x,1)$，则 $\rho_{XY} = $ ______。
+                    </p>
+                    
+                    <button class="accordion">查看详细解答</button>
+                    <div class="panel">
+                        <div class="panel-content">
+                            <div class="proof-box">
+                                <p><strong>【解】</strong>应填 $\displaystyle\frac{\sqrt{2}}{2}$。</p>
+                                
+                                <p style="margin-top: 15px;">由题设知，$EX = 0$，$DX = 1$。</p>
+                                
+                                <p style="margin-top: 15px;">又</p>
+                                <p style="text-align: center;">
+                                    $$E(Y|X=x) = x, \quad D(Y|X=x) = 1$$
+                                </p>
+                                
+                                <p style="margin-top: 15px;">故</p>
+                                <p>
+                                    $$\begin{align}
+                                    EY &= E[E(Y|X)] = EX = 0,\\
+                                    DY &= E[D(Y|X)] + D[E(Y|X)] = 1 + DX = 2,\\
+                                    E(XY) &= E[E(X \cdot Y|X)] = E[X \cdot E(Y|X)] = E(X^2) = DX + (EX)^2 = 1
+                                    \end{align}$$
+                                </p>
+                                
+                                <p style="margin-top: 15px;">因此</p>
+                                <p style="text-align: center;">
+                                    $$\rho_{XY} = \frac{1-0 \cdot 0}{\sqrt{1} \cdot \sqrt{2}} = \frac{\sqrt{2}}{2}$$
+                                </p>
+                            </div>
+                            
+                            <div class="note-box" style="margin-top: 20px;">
+                                <p><strong>【注】</strong>此题一般解决如下：</p>
+                                <p>由题设知 $EX = 0$，$DX = 1$，且 $(X,Y)$ 的概率密度为</p>
+                                <p style="text-align: center;">
+                                    $$f(x,y) = f_X(x) f_{Y|X}(y|x) = \frac{1}{2\pi} e^{-\frac{x^2}{2}} \cdot e^{-\frac{(y-x)^2}{2}}$$
+                                </p>
+                                
+                                <p style="margin-top: 15px;">从而</p>
+                                <p>
+                                    $$\begin{align}
+                                    EY &= \frac{1}{2\pi} \int_{-\infty}^{+\infty} \int_{-\infty}^{+\infty} y e^{-\frac{x^2}{2}} \cdot e^{-\frac{(y-x)^2}{2}} dxdy\\
+                                    &= \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{+\infty} e^{-\frac{x^2}{2}} dx \int_{-\infty}^{+\infty} y \cdot \frac{1}{\sqrt{2\pi}} e^{-\frac{(y-x)^2}{2}} dy\\
+                                    &= \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{+\infty} xe^{-\frac{x^2}{2}} dx\\
+                                    &= 0
+                                    \end{align}$$
+                                </p>
+                            </div>
+                            
+                            <div class="proof-box" style="margin-top: 20px;">
+                                <p>
+                                    $$\begin{align}
+                                    E(Y^2) &= \frac{1}{2\pi} \int_{-\infty}^{+\infty} \int_{-\infty}^{+\infty} y^2 e^{-\frac{x^2}{2}} \cdot e^{-\frac{(y-x)^2}{2}} dxdy\\
+                                    &= \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{+\infty} e^{-\frac{x^2}{2}} dx \int_{-\infty}^{+\infty} y^2 \cdot \frac{1}{\sqrt{2\pi}} e^{-\frac{(y-x)^2}{2}} dy\\
+                                    &= \int_{-\infty}^{+\infty} (x^2+1) \cdot \frac{1}{\sqrt{2\pi}} e^{-\frac{x^2}{2}} dx\\
+                                    &= 2
+                                    \end{align}$$
+                                </p>
+                                
+                                <p style="margin-top: 15px;">
+                                    $$DY = E(Y^2) - (EY)^2 = 2$$
+                                </p>
+                                
+                                <p>
+                                    $$\begin{align}
+                                    E(XY) &= \frac{1}{2\pi} \int_{-\infty}^{+\infty} \int_{-\infty}^{+\infty} xy e^{-\frac{x^2}{2}} \cdot e^{-\frac{(y-x)^2}{2}} dxdy\\
+                                    &= \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{+\infty} xe^{-\frac{x^2}{2}} dx \int_{-\infty}^{+\infty} y \cdot \frac{1}{\sqrt{2\pi}} e^{-\frac{(y-x)^2}{2}} dy\\
+                                    &= \int_{-\infty}^{+\infty} x^2 \cdot \frac{1}{\sqrt{2\pi}} e^{-\frac{x^2}{2}} dx\\
+                                    &= 1
+                                    \end{align}$$
+                                </p>
+                                
+                                <p style="margin-top: 15px;">
+                                    $$\text{Cov}(X,Y) = E(XY) - EXEY = 1$$
+                                </p>
+                                
+                                <p>所以 $X$ 与 $Y$ 的相关系数为</p>
+                                <p style="text-align: center; font-size: 1.3em; margin: 15px 0;">
+                                    $$\rho_{XY} = \frac{\text{Cov}(X,Y)}{\sqrt{DX}\sqrt{DY}} = \frac{\sqrt{2}}{2}$$
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>📖 条件数学期望 - 交互式教程</p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
+                使用MathJax渲染数学公式 | 需要网络连接
+            </p>
+        </footer>
+    </div>
+    
+    <button class="scroll-top" id="scrollTopBtn">↑</button>
+    
+    <script>
+        // 折叠面板功能
+        const accordions = document.querySelectorAll('.accordion');
+        
+        accordions.forEach(accordion => {
+            accordion.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const panel = this.nextElementSibling;
+                
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+        
+        // 返回顶部按钮
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+        
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 页面加载动画
+        window.addEventListener('load', () => {
+            document.querySelectorAll('section').forEach((section, index) => {
+                setTimeout(() => {
+                    section.style.opacity = '1';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
+

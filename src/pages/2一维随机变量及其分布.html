@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第2讲：一维随机变量及其分布 - 交互式教程</title>
+    
+    <!-- MathJax 配置 - 完整版本 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            CommonHTML: { 
+                scale: 110 
+            },
+            displayAlign: "center",
+            displayIndent: "0em"
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --primary-mint: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --primary-white: #ffffff;
+            --primary-dark: #343434;
+            --shadow: rgba(52, 52, 52, 0.1);
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--primary-dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        /* 导航栏 */
+        nav {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #d96a00 100%);
+            color: var(--primary-white);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 6px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        nav h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        nav .subtitle {
+            text-align: center;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+        
+        /* 容器 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        /* 目录卡片 */
+        .toc-card {
+            background: var(--primary-white);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 16px var(--shadow);
+            border-left: 6px solid var(--primary-orange);
+        }
+        
+        .toc-card h2 {
+            color: var(--primary-orange);
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toc-card h2::before {
+            content: "📚";
+            margin-right: 0.5rem;
+        }
+        
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        
+        .toc-item {
+            background: linear-gradient(135deg, var(--primary-mint) 0%, #91c8b8 100%);
+            padding: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+            color: var(--primary-dark);
+            box-shadow: 0 3px 6px var(--shadow);
+        }
+        
+        .toc-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px var(--shadow);
+            background: linear-gradient(135deg, #91c8b8 0%, var(--primary-mint) 100%);
+        }
+        
+        /* 内容卡片 */
+        .content-card {
+            background: var(--primary-white);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 16px var(--shadow);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .content-card h2 {
+            color: var(--primary-orange);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 3px solid var(--primary-yellow);
+        }
+        
+        .content-card h3 {
+            color: var(--primary-orange);
+            font-size: 1.4rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+            border-left: 4px solid var(--primary-mint);
+        }
+        
+        .content-card h4 {
+            color: var(--primary-dark);
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* 折叠面板 */
+        .accordion {
+            margin: 1.5rem 0;
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, var(--primary-mint) 0%, #b8dcd0 100%);
+            padding: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px var(--shadow);
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #b8dcd0 0%, var(--primary-mint) 100%);
+            transform: translateX(5px);
+        }
+        
+        .accordion-header::after {
+            content: "▼";
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background: #f9f9f9;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .accordion-content.active {
+            max-height: 5000px;
+            padding: 1.5rem;
+            margin-top: -10px;
+        }
+        
+        /* 注释框 */
+        .note-box {
+            background: linear-gradient(135deg, #fff8e1 0%, var(--primary-yellow) 50%, #fff8e1 100%);
+            border-left: 5px solid var(--primary-orange);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(242, 125, 0, 0.2);
+        }
+        
+        .note-box::before {
+            content: "📌 注意";
+            display: block;
+            font-weight: 700;
+            color: var(--primary-orange);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+        
+        /* 例题框 */
+        .example-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, var(--primary-mint) 100%);
+            border: 2px solid var(--primary-orange);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(166, 214, 201, 0.3);
+        }
+        
+        .example-box::before {
+            content: "📝 例题";
+            display: block;
+            font-weight: 700;
+            color: var(--primary-orange);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .solution {
+            background: var(--primary-white);
+            padding: 1.2rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-mint);
+        }
+        
+        .solution::before {
+            content: "💡 解答";
+            display: block;
+            font-weight: 600;
+            color: var(--primary-orange);
+            margin-bottom: 0.8rem;
+        }
+        
+        /* 公式块 */
+        .formula-block {
+            background: #fafafa;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            overflow-x: auto;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+        }
+        
+        /* 强调文本 */
+        .highlight {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, #fff4a3 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        /* 返回顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--shadow);
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            font-size: 1.5rem;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .back-to-top:hover {
+            background: #d96a00;
+            transform: translateY(-5px);
+        }
+        
+        /* 页脚 */
+        footer {
+            background: var(--primary-dark);
+            color: var(--primary-white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            nav h1 {
+                font-size: 1.4rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .content-card {
+                padding: 1.5rem;
+            }
+            
+            .toc-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* MathJax 公式样式优化 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        .MathJax_Display {
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <h1>📊 第2讲：一维随机变量及其分布</h1>
+        <div class="subtitle">概率论与数理统计讲义 · 交互式教程</div>
+    </nav>
+    
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 目录卡片 -->
+        <div class="toc-card">
+            <h2>三向解题法框架</h2>
+            <div class="toc-grid">
+                <div class="toc-item" onclick="scrollToSection('judge')">
+                    判分布<br>D₁(常规操作) + D₂₂(转换等价表达)
+                </div>
+                <div class="toc-item" onclick="scrollToSection('use')">
+                    用分布<br>D₁(常规操作)
+                </div>
+                <div class="toc-item" onclick="scrollToSection('find')">
+                    求分布<br>D₁(常规操作)
+                </div>
+            </div>
+        </div>
+        
+        <!-- 第一部分：判分布 -->
+        <div id="judge" class="content-card">
+            <h2>一、判分布（D₁(常规操作) + D₂₂(转换等价表达)）</h2>
+            
+            <h3>（1）判分布函数</h3>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    ① 充要条件
+                </div>
+                <div class="accordion-content">
+                    <p>$F(x)$ 是分布函数 $\Leftrightarrow$ $F(x)$ 是 $x$ 的单调不减且右连续的函数，且 $F(-\infty) = 0$，$F(+\infty) = 1$。</p>
+                </div>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    ② 分布函数形式大观
+                </div>
+                <div class="accordion-content">
+                    <p><strong>a.</strong> 设 $F(x)$ 是分布函数，$\lambda_i > 0$，$\sum_{i=1}^{n}\lambda_i = 1$，则 $\sum_{i=1}^{n}\lambda_i F_i(x)$ 是分布函数。特别地，算术平均值</p>
+                    <div class="formula-block">
+                        $$\frac{F_1(x) + F_2(x)}{2}$$
+                    </div>
+                    <p>是分布函数。</p>
+                    
+                    <p><strong>b.</strong> 设 $F(x)$ 是分布函数，则 $F(x)$ 在 $[x, x+T]$（$T>0$）上的均值 $\frac{1}{T}\int_x^{x+T}F(t)dt$ 是分布函数。</p>
+                    
+                    <p>可见，线性组合 $\sum_{i=1}^{n}\lambda_i F_i(x)$ 及其连续形式均仍是分布函数。</p>
+                    
+                    <p><strong>c.</strong> 凡荷平均值 $\sqrt{F_1(x)F_2(x)}$ 是分布函数。</p>
+                    
+                    <p><strong>d.</strong> $[F(x)]^n$，$1-[1-F(x)]^n$ 是分布函数。$\longrightarrow$ max、min 的分布函数</p>
+                </div>
+            </div>
+            
+            <h3>（2）判分布律的充要条件</h3>
+            <p>$\{p_i\}$ 是概率分布 $\Leftrightarrow$ $p_i \geq 0$，且 $\sum_i p_i = 1$。</p>
+            
+            <h3>（3）判概率密度</h3>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    ① 充要条件
+                </div>
+                <div class="accordion-content">
+                    <p>$f(x)$ 是概率密度 $\Leftrightarrow$ $f(x) \geq 0$，且 $\int_{-\infty}^{+\infty}f(x)dx = 1$。</p>
+                </div>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    ② 概率密度形式大观
+                </div>
+                <div class="accordion-content">
+                    <p><strong>a.</strong> 设 $f(x)$ 为概率密度，$\lambda_i > 0$，$\sum_{i=1}^{n}\lambda_i = 1$，则 $\sum_{i=1}^{n}\lambda_i f_i(x)$ 是概率密度。特别地，$\frac{1}{2}[f_1(x) + f_2(x)]$ 是概率密度。</p>
+                    
+                    <p><strong>b.</strong> 设 $f(x)$ 为概率密度，则 $f(x)$ 在 $[x, x+T]$（$T>0$）上的均值 $\frac{1}{T}\int_x^{x+T}f(t)dt$ 是概率密度。</p>
+                    
+                    <div class="note-box">
+                        证明：非负性显然，下证归一性。
+                        <div class="formula-block">
+                            $$\int_{-\infty}^{+\infty}\left[\frac{1}{T}\int_x^{x+T}f(t)dt\right]dx = \frac{1}{T}\int_{-\infty}^{+\infty}dt\int_{t-T}^{t}f(t)dx = \int_{-\infty}^{+\infty}f(t)dt = 1$$
+                        </div>
+                        可见，线性组合 $\sum_{i=1}^{n}\lambda_i f_i(x)$ 及其连续形式仍是概率密度。
+                    </div>
+                    
+                    <p><strong>c.</strong> 设 $X$ 的分布函数为 $F_i(x)$，概率密度为 $f_i(x)$，则 $\frac{2}{n}\sum_{i=1}^{n}F_i(x)f_i(x)$ 是概率密度。</p>
+                    
+                    <div class="note-box">
+                        证明：非负性显然，下证归一性。
+                        <div class="formula-block">
+                            $$\int_{-\infty}^{+\infty}\left[\frac{2}{n}\sum_{i=1}^{n}F_i(x)f_i(x)\right]dx = \frac{2}{n}\sum_{i=1}^{n}\int_{-\infty}^{+\infty}F_i(x)d[F_i(x)] = \frac{2}{n}\sum_{i=1}^{n}\frac{1}{2}F_i^2(x)\Big|_{-\infty}^{+\infty} = \frac{2}{n} \cdot \frac{1}{2} \cdot n = 1$$
+                        </div>
+                    </div>
+                    
+                    <p><strong>d.</strong> 设 $X$ 的分布函数为 $F(x)$，概率密度为 $f_i(x)$，则</p>
+                    <div class="formula-block">
+                        $$f_1(x)F_2(x)\cdots F_n(x) + F_1(x)f_2(x)\cdots F_n(x) + \cdots + F_1(x)F_2(x)\cdots f_n(x)$$
+                    </div>
+                    <p>是概率密度。</p>
+                    
+                    <p><strong>e.</strong> 设 $F(x)$ 是分布函数，$f(x)$ 是对应的概率密度，则 $n[F(x)]^{n-1}f(x)$，$n[1-F(x)]^{n-1}f(x)$ 是概率密度。</p>
+                </div>
+            </div>
+            
+            <h3>（4）反问题 $\longrightarrow$ D₂₂(转换等价表达)</h3>
+            <div class="formula-block">
+                用：
+                $$\begin{cases}
+                F(-\infty) = 0, \\
+                F(+\infty) = 1, \\
+                \sum_i p_i = 1, & \text{建方程，求参数。} \\
+                \int_{-\infty}^{+\infty}f(x)dx = 1
+                \end{cases}$$
+            </div>
+            <p style="text-align: right; color: var(--primary-orange);">max、min 的概率密度</p>
+            
+            <!-- 例题 2.1 -->
+            <div class="example-box">
+                <strong>例 2.1</strong> 设连续型随机变量 $X_1$、$X_2$ 的概率密度分别为 $f_1(x)$、$f_2(x)$，其分布函数分别为 $F_1(x)$、$F_2(x)$，记：
+                <div class="formula-block">
+                    $$g_1(x) = f_1(x)F_2(x) + f_2(x)F_1(x), \quad g_2(x) = f_1(x)F_1(x) + f_2(x)F_2(x), \quad g_3(x) = \frac{1}{2}[f_1(x) + f_2(x)]$$
+                    $$g_4(x) = \sqrt{f_1(x)f_2(x)}$$
+                </div>
+                则 $g_1(x)$、$g_2(x)$、$g_3(x)$、$g_4(x)$ 这 4 个函数中一定能作为概率密度的共有（&nbsp;&nbsp;&nbsp;&nbsp;）个。
+                <p>(A) 1 &nbsp;&nbsp;&nbsp; (B) 2 &nbsp;&nbsp;&nbsp; (C) 3 &nbsp;&nbsp;&nbsp; (D) 4</p>
+                
+                <div class="solution">
+                    【解】应选 (C)。
+                    <p>由"一、（3）"知 $g_1(x)$、$g_2(x)$、$g_3(x)$ 均可作为概率密度，但 $g_4(x) = \sqrt{f_1(x)f_2(x)}$ 不一定是概率密度，理由如下：</p>
+                    <p>由于 $\sqrt{f_1(x)f_2(x)} \leq \frac{f_1(x) + f_2(x)}{2}$，且只有当 $f_1(x) = f_2(x)$ 时，等号成立，故由积分保号性，得</p>
+                    <div class="formula-block">
+                        $$\int_{-\infty}^{+\infty}\sqrt{f_1(x)f_2(x)}dx < \int_{-\infty}^{+\infty}\frac{f_1(x) + f_2(x)}{2}dx = 1$$
+                    </div>
+                    <p>如 $f_1(x) = \begin{cases}2x, & 0 < x < 1, \\ 0, & \text{其他,}\end{cases}$ $f_2(x) = \begin{cases}4x^3, & 0 < x < 1, \\ 0, & \text{其他}\end{cases}$</p>
+                    <p>都是概率密度，但 $\sqrt{f_1(x)f_2(x)} = \begin{cases}2\sqrt{2}x^2, & 0 < x < 1, \\ 0, & \text{其他}\end{cases}$ 不是概率密度，因为</p>
+                    <div class="formula-block">
+                        $$\int_{-\infty}^{+\infty}\sqrt{f_1(x)f_2(x)}dx = \int_0^1 2\sqrt{2}x^2dx = \frac{2\sqrt{2}}{3} < 1$$
+                    </div>
+                    <p>综上所述，$g_1(x)$、$g_2(x)$、$g_3(x)$、$g_4(x)$ 这 4 个函数中一定能作为概率密度的共有 3 个。应选 (C)。</p>
+                </div>
+                
+                <div class="note-box">
+                    【注】思考为何 $\sqrt{f_1(x)f_2(x)}$ 不能作为概率密度，而 $\sqrt{F_1(x)F_2(x)}$ 可作为分布函数？
+                    <p>答：因为 $\sqrt{F_1(x)F_2(x)}$ 只计算 $x \to +\infty$ 时的极限。</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 第二部分：用分布 -->
+        <div id="use" class="content-card">
+            <h2>二、用分布（D₁(常规操作)）</h2>
+            
+            <h3>1. 离散型分布</h3>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    （1）0-1 分布
+                </div>
+                <div class="accordion-content">
+                    <p>$X \sim B(1, p)$，$X$（伯努利计数变量）$\sim \begin{pmatrix}1 & 0 \\ p & 1-p\end{pmatrix}$</p>
+                    <p>$EX = p$，$DX = p(1-p)$。</p>
+                </div>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    （2）二项分布
+                </div>
+                <div class="accordion-content">
+                    <p>$X \sim B(n, p)$ 满足以下条件：</p>
+                    <ul>
+                        <li>$n$ 次试验相互独立；</li>
+                        <li>$P(A) = p$；</li>
+                        <li>只有 $A$ 和 $\bar{A}$ 两种结果。</li>
+                    </ul>
+                    <p>记 $X$ 为 $A$ 发生的次数，则</p>
+                    <div class="formula-block">
+                        $$P\{X = k\} = C_n^k p^k(1-p)^{n-k}, \quad k = 0, 1, 2, \cdots, n$$
+                    </div>
+                    <p>$EX = np$，$DX = np(1-p)$。</p>
+                    
+                    <p><strong>二项分布 $X \sim B(n, p)$ 还具有如下性质：</strong></p>
+                    <p>① $Y = n - X$ 服从二项分布 $B(n, q)$，其中 $q = 1 - p$。</p>
+                    
+                    <div class="note-box">
+                        【注】设 $X$ 为 $A$ 发生的次数，$Y$ 为 $\bar{A}$ 发生的次数，即 $Y = n - X$，则
+                        <div class="formula-block">
+                            $$P\{Y = n - k\} = P\{X = k, Y = n - k\} = C_n^k p^k C_{n-k}^{n-k}(1-p)^{n-k} = P\{X = k\}$$
+                        </div>
+                        故 $Y \sim B(n, q)$，$q = 1 - p$。
+                    </div>
+                    
+                    <p>② 对固定的 $n$ 和 $p$，随着 $k$ 的增大，$P\{X = k\}$ 先上升到最大值而后下降，如图（a）和（b）所示。</p>
+                    <p><strong>a.</strong> 当 $(n+1)p$ 为整数时，$P\{X = (n+1)p\} = P\{X = (n+1)p - 1\}$ 最大。</p>
+                    <p><strong>b.</strong> 当 $(n+1)p$ 不为整数时，$P\{X = [(n+1)p]\}$ 最大，其中 $[(n+1)p]$ 表示 $(n+1)p$ 的整数部分。</p>
+                    
+                    <!-- 例题 2.2 -->
+                    <div class="example-box">
+                        <strong>例 2.2</strong> 设某篮球运动员每次投篮投中的概率是 0.8，每次投篮的结果相互独立，则该运动员在 10 次投篮中，最有可能投中的次数为 _______。
+                        
+                        <div class="solution">
+                            【解】应填 8。
+                            <p>此题为备选题，则可按照"二、1.（2）②b"的结论，将 $n = 10$，$p = 0.8$ 代入，直接求出</p>
+                            <div class="formula-block">
+                                $$(n+1)p = 11 \times 0.8 = 8.8, \quad k = [8.8] = 8$$
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 例题 2.3 -->
+                    <div class="example-box">
+                        <strong>例 2.3</strong> 投保人的损失事件发生时，保险公司的赔付额 $Y$ 与投保人的损失额 $X$ 的关系为
+                        <div class="formula-block">
+                            $$Y = \begin{cases}0, & X \leq 100, \\ X - 100, & X > 100.\end{cases}$$
+                        </div>
+                        设损失事件发生时，投保人的损失额 $X$ 的概率密度为
+                        <div class="formula-block">
+                            $$f(x) = \begin{cases}\frac{2 \times 100^2}{(100 + x)^3}, & x > 0, \\ 0, & x \leq 0.\end{cases}$$
+                        </div>
+                        <p>（1）求 $P\{Y > 0\}$ 及 $EY$；</p>
+                        <p>（2）这种损失事件在一年内发生的次数记为 $N$，保险公司在一年内就这种损失事件产生的理赔次数记为 $M$。假设 $N$ 服从参数为 8 的泊松分布，在 $N = n(n \geq 1)$ 的条件下，$M$ 服从二项分布 $B(n, p)$，其中 $p = P\{Y > 0\}$，求 $M$ 的概率分布。</p>
+                        
+                        <div class="solution">
+                            【解】（1）$P\{Y > 0\} = P\{X - 100 > 0\} = P\{X > 100\} = \int_{100}^{+\infty}\frac{2 \times 100^2}{(100 + x)^3}dx = \frac{1}{4}$。
+                            <div class="formula-block">
+                                $$EY = \int_{100}^{+\infty}(x - 100)\frac{2 \times 100^2}{(100 + x)^3}dx = 50$$
+                            </div>
+                            
+                            <p>（2）由题知，$N \sim P(8)$，$P\{M = m | N = n\} = C_n^m\left(\frac{1}{4}\right)^m\left(\frac{3}{4}\right)^{n-m}$，由乘法公式可得</p>
+                            <div class="formula-block">
+                                $$P\{M = m, N = n\} = P\{N = n\}P\{M = m | N = n\}$$
+                                $$= \frac{8^n}{n!}e^{-8} \cdot C_n^m\left(\frac{1}{4}\right)^m\left(\frac{3}{4}\right)^{n-m}$$
+                            </div>
+                            <p>其中 $m = 0, 1, \cdots, n; n = 1, 2, \cdots$。</p>
+                            <p>故 $M$ 的概率分布为</p>
+                            <div class="formula-block">
+                                $$P\{M = m\} = \sum_{n=m}^{+\infty}P\{M = m, N = n\} = \sum_{n=m}^{+\infty}\frac{8^n}{n!}e^{-8} \cdot C_n^m\left(\frac{1}{4}\right)^m\left(\frac{3}{4}\right)^{n-m}$$
+                                $$= \sum_{n=m}^{+\infty}\frac{8^n}{n!}e^{-8} \cdot \frac{n!}{m!(n-m)!}\left(\frac{1}{4}\right)^m\left(\frac{3}{4}\right)^{n-m}$$
+                                $$= \left(\frac{1}{4}\right)^m e^{-8}\frac{8^m}{m!}\sum_{n=m}^{+\infty}\frac{6^{n-m}}{(n-m)!}$$
+                                $$= \left(\frac{1}{4}\right)^m e^{-8}\frac{8^m}{m!}\sum_{n=m}^{+\infty}\frac{6^{n-m}}{(n-m)!} = \left(\frac{1}{4}\right)^m e^{-8}\frac{8^m}{m!} \cdot e^6 = \frac{2^m}{m!}e^{-2}$$
+                            </div>
+                            <p>即 $P\{M = m\} = \frac{2^m}{m!}e^{-2}, m = 0, 1, 2, \cdots$，即 $M \sim P(2)$。</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            【注】①此带带有实际背景的题目，在复习过程中可有效训练考生的微观能力，并提高考生综合应用数学工具解决实际问题的能力，且命题时，已将"引入符号"的工作给考生做好了，降低了此题的难度。
+                            <p>②提高数学题的阅读理解能力，是解决数学题的重要一环。这里不是指中文的阅读理解能力，而是将文字描述准确理解并转化成数学表述的能力。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    （3）离散型首次冲击分布（几何分布）
+                </div>
+                <div class="accordion-content">
+                    <p>在伯努利试验序列中 $P(A) = p$，$P(\bar{A}) = 1 - p$，首次出现 $A$ 即停止（即首次冲击即失效）。令 $X$ 为试验次数，则 $P\{X = k\} = p(1-p)^{k-1}, k = 1, 2, \cdots$，其中 $P\{X = 1\}$ 最大，且 $EX = \frac{1}{p}$，$DX = \frac{1-p}{p^2}$。</p>
+                    
+                    <!-- 例题 2.4 -->
+                    <div class="example-box">
+                        <strong>例 2.4</strong> 在伯努利试验序列中，$P(A) = \frac{1}{2}$，第 2 次出现 $A$ 即停止。令 $X$ 为试验次数，求 $X$ 的分布律及 $EX$、$DX$。
+                        
+                        <div class="solution">
+                            【解】记 $p = P(A) = \frac{1}{2}$。令 $X_1$ 表示第 1 次出现 $A$ 的试验次数，$X_2$ 表示第 2 次出现 $A$ 的试验次数，将总过程分为 2 个子过程，且因试验为独立重复进行，故这 2 个子过程依然是独立同分布的，于是就有 $X = X_1 + X_2$，且
+                            <div class="formula-block">
+                                $$P\{X_1 = k_1, X_2 = k_2\} = p(1-p)^{k_1-1} \cdot p(1-p)^{k_2-1} = p^2(1-p)^{k-2}$$
+                            </div>
+                            <p>其中，$k_1 + k_2 = k, k = 2, 3, \cdots$。</p>
+                            <p>故</p>
+                            <div class="formula-block">
+                                $$P\{X = k\} = \binom{k-1}{1} \cdot P\{X_1 = k_1, X_2 = k_2\} = (k-1)p^2(1-p)^{k-2}$$
+                                $$= (k-1)\left(\frac{1}{2}\right)^2\left(\frac{1}{2}\right)^{k-2} = (k-1)\left(\frac{1}{2}\right)^k$$
+                            </div>
+                            <p>于是我们可以知道，这是 2 个独立同分布的几何分布的 $X_1$ 之和的分布。</p>
+                            <p>由 $EX_1 = \frac{1}{p}$，$DX_1 = \frac{1-p}{p^2}$，得 $EX = \frac{2}{p} = 4$，$DX = \frac{2(1-p)}{p^2} = 4$。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    （4）超几何分布
+                </div>
+                <div class="accordion-content">
+                    <p>$N$ 件产品中有 $M$ 件正品，从中无放回地随机抽取 $n$ 件，则取到 $k$ 个正品的概率为</p>
+                    <div class="formula-block">
+                        $$P\{X = k\} = \frac{C_M^k C_{N-M}^{n-k}}{C_N^n}, \quad k \text{ 为整数，} \max\{0, n-N+M\} \leq k \leq \min\{n, M\}, \quad \text{且 } EX = \frac{nM}{N}$$
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    （5）泊松分布
+                </div>
+                <div class="accordion-content">
+                    <p>泊松分布是指某单位时间段，某场合下，源源不断的随机质点流的个数，也常用于描述稀有事件的概率。</p>
+                    <div class="formula-block">
+                        $$P\{X = k\} = \frac{\lambda^k}{k!}e^{-\lambda}(k = 0, 1, \cdots; \lambda > 0)$$
+                    </div>
+                    <p>$\lambda$ 表示强度（$EX = \lambda$），且 $P\{X = [\lambda]\}$ 最大，其中 $[\lambda]$ 表示对 $\lambda$ 取整。</p>
+                    
+                    <div class="note-box">
+                        <strong>【注】泊松定理</strong> 若 $X \sim B(n, p)$，当 $n$ 很大，$p$ 很小，$\lambda = np$ 适中时，二项分布可用泊松分布近似表示，即 $C_n^k p^k(1-p)^{n-k} \approx \frac{\lambda^k}{k!}e^{-\lambda}$。
+                        <p>一般地，当 $n \geq 20$，$p \leq 0.05$ 时，用泊松近似公式通近二项分布效果比较好，特别当 $n \geq 100$，$np \leq 10$ 时，通近效果更佳。要求考生"会用泊松分布近似表示二项分布"，应予以重视。</p>
+                    </div>
+                    
+                    <!-- 例题 2.5 -->
+                    <div class="example-box">
+                        <strong>例 2.5</strong> 一本 500 页的书，共有 100 个错字，每个错字等可能出现在每页，按照泊松定理，在给定的一页上至少有 2 个错字的概率为（&nbsp;&nbsp;&nbsp;&nbsp;）。
+                        <p>(A) $1 - e^{-\frac{2}{5}}$ &nbsp;&nbsp;&nbsp; (B) $1 - e^{-\frac{1}{5}}$ &nbsp;&nbsp;&nbsp; (C) $1 - \frac{5}{6}e^{\frac{1}{5}}$ &nbsp;&nbsp;&nbsp; (D) $1 - \frac{6}{5}e^{\frac{1}{5}}$</p>
+                        
+                        <div class="solution">
+                            【解】应选 (D)。
+                            <p>本题的关键是如何建立其概率。由题意，每个错字出现在某页上的概率为 $\frac{1}{500}$，100 个错字就可看成 100 次伯努利试验，于是问题就迎刃而解了。</p>
+                            <p>设 $A$ 表示"给定的一页上至少有 2 个错字"，于是有</p>
+                            <div class="formula-block">
+                                $$P(A) = 1 - P(\bar{A}) = 1 - \sum_{i=0}^{1}C_{100}^i\left(\frac{1}{500}\right)^i\left(1 - \frac{1}{500}\right)^{100-i}$$
+                                $$= 1 - \left(1 - \frac{1}{500}\right)^{100} - 100 \times \frac{1}{500} \times \left(1 - \frac{1}{500}\right)^{99}$$
+                            </div>
+                            <p>由泊松定理得 $P(A) \approx 1 - e^{-\frac{1}{5}} - \frac{1}{5}e^{-\frac{1}{5}} = 1 - \frac{6}{5}e^{-\frac{1}{5}}$。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>2. 连续型分布</h3>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    （1）均匀分布 $U(a, b)$
+                </div>
+                <div class="accordion-content">
+                    <p>如果随机变量 $X$ 的概率密度和分布函数分别为</p>
+                    <div class="formula-block">
+                        $$f(x) = \begin{cases}\frac{1}{b-a}, & a < x < b, \\ 0, & \text{其他,}\end{cases} \quad F(x) = \begin{cases}0, & x < a, \\ \frac{x-a}{b-a}, & a \leq x < b, \\ 1, & x \geq b,\end{cases}$$
+                    </div>
+                    <p>则称 $X$ 在区间 $(a, b)$ 上服从均匀分布，记为 $X \sim U(a, b)$ [见图（a）、（b）]。</p>
+                    
+                    <div class="note-box">
+                        【注】（1）区间 $(a, b)$ 可以是 $[a, b]$。
+                        <p>（2）几何概型是均匀分布的实际背景，于是有另一种表示形式"$X$ 在 $I$ 上的任一子区间取值的概率与该区间长度成正比"，即 $X \sim U(I)$。</p>
+                        <p>（3）$X \sim U(0, 1)$，则 $Y = 1 - X \sim U(0, 1)$。由此亦可知，$X_1$、$Y$ 服从相同的分布，但 $P\{X = Y\} = 0$，$X$ 与 $Y$ 不是相同的随机变量。</p>
+                        <p>（4）$X \sim U(0, 1)$，则 $Y = -2\ln X \sim E\left(\frac{1}{2}\right)$（见例 3.6）。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    （2）连续型首次冲击分布（指数分布）
+                </div>
+                <div class="accordion-content">
+                    <p>设随机质点流的计数过程为 $\{N_t(t \geq 0)\}$，$N_t$ 服从参数为 $\lambda t$ 的泊松分布。令 $T_1$，$\{T_1 > t\}$ 表示第 1 个质点在时刻 $t$ 之后到来，$B = \{N_t = 0\}$ 表示在 $[0, t]$ 时间上有 0 个质点到来，即 $A$ 与 $B$ 是相等事件，故 $P(A) = P(B)$，即</p>
+                    <div class="formula-block">
+                        $$P\{T_1 > t\} = P\{N_t = 0\} = \frac{(\lambda t)^0}{0!}e^{-\lambda t} = e^{-\lambda t}$$
+                    </div>
+                    <p>于是 $F_{T_1}(t) = P\{T_1 \leq t\} = 1 - e^{-\lambda t}, t > 0$。</p>
+                    <p>即 $T_1$ 服从参数为 $\lambda$ 的指数分布。</p>
+                    <p>如果 $X$ 的概率密度和分布函数分别为</p>
+                    <div class="formula-block">
+                        $$f(x) = \begin{cases}\lambda e^{-\lambda x}, & x \geq 0, (\lambda > 0) \\ 0, & \text{其他}\end{cases}, \quad F(x) = \begin{cases}1 - e^{-\lambda x}, & x \geq 0, (\lambda > 0) \\ 0, & x < 0\end{cases}$$
+                    </div>
+                    <p>则称 $X$ 服从参数为 $\lambda$ 的指数分布，记为 $X \sim E(\lambda)$ [见图（a）、（b）]。</p>
+                    
+                    <div class="note-box">
+                        【注】（1）当 $t, s > 0$ 时，$P\{X \geq t + s | X \geq t\} = P\{X \geq s\}$ 称为指数分布的无记忆性。
+                        <p>（2）$EX = \frac{1}{\lambda}$ 称为平均等待时间，也称为平均寿命时间，$\lambda$ 称为失效频率，它是一个常数，只有失效频率不变，元件无记忆，才有无记忆性。</p>
+                        <p>（3）特别地，当 $\lambda = \frac{1}{2}$ 时，即 $X \sim f(x) = \begin{cases}\frac{1}{2}e^{-\frac{x}{2}}, & x \geq 0, \\ 0, & x < 0\end{cases}$，也称 $X$ 服从自由度为 2 的 $\chi^2$ 分布，故 $E\left(\frac{1}{2}\right)$ 与 $\chi^2(2)$ 是同一分布。</p>
+                        <p>（4）若 $X \sim E(1)$，则 $2X \sim E\left(\frac{1}{2}\right)$，$2X \sim \chi^2(2)$。</p>
+                        <p>（5）若 $X \sim E(\lambda)$，则 $2\lambda X \sim E\left(\frac{1}{2}\right)$，$2\lambda X \sim \chi^2(2)$。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    （3）自由度为 1 的 $t$ 分布（标准柯西分布）
+                </div>
+                <div class="accordion-content">
+                    <p>若</p>
+                    <div class="formula-block">
+                        $$X \sim f(x) = \frac{1}{\pi(1+x^2)}, \quad -\infty < x < +\infty$$
+                    </div>
+                    <p>则称 $X$ 服从自由度为 1 的 $t$ 分布（标准柯西分布），即 $X \sim t(1)$（$t$ 分布的详细内容见第 8 讲的"一、3."），这是用于描述迫近共振的一种分布。</p>
+                    
+                    <div class="note-box">
+                        【注】它的 $EX$、$DX$ 均不存在，这是考生熟知的。
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    （4）正态分布
+                </div>
+                <div class="accordion-content">
+                    <p>若 $X \sim f(x) = \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(x-\mu)^2}{2\sigma^2}}, -\infty < x < +\infty$，其中 $-\infty < \mu < +\infty$，$\sigma > 0$，则称 $X$ 服从参数为 $(\mu, \sigma^2)$ 的正态分布，记为 $X \sim N(\mu, \sigma^2)$。</p>
+                    
+                    <div class="note-box">
+                        【注】（1）$\mu = 0$，$\sigma = 1$ 时的正态分布为标准正态分布，记为 $X \sim N(0, 1)$。
+                        <div class="formula-block">
+                            $$X \sim \varphi(x) = \frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}, \quad \Phi(x) = \int_{-\infty}^{x}\frac{1}{\sqrt{2\pi}}e^{-\frac{t^2}{2}}dt$$
+                        </div>
+                        <p>且</p>
+                        <div class="formula-block">
+                            $$Y = |X| \sim f_Y(y) = \begin{cases}\frac{2}{\sqrt{2\pi}}e^{-\frac{y^2}{2}}, & y > 0, \\ 0, & y \leq 0\end{cases} = \begin{cases}2\varphi(y), & y > 0, \\ 0, & y \leq 0.\end{cases}$$
+                        </div>
+                        <p>这个通理见例 2.8 注（2）。</p>
+                        <p>（2）计算公式与重要数据。</p>
+                        <p>若 $X \sim N(0, 1)$，则有</p>
+                        <div class="formula-block">
+                            $$\Phi(-x) = 1 - \Phi(x); \quad \Phi(0) = \frac{1}{2}$$
+                            $$P\{|X| \leq a\} = 2\Phi(a) - 1(a > 0)$$
+                        </div>
+                        <p>（3）标准化。$\longrightarrow$ D₂₂(化归转换样式)，牢记"标准化"操作</p>
+                        <p>若 $X \sim N(\mu, \sigma^2)$，则</p>
+                        <div class="formula-block">
+                            $$\frac{X - \mu}{\sigma} \sim N(0, 1)$$
+                        </div>
+                        <p>且有</p>
+                        <div class="formula-block">
+                            $$F(x) = P\{X \leq x\} = \Phi\left(\frac{x - \mu}{\sigma}\right)$$
+                            $$P\{a \leq X \leq b\} = \Phi\left(\frac{b - \mu}{\sigma}\right) - \Phi\left(\frac{a - \mu}{\sigma}\right)$$
+                            $$P\{\mu - k\sigma \leq X \leq \mu + k\sigma\} = 2\Phi(k) - 1(k > 0)$$
+                        </div>
+                        <p>（4）含参数的概率密度的结构。</p>
+                        <p>设函数 $f(x) = ke^{-(ax^2 + bx + c)}$，$x \in (-\infty, +\infty)$（$a > 0$），则</p>
+                        <div class="formula-block">
+                            $$ax^2 + bx + c = a\left[\left(x + \frac{b}{2a}\right)^2 + \frac{4ac - b^2}{4a^2}\right]$$
+                        </div>
+                        <p>且 $k = \sqrt{\frac{a}{\pi}}e^{\frac{4ac - b^2}{4a}}$，如 $f(x) = ke^{-\left(\frac{x^2}{4} + \frac{x}{2} + \frac{1}{4}\right)}$，则</p>
+                        <div class="formula-block">
+                            $$\frac{x^2}{4} + \frac{x}{2} + \frac{1}{4} = \frac{1}{4}\left[\left(x + 1\right)^2 + \frac{4 \cdot \frac{1}{4} \cdot \frac{1}{4} - \left(\frac{1}{2}\right)^2}{\frac{4}{4} \cdot \left(\frac{1}{4}\right)^2}\right] = \frac{1}{4}(x+1)^2$$
+                        </div>
+                        <p>且 $k = \sqrt{\frac{1}{4\pi}}e^0 = \frac{1}{2\sqrt{\pi}}$。</p>
+                    </div>
+                    
+                    <!-- 例题 2.9 -->
+                    <div class="example-box">
+                        <strong>例 2.9</strong> 设 $X_1$、$X_2$、$X_3$ 是随机变量，且
+                        <div class="formula-block">
+                            $$X_1 \sim N(0, 1), X_2 \sim N(0, 2^2), X_3 \sim N(5, 3^2)$$
+                            $$p_i = P\{-2 \leq X_i \leq 2\}(i = 1, 2, 3)$$
+                        </div>
+                        <p>则（&nbsp;&nbsp;&nbsp;&nbsp;）。</p>
+                        <p>(A) $p_1 > p_2 > p_3$ &nbsp;&nbsp;&nbsp; (B) $p_2 > p_1 > p_3$ &nbsp;&nbsp;&nbsp; (C) $p_3 > p_1 > p_2$ &nbsp;&nbsp;&nbsp; (D) $p_1 > p_2 > p_3$</p>
+                        
+                        <div class="solution">
+                            【解】应选 (A)。
+                            <div class="formula-block">
+                                $$p_1 = \Phi(2) - \Phi(-2) = 2\Phi(2) - 1$$
+                                $$p_2 = \Phi\left(\frac{2}{2}\right) - \Phi\left(\frac{-2}{2}\right) = 2\Phi(1) - 1$$
+                                $$p_3 = \Phi\left(\frac{2-5}{3}\right) - \Phi\left(\frac{-2-5}{3}\right) = \Phi(-1) - \Phi\left(-\frac{7}{3}\right)$$
+                            </div>
+                            <p>易见 $p_1 > p_2$。又 $p_2 > 0.5, p_3 < 0.5$，故 $p_2 > p_3$。</p>
+                            <p>综上可知，$p_1 > p_2 > p_3$。</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            【注】结合正态分布概率密度曲线的几何征以及概率 $p_i = P\{-2 \leq X_i \leq 2\}$ 的几何意义也可以直观判断出 $p_1 > p_2 > p_3$。
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>3. 利用分布求概率及反问题</h3>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    公式汇总
+                </div>
+                <div class="accordion-content">
+                    <p>（1）$X \sim F(x)$，则</p>
+                    <ul>
+                        <li>① $P\{X \leq a\} = F(a)$；</li>
+                        <li>② $P\{X < a\} = F(a - 0)$；</li>
+                        <li>③ $P\{X = a\} = P\{X \leq a\} - P\{X < a\} = F(a) - F(a - 0)$；</li>
+                        <li>④ $P\{a < X < b\} = P\{X < b\} - P\{X \leq a\} = F(b - 0) - F(a)$；</li>
+                        <li>⑤ $P\{a \leq X \leq b\} = P\{X \leq b\} - P\{X < a\} = F(b) - F(a - 0)$。</li>
+                    </ul>
+                    <p>（2）$X \sim p_i$，则 $P\{X \in I\} = \sum_{x_i \in I}P\{X = x_i\}$。</p>
+                    <p>（3）$X \sim f(x)$，则 $P\{X \in I\} = \int_I f(x)dx$。</p>
+                    <p>（4）反问题：已知概率反求参数。</p>
+                    
+                    <!-- 例题 2.10 -->
+                    <div class="example-box">
+                        <strong>例 2.10</strong> 设随机变量 $X$ 的分布函数为 $F(x) = \begin{cases}1 - e^{-\sqrt{\lambda x}}, & x > 0, (\lambda > 0), \\ 0, & \text{其他}\end{cases}$ 记
+                        <div class="formula-block">
+                            $$p_1 = P\{X > x\}, p_2 = P\{X > x + t | X > t\}, p_3 = P\{X > x - t | X > t\}$$
+                        </div>
+                        <p>其中 $x > 2t > 0$，则（&nbsp;&nbsp;&nbsp;&nbsp;）。</p>
+                        <p>(A) $p_3 > p_1 = p_2$ &nbsp;&nbsp;&nbsp; (B) $p_3 > p_1 > p_2$ &nbsp;&nbsp;&nbsp; (C) $p_3 = p_2 > p_1$ &nbsp;&nbsp;&nbsp; (D) $p_3 > p_2 > p_1$</p>
+                        
+                        <div class="solution">
+                            【解】应选 (D)。
+                            <p>由题意得</p>
+                            <div class="formula-block">
+                                $$p_1 = P\{X > x\} = 1 - F(x) = e^{-\sqrt{\lambda x}}$$
+                                $$p_2 = P\{X > x + t | X > t\} = \frac{P\{X > x + t\}}{P\{X > t\}} = \frac{e^{-\sqrt{\lambda(x+t)}}}{e^{-\sqrt{\lambda t}}} = e^{\sqrt{\lambda t} - \sqrt{\lambda x + \lambda t}}$$
+                                $$p_3 = P\{X > x - t | X > t\} = \frac{P\{X > \max\{x-t, t\}\}}{P\{X > t\}} = \frac{P\{X > x - t\}}{P\{X > t\}} = e^{\sqrt{\lambda t} - \sqrt{\lambda x - \lambda t}}$$
+                            </div>
+                            <p>由于</p>
+                            <div class="formula-block">
+                                $$\sqrt{\lambda t} - \sqrt{\lambda x - \lambda t} > \sqrt{\lambda t} - \sqrt{\lambda x + \lambda t}$$
+                            </div>
+                            <div class="formula-block">
+                                $$\sqrt{\lambda t} - \sqrt{\lambda x + \lambda t} - (-\sqrt{\lambda x}) = \sqrt{\lambda t} + \sqrt{\lambda x} - \sqrt{\lambda x + \lambda t} = \frac{2\lambda\sqrt{xt}}{\sqrt{\lambda t} + \sqrt{\lambda x} + \sqrt{\lambda x + \lambda t}} > 0$$
+                            </div>
+                            <p>故 $p_3 > p_2 > p_1$。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 第三部分：求分布 -->
+        <div id="find" class="content-card">
+            <h2>三、求分布（D₁(常规操作)）</h2>
+            
+            <p>根据题设条件，建立 $F(x) = P\{X \leq x\}$ 并计算此概率，这是对第 1、2 讲知识的综合应用。</p>
+            
+            <!-- 例题 2.11 -->
+            <div class="example-box">
+                <strong>例 2.11</strong> 设随机变量 $X$ 的概率分布为 $P\{X = 1\} = P\{X = 2\} = \frac{1}{2}$。在给定 $X = i$ 的条件下，随机变量 $Y$ 服从均匀分布 $U(0, i)$（$i = 1, 2$）。求 $Y$ 的分布函数 $F_Y(y)$ 和概率密度 $f_Y(y)$。
+                
+                <div class="solution">
+                    【解】
+                    <div class="formula-block">
+                        $$F_Y(y) = P\{Y \leq y\} = P\{X = 1\}P\{Y \leq y | X = 1\} + P\{X = 2\}P\{Y \leq y | X = 2\}$$
+                        $$= \frac{1}{2}P\{Y \leq y | X = 1\} + \frac{1}{2}P\{Y \leq y | X = 2\}$$
+                    </div>
+                    <p>当 $y < 0$ 时，$F_Y(y) = 0$；</p>
+                    <p>当 $0 \leq y < 1$ 时，$F_Y(y) = \frac{3y}{4}$；</p>
+                    <p>当 $1 \leq y < 2$ 时，$F_Y(y) = \frac{1}{2} + \frac{y}{4}$；</p>
+                    <p>当 $y \geq 2$ 时，$F_Y(y) = 1$。</p>
+                    
+                    <p>所以 $Y$ 的分布函数数为</p>
+                    <div class="formula-block">
+                        $$F_Y(y) = \begin{cases}0, & y < 0, \\ \frac{3y}{4}, & 0 \leq y < 1, \\ \frac{1}{2} + \frac{y}{4}, & 1 \leq y < 2, \\ 1, & y \geq 2.\end{cases}$$
+                    </div>
+                    
+                    <p>随机变量 $Y$ 的概率密度为</p>
+                    <div class="formula-block">
+                        $$f_Y(y) = \begin{cases}\frac{3}{4}, & 0 < y < 1, \\ \frac{1}{4}, & 1 < y < 2, \\ 0, & \text{其他.}\end{cases}$$
+                    </div>
+                </div>
+                
+                <div class="note-box">
+                    【注】计算 $F(x) = P\{X \leq x\}$ 时，若 $\{X \leq x\}$ 是复杂事件，应先将其转化为完备事件组的并，然后用全概率公式计算 $P\{X \leq x\}$。
+                </div>
+            </div>
+            
+            <!-- 例题 2.12 -->
+            <div class="example-box">
+                <strong>例 2.12</strong> 设水平地面上车轮半径为 1，车轮表面有一记号点 $P$，$X$ 为随机停车时点 $P$ 到水平地面的高度，求：
+                <p>（1）$X$ 的概率密度；</p>
+                <p>（2）$DX$。</p>
+                
+                <div class="solution">
+                    【解】（1）由题意知，$0 \leq X \leq 2$。故
+                    <p>当 $x < 0$ 时，$F(x) = P\{X \leq x\} = 0$。</p>
+                    <p>当 $x \geq 2$ 时，$F(x) = P\{X \leq x\} = 1$。</p>
+                    <p>当 $0 \leq x < 1$ 时，如图（a）所示，记 $|PA| = x$，则 $|PB| = 1 - x$，于是 $\sin\theta = 1 - x, \theta = \arcsin(1-x)$，弧孤 $\widehat{CP}$ 的长度为</p>
+                    <div class="formula-block">
+                        $$\pi - 2\theta = \pi - 2\arcsin(1-x) = \pi + 2\arcsin(x-1)$$
+                    </div>
+                    <p>当 $1 \leq x < 2$ 时，如图（b）所示，记 $|PA| = x$，则 $|PB| = x - 1$，于是 $\sin\theta = x - 1, \theta = \arcsin(x-1)$，优弧 $\widehat{CP}$ 的长度为 $\pi + 2\theta = \pi + 2\arcsin(x-1)$，于是当 $0 \leq x < 2$ 时，</p>
+                    <div class="formula-block">
+                        $$F(x) = P\{X \leq x\} = \frac{\pi + 2\arcsin(x-1)}{2\pi} = \frac{1}{2} + \frac{1}{\pi}\arcsin(x-1)$$
+                    </div>
+                    <p>故</p>
+                    <div class="formula-block">
+                        $$f(x) = \begin{cases}\frac{1}{\pi} \cdot \frac{1}{\sqrt{1-(x-1)^2}}, & 0 < x < 2, \\ 0, & \text{其他.}\end{cases}$$
+                    </div>
+                    
+                    <p>（2）</p>
+                    <div class="formula-block">
+                        $$EX = \int_0^2 xf(x)dx = \frac{1}{\pi}\int_0^2 \frac{x}{\sqrt{1-(x-1)^2}}dx$$
+                        $$\overset{x-1=t}{=} \frac{1}{\pi}\int_{-1}^1 \frac{t+1}{\sqrt{1-t^2}}dt = \frac{1}{\pi}\int_{-1}^1 \frac{1}{\sqrt{1-t^2}}dt = \frac{2}{\pi} \cdot \arcsin t\Big|_0^1 = 1$$
+                        $$E(X^2) = \int_0^2 x^2f(x)dx = \frac{1}{\pi}\int_0^2 \frac{x^2}{\sqrt{1-(x-1)^2}}dx$$
+                        $$\overset{x-1=t}{=} \frac{1}{\pi}\int_{-1}^1 \frac{t^2 + 2t + 1}{\sqrt{1-t^2}}dt$$
+                        $$= \frac{1}{\pi}\int_{-1}^1 \frac{2}{\sqrt{1-t^2}}dt + \frac{1}{\pi}\int_{-1}^1 \sqrt{1-t^2}dt = \frac{3}{2}$$
+                    </div>
+                    <p>故 $DX = E(X^2) - (EX)^2 = \frac{3}{2} - 1 = \frac{1}{2}$。</p>
+                </div>
+                
+                <div class="note-box">
+                    【注】类似例 2.3 那样带有实际背景的问题，对考生提出较高要求的同时，可以体现较好的区分度。
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <footer>
+            <p>📚 概率论与数理统计 · 第2讲 · 一维随机变量及其分布</p>
+            <p>交互式教程 © 2025 | 需要网络连接以加载 MathJax 数学公式库</p>
+        </footer>
+        
+        <!-- 返回顶部按钮 -->
+        <div class="back-to-top" onclick="scrollToTop()">↑</div>
+    </div>
+    
+    <script>
+        // 折叠面板功能
+        function toggleAccordion(element) {
+            const content = element.nextElementSibling;
+            const isActive = content.classList.contains('active');
+            
+            // 关闭所有其他面板
+            document.querySelectorAll('.accordion-content').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.accordion-header').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 切换当前面板
+            if (!isActive) {
+                content.classList.add('active');
+                element.classList.add('active');
+            }
+        }
+        
+        // 平滑滚动到指定章节
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        // 返回顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 显示/隐藏返回顶部按钮
+        window.addEventListener('scroll', function() {
+            const backToTop = document.querySelector('.back-to-top');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+        
+        // 页面加载完成后的提示
+        window.addEventListener('load', function() {
+            console.log('📊 交互式教程已加载完成！');
+            console.log('💡 使用提示：');
+            console.log('   - 点击目录卡片快速跳转到对应章节');
+            console.log('   - 点击折叠面板标题展开/收起内容');
+            console.log('   - 使用右下角按钮快速返回顶部');
+            console.log('   - 所有数学公式由 MathJax 渲染');
+        });
+    </script>
+</body>
+</html>
+
+<!--
+使用说明：
+1. 保存方法：
+   - 将此代码复制到文本编辑器中
+   - 另存为 .html 文件（如：一维随机变量及其分布.html）
+   - 确保文件编码为 UTF-8
+
+2. 网络要求：
+   - 需要网络连接以加载 MathJax（数学公式渲染库）
+   - 需要网络连接以加载 Google Fonts（字体）
+   - 如无网络连接，数学公式可能无法正确显示
+
+3. 浏览器支持：
+   - 推荐使用现代浏览器：Chrome、Firefox、Edge、Safari
+   - 建议浏览器版本：Chrome 90+、Firefox 88+、Edge 90+、Safari 14+
+
+4. 功能特性：
+   - 响应式设计，适配桌面和移动设备
+   - 交互式折叠面板，点击标题展开/收起内容
+   - 目录卡片快速导航
+   - 平滑滚动效果
+   - 返回顶部按钮
+   - 完整的 MathJax 数学公式渲染
+
+5. 测试方法：
+   - 双击打开 HTML 文件
+   - 或在浏览器中拖入文件
+   - 检查数学公式是否正确渲染
+   - 测试交互功能是否正常
+
+6. 故障排除：
+   - 如果数学公式不显示：检查网络连接，刷新页面
+   - 如果页面显示异常：清除浏览器缓存，重新打开
+   - 如果折叠面板不工作：确保 JavaScript 已启用
+
+7. 定制建议：
+   - 可在 CSS 的 :root 部分修改颜色主题
+   - 可在 nav 部分修改标题内容
+   - 可添加更多章节内容到 .content-card 中
+-->

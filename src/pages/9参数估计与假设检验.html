@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第9讲 参数估计与假设检验 - 交互式教程</title>
+    
+    <!-- MathJax 完整配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            SVG: {
+                scale: 110
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 100%);
+            color: #343434;
+            line-height: 1.8;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #343434 100%);
+            color: #ffffff;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #343434;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            transform: translateY(-2px);
+        }
+        
+        main {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        h3 {
+            color: #343434;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+            padding-left: 15px;
+            border-left: 5px solid #f7d117;
+        }
+        
+        h4 {
+            color: #f27d00;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        .concept-box {
+            background: linear-gradient(135deg, #a6d6c9 0%, #f7d117 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .formula-box {
+            background: #f5f5f5;
+            border-left: 5px solid #f27d00;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        
+        .example-box {
+            background: #fff9e6;
+            border: 2px solid #f7d117;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        
+        .example-box h4 {
+            color: #f27d00;
+            margin-bottom: 15px;
+        }
+        
+        .note-box {
+            background: #e6f7ff;
+            border-left: 5px solid #a6d6c9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        
+        .note-box::before {
+            content: "📌 注意：";
+            font-weight: bold;
+            color: #f27d00;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #f27d00;
+            color: #ffffff;
+            padding: 15px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .collapsible {
+            background: #f27d00;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            border-radius: 10px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        
+        .collapsible:hover {
+            background: #d16d00;
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .content-inner {
+            padding: 20px;
+        }
+        
+        .flowchart {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            display: none;
+        }
+        
+        .back-to-top:hover {
+            background: #d16d00;
+            transform: translateY(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            main {
+                padding: 20px;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+        
+        footer {
+            background: #343434;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第9讲 参数估计与假设检验</h1>
+            <p>数理统计核心专题 - 交互式教程</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#overview">概览</a></li>
+                <li><a href="#point-estimation">点估计</a></li>
+                <li><a href="#interval-estimation">区间估计</a></li>
+                <li><a href="#hypothesis-testing">假设检验</a></li>
+                <li><a href="#examples">例题精选</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <section id="overview">
+                <h2>📊 三向解题法概览</h2>
+                <div class="concept-box">
+                    <h3>核心框架</h3>
+                    <p>参数估计与假设检验的学习遵循以下三个主要目标：</p>
+                </div>
+                
+                <div class="flowchart">
+                    <h4>参数估计与假设检验 (O₁(Ⅲ任性目标))</h4>
+                    <div style="margin: 20px 0;">
+                        <div style="background: #a6d6c9; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                            <strong>1. 求点估计、作评价（仅数学一）</strong><br>
+                            求点估计、求数字特征（仅数学三）<br>
+                            O₁(Ⅲ任性目标1)
+                        </div>
+                        <div style="background: #f7d117; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                            <strong>2. 作区间估计、假设检验、求两类错误</strong><br>
+                            O₂(Ⅲ任性目标2、3、4)（仅数学一）
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="point-estimation">
+                <h2>📍 一、求点估计、作评价（O₁(Ⅲ任性目标1)）</h2>
+                
+                <h3>1. 矩估计 (D₁(常规操作))</h3>
+                
+                <button class="collapsible">基本原理与方法</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p><strong>对于一个参数：</strong></p>
+                        <div class="formula-box">
+                            <p>a. 用一阶矩建立方程：令 $\widehat{X} = EX$；</p>
+                            <p>b. 若 "a" 不能用，用二阶矩建立方程：令 $\frac{1}{n}\sum_{i=1}^{n}X_i^2 = E(X^2)$</p>
+                        </div>
+                        
+                        <p>一个方程解出一个参数即可作为矩估计。</p>
+                        
+                        <p><strong>对于两个参数：</strong></p>
+                        <div class="formula-box">
+                            用一阶矩与二阶矩建立两个方程，即 $\overline{X} = EX$ 与 $\frac{1}{n}\sum_{i=1}^{n}X_i^2 = E(X^2)$，两个方程解出两个参数即可作为矩估计。
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔍 例 9.1</h4>
+                    <p>设总体 $X$ 的概率密度为 $f(x) = \frac{1}{2\theta}e^{-\frac{|x|}{\theta}}$，$-\infty < x < +\infty$，$\theta > 0$。$X_1, X_2, \cdots, X_n$ 是取自总体 $X$ 的样本，则未知参数 $\theta$ 的矩估计量为________。</p>
+                    
+                    <button class="collapsible">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>解：</strong>应填 $\sqrt{\frac{1}{2n}\sum_{i=1}^{n}X_i^2}$</p>
+                            
+                            <p>总体只含有一个参数 $\theta$，但由于一阶矩建立的方程</p>
+                            <div class="formula-box">
+                                $$EX = \int_{-\infty}^{+\infty} x \cdot \frac{1}{2\theta}e^{-\frac{|x|}{\theta}}dx = 0$$
+                            </div>
+                            <p>无法解出 $\theta$，因此采用总体二阶矩建立方程：</p>
+                            <div class="formula-box">
+                                $$E(X^2) = \int_{-\infty}^{+\infty} x^2 \cdot \frac{1}{2\theta}e^{-\frac{|x|}{\theta}}dx = 2 \cdot \frac{1}{2\theta}\int_{0}^{+\infty} x^2 \cdot e^{-\frac{x}{\theta}}dx$$
+                                $$= \theta^2 \int_{0}^{+\infty} \frac{x^2}{\theta^2}e^{-\frac{x}{\theta}}d\left(\frac{x}{\theta}\right) \stackrel{t = \frac{x}{\theta}}{=} \theta^2\int_{0}^{+\infty} t^2e^{-t}dt = \theta^2\Gamma(3) = 2\theta^2$$
+                            </div>
+                            <p>其中 $\Gamma(n+1) = \int_{0}^{+\infty} x^n e^{-x}dx = n!$。用样本二阶原点矩 $A_2 = \frac{1}{n}\sum_{i=1}^{n}X_i^2$ 代替总体二阶原点矩 $E(X^2)$ 得到 $\theta$ 的矩估计量为</p>
+                            <div class="formula-box">
+                                $$\widehat{\theta} = \sqrt{\frac{A_2}{2}} = \sqrt{\frac{1}{2n}\sum_{i=1}^{n}X_i^2}$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔍 例 9.2</h4>
+                    <p>设总体 $X$ 服从含有两个参数的指数分布，其概率密度为</p>
+                    <div class="formula-box">
+                        $$f(x;\theta,\lambda) = \begin{cases} \frac{1}{\lambda}e^{-\frac{1}{\lambda}(x-\theta)}, & x \geq \theta_0 (\lambda > 0) \\ 0, & \text{其他} \end{cases}$$
+                    </div>
+                    <p>$X_1, X_2, \cdots, X_n$ 是来自总体 $X$ 的一个样本，求未知参数 $\lambda$、$\theta$ 的矩估计量。</p>
+                    
+                    <button class="collapsible">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>解：</strong>这是求两个未知参数矩估计量的问题。由于</p>
+                            <div class="formula-box">
+                                $$EX = \int_{\theta}^{+\infty} x \cdot \frac{1}{\lambda}e^{-\frac{1}{\lambda}(x-\theta)}dx \stackrel{\delta x - \theta = t}{=} \int_{0}^{+\infty} \frac{t+\theta}{\lambda}e^{-\frac{t}{\lambda}}dt$$
+                                $$= ET + \theta = \lambda + \theta$$
+                            </div>
+                            <div class="formula-box">
+                                $$E(X^2) = \int_{\theta}^{+\infty} x^2 \cdot \frac{1}{\lambda}e^{-\frac{1}{\lambda}(x-\theta)}dx \stackrel{\delta x - \theta = t}{=} \int_{0}^{+\infty} \frac{(t+\theta)^2}{\lambda}e^{-\frac{t}{\lambda}}dt$$
+                                $$= E[(T+\theta)^2] = E(T^2) + 2\theta ET + \theta^2 = 2\lambda^2 + 2\theta\lambda + \theta^2$$
+                            </div>
+                            <p>矩法方程为</p>
+                            <div class="formula-box">
+                                $$\begin{cases} EX = \overline{X} \\ E(X^2) = \frac{1}{n}\sum_{i=1}^{n}X_i^2 \end{cases} \text{ 即 } \begin{cases} \lambda + \theta = \overline{X} \\ \lambda^2 + (\lambda + \theta)^2 = \frac{1}{n}\sum_{i=1}^{n}X_i^2 \end{cases}$$
+                            </div>
+                            <p>由此解得 $\lambda$、$\theta$ 的矩估计量分别为</p>
+                            <div class="formula-box">
+                                $$\widehat{\lambda} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}X_i^2 - \overline{X}^2}, \quad \widehat{\theta} = \overline{X} - \sqrt{\frac{1}{n}\sum_{i=1}^{n}X_i^2 - \overline{X}^2}$$
+                            </div>
+                            <p>其中 $\overline{X} = \frac{1}{n}\sum_{i=1}^{n}X_i$</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>2. 最大似然估计 (D₁(常规操作)+D₂₂(转换等价表述))</h3>
+                
+                <button class="collapsible">最大似然估计原理</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>对未知参数 $\theta$ 进行估计时，在该参数可能的取值范围 $I$ 内选取，使 "样本获此观测值 $x_1, x_2, \cdots, x_n$" 的概率最大的参数值 $\widehat{\theta}$ 作为 $\theta$ 的估计，这样选定的 $\widehat{\theta}$ 最有利于 $x_1, x_2, \cdots, x_n$ 的出现，即 "参数 $\theta$ 为多少时，观测值出现的概率最大"。</p>
+                        
+                        <div class="note-box">
+                            若联合概率密度（连续型）或联合分布律（离散型）中有与参数 $\theta$ 无关的因式，为便于计算，去掉这些因式不会影响对 $\theta$ 的最大似然估计，比如 $P\{X_1 = k_1, X_2 = k_2, \cdots, X_n = k_n\} = n! \prod_{i=1}^{n} \frac{[P(\theta)]^{k_i}}{(k_i)!}$，可令 $L(\theta) = \prod_{i=1}^{n}[P(\theta)]^{k_i}$，但要注意，若求 $P\{X_1 = k_1, X_2 = k_2, \cdots, X_n = k_n\}$，则不能去掉任何因式。
+                        </div>
+                        
+                        <p><strong>求参数步骤：</strong></p>
+                        <div class="formula-box">
+                            <ol>
+                                <li>若似然函数有驻点，则 $\frac{dL}{d\theta} = 0$ 或 $\frac{d(\ln L)}{d\theta} = 0$，解出 $\widehat{\theta}$；</li>
+                                <li>若似然函数无驻点(单调)，则用定义求 $\widehat{\theta}$；</li>
+                                <li>若似然函数为常数，则用定义求 $\widehat{\theta}$，此时 $\widehat{\theta}$ 不唯一。</li>
+                            </ol>
+                        </div>
+                        
+                        <p><strong>③最大似然估计量的不变性原则：</strong></p>
+                        <p>设 $\widehat{\theta}$ 是总体分布中未知参数 $\theta$ 的最大似然估计，函数 $u = u(\theta)$ 具有单值反函数 $\theta = \theta(u)$，则 $\widehat{u} = u(\widehat{\theta})$ 是 $u(\theta)$ 的最大似然估计。</p>
+                        
+                        <p><strong>④双总体的最大似然估计。</strong></p>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔍 例 9.3</h4>
+                    <p>设总体 $X$ 服从参数为 $\lambda$ ($\lambda > 0$ 但未知) 的泊松分布，$X_1, X_2, \cdots, X_n$ 是来自总体 $X$ 的一个简单随机样本，则 $P\{X = 0\}$ 的最大似然估计量为________。</p>
+                    
+                    <button class="collapsible">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>解：</strong>应填 $e^{-\overline{X}}$</p>
+                            <p>设 $X_1, X_2, \cdots, X_n$ 对应的样本值为 $x_1, x_2, \cdots, x_n$，则似然函数为</p>
+                            <div class="formula-box">
+                                $$L(\lambda) = P\{X = x_1\}P\{X = x_2\}\cdots P\{X = x_n\}$$
+                                $$= \frac{\lambda^{x_1}}{x_1!}e^{-\lambda} \cdot \frac{\lambda^{x_2}}{x_2!}e^{-\lambda} \cdot \ldots \cdot \frac{\lambda^{x_n}}{x_n!}e^{-\lambda} = \frac{e^{-n\lambda}}{x_1!x_2!\cdots x_n!}\lambda^{\sum_{i=1}^{n}x_i}$$
+                            </div>
+                            <p>即</p>
+                            <div class="formula-box">
+                                $$\ln L(\lambda) = -n\lambda - \sum_{i=1}^{n}\ln(x_i!) + \left(\sum_{i=1}^{n}x_i\right)\ln\lambda$$
+                            </div>
+                            <p>令 $\frac{d[\ln L(\lambda)]}{d\lambda} = 0$，即 $-n + \frac{\sum_{i=1}^{n}x_i}{\lambda} = 0$，解得 $\widehat{\lambda} = \frac{1}{n}\sum_{i=1}^{n}x_i = \overline{x}$，即 $\lambda$ 的最大似然估计量为 $\widehat{\lambda} = \frac{1}{n}\sum_{i=1}^{n}X_i = \overline{X}$。代入</p>
+                            <p>$P\{X = 0\} = \frac{\lambda^0}{0!}e^{-\lambda}$，由最大似然估计量的不变性原则，得 $P\{X = 0\}$ 的最大似然估计量为 $e^{-\overline{X}}$。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note-box">
+                    <strong>【注】常见分布的矩估计量和最大似然估计量如表所示。</strong>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>$X$ 服从的分布</th>
+                            <th>矩估计量</th>
+                            <th>最大似然估计量</th>
+                        </tr>
+                        <tr>
+                            <td>0-1 分布</td>
+                            <td>$\widehat{p} = \overline{X}$</td>
+                            <td>$\widehat{p} = \overline{X}$</td>
+                        </tr>
+                        <tr>
+                            <td>$B(n,p)$</td>
+                            <td>$\widehat{p} = \frac{\overline{X}}{n}$</td>
+                            <td>$\widehat{p} = \frac{\overline{X}}{n}$</td>
+                        </tr>
+                        <tr>
+                            <td>$G(p)$</td>
+                            <td>$\widehat{p} = \frac{1}{\overline{X}}$</td>
+                            <td>$\widehat{p} = \frac{1}{\overline{X}}$</td>
+                        </tr>
+                        <tr>
+                            <td>$P(\lambda)$</td>
+                            <td>$\widehat{\lambda} = \overline{X}$</td>
+                            <td>$\widehat{\lambda} = \overline{X}$</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="table-container" style="margin-top: 20px;">
+                    <table>
+                        <tr>
+                            <th>$X$ 服从的分布</th>
+                            <th>矩估计量</th>
+                            <th>最大似然估计量</th>
+                        </tr>
+                        <tr>
+                            <td>$U(a,b)$</td>
+                            <td>
+                                $\widehat{a} = \overline{X} - \sqrt{3\sum_{i=1}^{n}(X_i - \overline{X})^2}$<br>
+                                $\widehat{b} = \overline{X} + \sqrt{\frac{3}{n}\sum_{i=1}^{n}(X_i - \overline{X})^2}$
+                            </td>
+                            <td>
+                                $\widehat{a} = \min\{X_1, X_2, \cdots, X_n\}$<br>
+                                $\widehat{b} = \max\{X_1, X_2, \cdots, X_n\}$
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>$E(\lambda)$</td>
+                            <td>$\widehat{\lambda} = \frac{1}{\overline{X}}$</td>
+                            <td>$\widehat{\lambda} = \frac{1}{\overline{X}}$</td>
+                        </tr>
+                        <tr>
+                            <td>$N(\mu,\sigma^2)$</td>
+                            <td>
+                                $\widehat{\mu} = \overline{X}, \quad \widehat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^{n}(X_i - \overline{X})^2$
+                            </td>
+                            <td>
+                                $\mu, \sigma^2$ 均未知：$\widehat{\mu} = \overline{X}, \widehat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^{n}(X_i - \overline{X})^2$；<br>
+                                $\mu$ 已知，$\sigma^2$ 未知：$\widehat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^{n}(X_i - \mu)^2$；<br>
+                                $\mu$ 未知，$\sigma^2$ 已知：$\widehat{\mu} = \overline{X}$
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <h3>3. 估计量的评价（仅数学一）(D₁(常规操作)+D₂₃(化归经典形式))</h3>
+                
+                <button class="collapsible">评价标准详解</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <h4>（1）无偏性</h4>
+                        <p>对于估计量 $\widehat{\theta}$，若 $E\widehat{\theta} = \theta$，则称 $\widehat{\theta}$ 为 $\theta$ 的无偏估计量。</p>
+                        
+                        <h4>（2）有效性</h4>
+                        <p>若 $E\widehat{\theta}_1 = \theta$，$E\widehat{\theta}_2 = \theta$，即 $\widehat{\theta}_1, \widehat{\theta}_2$ 均是 $\theta$ 的无偏估计量，当 $D\widehat{\theta}_1 < D\widehat{\theta}_2$ 时，称 $\widehat{\theta}_1$ 比 $\widehat{\theta}_2$ 有效。</p>
+                        
+                        <h4>（3）一致性（相合性）（只针对大样本 $n \to \infty$）</h4>
+                        <p>若 $\widehat{\theta}$ 为 $\theta$ 的估计量，则对任意 $\varepsilon > 0$，有</p>
+                        <div class="formula-box">
+                            $$\lim_{n\to\infty} P\{|\widehat{\theta} - \theta| \geq \varepsilon\} = 0$$
+                        </div>
+                        <p>或</p>
+                        <div class="formula-box">
+                            $$\lim_{n\to\infty} P\{|\widehat{\theta} - \theta| < \varepsilon\} = 1$$
+                        </div>
+                        <p>即当 $\widehat{\theta} \stackrel{P}{\longrightarrow} \theta$ 时，称 $\widehat{\theta}$ 为 $\theta$ 的一致（或相合）估计。</p>
+                        
+                        <div class="note-box">
+                            <p>一般利用切比雪夫不等式 $P\{|X - EX| \geq \varepsilon\} \leq \frac{DX}{\varepsilon^2}$</p>
+                            <p>或常做大数定律 $P\{|X - EX| < \varepsilon\} = 1 - P\{|X - EX| \geq \varepsilon\}$</p>
+                            <p>由 $\widehat{\theta} \stackrel{P}{\longrightarrow} EX$</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>4. 估计量的数字特征（仅数学三）(D₁(常规操作))</h3>
+                
+                <div class="concept-box">
+                    <p>①求 $E\widehat{\theta}$</p>
+                    <p>②求 $D\widehat{\theta}$</p>
+                    <p>③验证 $\widehat{\theta}$ 是否依概率收敛于 $\theta$，即是否有 $\widehat{\theta} \stackrel{P}{\longrightarrow} \theta$，即对任意 $\varepsilon > 0$，有</p>
+                    <div class="formula-box">
+                        $$\lim_{\theta\to\infty} P\{|\widehat{\theta} - \theta| \geq \varepsilon\} = 0 \text{ 或 } \lim_{n\to\infty} P\{|\widehat{\theta} - \theta| < \varepsilon\} = 1$$
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔍 例 9.7</h4>
+                    <p>设 $X_1, \cdots, X_n$ 独立同分布，$X_i$ 可取且只可取 4 个不同数值，且相应的取值概率分别为</p>
+                    <div class="formula-box">
+                        $$p_1 = 1-\theta, p_2 = \theta - \theta^2, p_3 = \theta^2 - \theta^3, p_4 = \theta^3$$
+                    </div>
+                    <p>记 $N_i (i=1,2,3,4)$ 为从总体抽取的 $n$ 个样本中出现 4 个不同数值所对应的个数。</p>
+                    <p>(1)（仅数学一）确定 $a_1, a_2, a_3, a_4$ 使 $T = \sum_{i=1}^{4}a_iN_i$ 为 $\theta$ 的无偏估计；</p>
+                    <p>（仅数学三）确定 $a_1, a_2, a_3, a_4$ 使 $E\left(\sum_{i=1}^{4}a_iN_i\right) = \theta$；</p>
+                    <p>(2) 若 $N_i = n_i$，$i = 1,2,3,4$，求 $\theta$ 的最大似然估计值。</p>
+                    
+                    <button class="collapsible">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>【解】</strong>(1)（仅数学一）由于 $N_i \sim B(n, p_i), i = 1,2,3,4$，因此 $EN_i = np_i$，从而有</p>
+                            <div class="formula-box">
+                                $$ET = \sum_{i=1}^{4}a_iEN_i = a_1n(1-\theta) + a_2n(\theta - \theta^2) + a_3n(\theta^2 - \theta^3) + a_4n\theta^3$$
+                                $$= na_1 + n(a_2 - a_1)\theta + n(a_3 - a_2)\theta^2 + n(a_4 - a_3)\theta^3$$
+                            </div>
+                            <p>若使 $T$ 为 $\theta$ 的无偏估计，即要求</p>
+                            <div class="formula-box">
+                                $$\begin{cases} na_1 = 0 \\ n(a_2 - a_1) = 1 \\ n(a_3 - a_2) = 0 \\ n(a_4 - a_3) = 0 \end{cases}$$
+                            </div>
+                            <p>解得 $a_1 = 0, a_2 = a_3 = a_4 = \frac{1}{n}$</p>
+                            <p>即 $T = \frac{N_2 + N_3 + N_4}{n}$ 是 $\theta$ 的无偏估计。</p>
+                            
+                            <p>（仅数学三）由于 $N_i \sim B(n, p_i), i = 1,2,3,4$，因此 $EN_i = np_i$，从而有</p>
+                            <div class="formula-box">
+                                $$E\left(\sum_{i=1}^{4}a_iN_i\right) = \sum_{i=1}^{4}a_iEN_i = a_1n(1-\theta) + a_2n(\theta - \theta^2) + a_3n(\theta^2 - \theta^3) + a_4n\theta^3$$
+                                $$= na_1 + n(a_2 - a_1)\theta + n(a_3 - a_2)\theta^2 + n(a_4 - a_3)\theta^3$$
+                            </div>
+                            <p>若使 $E\left(\sum_{i=1}^{4}a_iN_i\right) = \theta$，即要求</p>
+                            <div class="formula-box">
+                                $$\begin{cases} na_1 = 0 \\ n(a_2 - a_1) = 1 \\ n(a_3 - a_2) = 0 \\ n(a_4 - a_3) = 0 \end{cases}$$
+                            </div>
+                            <p>解得 $a_1 = 0, a_2 = a_3 = a_4 = \frac{1}{n}$</p>
+                            
+                            <p>(2) 由题意，有 $N_1 + N_2 + N_3 + N_4 = n$，且似然函数为</p>
+                            <div class="formula-box">
+                                $$L(\theta) = (1-\theta)^{n_1}(\theta - \theta^2)^{n_2}(\theta^2 - \theta^3)^{n_3}(\theta^3)^{n_4} = \theta^{n_2+2n_3+3n_4}(1-\theta)^{n_1+n_2+n_3}$$
+                            </div>
+                            <p>取对数得</p>
+                            <div class="formula-box">
+                                $$\ln L(\theta) = (n_2 + 2n_3 + 3n_4)\ln\theta + (n_1 + n_2 + n_3)\ln(1-\theta)$$
+                            </div>
+                            <p>对 $\theta$ 求导，有</p>
+                            <div class="formula-box">
+                                $$\frac{d[\ln L(\theta)]}{d\theta} = \frac{n_2 + 2n_3 + 3n_4}{\theta} - \frac{n_1 + n_2 + n_3}{1-\theta} \stackrel{\triangle}{=} 0$$
+                            </div>
+                            <p>解得</p>
+                            <div class="formula-box">
+                                $$\frac{1-\theta}{\theta} = \frac{n_1 + n_2 + n_3}{n_2 + 2n_3 + 3n_4}$$
+                            </div>
+                            <p>则 $\theta$ 的最大似然估计值为</p>
+                            <div class="formula-box">
+                                $$\widehat{\theta} = \frac{n_2 + 2n_3 + 3n_4}{n_1 + 2n_2 + 3n_3 + 3n_4}$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="interval-estimation">
+                <h2>📏 二、作区间估计、假设检验、求两类错误</h2>
+                
+                <h3>1. 区间估计 (D₁(常规操作))</h3>
+                
+                <button class="collapsible">（1）概念</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>设 $\theta$ 是总体 $X$ 的分布函数的一个未知参数，对于给定的 $\alpha (0 < \alpha < 1)$，如果由样本 $X_1, X_2, \cdots, X_n$ 确定的两个统计量 $\widehat{\theta}_1 = \widehat{\theta}_1(X_1, X_2, \cdots, X_n)$，$\widehat{\theta}_2 = \widehat{\theta}_2(X_1, X_2, \cdots, X_n)$，使</p>
+                        <div class="formula-box">
+                            $$P(\widehat{\theta}_1(X_1, X_2, \cdots, X_n) < \theta < \widehat{\theta}_2(X_1, X_2, \cdots, X_n)) = 1-\alpha$$
+                        </div>
+                        <p>则称随机区间 $(\widehat{\theta}_1, \widehat{\theta}_2)$ 是 $\theta$ 的置信度为 $1-\alpha$ 的置信区间，$\widehat{\theta}_1$ 和 $\widehat{\theta}_2$ 分别称为 $\theta$ 的置信度为 $1-\alpha$ 的双侧置信区间的置信下限和置信上限。$1-\alpha$ 称为置信度或置信水平，$\alpha$ 称为显著性水平。如果 $P(\theta < \widehat{\theta}_1) = P(\theta > \widehat{\theta}_2) = \frac{\alpha}{2}$，则称这种置信区间为等尾置信区间。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">（2）单个正态总体均值和方差的置信区间</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>设 $X \sim N(\mu, \sigma^2)$，从总体 $X$ 中抽取样本 $X_1, X_2, \cdots, X_n$，样本均值为 $\overline{X}$，样本方差为 $S^2$。</p>
+                        
+                        <h4>① $\sigma^2$ 已知，$\mu$ 的置信水平是 $1-\alpha$ 的置信区间为</h4>
+                        <div class="formula-box">
+                            $$\left(\overline{X} - \frac{\sigma}{\sqrt{n}}z_{\frac{\alpha}{2}}, \overline{X} + \frac{\sigma}{\sqrt{n}}z_{\frac{\alpha}{2}}\right)$$
+                        </div>
+                        <p>记为 $I_1 \Rightarrow P\{\mu \in I_1\} = 1-\alpha$</p>
+                        
+                        <h4>② $\sigma^2$ 未知，$\mu$ 的置信水平是 $1-\alpha$ 的置信区间为</h4>
+                        <div class="formula-box">
+                            $$\left(\overline{X} - \frac{S}{\sqrt{n}}t_{\alpha}(n-1), \overline{X} + \frac{S}{\sqrt{n}}t_{\alpha}(n-1)\right)$$
+                        </div>
+                        <p>记为 $I_2 \Rightarrow P\{\mu \in I_2\} = 1-\alpha$</p>
+                        
+                        <h4>③ $\mu$ 已知，$\sigma^2$ 的置信水平是 $1-\alpha$ 的置信区间为</h4>
+                        <div class="formula-box">
+                            $$\left(\frac{\sum_{i=1}^{n}(X_i - \mu)^2}{\chi_{\frac{\alpha}{2}}^2(n)}, \frac{\sum_{i=1}^{n}(X_i - \mu)^2}{\chi_{1-\frac{\alpha}{2}}^2(n)}\right)$$
+                        </div>
+                        <p>记为 $I_3 \Rightarrow P\{\sigma^2 \in I_3\} = 1-\alpha$</p>
+                        <p>此种情况一般不出现</p>
+                        
+                        <h4>④ $\mu$ 未知，$\sigma^2$ 的置信水平是 $1-\alpha$ 的置信区间为</h4>
+                        <div class="formula-box">
+                            $$\left(\frac{(n-1)S^2}{\chi_{\frac{\alpha}{2}}^2(n-1)}, \frac{(n-1)S^2}{\chi_{1-\frac{\alpha}{2}}^2(n-1)}\right)$$
+                        </div>
+                        <p>记为 $I_4 \Rightarrow P\{\sigma^2 \in I_4\} = 1-\alpha$</p>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔍 例 9.9</h4>
+                    <p>设总体 $X$ 服从正态分布 $N(\mu, \sigma^2)$，其中 $\sigma^2$ 已知，$n$ 是给定的样本容量，$\mu$ 为未知参数，则 $\mu$ 的等尾双侧置信区间长度 $L$ 与置信度 $1-\alpha$ 的关系是（ ）。</p>
+                    <p>(A) 当 $1-\alpha$ 减小时，$L$ 减小</p>
+                    <p>(B) 当 $1-\alpha$ 减小时，$L$ 增大</p>
+                    <p>(C) 当 $1-\alpha$ 减小时，$L$ 不变</p>
+                    <p>(D) 当 $1-\alpha$ 减小时，$L$ 增减不定</p>
+                    
+                    <button class="collapsible">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>【解】</strong>应选 (A)。</p>
+                            <p>由均值 $\mu$ 的等尾双侧置信区间 $\left(\overline{X} - \frac{\sigma}{\sqrt{n}}z_{\frac{\alpha}{2}}, \overline{X} + \frac{\sigma}{\sqrt{n}}z_{\frac{\alpha}{2}}\right)$ 来确定正确选项。事实上，此时置信区间长度</p>
+                            <div class="formula-box">
+                                $$L = \frac{2\sigma}{\sqrt{n}}z_{\frac{\alpha}{2}}$$
+                            </div>
+                            <p>当 $1-\alpha$ 减小时，$\alpha$ 增大，$z_{\frac{\alpha}{2}}$ 减小，故 $L$ 减小，所以选择 (A)。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>2. 假设检验 (D₁(常规操作))</h3>
+                
+                <button class="collapsible">（1）概念</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>关于总体（分布中的未知参数，分布的类型、特征、相关性、独立性……）的每一种论断（"看法"）称为统计假设，然后根据样本观测数据或试验结果提供的信息去推断（检验）这个"看法"（即假设）是否成立，这类统计推断问题称为假设检验。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">（2）原假设与备择假设</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>常常把没有充分理由不能轻易否定的假设取为<span class="highlight">原假设（基本假设或零假设）</span>，记为 $H_0$，将其否定的陈述（假设）称为<span class="highlight">对立假设或备择假设</span>，记为 $H_1$。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">（3）小概率原理与显著性水平</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <h4>①小概率原理</h4>
+                        <p>对假设进行检验的<span class="highlight">基本思想是采用某种带有概率性质的反证法</span>。这种方法的依据是小概率原理——概率很接近于 0 的事件在一次试验或观察中认为各备假设不会发生。若小概率事件发生了，则拒绝原假设。</p>
+                        
+                        <h4>②显著性水平 $\alpha$</h4>
+                        <p>小概率事件中"小概率"的值没有统一规定，通常是根据实际问题的要求，规定一个界限 $\alpha (0 < \alpha < 1)$，当一个事件的概率不大于 $\alpha$ 时，即认为它是小概率事件。在假设检验问题中，$\alpha$ 称为<span class="highlight">显著性水平</span>，通常取 $\alpha = 0.1$，0.05，0.01 等。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">（4）正态总体下的六大检验及拒绝域</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <div class="formula-box">
+                            <h4>① $\sigma^2$ 已知，$\mu$ 未知，$H_0: \mu = \mu_0$，$H_1: \mu \neq \mu_0$，则拒绝域为</h4>
+                            <p>$$\left(-\infty, \mu_0 - \frac{\sigma}{\sqrt{n}}z_{\frac{\alpha}{2}}\right) \cup \left[\mu_0 + \frac{\sigma}{\sqrt{n}}z_{\frac{\alpha}{2}}, +\infty\right)$$</p>
+                            
+                            <h4>② $\sigma^2$ 未知，$\mu$ 未知，$H_0: \mu = \mu_0$，$H_1: \mu \neq \mu_0$，则拒绝域为</h4>
+                            <p>$$\left(-\infty, \mu_0 - \frac{S}{\sqrt{n}}t_{\frac{\alpha}{2}}(n-1)\right) \cup \left[\mu_0 + \frac{S}{\sqrt{n}}t_{\frac{\alpha}{2}}(n-1), +\infty\right)$$</p>
+                            
+                            <h4>③ $\sigma^2$ 已知，$\mu$ 未知，$H_0: \mu \leq \mu_0$，$H_1: \mu > \mu_0$，则拒绝域为</h4>
+                            <p>$$\left[\mu_0 + \frac{\sigma}{\sqrt{n}}z_{\alpha}, +\infty\right)$$</p>
+                            <p>(或若 $\mu = \mu_0$)</p>
+                            
+                            <h4>④ $\sigma^2$ 已知，$\mu$ 未知，$H_0: \mu \geq \mu_0$，$H_1: \mu < \mu_0$，则拒绝域为</h4>
+                            <p>$$\left(-\infty, \mu_0 - \frac{\sigma}{\sqrt{n}}z_{\alpha}\right]$$</p>
+                            <p>(或若 $\mu = \mu_0$)</p>
+                            
+                            <h4>⑤ $\sigma^2$ 未知，$\mu$ 未知，$H_0: \mu \leq \mu_0$，$H_1: \mu > \mu_0$，则拒绝域为</h4>
+                            <p>$$\left[\mu_0 + \frac{S}{\sqrt{n}}t_{\alpha}(n-1), +\infty\right)$$</p>
+                            <p>(或若 $\mu = \mu_0$)</p>
+                            
+                            <h4>⑥ $\sigma^2$ 未知，$\mu$ 未知，$H_0: \mu \geq \mu_0$，$H_1: \mu < \mu_0$，则拒绝域为</h4>
+                            <p>$$\left(-\infty, \mu_0 - \frac{S}{\sqrt{n}}t_{\alpha}(n-1)\right]$$</p>
+                            <p>(或若 $\mu = \mu_0$)</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            <p>(1) $H_0$ 中含 "="，以便 $H_0$ 成立时有分布可用。</p>
+                            <p>(2) 拒绝域的 "形式" 与备择假设 $H_1$ 的 "含义" 一致，便于记忆。比如上述①中，$H_1: \mu \neq \mu_0$，则拒绝域为 "远离 $\mu_0$"，可见，"$\mu \neq \mu_0$" 与 "远离 $\mu_0$" 的含义一致。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔍 例 9.11</h4>
+                    <p>设 $X_1, X_2, \cdots, X_n$ 为来自正态总体 $N(\mu, 2)$ 的简单随机样本，记 $\overline{X} = \frac{1}{n}\sum_{i=1}^{n}X_i z_{\alpha}$ 表示标准正态分布上 $\alpha$ 分位数。假设检验问题：$H_0: \mu \leq 1$，$H_1: \mu > 1$ 的显著性水平为 $\alpha$ 的检验的拒绝域为（ ）。</p>
+                    <p>(A) $\left\{(X_1, X_2, \cdots, X_n) | \overline{X} \geq 1 + \frac{2}{n}z_{\alpha}\right\}$</p>
+                    <p>(B) $\left\{(X_1, X_2, \cdots, X_n) | \overline{X} \geq 1 + \frac{\sqrt{2}}{n}z_{\alpha}\right\}$</p>
+                    <p>(C) $\left\{(X_1, X_2, \cdots, X_n) | \overline{X} \geq 1 + \frac{2}{\sqrt{n}}z_{\alpha}\right\}$</p>
+                    <p>(D) $\left\{(X_1, X_2, \cdots, X_n) | \overline{X} \geq 1 + \sqrt{\frac{2}{n}}z_{\alpha}\right\}$</p>
+                    
+                    <button class="collapsible">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>【解】</strong>应选 (D)。</p>
+                            <p>由题意知，$\sigma = \sqrt{2}$，且符合上述六大情形的③，故拒绝域为 $\overline{X} \geq \mu_0 + \frac{\sigma}{\sqrt{n}}z_{\alpha} = 1 + \sqrt{\frac{2}{n}}z_{\alpha}$，选 (D)。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>3. 两类错误 (D₁(常规操作))</h3>
+                
+                <div class="concept-box">
+                    <p><span class="highlight">第一类错误（"弃真"）</span>：若 $H_0$ 为真，按检验法则，否定了 $H_0$，此时犯了 "弃真" 的错误，这种错误称为第一类错误，犯第一类错误的概率为 $\alpha = P\{$ 拒绝 $H_0 | H_0$ 为真$\}$。</p>
+                    
+                    <p><span class="highlight">第二类错误（"取伪"）</span>：若 $H_0$ 不真，按检验法则，接受 $H_0$，此时犯了 "取伪" 的错误，这种错误称为第二类错误，犯第二类错误的概率为 $\beta = P\{$ 接受 $H_0 | H_0$ 为假$\}$。</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔍 例 9.12</h4>
+                    <p>设 $X_1, X_2, \cdots, X_{16}$ 是来自总体 $N(\mu, 4)$ 的简单随机样本，考虑假设检验问题：$H_0: \mu \leq 10$，$H_1: \mu > 10$。$\Phi(x)$ 表示标准正态分布函数。若该检验问题的拒绝域为 $W = \{\overline{X} > 11\}$，其中 $\overline{X} = \frac{1}{16}\sum_{i=1}^{16}X_i$，则</p>
+                    <p>$\mu = 11.5$ 时，该检验犯第二类错误的概率为（ ）。</p>
+                    <p>(A) $1-\Phi(1)$ &nbsp;&nbsp; (B) $1-\Phi(0.5)$ &nbsp;&nbsp; (C) $1-\Phi(1.5)$ &nbsp;&nbsp; (D) $1-\Phi(2)$</p>
+                    
+                    <button class="collapsible">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>【解】</strong>应选 (A)。</p>
+                            <p>当 $\mu = 11.5$ 时，该检验犯第二类错误的概率为</p>
+                            <div class="formula-box">
+                                $$P\{\overline{X} \leq 11 | \mu = 11.5\}$$
+                            </div>
+                            <p>当 $\mu = 11.5$ 时，</p>
+                            <div class="formula-box">
+                                $$\overline{X} \sim N\left(11.5, \frac{4}{16}\right), \text{ 即 } \overline{X} \sim N\left(11.5, \frac{1}{4}\right)$$
+                            </div>
+                            <p>于是</p>
+                            <div class="formula-box">
+                                $$Z = \frac{\overline{X} - \mu}{1/\sqrt{36}} \stackrel{\text{近似}}{\sim} N(0, 1)$$
+                            </div>
+                            <p>从而</p>
+                            <div class="formula-box">
+                                $$P\{\overline{X} \leq 11 | \mu = 11.5\} = \Phi\left(\frac{11-11.5}{1/2}\right) = \Phi(-1) = 1-\Phi(1)$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="examples">
+                <h2>💡 综合例题精选</h2>
+                
+                <div class="example-box">
+                    <h4>🔍 例 9.4</h4>
+                    <p>设总体 $X$ 的概率分布为 $P\{X = 1\} = \frac{1-\theta}{2}$，$P\{X = 2\} = P\{X = 3\} = \frac{1+\theta}{4}$，利用来自总体 $X$ 的样本值 1, 3, 2, 2, 1, 3, 1, 2，可得 $\theta$ 的最大似然估计值为（ ）。</p>
+                    <p>(A) $\frac{3}{8}$ &nbsp;&nbsp; (B) $\frac{1}{4}$ &nbsp;&nbsp; (C) $\frac{1}{2}$ &nbsp;&nbsp; (D) $\frac{5}{8}$</p>
+                    
+                    <button class="collapsible">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>【解】</strong>应选 (B)。</p>
+                            <p>由题意可得似然函数为</p>
+                            <div class="formula-box">
+                                $$L(\theta) = \left(\frac{1-\theta}{2}\right)^3 \cdot \left(\frac{1+\theta}{4}\right)^5$$
+                            </div>
+                            <p>两边取对数，得</p>
+                            <div class="formula-box">
+                                $$\ln L(\theta) = 3\ln\frac{1-\theta}{2} + 5\ln\frac{1+\theta}{4} = 3\ln(1-\theta) - 3\ln 2 + 5\ln(1+\theta) - 5\ln 4$$
+                            </div>
+                            <p>令</p>
+                            <div class="formula-box">
+                                $$\frac{d[\ln L(\theta)]}{d\theta} = \frac{-3}{1-\theta} + \frac{5}{1+\theta} = 0$$
+                            </div>
+                            <p>得 $\theta$ 的最大似然估计值为 $\widehat{\theta} = \frac{1}{4}$，故选 (B)。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔍 例 9.5</h4>
+                    <p>设总体 $X$ 的概率密度为 $f(x) = \begin{cases} \frac{2x}{\alpha^2}, & 0 \leq x \leq \alpha \\ 0, & \text{其他} \end{cases}$，其中 $\alpha (\alpha > 1)$ 是未知参数，$X_1, X_2, \cdots, X_n$ 是来自总体 $X$ 的简单随机样本，$X_{(1)} = \min\{X_1, X_2, \cdots, X_n\}$，$X_{(n)} = \max\{X_1, X_2, \cdots, X_n\}$，则 $p$ 的最大似然估计量 $\widehat{p}$ 为（ ）。</p>
+                    <p>(A) $\sqrt{X_{(1)}}$ &nbsp;&nbsp; (B) $\sqrt{X_{(n)}}$ &nbsp;&nbsp; (C) $\frac{1}{X_{(1)}}$ &nbsp;&nbsp; (D) $\frac{1}{X_{(n)}}$</p>
+                    
+                    <button class="collapsible">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>【解】</strong>应选 (D)。</p>
+                            <div class="formula-box">
+                                $$p = P\{0 < X < \sqrt{\alpha}\} = \int_{0}^{\sqrt{\alpha}} f(x)dx = \frac{1}{\alpha}$$
+                            </div>
+                            <p>当 $0 \leq x_1 \leq \alpha, 0 \leq x_2 \leq \alpha, \cdots, 0 \leq x_n \leq \alpha$ 时，似然函数为</p>
+                            <div class="formula-box">
+                                $$L(\alpha) = f(x_1)f(x_2)\cdots f(x_n) = \frac{2^n}{\alpha^{2n}}x_1x_2\cdots x_n$$
+                            </div>
+                            <p>显然 $L(\alpha)$ 关于 $\alpha$ 单调递减少，且 $\alpha \geq \max\{x_1, x_2, \cdots, x_n\}$，则 $\alpha$ 的最大似然估计量为</p>
+                            <div class="formula-box">
+                                $$\widehat{\alpha} = \max\{X_1, X_2, \cdots, X_n\}$$
+                            </div>
+                            <p>又知 $p = \frac{1}{\alpha}$ 是关于 $\alpha$ 的单调函数，根据最大似然估计量的不变性原则，得 $p$ 的最大似然估计量为</p>
+                            <div class="formula-box">
+                                $$\widehat{p} = \frac{1}{\max\{X_1, X_2, \cdots, X_n\}} = \frac{1}{X_{(n)}}$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔍 例 9.6</h4>
+                    <p>设 $X_1, X_2, \cdots, X_n$ 为来自均值为 $\theta$ 的指数分布总体的简单随机样本，$Y_1, Y_2, \cdots, Y_m$ 为来自均值为 $2\theta$ 的指数分布总体的简单随机样本，且两样本相互独立，其中 $\theta (> 0)$ 是未知参数，利用样本 $X_1, X_2, \cdots, X_n, Y_1, Y_2, \cdots, Y_m$ 求 $\theta$ 的最大似然估计量 $\widehat{\theta}$，并求 $D\widehat{\theta}$。</p>
+                    
+                    <button class="collapsible">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>【解】</strong>设 $x_1, x_2, \cdots, x_n, y_1, y_2, \cdots, y_m$ 为样本值，则似然函数为</p>
+                            <div class="formula-box">
+                                $$L(\theta) = \frac{1}{2^m \theta^{m+n}}e^{-\frac{1}{\theta}\sum_{i=1}^{n}x_i - \frac{1}{2\theta}\sum_{j=1}^{m}y_j}$$
+                            </div>
+                            <p>从而</p>
+                            <div class="formula-box">
+                                $$\ln L(\theta) = -m\ln 2 - (n+m)\ln\theta - \frac{1}{\theta}\sum_{i=1}^{n}x_i - \frac{1}{2\theta}\sum_{j=1}^{m}y_j$$
+                            </div>
+                            <div class="formula-box">
+                                $$\frac{d[\ln L(\theta)]}{d\theta} = -\frac{n+m}{\theta} + \frac{1}{\theta^2}\sum_{i=1}^{n}x_i + \frac{1}{2\theta^2}\sum_{j=1}^{m}y_j$$
+                            </div>
+                            <p>令</p>
+                            <div class="formula-box">
+                                $$\frac{d[\ln L(\theta)]}{d\theta} = 0$$
+                            </div>
+                            <p>解得</p>
+                            <div class="formula-box">
+                                $$\theta = \frac{1}{n+m}\left(\sum_{i=1}^{n}x_i + \frac{1}{2}\sum_{j=1}^{m}y_j\right)$$
+                            </div>
+                            <p>因此 $\theta$ 的最大似然估计量为</p>
+                            <div class="formula-box">
+                                $$\widehat{\theta} = \frac{2n\overline{X} + m\overline{Y}}{2(n+m)}$$
+                            </div>
+                            <p>其中 $\overline{X} = \frac{1}{n}\sum_{i=1}^{n}X_i$，$\overline{Y} = \frac{1}{m}\sum_{j=1}^{m}Y_j$</p>
+                            <p>由于 $D\overline{X} = \frac{\theta^2}{n}$，$D\overline{Y} = \frac{4\theta^2}{m}$，所以</p>
+                            <div class="formula-box">
+                                $$D\widehat{\theta} = D\left[\frac{2n\overline{X} + m\overline{Y}}{2(n+m)}\right] = \frac{4n^2D\overline{X} + m^2D\overline{Y}}{4(n+m)^2} = \frac{\theta^2}{n+m}$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔍 例 9.8</h4>
+                    <p>设总体 $X$ 的分布函数为</p>
+                    <div class="formula-box">
+                        $$F(x;\theta) = \begin{cases} 1-e^{-\frac{x^2}{\theta}}, & x > 0 \\ 0, & x < 0 \end{cases}$$
+                    </div>
+                    <p>其中 $\theta$ 是未知参数且大于零，$X_1, X_2, \cdots, X_n$ 为来自总体 $X$ 的简单随机样本。</p>
+                    <p>(1) 求 $EX$ 与 $E(X^2)$；</p>
+                    <p>(2) 求 $\theta$ 的最大似然估计量 $\widehat{\theta}$；</p>
+                    <p>(3) 是否存在实数 $a$，使得对任何 $\varepsilon > 0$，都有 $\lim_{n\to\infty} P\{|\widehat{\theta} - a| \geq \varepsilon\} = 0$？</p>
+                    
+                    <button class="collapsible">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>【解】</strong>(1) 总体 $X$ 的概率密度为</p>
+                            <div class="formula-box">
+                                $$f(x;\theta) = \begin{cases} \frac{2x}{\theta}e^{-\frac{x^2}{\theta}}, & x > 0 \\ 0, & \text{其他} \end{cases}$$
+                            </div>
+                            <div class="formula-box">
+                                $$EX = \int_{0}^{+\infty} x \cdot \frac{2x}{\theta}e^{-\frac{x^2}{\theta}}dx = \int_{0}^{+\infty} x d\left(e^{-\frac{x^2}{\theta}}\right) = \int_{0}^{+\infty} e^{-\frac{x^2}{\theta}}dx = \frac{\sqrt{\pi\theta}}{2} \cdot \frac{1}{\sqrt{\pi\theta}}\int_{-\infty}^{+\infty} e^{-\frac{x^2}{\theta}}dx = \frac{\sqrt{\pi\theta}}{2}$$
+                            </div>
+                            <div class="formula-box">
+                                $$E(X^2) = \int_{0}^{+\infty} x^2 \cdot \frac{2x}{\theta}e^{-\frac{x^2}{\theta}}dx = \theta\int_{0}^{+\infty} ue^{-u}du = \theta$$
+                            </div>
+                            
+                            <p>(2) 设 $x_1, x_2, \cdots, x_n$ 为样本值，则似然函数为</p>
+                            <div class="formula-box">
+                                $$L(\theta) = \prod_{i=1}^{n}f(x_i;\theta) = \begin{cases} \frac{2^n x_1x_2\cdots x_n}{\theta^n}\exp\left\{-\frac{1}{\theta}\sum_{i=1}^{n}x_i^2\right\}, & x_1, x_2, \cdots, x_n > 0 \\ 0, & \text{其他} \end{cases}$$
+                            </div>
+                            <p>当 $x_1, x_2, \cdots, x_n > 0$ 时，$\ln L(\theta) = n\ln 2 + \sum_{i=1}^{n}\ln x_i - n\ln\theta - \frac{1}{\theta}\sum_{i=1}^{n}x_i^2$，令</p>
+                            <div class="formula-box">
+                                $$\frac{d[\ln L(\theta)]}{d\theta} = -\frac{n}{\theta} + \frac{1}{\theta^2}\sum_{i=1}^{n}x_i^2 = 0$$
+                            </div>
+                            <p>得</p>
+                            <div class="formula-box">
+                                $$\theta = \frac{1}{n}\sum_{i=1}^{n}x_i^2$$
+                            </div>
+                            <p>从而 $\theta$ 的最大似然估计量为 $\widehat{\theta} = \frac{1}{n}\sum_{i=1}^{n}X_i^2$</p>
+                            
+                            <p>(3) 存在，$a = \theta$。因为 $\{X_i^2\}$ 是独立同分布的随机变量序列，且 $E(X_i^2) = \theta < +\infty$，所以根据大数定律，当 $n \to \infty$ 时，$\widehat{\theta} = \frac{1}{n}\sum_{i=1}^{n}X_i^2$ 依概率收敛于 $E(X_i^2)$，即 $\theta$，所以对任何 $\varepsilon > 0$，都有</p>
+                            <div class="formula-box">
+                                $$\lim_{\theta\to\infty} P\{|\widehat{\theta} - \theta| \geq \varepsilon\} = 0$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>🔍 例 9.10</h4>
+                    <p>设总体 $X$ 的数学期望存在且方差为 1，根据来自 $X$ 的容量为 36 的简单随机样本测得样本均值为 $a$，$\Phi(1.96) = 0.975$，则 $X$ 的数学期望的置信度等于 0.95 的置信区间为（ ）。</p>
+                    <p>(A) $(a - 0.196, a + 0.196)$</p>
+                    <p>(B) $(a - 0.327, a + 0.327)$</p>
+                    <p>(C) $(a - 0.49, a + 0.49)$</p>
+                    <p>(D) $(a - 0.025, a + 0.025)$</p>
+                    
+                    <button class="collapsible">查看解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>【解】</strong>应选 (B)。</p>
+                            <p>由中心极限定理，若 $X_i$ 满足定理条件，则当 $n \to \infty$ 时，$\sum_{i=1}^{n}X_i$ 近似服从 $N(n\mu, n\sigma^2)$，故</p>
+                            <div class="formula-box">
+                                $$\sum_{i=1}^{36}X_i \stackrel{\text{近似}}{\sim} N(36\mu, 36), \overline{X} = \frac{1}{36}\sum_{i=1}^{36}X_i \stackrel{\text{近似}}{\sim} N\left(\mu, \frac{1}{36}\right)$$
+                            </div>
+                            <p>于是</p>
+                            <div class="formula-box">
+                                $$Z = \frac{\overline{X} - \mu}{1/\sqrt{36}} \stackrel{\text{近似}}{\sim} N(0,1)$$
+                            </div>
+                            <p>又由 $\Phi(1.96) = 0.975$，故 $P\{-1.96 < Z < 1.96\} = 0.95$，即 $\mu$ 的置信度等于 0.95 的置信区间为</p>
+                            <div class="formula-box">
+                                $$\left(\overline{X} - \frac{1}{6}\times 1.96, \overline{X} + \frac{1}{6}\times 1.96\right)$$
+                            </div>
+                            <p>将 $\overline{x} = a$ 代入上式得置信区间为 $(a - 0.327, a + 0.327)$。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>© 2025 数理统计学习教程 | 制作于 Claude Sonnet 4.5</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">💡 提示：需要网络连接以加载 MathJax 数学公式渲染库</p>
+        </footer>
+    </div>
+    
+    <button class="back-to-top" onclick="scrollToTop()">↑</button>
+    
+    <script>
+        // 折叠面板功能
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+        
+        // 返回顶部按钮
+        window.onscroll = function() {
+            var btn = document.querySelector('.back-to-top');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                btn.style.display = "block";
+            } else {
+                btn.style.display = "none";
+            }
+        };
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

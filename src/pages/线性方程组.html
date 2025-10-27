@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第5讲 线性方程组 - 交互式教程</title>
+    
+    <!-- MathJax 配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            displayAlign: "center",
+            displayIndent: "0em"
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --primary-mint: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --bg-white: #ffffff;
+            --text-dark: #343434;
+            --light-gray: #f5f5f5;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        /* 顶部导航栏 */
+        .header {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9800 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        /* 侧边导航 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 120px;
+            width: 250px;
+            height: calc(100vh - 120px);
+            background: white;
+            padding: 2rem 1rem;
+            overflow-y: auto;
+            box-shadow: 4px 0 6px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar h3 {
+            color: var(--primary-orange);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar a {
+            color: var(--text-dark);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar a:hover {
+            background: var(--primary-mint);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        /* 主内容区域 */
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto 2rem 280px;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+        
+        /* 章节标题 */
+        .section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--light-gray);
+            border-radius: 10px;
+            border-left: 5px solid var(--primary-orange);
+        }
+        
+        .section h2 {
+            color: var(--primary-orange);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section h2::before {
+            content: "📚";
+            margin-right: 0.5rem;
+        }
+        
+        .section h3 {
+            color: var(--primary-mint);
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-mint);
+        }
+        
+        .section h4 {
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+        
+        /* 可折叠内容 */
+        .collapsible {
+            background: white;
+            border: 2px solid var(--primary-mint);
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .collapsible:hover {
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+        
+        .collapsible-header {
+            background: var(--primary-mint);
+            color: white;
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+        
+        .collapsible-header:hover {
+            background: #8dc5b3;
+        }
+        
+        .collapsible-header::after {
+            content: "▼";
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .collapsible.active .collapsible-header::after {
+            transform: rotate(-180deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 1rem;
+        }
+        
+        .collapsible.active .collapsible-content {
+            max-height: 5000px;
+            padding: 1.5rem;
+        }
+        
+        /* 数学公式样式 */
+        .mjx-chtml {
+            font-size: 1.15em !important;
+        }
+        
+        .formula-block {
+            background: #f9f9f9;
+            border-left: 4px solid var(--primary-yellow);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        
+        /* 定理/注意框 */
+        .theorem-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            border: 2px solid var(--primary-yellow);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        
+        .theorem-box::before {
+            content: "💡";
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .theorem-box h4 {
+            color: #d4a005;
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .theorem-box p {
+            margin-left: 2rem;
+        }
+        
+        /* 注意框 */
+        .note-box {
+            background: linear-gradient(135deg, #e6f7f1 0%, #f0faf6 100%);
+            border: 2px solid var(--primary-mint);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .note-box h4 {
+            color: var(--primary-mint);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 例题框 */
+        .example-box {
+            background: white;
+            border: 2px solid var(--primary-orange);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+        
+        .example-box h4 {
+            color: var(--primary-orange);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .example-box h4::before {
+            content: "📝";
+            margin-right: 0.5rem;
+        }
+        
+        /* 解答框 */
+        .solution-box {
+            background: #f0f8ff;
+            border-left: 4px solid #4a90e2;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+        }
+        
+        .solution-box h5 {
+            color: #4a90e2;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 表格样式 */
+        .content-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 8px var(--shadow);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .content-table th {
+            background: var(--primary-orange);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .content-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .content-table tr:nth-child(even) {
+            background: var(--light-gray);
+        }
+        
+        .content-table tr:hover {
+            background: #fff9e6;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            background: var(--primary-orange);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+        
+        .btn:hover {
+            background: #d66c00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .container {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1001;
+                background: white;
+                border: none;
+                font-size: 1.5rem;
+                padding: 0.5rem;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+        }
+        
+        .menu-toggle {
+            display: none;
+        }
+        
+        /* 滚动到顶部按钮 */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-orange);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px var(--shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .scroll-top:hover {
+            background: #d66c00;
+            transform: translateY(-5px);
+        }
+        
+        .scroll-top.show {
+            display: flex;
+        }
+        
+        /* 高亮文本 */
+        .highlight {
+            background: var(--primary-yellow);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        /* 列表样式 */
+        ul.custom-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        ul.custom-list li {
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        
+        ul.custom-list li::before {
+            content: "▸";
+            color: var(--primary-orange);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- 移动端菜单按钮 -->
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    
+    <!-- 头部 -->
+    <header class="header">
+        <h1>第5讲 线性方程组</h1>
+        <p>系统学习线性方程组的理论与应用</p>
+    </header>
+    
+    <!-- 侧边导航 -->
+    <nav class="sidebar" id="sidebar">
+        <h3>📑 目录导航</h3>
+        <ul>
+            <li><a href="#overview">三问解题法</a></li>
+            <li><a href="#section1">一、理论总结</a></li>
+            <li><a href="#section1-1">1.1 齐次方程组</a></li>
+            <li><a href="#section1-2">1.2 非齐次方程组</a></li>
+            <li><a href="#section2">二、方程组问题</a></li>
+            <li><a href="#section2-1">2.1 一般求解问题</a></li>
+            <li><a href="#section2-2">2.2 公共解问题</a></li>
+            <li><a href="#section2-3">2.3 同解问题</a></li>
+            <li><a href="#section3">三、几何意义</a></li>
+            <li><a href="#examples">典型例题</a></li>
+        </ul>
+    </nav>
+    
+    <!-- 主内容 -->
+    <main class="container">
+        <!-- 概览 -->
+        <section class="section" id="overview">
+            <h2>📊 三问解题法</h2>
+            <p>线性方程组的求解遵循"三问"原则：</p>
+            
+            <div class="theorem-box">
+                <h4>核心思路</h4>
+                <p><strong>1. 线性方程组理论总结</strong>（$D_1$（常规操作））</p>
+                <p><strong>2. 线性方程组问题</strong>（$D_1$（常规操作）+$D_{22}$（转换等价表达）+$P_2$（反证思路））</p>
+                <p><strong>3. 线性方程组的几何意义</strong>（$O_3$（旧往目标4）+$D_1$（常规操作）+$D_{22}$（转换等价表达）+$D_{43}$（数形结合））</p>
+            </div>
+            
+            <div class="formula-block">
+                <p><strong>线性方程组分类：</strong></p>
+                <p>• 齐次线性方程组：$Ax = 0$（$D_1$（常规操作））</p>
+                <p>• 非齐次线性方程组：$Ax = b$（$D_1$（常规操作））</p>
+            </div>
+        </section>
+        
+        <!-- 第一部分：理论总结 -->
+        <section class="section" id="section1">
+            <h2>一、线性方程组理论总结</h2>
+            
+            <div id="section1-1">
+                <h3>1. 齐次线性方程组 $Ax = 0$</h3>
+                
+                <div class="collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        （1）解的性质
+                    </div>
+                    <div class="collapsible-content">
+                        <p>对于齐次线性方程组 $A_{m \times n}x = 0$，</p>
+                        <div class="formula-block">
+                            <p>若 $\xi_1, \xi_2$ 是方程组 $Ax = 0$ 的解，则 $x = k_1\xi_1 + k_2\xi_2$（$k_1, k_2 \in \mathbb{R}$）也是它的解。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        （2）基础解系与通解
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="note-box">
+                            <h4>基础解系的定义</h4>
+                            <p>①设 $r(A) < n$，$\xi_1, \xi_2, \cdots, \xi_r$ 是方程组 $Ax=0$ 的一组解向量，如果</p>
+                            <ul class="custom-list">
+                                <li>a. $\xi_1, \xi_2, \cdots, \xi_r$ 线性无关；</li>
+                                <li>b. 方程组 $Ax=0$ 的任一解向量均可由 $\xi_1, \xi_2, \cdots, \xi_r$ 线性表示，即 $s=n-r(A)$，</li>
+                            </ul>
+                            <p>则称 $\xi_1, \xi_2, \cdots, \xi_r$ 是方程组 $Ax=0$ 的一个<span class="highlight">基础解系</span>。</p>
+                        </div>
+                        
+                        <div class="theorem-box">
+                            <h4>【注】基础解系应满足三个条件：</h4>
+                            <p>①是解；②线性无关；③$s=n-r(A)$。</p>
+                        </div>
+                        
+                        <p>②齐次线性方程组 $Ax=0$ 有非零解的充要条件是 $r(A) < n$。此时它的通解为</p>
+                        <div class="formula-block">
+                            $$x = k_1\xi_1 + k_2\xi_2 + \cdots + k_{n-r}\xi_{n-r},$$
+                            <p>其中 $r=r(A)$，$k_1, k_2, \cdots, k_{n-r}$ 为任意常数。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        （3）解与系数矩阵的关系
+                    </div>
+                    <div class="collapsible-content">
+                        <p>若齐次线性方程组</p>
+                        <div class="formula-block">
+                            $$\begin{cases}
+                            a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n = 0, \\
+                            a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n = 0, \\
+                            \cdots\cdots \\
+                            a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n = 0
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>有解 $\beta = [b_1, b_2, \cdots, b_n]^T$，则</p>
+                        <div class="formula-block">
+                            $$a_{i1}b_1 + a_{i2}b_2 + \cdots + a_{in}b_n = 0 \quad (i=1, 2, \cdots, m).$$
+                        </div>
+                        
+                        <div class="note-box">
+                            <h4>【重要结论】</h4>
+                            <p>记系数矩阵 $A$ 的行向量为 $\alpha_i = [a_{i1}, a_{i2}, \cdots, a_{in}]$ $(i=1, 2, \cdots, m)$，则上式即为</p>
+                            <p class="highlight">$\alpha_i \beta = 0$ $(i=1, 2, \cdots, m)$</p>
+                            <p>故<strong>系数矩阵 $A$ 的行向量与 $Ax=0$ 的解向量正交</strong>。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="section1-2">
+                <h3>2. 非齐次线性方程组 $Ax = b$</h3>
+                
+                <div class="collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        （1）解的性质
+                    </div>
+                    <div class="collapsible-content">
+                        <p>对于非齐次线性方程组 $A_{m \times n}x = b$，</p>
+                        <div class="formula-block">
+                            <p>若 $\eta_1, \eta_2$ 都是方程组 $Ax=b$ 的解，则 $\eta_1 - \eta_2$ 是相应的齐次线性方程组 $Ax=0$ 的解。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        （2）非齐次线性方程组解的情形
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="theorem-box">
+                            <h4>解的判定</h4>
+                            <p>① 当 $r(A) = r([A, b]) = n$ 时，方程组有<span class="highlight">唯一解</span>；</p>
+                            <p>② 当 $r(A) = r([A, b]) < n$ 时，方程组有<span class="highlight">无穷多解</span>；</p>
+                            <p>③ 当 $r(A) \neq r([A, b])$ 时，方程组<span class="highlight">无解</span>。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        （3）非齐次线性方程组的通解
+                    </div>
+                    <div class="collapsible-content">
+                        <p>设 $r(A) = r < n$，若 $\xi_1, \xi_2, \cdots, \xi_{n-r}$ 为非齐次线性方程组 $Ax=b$ 相应的齐次线性方程组 $Ax=0$ 的基础解系，$\eta^*$ 为非齐次线性方程组 $Ax=b$ 的一个特解，则非齐次线性方程组 $Ax=b$ 的通解为</p>
+                        <div class="formula-block">
+                            $$x = \eta^* + k_1\xi_1 + k_2\xi_2 + \cdots + k_{n-r}\xi_{n-r},$$
+                            <p>其中 $k_1, k_2, \cdots, k_{n-r}$ 为任意常数。</p>
+                        </div>
+                        
+                        <div class="note-box">
+                            <h4>【注】重要结论</h4>
+                            <p>（1）与非齐次线性方程组 $Ax=b$ 对应的齐次线性方程组 $Ax=0$ 称为非齐次线性方程组 $Ax=b$ 的导出组，故上述结论可简述为<span class="highlight">非齐次线性方程组的通解等于它的一个特解与导出组的通解之和</span>。</p>
+                            <p>（2）当未知数个数 $n$ 个，且 $|A| \neq 0$ 时，可用克拉默法则求解，即 $x_i = \frac{D_i}{|A|}$，$i=1,2,\cdots,n$。</p>
+                            <p>（3）设 $\eta^*$ 是非齐次线性方程组 $A_{m \times n}x=b(b \neq 0)$ 的一个解，$\xi_1, \xi_2, \cdots, \xi_{n-r}$ 是其导出组 $Ax=0$ 的一个基础解系，且 $r(A)=r$，则</p>
+                            <ul class="custom-list">
+                                <li>① $\eta^*, \eta^* + \xi_1, \cdots, \eta^* + \xi_{n-r}$ 线性无关；</li>
+                                <li>② 非齐次线性方程组 $Ax=b$ 的任一解都可由 $\eta^*, \eta^* + \xi_1, \cdots, \eta^* + \xi_{n-r}$ 线性表示。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 第二部分：方程组问题 -->
+        <section class="section" id="section2">
+            <h2>二、线性方程组问题</h2>
+            <p>线性方程组问题分为①一般问题；②公共解问题；③同解问题。</p>
+            
+            <div id="section2-1">
+                <h3>1. 一般求解问题（含参常考）</h3>
+                
+                <div class="example-box">
+                    <h4>例5.1</h4>
+                    <p>设 $A$ 是秩为2的 $2 \times 5$ 矩阵，$B$ 是秩为3的 $3 \times 5$ 矩阵，若 $AB^T = O$，则对于齐次线性方程组 $Ax=0$ 的任一非零解 $b$ 有（　　）。</p>
+                    <p>(A) $A^Ty = b$ 有唯一解　　(B) $A^Ty = b$ 有无穷多解</p>
+                    <p>(C) $B^Ty = b$ 有唯一解　　(D) $B^Ty = b$ 有无穷多解</p>
+                    
+                    <div class="solution-box">
+                        <h5>【解】应选（C）</h5>
+                        <p>由题可得 $r(A)=2$，$r(B)=r(B^T)=3$。</p>
+                        <p>$D_{22}$（转换等价表达）：见第3讲，把样条换成矩阵去推，复杂得到：</p>
+                        <ul class="custom-list">
+                            <li>$AB^T = O$，即 $AB = O$，$AX = O$，$A^TX = O$，$A^TX = O$</li>
+                        </ul>
+                        <p>又由于 $AB^T = O$，即矩阵 $B$ 的每一行的转置均为齐次线性方程组 $Ax=0$ 的解，且 $Ax=0$ 的基础解系中所含解向量的个数为 $s=5-2=3$，而矩阵 $B$ 的三个行向量线性无关，故转置所对应的三个列向量是 $Ax=0$ 的一个基础解系。</p>
+                        <p>又 $Ab=0$，且 $b \neq 0$，于是 $b$ 可由矩阵 $B$ 的三个行向量的转置线性表示，即 $B^Ty=b$ 有解，且由于 $r(B^T)=3$，满足条件所对应的三个列向量是</p>
+                        <div class="formula-block">
+                            $$r(B^T) = r([B^T, b]) = 3,$$
+                        </div>
+                        <p>故 $B^Ty=b$ 有唯一解。</p>
+                        <p>3，故选项（A）、（D）错误。</p>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例5.2</h4>
+                    <p>设2阶矩阵 $A$ 满足 $a_{ij}+a_{ji}=0, i, j=1,2$。实矩阵 $P=[α,Aα]$，其中 $Aα$ 为非零列向量，则（　　）。</p>
+                    <p>(A) $\begin{bmatrix} A+A^T & O \\ E & P \end{bmatrix}x=0$ 只有零解　　(B) $\begin{bmatrix} A+E & O \\ E & P \end{bmatrix}x=0$ 有非零解</p>
+                    <p>(C) $\begin{bmatrix} O & A+A^T \\ P & E \end{bmatrix}x=\begin{bmatrix} α \\ Aα \end{bmatrix}$ 有无穷多解　　(D) $\begin{bmatrix} O & A+E \\ P & E \end{bmatrix}x=\begin{bmatrix} α \\ Aα \end{bmatrix}$ 有唯一解</p>
+                    
+                    <div class="solution-box">
+                        <h5>【解】应选（D）</h5>
+                        <p>由 $a_{ij}+a_{ji}=0$，知 $A^T=-A$，于是 $a^TAα=(a^TAα)^T=α^TA^Tα=-α^TAα$，即 $α^TAα=0$，$α$ 与 $Aα$ 正交，即 $P=[α,Aα]$ 可逆。</p>
+                        <p>各选项的详细分析请参见原文档。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="section2-2">
+                <h3>2. 公共解问题</h3>
+                
+                <div class="note-box">
+                    <h4>解题思路</h4>
+                    <p><strong>（1）齐次线性方程组公共非零解</strong></p>
+                    <p>①对于齐次线性方程组 $Ax=0$ 和 $Bx=0$，因其必有公共零解，故要求公共非零解，主要看两个方程组解是否基本办法。</p>
+                    <p>② $A_{m \times n}x=0$ 和 $B_{s \times n}x=0$ 有公共非零解的充要条件是 $\begin{bmatrix} A \\ B \end{bmatrix}x=0$ 有非零解，也即 $r\left(\begin{bmatrix} A \\ B \end{bmatrix}\right) < n$。</p>
+                    
+                    <p><strong>（2）非齐次线性方程组公共解</strong></p>
+                    <p>①非齐次线性方程组公共解本质上也是方程组联立解，这个思路一定要记住。</p>
+                    <p>②设（Ⅰ）$A_{m \times n}x=β$ 与（Ⅱ）$B_{s \times n}x=γ$ 均有解，则（Ⅰ）与（Ⅱ）有公共解的充要条件是</p>
+                    <div class="formula-block">
+                        $$r\begin{pmatrix} \begin{bmatrix} A \\ B \end{bmatrix} \end{pmatrix} = r\begin{pmatrix} \begin{bmatrix} A & β \\ B & γ \end{bmatrix} \end{pmatrix}.$$
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例5.4</h4>
+                    <p>设矩阵 $A=\begin{bmatrix} 0 & -1 & 2 \\ -1 & 0 & 2 \\ -1 & -1 & a \end{bmatrix}$，已知1是 $A$ 的特征多项式的重根。</p>
+                    <p>(1) 求 $a$ 的值；</p>
+                    <p>(2) 求所有满足 $Aα=α+β$，$A^2α=α+2β$ 的非零列向量 $α, β$。</p>
+                    
+                    <div class="solution-box">
+                        <h5>【解】</h5>
+                        <p>(1) $f(λ)=|λE-A|=(λ-1)[(λ-a)(λ+1)+4]$，因为1是 $A$ 的特征多项式的重根，故 $(1-a)(1+1)+4=0$，$a=3$。</p>
+                        
+                        <p>(2) 法一　由（1）可知 $A=\begin{bmatrix} 0 & -1 & 2 \\ -1 & 0 & 2 \\ -1 & -1 & 3 \end{bmatrix}$，由 $Aα=α+β$，得 $2Aα=2α+2β$，与 $A^2α=α+2β$ 联立得</p>
+                        <div class="formula-block">
+                            $$2Aα-A^2α=α,$$
+                        </div>
+                        <p>即 $(A-E)^2α=0$，故 $α$ 为任意的非零列向量，即 $α=[a_1,a_2,a_3]^T$，$a_1,a_2,a_3$ 不全为零，则</p>
+                        <div class="formula-block">
+                            $$β=(A-E)α=\begin{bmatrix} -1 & -1 & 2 \\ -1 & -1 & 2 \\ -1 & -1 & 2 \end{bmatrix}\begin{bmatrix} a_1 \\ a_2 \\ a_3 \end{bmatrix}=\begin{bmatrix} 2a_3-a_1-a_2 \\ 2a_3-a_1-a_2 \\ 2a_3-a_1-a_2 \end{bmatrix}.$$
+                        </div>
+                        <p>综上 $α=\begin{bmatrix} a_1 \\ a_2 \\ a_3 \end{bmatrix}$，$β=\begin{bmatrix} 2a_3-a_1-a_2 \\ 2a_3-a_1-a_2 \\ 2a_3-a_1-a_2 \end{bmatrix}$（$a_1,a_2,a_3$ 不全为零，$a_1+a_2 \neq 2a_3$）。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="section2-3">
+                <h3>3. 同解问题</h3>
+                
+                <div class="note-box">
+                    <h4>解题思路</h4>
+                    <p><strong>（1）齐次线性方程组</strong></p>
+                    <p>① 方程组 $A_{m \times n}x=0$ 与 $B_{s \times n}x=0$ 同解的充要条件是 $r\begin{pmatrix} \begin{bmatrix} A \\ B \end{bmatrix} \end{pmatrix} = r(A) = r(B)$。</p>
+                    
+                    <div class="theorem-box">
+                        <h4>【注】证</h4>
+                        <p>设 $Ax=0$ 的基础解系为 $\xi_1, \xi_2, \cdots, \xi_r$，$Bx=0$ 的基础解系为 $η_1, η_2, \cdots, η_s$。</p>
+                        <p>$Ax=0$ 与 $Bx=0$ 同解 $⇔$ （Ⅰ）$\xi_1, \xi_2, \cdots, \xi_r$ 与（Ⅱ）$η_1, η_2, \cdots, η_s$ 等价</p>
+                        <p>$⇔$ $r$（Ⅰ）$=r$（Ⅱ），且（Ⅰ）可由（Ⅱ）线性表示</p>
+                        <p>$⇔$ $r$（Ⅰ）$=r$（Ⅱ）$=r$（Ⅰ，Ⅱ）</p>
+                        <p>$⇔r(A)=r(B)$，且 $Ax=0$ 的解均为 $Bx=0$ 的解</p>
+                        <p>$⇔r(A)=r(B)=r\begin{pmatrix} \begin{bmatrix} A \\ B \end{bmatrix} \end{pmatrix}$。</p>
+                    </div>
+                    
+                    <p>② 方程组 $A_{m \times n}x=0$ 与 $B_{s \times n}x=0$ 同解的充要条件是 $A$ 的行向量组与 $B$ 的行向量组等价。</p>
+                    
+                    <div class="theorem-box">
+                        <h4>【注】显然由①的证明过程即可得出结论。</h4>
+                    </div>
+                </div>
+                
+                <div class="note-box">
+                    <h4>重要提示</h4>
+                    <p>③设矩阵 $A_{m \times n}$，$B_{s \times n}$，则 $Ax=0$ 与 $Bx=0$ 同解的充要条件是存在矩阵 $P, Q$，使得 $B=PA$，$A=QB$。</p>
+                    
+                    <div class="theorem-box">
+                        <h4>【注】证</h4>
+                        <p>设 $Ax=0$ 与 $Bx=0$ 的通解分别为 $x_A, x_B$，先证 $x_A$ 可由 $x_B$ 线性表示的充要条件是存在 $s \times m$ 矩阵 $P$，使得 $PA=B$。</p>
+                        <p>若 $PA=B$，设 $x_A$ 是 $Ax=0$ 的解，则 $Ax_A=0$，于是 $PAx_A=Bx_A=0$，即 $x_A$ 为 $Bx=0$ 的解，$x_A$ 可由 $x_B$ 线性表示。</p>
+                        <p>反过来，若 $Ax$ 为 $Bx$ 的解，则 $Ax=0$ 与 $\begin{bmatrix} A \\ B \end{bmatrix}x=0$ 同解，即 $x_A$ 可由 $x_B$ 线性表示，从而 $r\begin{pmatrix} \begin{bmatrix} A \\ B \end{bmatrix} \end{pmatrix}=$</p>
+                        <p>$r(A)$，即 $B$ 的行向量可由 $A$ 的行向量线性表示，故存在矩阵 $P$，使得 $PA=B$。</p>
+                        <p>同理可证 $A=QB$。</p>
+                        <p>证明①~④循环封闭，故①~④为等价命题。</p>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例5.8</h4>
+                    <p>设矩阵 $A=\begin{bmatrix} 1 & -1 & 0 & -1 \\ 1 & 1 & 0 & 3 \\ 2 & 1 & 2 & 6 \end{bmatrix}$，$B=\begin{bmatrix} 1 & 0 & 1 & 2 \\ 1 & -1 & a & a-1 \\ 2 & -3 & 2 & -2 \end{bmatrix}$，向量 $α=\begin{bmatrix} 0 \\ 2 \\ 3 \end{bmatrix}$，$β=\begin{bmatrix} 1 \\ 0 \\ -1 \end{bmatrix}$。</p>
+                    <p>(1) 证明：方程组 $Ax=α$ 的解均为方程组 $Bx=β$ 的解；</p>
+                    <p>(2) 若方程组 $Ax=a$ 与方程组 $Bx=β$ 不同解，求 $a$ 的值。</p>
+                    
+                    <div class="solution-box">
+                        <h5>【解】详细解答请参见原文档。</h5>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 第三部分：几何意义 -->
+        <section class="section" id="section3">
+            <h2>三、线性方程组的几何意义</h2>
+            
+            <p>设线性方程组</p>
+            <div class="formula-block">
+                $$\begin{cases}
+                a_1x + b_1y + c_1z = d_1, \\
+                a_2x + b_2y + c_2z = d_2, \\
+                a_3x + b_3y + c_3z = d_3.
+                \end{cases}$$
+            </div>
+            
+            <p>记 $A=\begin{bmatrix} a_1 & b_1 & c_1 \\ a_2 & b_2 & c_2 \\ a_3 & b_3 & c_3 \end{bmatrix}$，$\overline{A}=\begin{bmatrix} a_1 & b_1 & c_1 & d_1 \\ a_2 & b_2 & c_2 & d_2 \\ a_3 & b_3 & c_3 & d_3 \end{bmatrix}$，</p>
+            
+            <p>且 $\Pi_i$ $(i=1, 2, 3)$ 表示第 $i$ 张平面：$a_ix + b_iy + c_iz = d_i$，$\alpha_i$ $(i=1, 2, 3)$ 表示第 $i$ 张平面的法向量 $[a_i, b_i, c_i]$，即 $A$ 的行向量，$\beta_i$ $(i=1, 2, 3)$ 表示 $[a_i, b_i, c_i, d_i]$，即 $\overline{A}$ 的行向量。</p>
+            
+            <div class="note-box">
+                <h4>【注】以下 $i \neq j$</h4>
+                <p>① $\alpha_i$ 与 $\alpha_j$ 线性相关 $⇔$ $\Pi_i$ 与 $\Pi_j$ 平行或重合。</p>
+                <p>② $\alpha_i$ 与 $\alpha_j$ 线性无关 $⇔$ $\Pi_i$ 与 $\Pi_j$ 相交。</p>
+                <p>③ $\beta_i$ 与 $\beta_j$ 线性相关 $⇔$ $\Pi_i$ 与 $\Pi_j$ 重合。</p>
+                <p>如 $\Pi_1: x+y+z=1$，$\Pi_2: 2x+2y+2z=2$，其中</p>
+                <p>$\beta_1=[1, 1, 1, 1]$，$\beta_2=[2, 2, 2, 2]$，</p>
+                <p>$\beta_1$ 与 $\beta_2$ 线性相关，故 $\Pi_1$ 与 $\Pi_2$ 重合。</p>
+            </div>
+            
+            <div class="note-box">
+                <h4>④ $\beta_i$ 与 $\beta_j$ 线性无关 $⇔$ $\Pi_i$ 与 $\Pi_j$ 不重合。</h4>
+                <p>如 $\Pi_1: x+y+z=0$，$\Pi_2: x+y+z=1$，其中</p>
+                <p>$\beta_1=[1, 1, 1, 0]$，$\beta_2=[1, 1, 1, 1]$，</p>
+                <p>$\beta_1$ 与 $\beta_2$ 线性无关，故 $\Pi_1$ 与 $\Pi_2$ 不重合。</p>
+            </div>
+            
+            <h3>方程组有解的情形</h3>
+            
+            <table class="content-table">
+                <thead>
+                    <tr>
+                        <th>图形</th>
+                        <th>几何意义</th>
+                        <th>代数表达</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>三张平面相交于一点</td>
+                        <td>三张平面相交于一点</td>
+                        <td>$r(A) = r(\overline{A}) = 3$</td>
+                    </tr>
+                    <tr>
+                        <td>三张平面相交于一条直线</td>
+                        <td>三张平面相交于一条直线</td>
+                        <td>$r(A) = r(\overline{A}) = 2$，且 $\beta_1, \beta_2, \beta_3$ 中任意两个向量都线性无关（<span class="highlight">任何两个面都不重合</span>）</td>
+                    </tr>
+                    <tr>
+                        <td>两张平面重合，第三张平面与之相交</td>
+                        <td>两张平面重合，第三张平面与之相交</td>
+                        <td>$r(A) = r(\overline{A}) = 2$，且 $\beta_1, \beta_2, \beta_3$ 中有两个向量线性相关（<span class="highlight">含在两个面重合</span>）</td>
+                    </tr>
+                    <tr>
+                        <td>三张平面重合</td>
+                        <td>三张平面重合</td>
+                        <td>$r(A) = r(\overline{A}) = 1$</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>方程组无解的情形</h3>
+            
+            <table class="content-table">
+                <thead>
+                    <tr>
+                        <th>图形</th>
+                        <th>几何意义</th>
+                        <th>代数表达</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>三张平面两两相交，且交线互平行</td>
+                        <td>三张平面两两相交，且交线互平行</td>
+                        <td>$r(A) = 2, r(\overline{A}) = 3$，且 $\alpha_1, \alpha_2, \alpha_3$ 中任意两个向量都线性无关（<span class="highlight">任何两个面都不重合</span>）</td>
+                    </tr>
+                    <tr>
+                        <td>两张平面平行，第三张平面与它们相交</td>
+                        <td>两张平面平行，第三张平面与它们相交</td>
+                        <td>$r(A) = 2, r(\overline{A}) = 3$，且 $\alpha_1, \alpha_2, \alpha_3$ 中有两个向量线性相关（<span class="highlight">有两面平行</span>）</td>
+                    </tr>
+                    <tr>
+                        <td>三张平面相互平行且不重合</td>
+                        <td>三张平面相互平行且不重合</td>
+                        <td>$r(A) = 1, r(\overline{A}) = 2$，且 $\beta_1, \beta_2, \beta_3$ 中任意两个向量都线性无关（<span class="highlight">任何两个面都不重合</span>）</td>
+                    </tr>
+                    <tr>
+                        <td>两张平面重合，第三张平面与它们平行但不重合</td>
+                        <td>两张平面重合，第三张平面与它们平行但不重合</td>
+                        <td>$r(A) = 1, r(\overline{A}) = 2$，且 $\beta_1, \beta_2, \beta_3$ 中有两个向量线性相关（<span class="highlight">含在两个面重合</span>）</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="example-box" id="examples">
+                <h4>例5.9</h4>
+                <p>在空间直角坐标系 $O-xyz$ 中，三张平面 $\Pi_1: ax+y-z=1$，$\Pi_2: x+y+bz=a$，$\Pi_3: x+ay-z=1$ 的位置关系如图所示，则（　　）。</p>
+                <p>(A) $a=1, b \neq -1$　　(B) $a=1, b=-1$</p>
+                <p>(C) $a \neq -2, b=2$　　(D) $a=-2, b=2$</p>
+                
+                <div class="solution-box">
+                    <h5>【解】应选（D）</h5>
+                    <p>由于三张平面相交于一条直线，记</p>
+                    <div class="formula-block">
+                        $$\alpha_1=\begin{bmatrix} a \\ 1 \\ -1 \end{bmatrix}, \alpha_2=\begin{bmatrix} 1 \\ 1 \\ b \end{bmatrix}, \alpha_3=\begin{bmatrix} 1 \\ a \\ -1 \end{bmatrix}, \beta_1=\begin{bmatrix} a \\ 1 \\ -1 \\ 1 \end{bmatrix}, \beta_2=\begin{bmatrix} 1 \\ 1 \\ b \\ a \end{bmatrix}, \beta_3=\begin{bmatrix} 1 \\ a \\ -1 \\ 1 \end{bmatrix},$$
+                    </div>
+                    <p>则 $r(\alpha_1, \alpha_2, \alpha_3) = r(\beta_1, \beta_2, \beta_3) = 2$，且 $\beta_1, \beta_2, \beta_3$ 任意两个向量都线性无关。</p>
+                    <p>通过行变换可得：$a=-2, b=2$。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 返回顶部按钮 -->
+        <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
+    </main>
+    
+    <script>
+        // 折叠功能
+        function toggleCollapsible(element) {
+            const collapsible = element.parentElement;
+            collapsible.classList.toggle('active');
+        }
+        
+        // 侧边栏切换（移动端）
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+        
+        // 滚动到顶部
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 显示/隐藏返回顶部按钮
+        window.addEventListener('scroll', function() {
+            const scrollTop = document.getElementById('scrollTop');
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('show');
+            } else {
+                scrollTop.classList.remove('show');
+            }
+        });
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    // 移动端关闭侧边栏
+                    if (window.innerWidth <= 768) {
+                        document.getElementById('sidebar').classList.remove('active');
+                    }
+                }
+            });
+        });
+        
+        // 初始化：展开第一个可折叠内容
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstCollapsible = document.querySelector('.collapsible');
+            if (firstCollapsible) {
+                firstCollapsible.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
+
+<!-- 
+使用说明：
+1. 将此代码保存为 .html 文件（如 linear_equations_tutorial.html）
+2. 需要网络连接以加载 MathJax 和 Google Fonts
+3. 在任何现代浏览器中打开即可查看
+4. 支持桌面和移动设备浏览
+5. 点击章节可折叠/展开内容
+6. 使用侧边栏快速导航
+7. 所有数学公式使用 LaTeX 格式，通过 MathJax 渲染
+-->

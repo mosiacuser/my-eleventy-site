@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第3讲 一维随机变量函数的分布 - 交互式教程</title>
+    
+    <!-- MathJax配置 - 完整版本 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            CommonHTML: {
+                scale: 110
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f7f7f7 0%, #e8f4f1 100%);
+            color: #343434;
+            line-height: 1.8;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            background: linear-gradient(90deg, #f27d00 0%, #ff9933 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .navbar p {
+            margin-top: 0.5rem;
+            opacity: 0.95;
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+        
+        /* 侧边栏导航 */
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .sidebar h3 {
+            color: #f27d00;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin: 0.8rem 0;
+        }
+        
+        .sidebar a {
+            color: #343434;
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover {
+            background: #a6d6c9;
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        /* 主内容区 */
+        .content {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        /* 章节标题 */
+        .section {
+            margin-bottom: 3rem;
+            scroll-margin-top: 120px;
+        }
+        
+        .section h2 {
+            color: #f27d00;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 4px solid #a6d6c9;
+        }
+        
+        .section h3 {
+            color: #343434;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            padding-left: 1rem;
+            border-left: 5px solid #f7d117;
+        }
+        
+        /* 流程图容器 */
+        .flowchart {
+            background: linear-gradient(135deg, #e8f8f5 0%, #d5f0ea 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px solid #a6d6c9;
+        }
+        
+        .flowchart-title {
+            text-align: center;
+            color: #f27d00;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+        
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 5px solid #f27d00;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .card-highlight {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            border-left-color: #f7d117;
+        }
+        
+        /* 例题样式 */
+        .example {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe9e9 100%);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 2px solid #f27d00;
+        }
+        
+        .example-header {
+            background: #f27d00;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            margin: -1.5rem -1.5rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        /* 解答样式 */
+        .solution {
+            background: linear-gradient(135deg, #e8f8f5 0%, #d5f0ea 100%);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            border: 2px solid #a6d6c9;
+        }
+        
+        .solution-header {
+            background: #a6d6c9;
+            color: #343434;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            margin: -1.5rem -1.5rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        /* 注意事项 */
+        .note {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 2px solid #f7d117;
+        }
+        
+        .note-header {
+            color: #f27d00;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+        
+        /* 折叠面板 */
+        details {
+            background: white;
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            border: 2px solid #a6d6c9;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        details:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        summary {
+            font-weight: 600;
+            color: #f27d00;
+            cursor: pointer;
+            user-select: none;
+            font-size: 1.1rem;
+        }
+        
+        summary:hover {
+            color: #ff9933;
+        }
+        
+        details[open] summary {
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid #a6d6c9;
+        }
+        
+        /* 公式块 */
+        .formula-block {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            border: 1px solid #e0e0e0;
+        }
+        
+        /* 按钮 */
+        .btn {
+            background: #f27d00;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            background: #ff9933;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(242, 125, 0, 0.3);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 968px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+            }
+        }
+        
+        /* 数学公式样式增强 */
+        .mjx-chtml {
+            font-size: 1.15em !important;
+        }
+        
+        /* 回到顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #f27d00;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: #ff9933;
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="navbar">
+        <h1>📊 第3讲 一维随机变量函数的分布</h1>
+        <p>概率论与数理统计 - 交互式教程</p>
+    </div>
+    
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 侧边栏导航 -->
+        <aside class="sidebar">
+            <h3>📑 目录导航</h3>
+            <ul>
+                <li><a href="#overview">概览</a></li>
+                <li><a href="#method1">离散型→离散型</a></li>
+                <li><a href="#method2">连续型→连续型</a></li>
+                <li><a href="#method3">连续型→离散型</a></li>
+                <li><a href="#method4">随机变量变换</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <main class="content">
+            <!-- 概览部分 -->
+            <section id="overview" class="section">
+                <h2>📌 三向解题法概览</h2>
+                
+                <div class="flowchart">
+                    <div class="flowchart-title">三向解题法流程图</div>
+                    <p style="text-align: center; font-size: 1.2rem; margin-bottom: 1.5rem;">
+                        <strong>求一维随机变量函数的分布</strong><br>
+                        <span style="color: #f27d00;">（$O_4$叮住目标）</span>
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div class="card">
+                            <strong style="color: #f27d00;">离散型→离散型</strong><br>
+                            <span style="color: #666;">（$O_4$叮住目标1）</span>
+                        </div>
+                        <div class="card">
+                            <strong style="color: #f27d00;">连续型→连续型</strong><br>
+                            <span style="color: #666;">（或混合型）</span><br>
+                            <span style="color: #666;">（$O_4$叮住目标2）</span>
+                        </div>
+                        <div class="card">
+                            <strong style="color: #f27d00;">连续型→离散型</strong><br>
+                            <span style="color: #666;">（$O_4$叮住目标3）</span>
+                        </div>
+                        <div class="card">
+                            <strong style="color: #f27d00;">两种重要的随机变量变换</strong><br>
+                            <span style="color: #666;">（$O_4$叮住目标4）</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="note">
+                    <div class="note-header">💡 核心思想</div>
+                    <p>已知随机变量 $X$ 的分布，求其函数 $Y = g(X)$ 的分布，关键在于:</p>
+                    <ul style="margin-left: 2rem; margin-top: 1rem;">
+                        <li>离散型：利用概率守恒，找出 $Y$ 各取值的概率</li>
+                        <li>连续型：使用分布函数法或公式法，求出 $Y$ 的分布函数或密度函数</li>
+                        <li>变换：掌握 $U(0,1)$ 和 $E(1)$ 的重要变换性质</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 方法1：离散型→离散型 -->
+            <section id="method1" class="section">
+                <h2>🎯 方法一：离散型→离散型（$O_4$叮住目标1）</h2>
+                
+                <div class="card-highlight">
+                    <h3>基本原理</h3>
+                    <p>设 $X$ 为离散型随机变量，其概率分布为 $p_i = P\{X = x_i\}$ （$i=1,2,\cdots$），则 $X$ 的函数</p>
+                    <div class="formula-block">
+                        $$Y = g(X)$$
+                    </div>
+                    <p>也是离散型随机变量，其概率分布为 $P\{Y = g(x_i)\} = p_i$，即</p>
+                    <div class="formula-block">
+                        $$Y \sim \begin{pmatrix} g(x_1) & g(x_2) & \cdots \\ p_1 & p_2 & \cdots \end{pmatrix}$$
+                    </div>
+                    <p style="margin-top: 1rem;">如果有若干个 $g(x_i)$ 相同，则合并诸项为一项 $g(x_j)$，并将相应概率相加作为 $Y$ 取 $g(x_j)$ 值的概率。</p>
+                </div>
+                
+                <!-- 例3.1 -->
+                <details open>
+                    <summary>📝 例3.1 - 离散型随机变量的函数分布</summary>
+                    
+                    <div class="example">
+                        <div class="example-header">例题 3.1</div>
+                        <p><strong>题目：</strong>设随机变量 $X$ 的概率分布为 $P\{X = k\} = \frac{1}{2^k}$，$k = 1,2,3,\cdots$。若 $Y$ 表示 $X$ 除以 3 的余数，则 $Y$ 的概率分布为？</p>
+                    </div>
+                    
+                    <div class="solution">
+                        <div class="solution-header">💡 解答</div>
+                        <p><strong>分析：</strong>$Y$ 的可能取值为 0, 1, 2</p>
+                        
+                        <p style="margin-top: 1rem;"><strong>解：</strong>首先写出 $Y$ 的分布律表示：</p>
+                        <div class="formula-block">
+                            $$Y \sim \begin{pmatrix} 0 & 1 & 2 \\ \frac{1}{7} & \frac{4}{7} & \frac{2}{7} \end{pmatrix}$$
+                        </div>
+                        
+                        <p><strong>计算过程：</strong></p>
+                        <div class="formula-block">
+                            $$P\{Y = 0\} = \sum_{k=1}^{\infty} P\{X = 3k\} = \sum_{k=1}^{\infty} \frac{1}{2^{3k}} = \frac{1}{7}$$
+                            
+                            $$P\{Y = 1\} = \sum_{k=0}^{\infty} P\{X = 3k+1\} = \sum_{k=0}^{\infty} \frac{1}{2^{3k+1}} = \frac{4}{7}$$
+                            
+                            $$P\{Y = 2\} = \sum_{k=0}^{\infty} P\{X = 3k+2\} = \sum_{k=0}^{\infty} \frac{1}{2^{3k+2}} = \frac{2}{7}$$
+                        </div>
+                        
+                        <p>因此 $Y$ 的概率分布为：</p>
+                        <div class="formula-block">
+                            $$Y \sim \begin{pmatrix} 0 & 1 & 2 \\ \frac{1}{7} & \frac{4}{7} & \frac{2}{7} \end{pmatrix}$$
+                        </div>
+                    </div>
+                </details>
+            </section>
+            
+            <!-- 方法2：连续型→连续型 -->
+            <section id="method2" class="section">
+                <h2>🎯 方法二：连续型→连续型（$O_4$叮住目标2）</h2>
+                
+                <div class="card-highlight">
+                    <h3>基本思路</h3>
+                    <p>设 $X$ 为连续型随机变量，其分布函数、概率密度分别为 $F_X(x)$ 与 $f_X(x)$，随机变量 $Y = g(X)$ 是 $X$ 的函数，则 $Y$ 的分布函数或概率密度可用下面两种方法求得。</p>
+                </div>
+                
+                <h3>1️⃣ 分布函数法</h3>
+                <div class="card">
+                    <p>直接由定义求 $Y$ 的分布函数：</p>
+                    <div class="formula-block">
+                        $$F_Y(y) = P\{Y \leq y\} = P\{g(X) \leq y\} = \int_{g(x)\leq y} f_X(x)\,dx$$
+                    </div>
+                    <p style="margin-top: 1rem;">如果 $F_Y(y)$ 连续，且除有限个点外，$F_Y'(y)$ 存在且连续，则 $Y$ 的概率密度 $f_Y(y) = F_Y'(y)$。</p>
+                </div>
+                
+                <h3>2️⃣ 公式法</h3>
+                <div class="card">
+                    <p><strong>$\mathbf{D_4}$ (化归轻身形式)：</strong>根据上面的分布函数法，若 $y = g(x)$ 在 $(a,b)$ 上是关于 $x$ 的严格单调可导函数，则存在 $x = h(y)$ 是 $y = g(x)$ 在 $(a,b)$ 上的可导反函数。</p>
+                    
+                    <details style="margin-top: 1rem;">
+                        <summary><strong>① 若 $y = g(x)$ 严格单调增加</strong></summary>
+                        <p>则 $x = h(y)$ 也严格单调增加，即 $h'(y) > 0$，且</p>
+                        <div class="formula-block">
+                            $$F_Y(y) = P\{Y \leq y\} = P\{g(X) \leq y\} = P\{X \leq h(y)\} = \int_{-\infty}^{h(y)} f_X(x)\,dx$$
+                        </div>
+                        <p>故 $f_Y(y) = F_Y'(y) = f_X[h(y)] \cdot h'(y)$</p>
+                    </details>
+                    
+                    <details style="margin-top: 1rem;">
+                        <summary><strong>② 若 $y = g(x)$ 严格单调减少</strong></summary>
+                        <p>则 $x = h(y)$ 也严格单调减少，即 $h'(y) < 0$，且</p>
+                        <div class="formula-block">
+                            $$F_Y(y) = P\{Y \leq y\} = P\{g(X) \leq y\} = P\{X \geq h(y)\} = \int_{h(y)}^{+\infty} f_X(x)\,dx$$
+                        </div>
+                        <p>故 $f_Y(y) = F_Y'(y) = -f_X[h(y)] \cdot h'(y) = f_X[h(y)] \cdot [-h'(y)]$</p>
+                    </details>
+                    
+                    <p style="margin-top: 1.5rem;"><strong>综上，公式法的结果为：</strong></p>
+                    <div class="formula-block">
+                        $$f_Y(y) = \begin{cases} f_X[h(y)] \cdot |h'(y)|, & \alpha < y < \beta, \\ 0, & \text{其他} \end{cases}$$
+                    </div>
+                    <p>其中 $\alpha = \min\{\lim_{x \to a^+} g(x), \lim_{x \to b^-} g(x)\}$，$\beta = \max\{\lim_{x \to a^+} g(x), \lim_{x \to b^-} g(x)\}$</p>
+                </div>
+                
+                <div class="note">
+                    <div class="note-header">⚠️ 注意</div>
+                    <p>若 $y = g(x)$ 在 $(a,b)$ 上分段严格单调，则将 $(a,b)$ 划分为各产生严格单调的子区间，按 ①、② 计算并加起来即可。</p>
+                </div>
+                
+                <!-- 例3.2 -->
+                <details>
+                    <summary>📝 例3.2 - 指数分布的变换</summary>
+                    
+                    <div class="example">
+                        <div class="example-header">例题 3.2</div>
+                        <p><strong>题目：</strong>设随机变量 $X$ 的概率密度为 $f(x) = \frac{e^x}{(1+e^x)^2}$，$-\infty < x < +\infty$，令 $Y = e^x$。</p>
+                        <p>（1）求 $X$ 的分布函数；</p>
+                        <p>（2）求 $Y$ 的概率密度。</p>
+                    </div>
+                    
+                    <div class="solution">
+                        <div class="solution-header">💡 解答</div>
+                        
+                        <p><strong>（1）$X$ 的分布函数为：</strong></p>
+                        <div class="formula-block">
+                            $$F(x) = \int_{-\infty}^x f(t)\,dt = \int_{-\infty}^x \frac{e^t}{(1+e^t)^2}\,dt = \frac{e^x}{1+e^x}$$
+                        </div>
+                        
+                        <p><strong>（2）</strong>函数 $y = e^x$ 单调且反函数为 $x = \ln y$ （$y > 0$），从而 $Y$ 的概率密度为：</p>
+                        <div class="formula-block">
+                            $$f_Y(y) = \begin{cases} \frac{1}{y} f(\ln y), & y > 0, \\ 0, & \text{其他} \end{cases}$$
+                            
+                            $$= \begin{cases} \frac{1}{(1+y)^2}, & y > 0, \\ 0, & \text{其他.} \end{cases}$$
+                        </div>
+                    </div>
+                </details>
+            </section>
+            
+            <!-- 方法3：连续型→离散型 -->
+            <section id="method3" class="section">
+                <h2>🎯 方法三：连续型→离散型（$O_4$叮住目标3）</h2>
+                
+                <div class="card-highlight">
+                    <h3>基本方法</h3>
+                    <p>若 $X \sim f_X(x)$，且 $Y = g(X)$ 是离散型随机变量，首先确定 $Y$ 的可能取值 $a$，然后通过计算概率 $P\{Y = a\}$ 求得 $Y$ 的概率分布。</p>
+                </div>
+                
+                <!-- 例3.3 -->
+                <details>
+                    <summary>📝 例3.3 - 指数分布取整函数</summary>
+                    
+                    <div class="example">
+                        <div class="example-header">例题 3.3</div>
+                        <p><strong>题目：</strong>设随机变量 $X$ 服从参数为 $\lambda$ 的指数分布，令 $Y = [X] + 1$（$[X]$ 为不超过 $X$ 的最大整数），则 $P\{Y > 5 | Y > 2\}$ = ？</p>
+                    </div>
+                    
+                    <div class="solution">
+                        <div class="solution-header">💡 解答</div>
+                        
+                        <p><strong>应填</strong> $e^{-3\lambda}$</p>
+                        
+                        <p><strong>解析：</strong>因为 $X \sim E(\lambda)$，即</p>
+                        <div class="formula-block">
+                            $$F_X(x) = \begin{cases} 1 - e^{-\lambda x}, & x \geq 0, \\ 0, & x < 0. \end{cases}$$
+                        </div>
+                        
+                        <p>$X$ 的有效取值区间为 $[0, +\infty)$，故 $Y = [X] + 1$ 的值域是 $\{1, 2, 3, \cdots\}$，$Y$ 是离散型随机变量，则</p>
+                        
+                        <div class="formula-block">
+                            $$\begin{aligned}
+                            P\{Y = k\} &= P\{[X] + 1 = k\} = P\{[X] = k - 1\} \\
+                            &\overset{\mathbf{D_4}(\text{转换等价条件})}{=} P\{k - 1 \leq X < k\} \\
+                            &= P\{X < k\} - P\{X < k - 1\} \\
+                            &= F_X(k) - F_X(k - 1) \\
+                            &= (1 - e^{-\lambda k}) - [1 - e^{-\lambda(k-1)}] \\
+                            &= e^{-\lambda(k-1)} - e^{-\lambda k} \\
+                            &= (1 - e^{-\lambda})(e^{-\lambda})^{k-1}
+                            \end{aligned}$$
+                        </div>
+                        
+                        <p style="margin-top: 1rem;"><span style="color: #f27d00;">这是参数为 $p = 1 - e^{-\lambda}$ 的几何分布</span>，即 $P\{X = k\} = (1 - p)^{k-1}p$</p>
+                        
+                        <p>其中 $k = 1, 2, \cdots$。所以 $Y$ 服从参数为 $1 - e^{-\lambda}$ 的几何分布。</p>
+                        
+                        <p>根据几何分布的无记忆性，得</p>
+                        <div class="formula-block">
+                            $$\begin{aligned}
+                            P\{Y > 5 | Y > 2\} &= P\{Y > 3\} = 1 - P\{Y \leq 3\} \\
+                            &= 1 - \sum_{k=1}^{3} [1 - (1 - e^{-\lambda})]^{k-1} \cdot (1 - e^{-\lambda}) \\
+                            &= 1 - (1 - e^{-\lambda}) \cdot \sum_{k=1}^{3} e^{-\lambda(k-1)} \\
+                            &= e^{-3\lambda}
+                            \end{aligned}$$
+                        </div>
+                    </div>
+                </details>
+                
+                <div class="note">
+                    <div class="note-header">📌 注意</div>
+                    <p>本题前半部分实际是证明：若 $X \sim E(\lambda)$，$Y = [X]$，即 $Y$ 是 $X$ 的整数部分，且</p>
+                    <div class="formula-block">
+                        $$\begin{aligned}
+                        P\{Y + 1 = k\} &= P\{[X] + 1 = k\} \\
+                        &= P\{k - 1 \leq X < k\} \\
+                        &= e^{-\lambda(k-1)} - e^{-\lambda k} \\
+                        &= e^{-\lambda(k-1)}(1 - e^{-\lambda}), \quad k = 1, 2, \cdots
+                        \end{aligned}$$
+                    </div>
+                    <p>即 $Y + 1$ 服从参数为 $1 - e^{-\lambda}$ 的几何分布。</p>
+                </div>
+            </section>
+            
+            <!-- 方法4：重要的随机变量变换 -->
+            <section id="method4" class="section">
+                <h2>🎯 方法四：两种重要的随机变量变换（$O_4$叮住目标4）</h2>
+                
+                <h3>1️⃣ 变换于 $U(0,1)$</h3>
+                
+                <div class="card-highlight">
+                    <p><strong>定理：</strong>设随机变量 $X$ 的分布函数 $F_X(x)$ 是严格单调增加函数，且反函数 $F_X^{-1}(y)$ 存在，$Y = F_X(X)$，证明：$Y$ 服从区间 $(0,1)$ 上的均匀分布。</p>
+                </div>
+                
+                <!-- 例3.4 -->
+                <details>
+                    <summary>📝 例3.4 - 均匀分布的验证</summary>
+                    
+                    <div class="example">
+                        <div class="example-header">例题 3.4</div>
+                        <p><strong>题目：</strong>设随机变量 $X$ 的分布函数 $F_X(x)$ 是严格单调增加函数，其反函数 $F_X^{-1}(y)$ 存在，$Y = F_X(X)$。证明：$Y$ 服从区间 $(0,1)$ 上的均匀分布。</p>
+                    </div>
+                    
+                    <div class="solution">
+                        <div class="solution-header">💡 证明</div>
+                        
+                        <p>$Y = F_X(X)$ 是在区间 $(0,1)$ 上取值的随机变量，故</p>
+                        
+                        <p>当 $y < 0$ 时，$F_Y(y) = 0$；</p>
+                        
+                        <p>当 $y \geq 1$ 时，$F_Y(y) = 1$；</p>
+                        
+                        <p>当 $0 \leq y < 1$ 时，</p>
+                        <div class="formula-block">
+                            $$\begin{aligned}
+                            F_Y(y) &= P\{Y \leq y\} = P\{F_X(X) \leq y\} \\
+                            &= P\{X \leq F_X^{-1}(y)\} = F_X[F_X^{-1}(y)] = y
+                            \end{aligned}$$
+                        </div>
+                        
+                        <p>综上所述，$Y = F_X(X)$ 的分布函数为</p>
+                        <div class="formula-block">
+                            $$F_Y(y) = \begin{cases} 0, & y < 0, \\ y, & 0 \leq y < 1, \\ 1, & y \geq 1 \end{cases}$$
+                        </div>
+                        
+                        <p>这就是在区间 $(0,1)$ 上的均匀分布函数，所以 $Y \sim U(0,1)$。</p>
+                    </div>
+                </details>
+                
+                <div class="note">
+                    <div class="note-header">📌 重要性质</div>
+                    <p><strong>（1）</strong>题设条件中的"$F_X(x)$ 严格单调增加"是充分条件，事实上，只需要 $F_X(x)$ 在 $X$ 的正概率密度区间上严格单调增加即可，见例 3.5。</p>
+                    <p><strong>（2）</strong>本题是一个重要结论，即在满足 $F_X(x)$ 在 $X$ 的正概率密度区间上严格单调增加时，若 $X \sim F_X(x)$，则 $Y = F_X(X) \sim U(0,1)$。这一结论常研中常用。</p>
+                    <p><strong>（3）</strong>事实上，在概率论专业教材中可定义 $F_X(x)$ 具有广义反函数，即上述（1）并不需要，这已超出考研要求。</p>
+                    <p><strong>（4）</strong>任一连续型随机变量 $X$ 的分布函数为 $F_X(x)$，由大题（$Y \sim U(0,1)$）可知，$Y = F_X(X) \sim U(0,1)$。</p>
+                </div>
+                
+                <!-- 例3.5 -->
+                <details>
+                    <summary>📝 例3.5 - 概率计算应用</summary>
+                    
+                    <div class="example">
+                        <div class="example-header">例题 3.5</div>
+                        <p><strong>题目：</strong>设随机变量 $X$ 的概率密度为 $f(x) = \begin{cases} \frac{x}{2}, & 0 < x < 2, \\ 0, & \text{其他}, \end{cases}$ $F(x)$ 为 $X$ 的分布函数，$EX$ 为 $X$ 的数学期望，则 $P\{F(X) > EX - 1\}$ = ？</p>
+                    </div>
+                    
+                    <div class="solution">
+                        <div class="solution-header">💡 解答</div>
+                        
+                        <p><strong>应填</strong> $\frac{2}{3}$</p>
+                        
+                        <p><strong>法一：</strong>由题意知，$EX = \int_0^{\infty} xf(x)\,dx = \int_0^2 \frac{x^2}{2}\,dx = \frac{4}{3}$</p>
+                        
+                        <p>由 $F(x) = \int_{-\infty}^x f(t)\,dt$，得</p>
+                        <div class="formula-block">
+                            $$F(x) = \begin{cases} 0, & x < 0, \\ \frac{x^2}{4}, & 0 \leq x < 2, \\ 1, & x \geq 2 \end{cases}$$
+                        </div>
+                        
+                        <p>从而，$P\{F(X) > EX - 1\} = P\left\{\frac{X^2}{4} > \frac{1}{3}\right\} = P\left\{\frac{2}{\sqrt{3}} < X < 2\right\} = \int_{\frac{2}{\sqrt{3}}}^2 \frac{x}{2}\,dx = \frac{2}{3}$</p>
+                        
+                        <p><strong>法二：</strong>令 $Y = F(X)$，由例 3.4 可知，$Y \sim U(0,1)$，则</p>
+                        <div class="formula-block">
+                            $$P\{F(X) > EX - 1\} = P\left\{Y > \frac{1}{3}\right\} = \frac{2}{3}$$
+                        </div>
+                        
+                        <div style="background: #fff9e6; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                            <p><strong>$\mathbf{D_4}$(就是研究对象)：此题满足条件</strong></p>
+                        </div>
+                    </div>
+                </details>
+                
+                <div class="card">
+                    <p>事实上，由此可解得 $X > 0$ 时，$X = \frac{1}{\lambda}\ln\frac{1}{1-Y}$，由均匀分布 $U(0,1)$ 的随机值 $y_i$ 可以得到指数分布 $E(\lambda)$ 的随机值。</p>
+                    <p>到 $x_i = \frac{1}{\lambda}\ln\frac{1}{1-y_i}$，此为根据分布函数产生的便捷性。此获得多复杂分布的随机值，为数值模拟提供了法宝。</p>
+                    <p>从而，基于均匀分布随机值产生的便捷性，可获得很多复杂分布的随机值，为数值模拟提供了法宝。</p>
+                </div>
+                
+                <h3 style="margin-top: 2rem;">2️⃣ 变换于 $E(1)$</h3>
+                
+                <div class="card-highlight">
+                    <p><strong>定理：</strong>设随机变量 $X$ 的分布函数 $F_X(x)$ 连续，且 $F_X(x)$ 在 $X$ 的正概率密度区间上严格单调增加，$Y = -\ln[1 - F_X(X)]$，证明随机变量 $Y$ 服从指数分布 $E(1)$。</p>
+                </div>
+                
+                <!-- 例3.6 -->
+                <details>
+                    <summary>📝 例3.6 - 指数分布的验证</summary>
+                    
+                    <div class="example">
+                        <div class="example-header">例题 3.6</div>
+                        <p><strong>题目：</strong>设随机变量 $X$ 的分布函数 $F_X(x)$ 连续，且 $F_X(x)$ 在 $X$ 的正概率密度区间上严格单调增加，$Y = -\ln[1 - F_X(X)]$，证明随机变量 $Y$ 服从指数分布 $E(1)$。</p>
+                    </div>
+                    
+                    <div class="solution">
+                        <div class="solution-header">💡 证明</div>
+                        
+                        <p>由于 $F_X(x)$ 连续，因此 $Y$ 为单调不减且非负的连续随机变量，又对任意的 $x > 0$，有</p>
+                        <div class="formula-block">
+                            $$\begin{aligned}
+                            P\{Y \leq x\} &= P\{-\ln[1 - F_X(X)] \leq x\} \\
+                            &= P\{F_X(X) \leq 1 - e^{-x}\}
+                            \end{aligned}$$
+                        </div>
+                        
+                        <p>且随机变量 $F_X(X)$ 服从 $U(0,1)$，于是</p>
+                        <div class="formula-block">
+                            $$P\{Y \leq x\} = P\{F_X(X) \leq 1 - e^{-x}\} = 1 - e^{-x}, \quad x > 0$$
+                        </div>
+                        
+                        <p>故 $Y$ 服从指数分布 $E(1)$。</p>
+                        
+                        <div style="background: #e8f8f5; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                            <p><strong>我们又收获了一个常用的随机条件</strong></p>
+                        </div>
+                    </div>
+                </details>
+                
+                <div class="note">
+                    <div class="note-header">💡 应用价值</div>
+                    <p>当建立了关系 $y_i = \ln\frac{1}{1 - F_X(x_i)}$ 后，可将随机值 $x_i$ 转化为 $E(1)$ 下的随机值 $y_i$，而指数分布的无记忆性在可靠性分析、金融保险等研究中，对历史数据进行处理更为方便。</p>
+                </div>
+            </section>
+            
+            <!-- 回到顶部按钮 -->
+            <button class="btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                ⬆️ 回到顶部
+            </button>
+        </main>
+    </div>
+    
+    <!-- 回到顶部浮动按钮 -->
+    <div class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        ⬆
+    </div>
+    
+    <script>
+        // 回到顶部按钮显示/隐藏
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 为所有 details 添加动画效果
+        document.querySelectorAll('details').forEach(detail => {
+            detail.addEventListener('toggle', function() {
+                if (this.open) {
+                    this.style.animation = 'slideIn 0.3s ease-out';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

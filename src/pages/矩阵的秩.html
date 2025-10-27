@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第4讲 矩阵的秩 - 交互式教程</title>
+    
+    <!-- 完整的MathJax配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            },
+            SVG: {
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 100%);
+            color: #343434;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #343434;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: #a6d6c9;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        section {
+            background: #ffffff;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        h3 {
+            color: #f27d00;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid #f7d117;
+        }
+        
+        h4 {
+            color: #343434;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+            font-weight: 600;
+        }
+        
+        .definition {
+            background: linear-gradient(135deg, #a6d6c9 0%, #ffffff 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #f27d00;
+        }
+        
+        .formula-box {
+            background: #f7d117;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #f27d00;
+        }
+        
+        .formula-box h3 {
+            color: #343434;
+            border-left-color: #f27d00;
+            margin-top: 0;
+        }
+        
+        .property {
+            background: #ffffff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 3px solid #a6d6c9;
+        }
+        
+        .example {
+            background: linear-gradient(135deg, #ffffff 0%, #f7d117 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #a6d6c9;
+        }
+        
+        .example h4 {
+            color: #f27d00;
+            margin-top: 0;
+        }
+        
+        .solution {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .note {
+            background: #a6d6c9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f27d00;
+        }
+        
+        .note strong {
+            color: #f27d00;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        details {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #a6d6c9;
+            cursor: pointer;
+        }
+        
+        summary {
+            font-weight: 600;
+            color: #f27d00;
+            cursor: pointer;
+            user-select: none;
+            padding: 5px;
+        }
+        
+        summary:hover {
+            color: #343434;
+        }
+        
+        details[open] {
+            background: #ffffff;
+        }
+        
+        details[open] summary {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #a6d6c9;
+        }
+        
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .property-card {
+            background: linear-gradient(135deg, #ffffff 0%, #a6d6c9 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #f27d00;
+            transition: transform 0.3s ease;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(242, 125, 0, 0.3);
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 50%;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            font-size: 1.5em;
+            z-index: 1000;
+        }
+        
+        .back-to-top:hover {
+            background: #f7d117;
+            transform: translateY(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            .properties-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #343434;
+            font-size: 0.9em;
+            background: rgba(255,255,255,0.8);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第4讲 矩阵的秩</h1>
+            <p>三向解题法：定义 + 公式 + 性质</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#overview">概述</a></li>
+                <li><a href="#definition">定义</a></li>
+                <li><a href="#formulas">公式</a></li>
+                <li><a href="#properties">性质体系</a></li>
+                <li><a href="#examples">例题解析</a></li>
+            </ul>
+        </nav>
+        
+        <section id="overview">
+            <h2>解题法概览</h2>
+            <div class="formula-box">
+                <h3>求矩阵的秩（$\bigcirc$（III往目标））</h3>
+                <p style="text-align: center; margin: 20px 0;">
+                    <strong>$\text{D}_1$（常规操作）+ $\text{D}_2$（脱胎换骨）+ $\text{D}_{41}$（试取特殊情形）+ $\text{P}_{12}$（反向思路）</strong>
+                </p>
+            </div>
+        </section>
+        
+        <section id="definition">
+            <h2>一、定义（$\text{D}_1$（常规操作））</h2>
+            
+            <div class="definition">
+                <h3>基本定义</h3>
+                <p>设$A$是$m \times n$矩阵，$A$中最大的不为零的子式的阶数称为矩阵$A$的<span class="highlight">秩</span>，记为$r(A)$。</p>
+                <p style="margin-top: 15px;">也可以这样定义：若存在$k$阶子式不为零，而任意$k+1$阶子式全为零（如果有的话），则$r(A) = k$，且若$A$为$m \times n$矩阵，则</p>
+                <p style="text-align: center; margin: 15px 0;">
+                    $$r(A_{m \times n}) = n \Leftrightarrow |A| \neq 0 \Leftrightarrow A \text{可逆}$$
+                </p>
+            </div>
+            
+            <div class="note">
+                <strong>【注】</strong>用初等变换将$A$化为行阶梯形矩阵，阶梯即为秩的秩。
+            </div>
+        </section>
+        
+        <section id="formulas">
+            <h2>二、公式（$\text{D}_1$（常规操作）+ $\text{D}_2$（脱胎换骨）+ $\text{D}_{41}$（试取特殊情形）+ $\text{P}_{12}$（反向思路））</h2>
+            
+            <div class="formula-box">
+                <h3>基本公式</h3>
+                
+                <div class="property">
+                    <strong>1.</strong> 设$A$是$m \times n$矩阵，则$0 \leq r(A) \leq \min\{m, n\}$
+                </div>
+                
+                <div class="property">
+                    <strong>2.</strong> 设$A$是$m \times n$矩阵，则$r(kA) = r(A)$ $(k \neq 0)$
+                </div>
+                
+                <div class="property">
+                    <strong>3.</strong> 设$A$是$m \times n$矩阵，$P$、$Q$分别是$m$阶、$n$阶可逆矩阵，则
+                    $$r(A) = r(PA) = r(AQ) = r(PAQ)$$
+                </div>
+                
+                <div class="note">
+                    <strong>【注】</strong>(1) 公式3表明初等变换不改变矩阵的秩。<br>
+                    (2) 若$r(AB) < r(A)$，$B$为$n$阶矩阵，则$r(B) < n$
+                </div>
+            </div>
+            
+            <div class="properties-grid">
+                <div class="property-card">
+                    <strong>4.</strong> 设$A$是$m \times n$矩阵，$B$是$n \times s$矩阵。<br>
+                    (1) 若$r(A) = n$（列满秩），则$r(AB) = r(B)$<br>
+                    (2) 若$r(B) = n$（行满秩），则$r(AB) = r(A)$
+                </div>
+                
+                <div class="property-card">
+                    <strong>5.</strong> 若$CA = CB$，$C$列满秩，则$A = B$；<br>
+                    若$AC = BC$，$C$行满秩，则$A = B$
+                </div>
+                
+                <div class="property-card">
+                    <strong>6.</strong> 设$A$是$m \times n$矩阵，$B$是$n \times s$矩阵，则
+                    $$r(AB) \leq \min\{r(A), r(B)\}$$
+                </div>
+                
+                <div class="property-card">
+                    <strong>7.</strong> 设$A$，$B$为同型矩阵，则
+                    $$r(A + B) \leq r([A, B]) \leq r(A) + r(B)$$
+                </div>
+            </div>
+            
+            <details>
+                <summary><strong>公式8：重要的秩不等式</strong></summary>
+                <div class="property">
+                    设$A$是$m \times n$矩阵，$B$是$n \times s$矩阵，则
+                    $$r(AB) \geq r(A) + r(B) - n$$
+                    <div style="margin-top: 15px; padding: 15px; background: #f7d117; border-radius: 8px;">
+                        <strong>证明：</strong>左设变A如下式
+                        $$\begin{bmatrix} E & O \\ O & AB \end{bmatrix} \rightarrow \begin{bmatrix} E & O \\ A & AB \end{bmatrix} \rightarrow \begin{bmatrix} E & -B \\ A & O \end{bmatrix} \rightarrow \begin{bmatrix} -B & E \\ O & A \end{bmatrix} \rightarrow \begin{bmatrix} B & E \\ O & A \end{bmatrix}$$
+                        故$r(AB) + n = r\begin{pmatrix} \begin{bmatrix} E & O \\ O & AB \end{bmatrix} \end{pmatrix} = r\begin{pmatrix} \begin{bmatrix} B & E \\ O & A \end{bmatrix} \end{pmatrix} \geq r(A) + r(B)$，证毕。
+                    </div>
+                    <div class="note" style="margin-top: 15px;">
+                        <strong>注意：</strong><br>
+                        ①当$AB = O$时，有$r(A) + r(B) \leq n$<br>
+                        ②当$AB$为$n$阶可逆矩阵时，$r(AB) = n$，有$r(A) + r(B) \leq 2n$<br>
+                        ③当$B$的列向量为$Ax = 0$的解时，即$AB = O$时，有$r(A) + r(B) \leq n$<br>
+                        ④当$B \neq O$，且其列向量为$Ax = 0$的解，即$AB = O$时，有$r(A) + r(B) \leq n$，$r(B) \geq 1$，$r(A) \leq n - 1$，则$A$列不满秩，即$A$列向量组线性相关
+                    </div>
+                </div>
+            </details>
+            
+            <details>
+                <summary><strong>公式9：分块矩阵的秩</strong></summary>
+                <div class="property">
+                    设$A$是$m \times n$矩阵，$B$是$n \times s$矩阵，$C$是$s \times t$矩阵，则
+                    $$r(ABC) \geq r(AB) + r(BC) - r(B)$$
+                    <div style="margin-top: 15px; padding: 15px; background: #a6d6c9; border-radius: 8px;">
+                        <strong>证明：</strong>左设变A如下式
+                        $$\begin{bmatrix} ABC & O \\ O & B \end{bmatrix} \rightarrow \begin{bmatrix} ABC & AB \\ O & B \end{bmatrix} \rightarrow \begin{bmatrix} O & AB \\ -BC & B \end{bmatrix} \rightarrow \begin{bmatrix} AB & O \\ B & -BC \end{bmatrix} \rightarrow \begin{bmatrix} AB & O \\ B & BC \end{bmatrix}$$
+                        故$r(ABC) + r(B) = r\begin{pmatrix} \begin{bmatrix} ABC & O \\ O & B \end{bmatrix} \end{pmatrix} = r\begin{pmatrix} \begin{bmatrix} AB & O \\ B & BC \end{bmatrix} \end{pmatrix} \geq r(AB) + r(BC)$，证毕。
+                    </div>
+                </div>
+            </details>
+            
+            <div class="property">
+                <strong>10.</strong> 设$A$是$m \times n$实矩阵，则
+                $$r(A) = r(A^T) = r(AA^T) = r(A^TA)$$
+                <div class="note" style="margin-top: 10px;">
+                    <strong>【注】</strong>$A^TAx = 0$与$Ax = 0$同解，$AA^Tx = 0$与$A^Tx = 0$同解，故$A^TA$与$A$的行向量组等价，$AA^T$与$A^T$的行向量组等价。
+                </div>
+            </div>
+            
+            <div class="property">
+                <strong>11.</strong> 设$A$是$n$阶方阵，$A^*$是$A$的伴随矩阵，则
+                $$r(A^*) = \begin{cases} 
+                n, & r(A) = n \\
+                1, & r(A) = n-1 \\
+                0, & r(A) < n-1
+                \end{cases}$$
+            </div>
+            
+            <div class="property">
+                <strong>12.</strong> 设$n$阶矩阵$A$满足$A^2 - (k_1 + k_2)A + k_1k_2E = O$，$k_1 \neq k_2$，则
+                $$r(A - k_1E) + r(A - k_2E) = n$$
+                <details style="margin-top: 10px;">
+                    <summary><strong>【注】证明</strong></summary>
+                    <div style="padding: 15px; margin-top: 10px;">
+                        由$A^2 - (k_1 + k_2)A + k_1k_2E = O$，得$(A - k_1E)(A - k_2E) = O$，于是
+                        $$r(A - k_1E) + r(A - k_2E) \leq n$$
+                        又
+                        $$r(A - k_1E) + r(A - k_2E) = r(k_1E - A) + r(A - k_2E)$$
+                        $$\geq r(k_1E - A + A - k_2E) = r[(k_1 - k_2)E] = r(E) = n$$
+                        故$r(A - k_1E) + r(A - k_2E) = n$
+                        <div class="note" style="margin-top: 15px;">
+                            (2) 设$A$为$n$阶方阵，则由上述结论可知：<br>
+                            ①若$A^2 = A$，则$r(A) + r(A - E) = n$<br>
+                            a.$r(A) + r(A - E) = n$；<br>
+                            b.$A$可相似对角化；<br>
+                            c.$A + E$可逆；<br>
+                            d.$(A + E)^n = E + (2^n - 1)A$<br>
+                            ②若$A^2 = E$，则$r(A + E) + r(A - E) = n$
+                        </div>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="property">
+                <strong>13.</strong> 设$A$是$m \times n$矩阵，则$Ax = 0$的基础解系所含向量的个数为$s = n - r(A)$
+            </div>
+            
+            <div class="property">
+                <strong>14.</strong> 方程组$A_{m \times n}x = 0$与$B_{m \times n}x = 0$同解$\Leftrightarrow r(A) = r\begin{pmatrix} \begin{bmatrix} A \\ B \end{bmatrix} \end{pmatrix} = r(B)$
+            </div>
+            
+            <div class="property">
+                <strong>15.</strong> 设两个向量组：（Ⅰ）$\alpha_1, \alpha_2, \cdots, \alpha_s$，（Ⅱ）$\beta_1, \beta_2, \cdots, \beta_t$，则$r(\text{Ⅰ}) = r(\text{Ⅱ}) = r(\text{Ⅰ}, \text{Ⅱ}) \Leftrightarrow$ 向量组（Ⅰ）与向量组（Ⅱ）等价
+            </div>
+            
+            <div class="property">
+                <strong>16.</strong> 若$A \sim A$，则$n_i = n - r(\lambda_iE - A)$，其中$\lambda_i$是$n_i$重特征根
+            </div>
+            
+            <div class="property">
+                <strong>17.</strong> 若$A \sim \Lambda$，则$r(A)$等于非零特征值的个数，重根按重数算
+            </div>
+        </section>
+        
+        <section id="properties">
+            <h2>性质体系总结</h2>
+            
+            <div class="properties-grid">
+                <div class="property-card">
+                    <strong>①</strong> $0 \leq r(A_{m \times n}) \leq \min\{m, n\}$
+                </div>
+                
+                <div class="property-card">
+                    <strong>②</strong> $r(kA) = r(A)$ $(k \neq 0)$
+                </div>
+                
+                <div class="property-card">
+                    <strong>③</strong> $r(A) = r(PA) = r(AQ) = r(PAQ)$ （$P$，$Q$为可逆矩阵）
+                </div>
+                
+                <div class="property-card">
+                    <strong>④</strong> 设$A$是$m \times n$矩阵，$B$是$n \times s$矩阵：<br>
+                    若$r(A) = n$（列满秩），则$r(AB) = r(B)$；<br>
+                    若$r(B) = n$（行满秩），则$r(AB) = r(A)$
+                </div>
+                
+                <div class="property-card">
+                    <strong>⑤</strong> 若$CA = CB$，$C$列满秩，则$A = B$；<br>
+                    若$AC = BC$，$C$行满秩，则$A = B$
+                </div>
+                
+                <div class="property-card">
+                    <strong>⑥</strong> $r(AB) \leq \min\{r(A), r(B)\}$
+                </div>
+                
+                <div class="property-card">
+                    <strong>⑦</strong> $r(A + B) \leq r([A, B]) \leq r(A) + r(B)$
+                </div>
+                
+                <div class="property-card">
+                    <strong>⑧</strong> $r(AB) \geq r(A) + r(B) - n$ （$A$为$m \times n$矩阵，$B$为$n \times s$矩阵）
+                </div>
+                
+                <div class="property-card">
+                    <strong>⑨</strong> $r(ABC) \geq r(AB) + r(BC) - r(B)$
+                </div>
+                
+                <div class="property-card">
+                    <strong>⑩</strong> $r(A) = r(A^T) = r(AA^T) = r(A^TA)$<br>
+                    $$r(A^*) = \begin{cases} 
+                    n, & r(A) = n \\
+                    1, & r(A) = n-1 \\
+                    0, & r(A) < n-1
+                    \end{cases}$$
+                </div>
+                
+                <div class="property-card">
+                    <strong>⑪</strong> 若$A^2 - (k_1 + k_2)A + k_1k_2E = O$，$k_1 \neq k_2$，则<br>
+                    $r(A - k_1E) + r(A - k_2E) = n$
+                </div>
+                
+                <div class="property-card">
+                    <strong>⑬</strong> $Ax = 0$的基础解系所含向量个数$s = n - r(A)$
+                </div>
+                
+                <div class="property-card">
+                    <strong>⑭</strong> $A_{m \times n}x = 0$与$B_{m \times n}x = 0$同解$\Leftrightarrow$<br>
+                    $r(A) = r\begin{pmatrix} \begin{bmatrix} A \\ B \end{bmatrix} \end{pmatrix} = r(B)$
+                </div>
+                
+                <div class="property-card">
+                    <strong>⑮</strong> 两向量组等价$\Leftrightarrow$<br>
+                    $r(\text{Ⅰ}) = r(\text{Ⅱ}) = r(\text{Ⅰ}, \text{Ⅱ})$
+                </div>
+                
+                <div class="property-card">
+                    <strong>⑯</strong> 若$A \sim \Lambda$，则$n_i = n - r(\lambda_iE - A)$
+                </div>
+                
+                <div class="property-card">
+                    <strong>⑰</strong> 若$A \sim \Lambda$，则$r(A)$等于非零特征值的个数
+                </div>
+            </div>
+        </section>
+        
+        <section id="examples">
+            <h2>例题解析</h2>
+            
+            <div class="example">
+                <h4>【例4.1】设$A$为$4 \times 3$矩阵，$B$为$3$阶方阵，若$r(A) = 3$，则（　）</h4>
+                <p><strong>(A)</strong> $ABx = 0$与$Bx = 0$同解　　<strong>(B)</strong> $ABx = 0$与$Ax = 0$同解</p>
+                <p><strong>(C)</strong> $B^TA^Tx = 0$与$A^Tx = 0$同解　　<strong>(D)</strong> $B^TA^Tx = 0$与$B^Tx = 0$同解</p>
+                
+                <details>
+                    <summary><strong>【解】</strong></summary>
+                    <div class="solution">
+                        <p><strong>应选(A)</strong></p>
+                        <p>由下面的公式6与公式8，知</p>
+                        $$r(A) + r(B) - 3 \leq r(AB) \leq \min\{r(A), r(B)\}$$
+                        <p>当$r(A) = 3$时，由(*)式得</p>
+                        $$3 + r(B) - 3 \leq r(AB) \leq r(B)$$
+                        <p>故有$r(AB) = r(B)$，又满足$Bx = 0$的解必是$ABx = 0$的解，故$ABx = 0$与$Bx = 0$同解。故选(A)。</p>
+                        <div class="note">
+                            <strong>【注】</strong>若$r(B) = 3$，同样由(*)式可得
+                        </div>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="example">
+                <h4>【例4.2】设$B$是$n$阶矩阵，$C$是$n \times m$矩阵，且$r(C) = n$，则下列结论：</h4>
+                <p>①若$BC = O$，则$B = O$；</p>
+                <p>②若$BC = C$，则$B = E$；</p>
+                <p>③若$BC = O$，则$1 \leq r(B) < n$；</p>
+                <p>④若$BC = C$，则$r(B) = n$。</p>
+                <p>所有正确结论的序号为（　）。</p>
+                <p><strong>(A)</strong> ①②④　　<strong>(B)</strong> ②④　　<strong>(C)</strong> ①③④　　<strong>(D)</strong> ③④</p>
+                
+                <details>
+                    <summary><strong>【解】</strong></summary>
+                    <div class="solution">
+                        <p><strong>应选(A)</strong></p>
+                        <p>对于①，$BC = O = OC$，由公式5得$B = O$；</p>
+                        <p>对于②，$BC = C = EC$，由公式5得$B = E$；</p>
+                        <p>对于③，由②可知③错误；</p>
+                        <p>对于④，由②可知④正确。</p>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="example">
+                <h4>【例4.3】设$A$，$B$分别为$3 \times 2$和$2 \times 3$矩阵，若$AB = \begin{bmatrix} 8 & 0 & -4 \\ 3 & 9 & -6 \\ -2 & 0 & 1 \end{bmatrix}$，则$BA = $ ______</h4>
+                
+                <details>
+                    <summary><strong>【解】</strong></summary>
+                    <div class="solution">
+                        <p><strong>应填$\begin{bmatrix} 9 & 0 \\ 0 & 9 \end{bmatrix}$</strong></p>
+                        <p>因$|AB| = 0$，$r(AB) = 2$，又$2 \leq r(A)$，$r(B) \leq 2$，故$r(A) = r(B) = 2$，即$A$列满秩，$B$行满秩。又由</p>
+                        $$2 = r(AB) \leq r(A), r(B) \leq \text{行数}$$
+                        <p>$ABAB = 9AB$，$A$列满秩，有$BAB = 9B$。又$B$行满秩，故有$BA = 9E_2 = \begin{bmatrix} 9 & 0 \\ 0 & 9 \end{bmatrix}$</p>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="example">
+                <h4>【例4.4】已知$n$阶矩阵$A$，$B$，$C$满足$ABC = O$，$E$为$n$阶单位矩阵，记矩阵$\begin{bmatrix} O & A \\ BC & E \end{bmatrix}$，$\begin{bmatrix} AB & C \\ O & E \end{bmatrix}$，$\begin{bmatrix} E & AB \\ AB & O \end{bmatrix}$的秩分别为$r_1$，$r_2$，$r_3$，则（　）</h4>
+                <p><strong>(A)</strong> $r_3 \leq r_2 \leq r_1$　　<strong>(B)</strong> $r_1 \leq r_3 \leq r_2$　　<strong>(C)</strong> $r_3 \leq r_1 \leq r_2$　　<strong>(D)</strong> $r_2 \leq r_1 \leq r_3$</p>
+                
+                <details>
+                    <summary><strong>【解】</strong></summary>
+                    <div class="solution">
+                        <p><strong>应选(B)</strong></p>
+                        <p>对于$\begin{bmatrix} O & A \\ BC & E \end{bmatrix}$，将分块矩阵的第2行的$(-A)$倍加至第1行，即</p>
+                        $$\begin{bmatrix} E & -A \\ O & E \end{bmatrix}\begin{bmatrix} O & A \\ BC & E \end{bmatrix} = \begin{bmatrix} -ABC & O \\ BC & E \end{bmatrix} = \begin{bmatrix} O & O \\ BC & E \end{bmatrix}$$
+                        <p>其秩$r_1 = n$；</p>
+                        
+                        <p>对于$\begin{bmatrix} AB & C \\ O & E \end{bmatrix}$，将分块矩阵的第2行的$(-C)$倍加至第1行，即</p>
+                        $$\begin{bmatrix} E & -C \\ O & E \end{bmatrix}\begin{bmatrix} AB & C \\ O & E \end{bmatrix} = \begin{bmatrix} AB & O \\ O & E \end{bmatrix}$$
+                        <p>其秩$r_2 = r(AB) + n$；</p>
+                        
+                        <p>对于$\begin{bmatrix} E & AB \\ AB & O \end{bmatrix}$，先将分块矩阵的第1行的$(-AB)$倍加至第2行，即</p>
+                        $$\begin{bmatrix} E & O \\ -AB & E \end{bmatrix}\begin{bmatrix} E & AB \\ AB & O \end{bmatrix} = \begin{bmatrix} E & AB \\ O & -ABAB \end{bmatrix}$$
+                        <p>再将分块矩阵的第1列的$(-AB)$倍加至第2列，即</p>
+                        $$\begin{bmatrix} E & AB \\ O & -ABAB \end{bmatrix}\begin{bmatrix} E & -AB \\ O & E \end{bmatrix} = \begin{bmatrix} E & O \\ O & -ABAB \end{bmatrix}$$
+                        <p>其秩$r_3 = r(-ABAB) + n$。</p>
+                        <p>又由于$r(AB) \geq r(-ABAB) \geq 0$，</p>
+                        <p>于是$r_1 \leq r_3 \leq r_2$，故选(B)。</p>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="example">
+                <h4>【例4.5】设$A$，$B$分别为$m \times n$与$n \times m$矩阵，$C$为$n$阶可逆矩阵，且$r(A) = r < n$，$A(C + BA) = O$，则$r(C + BA) = $ ______</h4>
+                
+                <details>
+                    <summary><strong>【解】</strong></summary>
+                    <div class="solution">
+                        <p><strong>应填$n - r$</strong></p>
+                        <p>因$A(C + BA) = O$，故$r(A) + r(C + BA) \leq n$。又$r(A) = r$，于是</p>
+                        $$r(C + BA) \leq n - r$$
+                        <p>且</p>
+                        $$r(C + BA) = r[C - (-BA)] \geq r(C) - r(BA) \geq r(C) - r(A) = n - r$$
+                        <p>故$r(C + BA) = n - r$</p>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="example">
+                <h4>【例4.6】设$n$阶矩阵$A, B, C$满足$r(A) + r(B) + r(C) = r(ABC) + 2n$，给出下列四个结论：</h4>
+                <p>①$r(ABC) + n = r(AB) + r(C)$；</p>
+                <p>②$r(AB) + n = r(A) + r(B)$；</p>
+                <p>③$r(A) = r(B) = r(C) = n$；</p>
+                <p>④$r(AB) = r(BC) = n$。</p>
+                <p>所有正确结论的序号是（　）。</p>
+                <p><strong>(A)</strong> ①②　　<strong>(B)</strong> ①③　　<strong>(C)</strong> ②④　　<strong>(D)</strong> ③④</p>
+                
+                <details>
+                    <summary><strong>【解】</strong></summary>
+                    <div class="solution">
+                        <p><strong>应选(A)</strong></p>
+                        <p><strong>法一</strong>　由于</p>
+                        $$r(A) + r(B) + r(C) = r(ABC) + 2n \geq r(AB) + r(C) - n + 2n$$
+                        $$\geq r(A) + r(B) - n + r(C) - n + 2n = r(A) + r(B) + r(C)$$
+                        <p>故$r(ABC) + 2n = r(AB) + r(C) + n$，$r(A) + r(B) + r(C) = r(AB) + r(C) + n$，可得$r(ABC) + n = r(AB) + r(C)$，$r(A) + r(B) = r(AB) + n$，则①，②正确。</p>
+                        <p>综上，选(A)。</p>
+                        
+                        <p><strong>法二</strong>　排除法。取$A = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}$，$B = \begin{bmatrix} 0 & 0 \\ 0 & 1 \end{bmatrix}$，$C = E$，则$r(A) = 1$，$r(B) = 1$，$r(C) = 2$，满足$r(A) + r(B) + r(C) = r(ABC) + 2n$，$r(C) = r(ABC) + 2n$，代入可排除③，④，故选(A)。</p>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="example">
+                <h4>【例4.7】设矩阵$A_{m \times n}$，$B_{n \times t}$满足$r(AB) = r(B)$，证明：对任意矩阵$C_{n \times t}$，有$r(ABC) = r(BC)$</h4>
+                
+                <details>
+                    <summary><strong>【证】</strong></summary>
+                    <div class="solution">
+                        <p>由$r(ABC) \geq r(AB) + r(BC) - r(B)$，且$r(AB) = r(B)$，有$r(ABC) \geq r(BC)$。又$r(ABC) \leq r(BC)$，</p>
+                        <p>故$r(ABC) = r(BC)$。</p>
+                        <div class="note">
+                            <strong>【注】</strong>此证法被简，若研究$ABCx = 0$与$BCx = 0$同解，亦可得证，但不如此证法简便。
+                        </div>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="example">
+                <h4>【例4.8】设$A$，$B$为$n$阶实矩阵，下列结论不成立的是（　）</h4>
+                <p><strong>(A)</strong> $r\begin{pmatrix} \begin{bmatrix} A & AB \\ O & A^T \end{bmatrix} \end{pmatrix} = 2r(A)$　　
+                <strong>(B)</strong> $r\begin{pmatrix} \begin{bmatrix} A & O \\ O & A^TA \end{bmatrix} \end{pmatrix} = 2r(A)$</p>
+                <p><strong>(C)</strong> $r\begin{pmatrix} \begin{bmatrix} A & BA \\ O & AA^T \end{bmatrix} \end{pmatrix} = 2r(A)$　　
+                <strong>(D)</strong> $r\begin{pmatrix} \begin{bmatrix} A & O \\ BA & A^T \end{bmatrix} \end{pmatrix} = 2r(A)$</p>
+                
+                <details>
+                    <summary><strong>【解】</strong></summary>
+                    <div class="solution">
+                        <p><strong>应选(C)</strong></p>
+                        <p>由矩阵的秩的性质知，$r(A) = r(A^T) = r(AA^T) = r(A^TA)$。</p>
+                        <p>故$r\begin{pmatrix} \begin{bmatrix} A & O \\ O & A^TA \end{bmatrix} \end{pmatrix} = 2r(A)$，选项(B)成立。</p>
+                        <p>在$\begin{bmatrix} A & AB \\ O & A^T \end{bmatrix}$中，$AB$的列向量组可由$A$的列向量组线性表示，故$r\begin{bmatrix} A & AB \\ O & A^T \end{bmatrix} \rightarrow \begin{bmatrix} A & O \\ O & A^T \end{bmatrix}$，故$r\begin{pmatrix} \begin{bmatrix} A & AB \\ O & A^T \end{bmatrix} \end{pmatrix} = 2r(A)$，选项(A)成立。</p>
+                        <p>同理，选项(D)也成立。</p>
+                        <p>而选项(C)，取$A = \begin{bmatrix} 0 & 1 \\ 0 & 1 \end{bmatrix}$，$B = \begin{bmatrix} 0 & 0 \\ 1 & 1 \end{bmatrix}$，$r\begin{pmatrix} \begin{bmatrix} A & BA \\ O & AA^T \end{bmatrix} \end{pmatrix} = r\begin{pmatrix} \begin{bmatrix} 0 & 1 & 0 & 0 \\ 0 & 1 & 0 & 2 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 1 & 1 \end{bmatrix} \end{pmatrix} \neq 2r(A)$，故选(C)。</p>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="example">
+                <h4>【例4.9】设$A$为4阶矩阵，$A^*$为$A$的伴随矩阵，若$A(A - A^*) = O$且$A \neq A^*$，则$r(A)$取值为（　）</h4>
+                <p><strong>(A)</strong> 0或1　　<strong>(B)</strong> 1或3　　<strong>(C)</strong> 2或3　　<strong>(D)</strong> 1或2</p>
+                
+                <details>
+                    <summary><strong>【解】</strong></summary>
+                    <div class="solution">
+                        <p><strong>应选(D)</strong></p>
+                        <p>由题意可知$A(A - A^*) = O$，故$r(A) + r(A - A^*) \leq 4$。又$A \neq A^*$，故$A - A^* \neq O$，即$r(A - A^*) \geq 1$，因此$r(A) \leq 3$。</p>
+                        <p>又$A(A - A^*) = A^2 - AA^* = A^2 - |A|E = A^2 - O$，则$r(A) + r(A) \leq 4$，于是$r(A) \leq 2$，此时$r(A^*) = 0$，故$A^* = O$。又$A \neq A^*$，所以$r(A) \geq 1$，故$r(A) = 1$或2。</p>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="example">
+                <h4>【例4.10】设$n$阶矩阵$A$满足$A^2 - (k_1 + k_2)A + k_1k_2E = O$，$k_1 \neq k_2$，则$r(A - k_1E) + r(A - k_2E) = n$</h4>
+                
+                <details>
+                    <summary><strong>【注】(1)证</strong></summary>
+                    <div class="solution">
+                        <p>由$A^2 - (k_1 + k_2)A + k_1k_2E = O$，得$(A - k_1E)(A - k_2E) = O$，于是</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+        
+        <footer>
+            <p>© 2024 矩阵的秩交互式教程 | 基于线性代数教材制作</p>
+            <p style="margin-top: 10px; font-size: 0.85em; color: #666;">
+                <strong>使用说明：</strong><br>
+                1. 将此文件保存为.html格式（例如：matrix_rank.html）<br>
+                2. 使用浏览器打开文件（需要网络连接以加载MathJax）<br>
+                3. 点击示例题目可展开查看详细解答<br>
+                4. 所有数学公式使用MathJax渲染，确保完整显示
+            </p>
+        </footer>
+        
+        <a href="#" class="back-to-top" title="返回顶部">↑</a>
+    </div>
+    
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 返回顶部按钮
+        const backToTop = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.style.display = 'block';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+        
+        // 高亮当前导航
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            document.querySelectorAll('nav a').forEach(link => {
+                link.style.background = '#a6d6c9';
+                link.style.color = '#343434';
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.style.background = '#f27d00';
+                    link.style.color = '#ffffff';
+                }
+            });
+        });
+        
+        // 添加加载动画
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

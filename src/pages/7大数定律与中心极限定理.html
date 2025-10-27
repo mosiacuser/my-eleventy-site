@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第7讲 大数定律与中心极限定理 - 交互式教程</title>
+    
+    <!-- MathJax 完整配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            CommonHTML: { scale: 110 },
+            SVG: { scale: 110 }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #a6d6c9 0%, #ffffff 50%, #f7d117 100%);
+            background-attachment: fixed;
+            color: #343434;
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* 顶部标题 */
+        header {
+            background: linear-gradient(135deg, #f27d00, #343434);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        /* 侧边栏导航 */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            position: sticky;
+            top: 120px;
+            height: calc(100vh - 140px);
+            overflow-y: auto;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            border-radius: 0 15px 15px 0;
+            margin: 20px 0 20px 20px;
+        }
+        
+        .sidebar h3 {
+            color: #f27d00;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin: 12px 0;
+        }
+        
+        .sidebar a {
+            color: #343434;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .sidebar a:hover {
+            background: #f27d00;
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            margin: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        /* 章节标题 */
+        .section {
+            margin: 40px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(166, 214, 201, 0.2), rgba(247, 209, 23, 0.1));
+            border-radius: 12px;
+            border-left: 5px solid #f27d00;
+        }
+        
+        .section-title {
+            color: #f27d00;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        .subsection-title {
+            color: #343434;
+            font-size: 1.5em;
+            font-weight: 600;
+            margin: 30px 0 15px 0;
+            padding: 15px;
+            background: rgba(242, 125, 0, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #f27d00;
+        }
+        
+        /* 折叠区域 */
+        details {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 2px solid #a6d6c9;
+            transition: all 0.3s;
+        }
+        
+        details:hover {
+            box-shadow: 0 4px 20px rgba(242, 125, 0, 0.2);
+            border-color: #f27d00;
+        }
+        
+        details[open] {
+            background: linear-gradient(135deg, rgba(247, 209, 23, 0.1), rgba(166, 214, 201, 0.1));
+        }
+        
+        summary {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #f27d00;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            list-style: none;
+        }
+        
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        
+        summary::before {
+            content: "▶ ";
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+        
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        
+        summary:hover {
+            background: rgba(242, 125, 0, 0.1);
+        }
+        
+        /* 提示框 */
+        .note-box {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f7d117, #f27d00);
+            color: #343434;
+            border-radius: 10px;
+            border-left: 5px solid #343434;
+            box-shadow: 0 4px 15px rgba(242, 125, 0, 0.3);
+        }
+        
+        .note-box strong {
+            font-size: 1.2em;
+            color: #343434;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        /* 公式块 */
+        .formula-block {
+            margin: 25px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(166, 214, 201, 0.3), rgba(255, 255, 255, 0.8));
+            border-radius: 10px;
+            border: 2px solid #a6d6c9;
+            overflow-x: auto;
+            text-align: center;
+        }
+        
+        /* 例题 */
+        .example {
+            margin: 25px 0;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            border: 3px solid #f7d117;
+            box-shadow: 0 4px 15px rgba(247, 209, 23, 0.3);
+        }
+        
+        .example-title {
+            color: #f27d00;
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: linear-gradient(135deg, #f7d117, #a6d6c9);
+            border-radius: 8px;
+        }
+        
+        /* 证明过程 */
+        .proof {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(166, 214, 201, 0.2);
+            border-radius: 8px;
+            border-left: 4px solid #a6d6c9;
+        }
+        
+        .proof-label {
+            font-weight: 700;
+            color: #f27d00;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        /* 流程图样式 */
+        .flowchart {
+            margin: 30px 0;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .flow-box {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #a6d6c9, #f7d117);
+            border-radius: 10px;
+            border: 2px solid #f27d00;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* 分段函数 */
+        .piecewise {
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(247, 209, 23, 0.1);
+            border-radius: 10px;
+            max-width: 600px;
+        }
+        
+        /* MathJax 公式增强 */
+        .mjx-chtml {
+            font-size: 1.15em !important;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 0;
+                margin: 20px;
+                border-radius: 15px;
+            }
+            
+            .main-content {
+                margin: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .section-title {
+                font-size: 1.5em;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(166, 214, 201, 0.2);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #f27d00;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #343434;
+        }
+        
+        /* 动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        /* 选项卡按钮 */
+        .tab-button {
+            display: inline-block;
+            margin: 10px 5px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f27d00, #f7d117);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(242, 125, 0, 0.3);
+        }
+        
+        .tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(242, 125, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📊 第7讲 大数定律与中心极限定理</h1>
+        <p>概率论与数理统计引论 | 交互式教程</p>
+    </header>
+    
+    <div class="container">
+        <!-- 侧边栏导航 -->
+        <nav class="sidebar">
+            <h3>📑 目录导航</h3>
+            <ul>
+                <li><a href="#overview">三向解题法</a></li>
+                <li><a href="#section1">一、判别或证明依概率收敛</a></li>
+                <li><a href="#section2">二、用大数定律计算收敛值</a></li>
+                <li><a href="#section2-1">2.1 切比雪夫大数定律</a></li>
+                <li><a href="#section2-2">2.2 伯努利大数定律</a></li>
+                <li><a href="#section2-3">2.3 辛钦大数定律</a></li>
+                <li><a href="#section3">三、用中心极限定理求概率</a></li>
+                <li><a href="#section3-1">3.1 列维-林德伯格定理</a></li>
+                <li><a href="#section3-2">3.2 棣莫弗-拉普拉斯定理</a></li>
+                <li><a href="#section3-3">3.3 考结论</a></li>
+            </ul>
+        </nav>
+        
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 三向解题法概览 -->
+            <section id="overview" class="section">
+                <h2 class="section-title">🎯 三向解题法</h2>
+                <p style="font-size: 1.2em; line-height: 2;">本讲介绍大数定律与中心极限定理的核心内容，主要包含三个解题方向：</p>
+                
+                <div class="flowchart">
+                    <div class="flow-box">大数定律与中心极限定理<br>($O$旧住目标)</div>
+                    <div style="margin: 20px 0;">⬇️</div>
+                    <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+                        <div class="flow-box" style="background: linear-gradient(135deg, #f27d00, #f7d117);">
+                            1. 判别或证明依概率收敛<br>($O_1$旧住目标1)
+                        </div>
+                        <div class="flow-box" style="background: linear-gradient(135deg, #a6d6c9, #f7d117);">
+                            2. 用大数定律计算收敛值<br>($O_2$旧住目标2)
+                        </div>
+                        <div class="flow-box" style="background: linear-gradient(135deg, #f7d117, #a6d6c9);">
+                            3. 用中心极限定理求概率<br>($O_3$旧住目标3)
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第一部分：判别或证明依概率收敛 -->
+            <section id="section1" class="section">
+                <h2 class="section-title">一、判别或证明依概率收敛 ($O_1$旧住目标1)</h2>
+                
+                <div class="note-box">
+                    <strong>🔑 核心定义</strong>
+                    设随机变量 $X$ 与随机变量序列 $\{X_n\}(n=1,2,3,\cdots)$，如果对任意的 $\varepsilon > 0$，有
+                    $$\lim_{n\to\infty} P\{|X_n - X| \geq \varepsilon\} = 0 \text{ 或 } \lim_{n\to\infty} P\{|X_n - X| < \varepsilon\} = 1,$$
+                    则称随机变量序列 $\{X_n\}$ 依概率收敛于随机变量 $X$，记为 $\lim_{n\to\infty} X_n = X(P)$ 或 $X_n \xrightarrow{P} X(n\to\infty)$。
+                </div>
+                
+                <details open>
+                    <summary>📝 重要注记</summary>
+                    <div style="padding: 20px;">
+                        <p><strong>(1)</strong> 以上定义中将随机变量 $X$ 写成数 $a$ 也成立。</p>
+                        
+                        <p><strong>(2)</strong> 设 $X_n \xrightarrow{P} X$，$Y_n \xrightarrow{P} Y$，$g(x,y)$ 是二元连续函数，则 $g(X_n,Y_n) \xrightarrow{P} g(X,Y)$。</p>
+                        
+                        <p>一般地，对 $m$ 元连续函数 $g(x_1,x_2,\cdots,x_m)$，上述结论亦成立。</p>
+                        
+                        <p><strong>(3)</strong> <span style="color: #f27d00; font-weight: 700;">（仅数学一）</span>在讨论未知参数估计量是否具有一致性（相合性）时，常常要用到依概率收敛这一性质和大数定律。</p>
+                    </div>
+                </details>
+                
+                <div class="example">
+                    <div class="example-title">📌 例 7.1</div>
+                    <p>设 $\{X_i\}$ 是一随机变量序列，$X_n(n=1,2,\cdots)$ 的概率密度为 
+                    $$f_n(x) = \frac{n}{\pi(1+n^2x^2)}, \quad -\infty < x < +\infty,$$
+                    证明：$X_n \xrightarrow{P} 0(n\to\infty)$。</p>
+                    
+                    <div class="proof">
+                        <div class="proof-label">【证】</div>
+                        <p>对任意给定的 $\varepsilon > 0$，由于</p>
+                        <div class="formula-block">
+                            $$P\{|X_n - 0| < \varepsilon\} = \int_{-\varepsilon}^{\varepsilon} \frac{n}{\pi(1+n^2x^2)} dx = \frac{2}{\pi} \arctan(n\varepsilon),$$
+                        </div>
+                        <p>故 $\displaystyle\lim_{n\to\infty} P\{|X_n| < \varepsilon\} = \lim_{n\to\infty} \frac{2}{\pi}\arctan(n\varepsilon) = 1$，所以 $X_n \xrightarrow{P} 0(n\to\infty)$。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第二部分：用大数定律计算收敛值 -->
+            <section id="section2" class="section">
+                <h2 class="section-title">二、用大数定律计算收敛值 ($O_2$旧住目标2)</h2>
+                
+                <div style="padding: 20px; background: rgba(247, 209, 23, 0.15); border-radius: 10px; margin: 20px 0;">
+                    <p style="font-size: 1.2em; color: #f27d00; font-weight: 600;">→ 初比雪夫大数定律要求：</p>
+                    <p style="margin-left: 30px;">① 相互独立（可放到两两不相关）；</p>
+                    <p style="margin-left: 30px;">② 方差存在且一致上界。</p>
+                </div>
+                
+                <!-- 2.1 切比雪夫大数定律 -->
+                <div id="section2-1">
+                    <h3 class="subsection-title">1. 切比雪夫大数定律 ($D_1$(常规操作))</h3>
+                    
+                    <p style="font-size: 1.1em; margin: 20px 0;">假设 $\{X_n\}(n=1,2,\cdots)$ 是相互独立的随机变量序列，如果方差 $DX_i(i\geq 1)$ 存在且一致有上界，即存在常数 $C$，使 $DX_i \leq C$ 对一切 $i\geq 1$ 均成立，则 $\{X_n\}$ 服从大数定律：</p>
+                    
+                    <div class="formula-block">
+                        $$\frac{1}{n}\sum_{i=1}^{n} X_i \xrightarrow{P} \frac{1}{n}\sum_{i=1}^{n} EX_i.$$
+                    </div>
+                </div>
+                
+                <!-- 2.2 伯努利大数定律 -->
+                <div id="section2-2">
+                    <h3 class="subsection-title">2. 伯努利大数定律 ($D_1$(常规操作))</h3>
+                    
+                    <p style="font-size: 1.1em; margin: 20px 0;">假设 $\mu_n$ 是 $n$ 重伯努利试验中事件 $A$ 发生的次数，在每次试验中事件 $A$ 发生的概率为 $p(0 < p < 1)$，则</p>
+                    
+                    <div class="formula-block">
+                        $$\frac{\mu_n}{n} \xrightarrow{P} p, \quad \text{即对任意 } \varepsilon > 0, \text{ 有 } \lim_{n\to\infty} P\left\{\left|\frac{\mu_n}{n} - p\right| < \varepsilon\right\} = 1.$$
+                    </div>
+                    
+                    <details>
+                        <summary>📚 注记（仅数学三）</summary>
+                        <div style="padding: 20px;">
+                            <p>在数理统计中，若 $(x_1,x_2,\cdots,x_n)$ 为总体样本 $(X_1,X_2,\cdots,X_n)$ 的一个观测值，按大小顺序排列为 $x_{(1)} \leq x_{(2)} \leq \cdots \leq x_{(n)}$，则对任意实数 $x$，称函数</p>
+                            
+                            <div class="piecewise">
+                                $$F_n(x) = \frac{x_1,x_2,\cdots,x_n \text{中小于等于 } x \text{ 的样本值个数}}{n} = \frac{V_n(x)}{n} = \begin{cases}
+                                0, & x < x_{(1)}, \\
+                                \frac{k}{n}, & x_{(k)} \leq x < x_{(k+1)} (k=1,2,\cdots,n-1), \\
+                                1, & x \geq x_{(n)}
+                                \end{cases}$$
+                            </div>
+                            
+                            <p style="margin-top: 20px;">为样本 $(X_1,X_2,\cdots,X_n)$ 的<strong style="color: #f27d00;">经验分布函数（仅数学三）</strong>。事实上，</p>
+                            
+                            <p>① $F_n(x)$ 就是事件 $\{X \leq x\}$ 在 $n$ 次试验中出现的频率，而 $P\{X \leq x\} = F(x)$ 是事件 $\{X \leq x\}$ 出现的概率，</p>
+                            
+                            <p>由伯努利大数定律（即频率收敛于概率）可知，当 $n$ 充分大时，$F_n(x)$ 可作为未知分布函数 $F(x)$ 的一个近似，$n$ 越大，近似效果越好。</p>
+                            
+                            <div class="note-box" style="margin-top: 20px;">
+                                <strong>示例解析</strong>
+                                <p>设 $(2,1,5,2,1,3,1)$ 是来自总体 $X$ 的简单随机样本值，求总体 $X$ 的经验分布函数 $F_n(x)$。</p>
+                                <p><strong>解</strong> 将各观测值按从小到大的顺序排列，得 1, 1, 1, 2, 2, 3, 5，则经验分布函数为</p>
+                                <div class="formula-block">
+                                    $$F_7(x) = \begin{cases}
+                                    0, & x < 1, \\
+                                    \frac{3}{7}, & 1 \leq x < 2, \\
+                                    \frac{5}{7}, & 2 \leq x < 3, \\
+                                    \frac{6}{7}, & 3 \leq x < 5, \\
+                                    1, & x \geq 5.
+                                    \end{cases}$$
+                                </div>
+                            </div>
+                            
+                            <p style="margin-top: 20px;">② $E[F_n(x)] = F(x)$，$D[F_n(x)] = \frac{F(x)[1-F(x)]}{n}$。</p>
+                            
+                            <p>由于 $V_n(x)$ 为 $n$ 重伯努利试验中 $\{X \leq x\}$ 出现的次数，故 $V_n(x) \sim B(n,F(x))$，其中 $F(x) = P(X \leq x)$，</p>
+                            
+                            <p>于是 $E[V_n(x)] = nF(x)$，$E[F_n(x)] = E\left[\frac{V_n(x)}{n}\right] = F(x)$，$D[V_n(x)] = nF(x)[1-F(x)]$，$D[F_n(x)] = D\left[\frac{V_n(x)}{n}\right] = \frac{F(x)[1-F(x)]}{n}$。</p>
+                        </div>
+                    </details>
+                </div>
+                
+                <!-- 2.3 辛钦大数定律 -->
+                <div id="section2-3" style="margin-top: 40px;">
+                    <h3 class="subsection-title">3. 辛钦大数定律 ($D_1$(常规操作))</h3>
+                    
+                    <div style="padding: 20px; background: rgba(166, 214, 201, 0.2); border-radius: 10px; margin: 20px 0;">
+                        <p style="font-size: 1.1em; color: #f27d00; font-weight: 600;">→ 辛钦大数定律要求：</p>
+                        <p style="margin-left: 30px;">① 相互独立；② 同分布；③ 期望存在。</p>
+                    </div>
+                    
+                    <p style="font-size: 1.1em; margin: 20px 0;">假设 $\{X_n\}(n=1,2,\cdots)$ 是独立同分布的随机变量序列，如果数学期望 $EX_i = \mu(i=1,2,\cdots)$ 存在，则</p>
+                    
+                    <div class="formula-block">
+                        $$\frac{1}{n}\sum_{i=1}^{n} X_i \xrightarrow{P} \mu, \quad \text{即对任意 } \varepsilon > 0, \text{ 有 } \lim_{n\to\infty} P\left\{\left|\frac{1}{n}\sum_{i=1}^{n} X_i - \mu\right| < \varepsilon\right\} = 1.$$
+                    </div>
+                </div>
+                
+                <!-- 4. 考结论 -->
+                <div style="margin-top: 40px;">
+                    <h3 class="subsection-title">4. 考结论 ($D_1$(常规操作))</h3>
+                    
+                    <p style="font-size: 1.1em; margin: 20px 0;">在满足一定条件时，大数定律都在讲同一个结论，即</p>
+                    
+                    <div class="formula-block">
+                        $$\frac{1}{n}\sum_{i=1}^{n} X_i \xrightarrow{P} E\left(\frac{1}{n}\sum_{i=1}^{n} X_i\right).$$
+                    </div>
+                    
+                    <div class="example" style="margin-top: 30px;">
+                        <div class="example-title">📌 例 7.2</div>
+                        <p>设随机变量序列 $X_1,X_2,\cdots,X_n,\cdots$ 独立同分布，且 $X$ 的概率密度为 
+                        $$f(x) = \begin{cases}1-|x|, & |x| < 1, \\ 0, & \text{其他},\end{cases}$$
+                        则当 $n\to\infty$ 时，$\displaystyle\frac{1}{n}\sum_{i=1}^{n} X_i^2$ 依概率收敛于（  ）。</p>
+                        
+                        <p>(A) $\displaystyle\frac{1}{8}$ &nbsp;&nbsp;&nbsp; (B) $\displaystyle\frac{1}{6}$ &nbsp;&nbsp;&nbsp; (C) $\displaystyle\frac{1}{3}$ &nbsp;&nbsp;&nbsp; (D) $\displaystyle\frac{1}{2}$</p>
+                        
+                        <details>
+                            <summary>查看解答</summary>
+                            <div class="proof">
+                                <div class="proof-label">【解】</div>
+                                <p>应选 (B)。</p>
+                                <div class="formula-block">
+                                    $$E(X^2) = \int_{-1}^{1} x^2 \cdot (1-|x|) dx = 2\int_{0}^{1} x^2 dx - 2\int_{0}^{1} x^3 dx = \frac{2}{3} - \frac{1}{2} = \frac{1}{6},$$
+                                </div>
+                                <p>则当 $n\to\infty$ 时，$\displaystyle\frac{1}{n}\sum_{i=1}^{n} X_i^2$ 依概率收敛于 $E\left(\displaystyle\frac{1}{n}\sum_{i=1}^{n} X_i^2\right) = \frac{1}{n} \cdot n \cdot \frac{1}{6} = \frac{1}{6}$，故选 (B)。</p>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第三部分：用中心极限定理求概率 -->
+            <section id="section3" class="section">
+                <h2 class="section-title">三、用中心极限定理求概率 ($O_3$旧住目标3)</h2>
+                
+                <!-- 3.1 列维-林德伯格定理 -->
+                <div id="section3-1">
+                    <h3 class="subsection-title">1. 列维-林德伯格定理 ($D_1$(常规操作))</h3>
+                    
+                    <p style="font-size: 1.1em; margin: 20px 0;">假设 $\{X_n\}(n=1,2,\cdots)$ 是独立同分布的随机变量序列，如果 $EX_i = \mu$，$DX_i = \sigma^2 > 0(i=1,2,\cdots)$ 存在，则对任意的实数 $x$，有</p>
+                    
+                    <div class="formula-block">
+                        $$\lim_{n\to\infty} P\left\{\frac{\sum_{i=1}^{n} X_i - n\mu}{\sqrt{n\sigma}} \leq x\right\} = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{x} e^{-\frac{t^2}{2}} dt = \Phi(x).$$
+                    </div>
+                    
+                    <div class="note-box" style="margin-top: 30px;">
+                        <strong>【注】</strong>
+                        <p><strong>(1)</strong> 满足定理的三个条件 "独立、同分布、期望与方差存在"，缺一不可。</p>
+                        
+                        <p><strong>(2)</strong> 只要 $\{X_n\}$ 满足定理条件，那么当 $n$ 很大时，独立同分布随机变量的和 $\displaystyle\sum_{i=1}^{n} X_i$ 近似服从正态分布 $N(n\mu,n\sigma^2)$，由此可知，当 $n$ 很大时，有</p>
+                        
+                        <div class="formula-block">
+                            $$P\left\{a < \sum_{i=1}^{n} X_i < b\right\} \approx \Phi\left(\frac{b-n\mu}{\sqrt{n\sigma}}\right) - \Phi\left(\frac{a-n\mu}{\sqrt{n\sigma}}\right),$$
+                        </div>
+                        
+                        <p>这常常是解题关键。只要题目涉及独立同分布随机轨迹的和 $\displaystyle\sum_{i=1}^{n} X_i$，我们就要考虑是否应该运用中心极限定理。</p>
+                    </div>
+                </div>
+                
+                <!-- 3.2 棣莫弗-拉普拉斯定理 -->
+                <div id="section3-2" style="margin-top: 40px;">
+                    <h3 class="subsection-title">2. 棣莫弗-拉普拉斯定理 ($D_1$(常规操作))</h3>
+                    
+                    <p style="font-size: 1.1em; margin: 20px 0;">假设随机变量 $Y_n \sim B(n,p)(0 < p < 1, n\geq 1)$，则对任意实数 $x$，有</p>
+                    
+                    <div class="formula-block">
+                        $$\lim_{n\to\infty} P\left\{\frac{Y_n - np}{\sqrt{np(1-p)}} \leq x\right\} = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{x} e^{-\frac{t^2}{2}} dt = \Phi(x).$$
+                    </div>
+                    
+                    <details>
+                        <summary>📚 深入说明</summary>
+                        <div style="padding: 20px;">
+                            <div class="note-box">
+                                <strong>【注】</strong>
+                                <p><strong>(1)</strong> 如果记 $X_i \sim B(1,p)(0 < p < 1)$，即 $X_i \sim \begin{pmatrix} 1 & 0 \\ p & 1-p \end{pmatrix}$ 且相互独立，则</p>
+                                <div class="formula-block">
+                                    $$Y_n = \sum_{i=1}^{n} X_i \sim B(n,p),$$
+                                </div>
+                                <p>由列维-林德伯格定理推出棣莫弗-拉普拉斯定理。</p>
+                                
+                                <p><strong>(2)</strong> 二项分布概率计算的三种方法。</p>
+                                
+                                <p>设 $X \sim B(n,p)$。</p>
+                                
+                                <p>① 当 $n$ 不太大时（$n\leq 10$），直接计算</p>
+                                <div class="formula-block">
+                                    $$P\{X = k\} = C_n^k p^k (1-p)^{n-k}, \quad k = 0,1,\cdots,n;$$
+                                </div>
+                                
+                                <p>② 当 $n$ 较大且 $p$ 较小时（$n > 10, p < 0.1$），$\lambda = np$ 适中，根据<strong style="color: #f27d00;">泊松近似定理</strong>有近似公式</p>
+                                <div class="formula-block" style="background: linear-gradient(135deg, rgba(247, 209, 23, 0.2), rgba(166, 214, 201, 0.2));">
+                                    $$P\{X = k\} = C_n^k p^k (1-p)^{n-k} \approx \frac{\lambda^k}{k!} e^{-\lambda}, \quad k = 0,1,\cdots,n;$$
+                                </div>
+                                
+                                <p>③ 当 $n$ 较大而 $p$ 不太大时（$0.1 < p < 0.9, np\geq 10$），根据中心极限定理有近似公式</p>
+                                <div class="formula-block">
+                                    $$P\{a < X < b\} \approx \Phi\left(\frac{b-np}{\sqrt{np(1-p)}}\right) - \Phi\left(\frac{a-np}{\sqrt{np(1-p)}}\right).$$
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+                
+                <!-- 3.3 考结论 -->
+                <div id="section3-3" style="margin-top: 40px;">
+                    <h3 class="subsection-title">3. 考结论 ($D_1$(常规操作))</h3>
+                    
+                    <p style="font-size: 1.1em; margin: 20px 0;">设 $X_i$ 独立同分布于某一分布，期望、方差均存在，则当 $n\to\infty$ 时，$\displaystyle\sum_{i=1}^{n} X_i$ 服从正态分布，即对任意</p>
+                    
+                    <p>的 $X_i$ 定 $F(\mu,\sigma^2)$，$\mu = EX_i$，$\sigma^2 = DX_i$，都有在 $n\to\infty$ 时，$\displaystyle\sum_{i=1}^{n} X_i \sim N(n\mu,n\sigma^2)$，即 $\displaystyle\frac{\sum_{i=1}^{n} X_i - n\mu}{\sqrt{n\sigma}} \sim N(0,1)$，即</p>
+                    
+                    <div class="formula-block">
+                        $$\lim_{n\to\infty} P\left\{\frac{\sum_{i=1}^{n} X_i - n\mu}{\sqrt{n\sigma}} \leq x\right\} = \Phi(x).$$
+                    </div>
+                    
+                    <div class="example" style="margin-top: 30px;">
+                        <div class="example-title">📌 例 7.3</div>
+                        <p>设 $X_1,X_2,\cdots,X_{100}$ 为来自总体 $X$ 的简单随机样本，其中 $P\{X = 0\} = P\{X = 1\} = \displaystyle\frac{1}{2}$，$\Phi(x)$ 表示标准正态分布函数，则利用中心极限定理可得 $P\left\{\displaystyle\sum_{i=1}^{100} X_i \leq 55\right\}$ 的近似值为（  ）。</p>
+                        
+                        <p>(A) $1-\Phi(1)$ &nbsp;&nbsp; (B) $\Phi(1)$ &nbsp;&nbsp; (C) $1-\Phi(0.2)$ &nbsp;&nbsp; (D) $\Phi(0.2)$</p>
+                        
+                        <details>
+                            <summary>查看解答</summary>
+                            <div class="proof">
+                                <div class="proof-label">【解】</div>
+                                <p>应选 (B)。</p>
+                                <p>由题设，$EX = \displaystyle\frac{1}{2}$，$DX = \displaystyle\frac{1}{4}$，且 $X_1,X_2,\cdots,X_{100}$ 独立同分布，则</p>
+                                <div class="formula-block">
+                                    $$E\left(\sum_{i=1}^{100} X_i\right) = \sum_{i=1}^{100} EX_i = 100 \times \frac{1}{2} = 50;$$
+                                    $$D\left(\sum_{i=1}^{100} X_i\right) = \sum_{i=1}^{100} DX_i = 100 \times \frac{1}{4} = 25.$$
+                                </div>
+                                <p>由独立同分布的中心极限定理可知 $\displaystyle\sum_{i=1}^{100} X_i$ 近似服从正态分布 $N(50,25)$，故</p>
+                                <div class="formula-block">
+                                    $$P\left\{\sum_{i=1}^{100} X_i \leq 55\right\} = P\left\{\frac{\sum_{i=1}^{100} X_i - 50}{5} \leq \frac{55-50}{5}\right\} = P\left\{\frac{\sum_{i=1}^{100} X_i - 50}{5} \leq 1\right\} \approx \Phi(1).$$
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 总结 -->
+            <section class="section" style="background: linear-gradient(135deg, rgba(242, 125, 0, 0.1), rgba(166, 214, 201, 0.2));">
+                <h2 class="section-title">🎓 本讲小结</h2>
+                <div style="padding: 20px; font-size: 1.1em;">
+                    <p><strong>1. 大数定律</strong>揭示了随机变量序列的算术平均依概率收敛于其期望的算术平均。</p>
+                    <p><strong>2. 中心极限定理</strong>说明了独立同分布随机变量和的标准化变量近似服从标准正态分布。</p>
+                    <p><strong>3. 应用关键</strong>：</p>
+                    <ul style="margin-left: 40px; line-height: 2;">
+                        <li>判断是否满足定理条件（独立性、同分布、期望方差存在）</li>
+                        <li>正确进行标准化变换</li>
+                        <li>选择合适的定理（切比雪夫、伯努利、辛钦、列维-林德伯格、棣莫弗-拉普拉斯）</li>
+                        <li>注意二项分布的三种计算方法的适用条件</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 页脚说明 -->
+            <footer style="margin-top: 40px; padding: 30px; background: linear-gradient(135deg, #343434, #f27d00); color: white; border-radius: 15px; text-align: center;">
+                <h3 style="margin-bottom: 15px;">📝 使用说明</h3>
+                <p style="line-height: 2;">本HTML文件已集成MathJax，确保网络连接可用以正确渲染数学公式。</p>
+                <p style="line-height: 2;">点击折叠区域（▶）可展开/收起详细内容，提升学习体验。</p>
+                <p style="line-height: 2; margin-top: 15px; font-style: italic;">保存为 .html 文件后，用浏览器打开即可使用。</p>
+            </footer>
+        </main>
+    </div>
+    
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 动态高亮当前章节
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.sidebar a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.style.background = '';
+                link.style.color = '#343434';
+                if (link.getAttribute('href') === '#' + current) {
+                    link.style.background = '#f27d00';
+                    link.style.color = 'white';
+                }
+            });
+        });
+        
+        // 为所有公式块添加点击复制功能（可选）
+        document.querySelectorAll('.formula-block').forEach(block => {
+            block.style.cursor = 'pointer';
+            block.title = '点击复制公式';
+            block.addEventListener('click', function() {
+                const text = this.innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                    const original = this.style.background;
+                    this.style.background = 'rgba(166, 214, 201, 0.6)';
+                    setTimeout(() => {
+                        this.style.background = original;
+                    }, 300);
+                });
+            });
+        });
+        
+        console.log('%c📊 大数定律与中心极限定理教程已加载！', 'color: #f27d00; font-size: 16px; font-weight: bold;');
+        console.log('%c确保网络连接正常以加载MathJax数学公式渲染库', 'color: #343434; font-size: 12px;');
+    </script>
+</body>
+</html>

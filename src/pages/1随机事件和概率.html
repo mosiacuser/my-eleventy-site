@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第1讲 随机事件和概率 - 交互式教程</title>
+<!-- MathJax完整配置 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            displayMath: [['$$','$$'], ['\\[','\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        "HTML-CSS": {
+            availableFonts: ["TeX"],
+            linebreaks: { automatic: true },
+            scale: 110
+        },
+        CommonHTML: { scale: 110 },
+        displayAlign: "center"
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Noto Sans SC', sans-serif;
+        background: linear-gradient(135deg, #a6d6c9 0%, #ffffff 50%, #f7d117 100%);
+        color: #343434;
+        line-height: 1.8;
+        min-height: 100vh;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    header {
+        background: linear-gradient(135deg, #f27d00 0%, #343434 100%);
+        color: #ffffff;
+        padding: 40px 20px;
+        text-align: center;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    header p {
+        font-size: 1.2em;
+        opacity: 0.9;
+    }
+    
+    nav {
+        background: #343434;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        position: sticky;
+        top: 10px;
+        z-index: 100;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    nav ul {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    nav a {
+        color: #ffffff;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        background: #f27d00;
+        transition: all 0.3s;
+        display: block;
+    }
+    
+    nav a:hover {
+        background: #f7d117;
+        color: #343434;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+    
+    section {
+        background: #ffffff;
+        padding: 30px;
+        margin-bottom: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        border-left: 5px solid #f27d00;
+    }
+    
+    h2 {
+        color: #f27d00;
+        font-size: 2em;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #a6d6c9;
+    }
+    
+    h3 {
+        color: #343434;
+        font-size: 1.5em;
+        margin: 25px 0 15px 0;
+        padding-left: 15px;
+        border-left: 4px solid #f7d117;
+    }
+    
+    .formula-box {
+        background: linear-gradient(135deg, #a6d6c9 0%, #f7d117 100%);
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 10px;
+        border: 2px solid #f27d00;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    .formula-box h4 {
+        color: #343434;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+    }
+    
+    .note-box {
+        background: #f7d117;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 8px;
+        border-left: 5px solid #f27d00;
+    }
+    
+    .note-box strong {
+        color: #343434;
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+    }
+    
+    .example {
+        background: #ffffff;
+        border: 2px solid #a6d6c9;
+        border-radius: 10px;
+        margin: 20px 0;
+        overflow: hidden;
+    }
+    
+    .example-header {
+        background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+        color: #343434;
+        padding: 15px 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+        font-size: 1.1em;
+        transition: all 0.3s;
+    }
+    
+    .example-header:hover {
+        background: linear-gradient(135deg, #f7d117 0%, #f27d00 100%);
+    }
+    
+    .example-header::after {
+        content: '▼';
+        transition: transform 0.3s;
+    }
+    
+    .example-header.active::after {
+        transform: rotate(180deg);
+    }
+    
+    .example-content {
+        padding: 20px;
+        display: none;
+        background: #ffffff;
+        border-top: 2px solid #a6d6c9;
+    }
+    
+    .example-content.show {
+        display: block;
+        animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .solution {
+        background: #a6d6c9;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 8px;
+        border-left: 5px solid #f27d00;
+    }
+    
+    .solution-label {
+        color: #343434;
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: block;
+        font-size: 1.1em;
+    }
+    
+    .method-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+    
+    .method-card {
+        background: linear-gradient(135deg, #a6d6c9 0%, #ffffff 100%);
+        padding: 20px;
+        border-radius: 10px;
+        border: 2px solid #f27d00;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    
+    .method-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(242, 125, 0, 0.3);
+        background: linear-gradient(135deg, #f7d117 0%, #ffffff 100%);
+    }
+    
+    .method-card h4 {
+        color: #f27d00;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+    }
+    
+    .highlight {
+        background: #f7d117;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-weight: bold;
+    }
+    
+    .mjx-chtml {
+        font-size: 1.1em !important;
+    }
+    
+    footer {
+        text-align: center;
+        padding: 30px;
+        background: #343434;
+        color: #ffffff;
+        border-radius: 10px;
+        margin-top: 30px;
+    }
+    
+    @media (max-width: 768px) {
+        header h1 {
+            font-size: 1.8em;
+        }
+        
+        nav ul {
+            flex-direction: column;
+        }
+        
+        nav a {
+            text-align: center;
+        }
+        
+        section {
+            padding: 20px;
+        }
+        
+        .method-list {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .scroll-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #f27d00;
+        color: #ffffff;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        transition: all 0.3s;
+        font-size: 1.5em;
+    }
+    
+    .scroll-top:hover {
+        background: #f7d117;
+        transform: translateY(-5px);
+    }
+    
+    .scroll-top.show {
+        display: flex;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第1讲 随机事件和概率</h1>
+            <p>三问解题法 - 概率论基础教程</p>
+        </header>
+    <nav id="mainNav">
+        <ul>
+            <li><a href="#intro">解题法概览</a></li>
+            <li><a href="#method1">对立思想</a></li>
+            <li><a href="#method2">互斥思想</a></li>
+            <li><a href="#method3">条件思想</a></li>
+            <li><a href="#method4">单调性</a></li>
+            <li><a href="#method5">最值关系式</a></li>
+            <li><a href="#method6">独立性</a></li>
+        </ul>
+    </nav>
+    
+    <section id="intro">
+        <h2>三问解题法概览</h2>
+        <p>在概率论中，计算随机事件的概率有多种方法。本教程将介绍<span class="highlight">六种核心解题思路</span>，帮助你系统掌握概率计算的技巧。</p>
+        
+        <div class="method-list">
+            <div class="method-card">
+                <h4>① 对立思想求事件概率</h4>
+                <p>$D_1$(常规操作) + $D_{22}$(转换等价表达) + $D_{42}$(引入符号)</p>
+            </div>
+            <div class="method-card">
+                <h4>② 条件思想求事件概率</h4>
+                <p>$D_1$(常规操作) + $D_{22}$(转换等价表达) + $D_{42}$(引入符号)</p>
+            </div>
+            <div class="method-card">
+                <h4>③ 最值关系式处理事件概率</h4>
+                <p>$D_1$(常规操作) + $D_{23}$(化归经典形式)</p>
+            </div>
+            <div class="method-card">
+                <h4>④ 互斥思想求事件概率</h4>
+                <p>$D_1$(常规操作) + $D_{22}$(转换等价表达) + $D_{42}$(引入符号)</p>
+            </div>
+            <div class="method-card">
+                <h4>⑤ 单调性处理事件概率</h4>
+                <p>$D_1$(常规操作) + $D_{21}$(观察研究对象)</p>
+            </div>
+            <div class="method-card">
+                <h4>⑥ 独立、有利或抑止处理</h4>
+                <p>$D_1$(常规操作) + $D_{22}$(转换等价表达)</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="method1">
+        <h2>一、用对立思想求事件概率</h2>
+        <p>利用对立事件的概率关系，通过计算补事件的概率来求解原事件概率。</p>
+        
+        <div class="formula-box">
+            <h4>核心公式</h4>
+            <p><strong>$D_1$(常规操作) + $D_{22}$(转换等价表达) + $D_{42}$(引入符号)</strong></p>
+            <p>① $A \cup B = \overline{A} \cap \overline{B}$，$AB = \overline{A} \cup \overline{B}$ （长杆变短杆，并且换方向）</p>
+            <p>② $P(\overline{A}) = 1 - P(A)$</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>干是有 $P(A \cup B) = 1 - P(\overline{A \cup B}) = 1 - P(\overline{A}\overline{B})$；$P(AB) = 1 - P(\overline{AB}) = 1 - P(\overline{A} \cup \overline{B})$</p>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">
+                例 1.1 在1-100的整数中随机取一个数，则取到的整数既不能被2整除，又不能被3整除的概率为______
+            </div>
+            <div class="example-content">
+                <div class="solution">
+                    <span class="solution-label">【解】</span>
+                    <p>应填 $\displaystyle\frac{33}{100}$</p>
+                    <p>设$A$为事件"取到的数能被2整除"，$B$为事件"取到的数能被3整除"，则</p>
+                    <p>$$p = P(\overline{AB}) = P(\overline{A} \cup B) = 1 - P(A \cup B)$$</p>
+                    <p>$$= 1 - [P(A) + P(B) - P(AB)]$$</p>
+                    <p>由 $\displaystyle\frac{100}{2} = 50$，故 $P(A) = \displaystyle\frac{50}{100} = \displaystyle\frac{1}{2}$，又 $33 \lt \displaystyle\frac{100}{3} \lt 34$，故 $P(B) = \displaystyle\frac{33}{100}$</p>
+                    <p>同时能被2与3整除，即能被6整除，由 $16 \lt \displaystyle\frac{100}{6} \lt 17$，则</p>
+                    <p>$$P(AB) = \frac{16}{100} = \frac{4}{25}$$</p>
+                    <p>故 $$p = 1 - \left(\frac{1}{2} + \frac{33}{100} - \frac{4}{25}\right) = \frac{33}{100}$$</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="method2">
+        <h2>二、用互斥思想求事件概率</h2>
+        <p>当事件可以分解为若干个互不相容的事件之和时，使用加法公式求概率。</p>
+        
+        <div class="formula-box">
+            <h4>核心公式</h4>
+            <p><strong>$D_1$(常规操作) + $D_{22}$(转换等价表达) + $D_{42}$(引入符号)</strong></p>
+            <p>① $A \cup B = A \cup \overline{A}B = B \cup A\overline{B} = A\overline{B} \cup AB \cup \overline{A}B$</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>于是有 $P(A \cup B) = P(A \cup \overline{A}B) = P(B \cup A\overline{B}) = P(A\overline{B} \cup AB \cup \overline{A}B) = P(A\overline{B}) + P(AB) + P(\overline{A}B)$</p>
+        </div>
+        
+        <div class="formula-box">
+            <p>② 若$A_1$，$B_2$，$B_k$为完备事件组，则$A = AB_1 \cup AB_2 \cup AB_k$</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>于是有 $P(A) = P(AB_1) + P(AB_2) + P(AB_k)$</p>
+        </div>
+        
+        <div class="formula-box">
+            <p>③ $P(A\overline{B}) = P(A - B) = P(A) - P(AB)$</p>
+            <p>④ $P(A + B) = P(A) + P(B) - P(AB)$</p>
+            <p>⑤ $P(A + B + C) = P(A) + P(B) + P(C) - P(AB) - P(BC) - P(AC) + P(ABC)$</p>
+            <p>⑥ 若$A_1$，$A_2$，$\cdots$，$A_n(n \geq 2)$ 两两互斥，则 $\displaystyle P\left(\bigcup_{i=1}^{n}A_i\right) = \sum_{i=1}^{n}P(A_i)$</p>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">
+                例 1.2 设$A$，$B$，$C$为三个随机事件，且
+            </div>
+            <div class="example-content">
+                <p>$$P(A) = P(B) = P(C) = \frac{1}{4}, P(AB) = 0, P(AC) = P(BC) = \frac{1}{12}$$</p>
+                <p>则$A$，$B$，$C$中恰有一个事件发生的概率为（&nbsp;&nbsp;&nbsp;&nbsp;）</p>
+                <p>(A) $\displaystyle\frac{3}{4}$ &nbsp;&nbsp;&nbsp; (B) $\displaystyle\frac{2}{3}$ &nbsp;&nbsp;&nbsp; (C) $\displaystyle\frac{1}{2}$ &nbsp;&nbsp;&nbsp; (D) $\displaystyle\frac{5}{12}$</p>
+                
+                <div class="solution">
+                    <span class="solution-label">【解】</span>
+                    <p>应选（D）</p>
+                    <p>$$P(A\overline{B}\overline{C}) + P(\overline{A}B\overline{C}) + P(\overline{A}\overline{B}C)$$</p>
+                    <p>$$= P(A\overline{B}) - P(A\overline{B}C) + P(\overline{A}B) - P(\overline{A}BC) + P(\overline{B}C) - P(A\overline{B}C)$$</p>
+                    <p>$$= P(A) - P(AB) - [P(AC) - P(ABC)] + P(B) - P(AB) - [P(BC) - P(ABC)] + P(C) - P(BC) - [P(AC) - P(ABC)]$$</p>
+                    <p>$$= \frac{1}{4} - 0 - \frac{1}{12} + 0 + \frac{1}{4} - 0 - \frac{1}{12} + 0 + \frac{1}{4} - \frac{1}{12} - \frac{1}{12} + 0 = \frac{5}{12}$$</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="method3">
+        <h2>三、用条件思想求事件概率</h2>
+        <p>利用条件概率公式，在已知某些条件发生的情况下计算事件概率。</p>
+        
+        <div class="formula-box">
+            <h4>核心公式</h4>
+            <p><strong>$D_1$(常规操作) + $D_{22}$(转换等价表达) + $D_{42}$(引入符号)</strong></p>
+            <p>① $\displaystyle P(A|B) = \frac{P(AB)}{P(B)} (P(B) \gt 0)$</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>注意 $P(B) \gt 0$ 的条件，若 $P(B) = 0$，此公式不能用。如设 $(X,Y) \sim f(x,y)$，则</p>
+            <p>$$P\{x_1 \leq X \leq x_2 | Y = y_0\} = \frac{P\{x_1 \leq X \leq x_2, Y = y_0\}}{P\{Y = y_0\}}$$</p>
+            <p>显然是因为 $P\{Y = y_0\} = 0$，故应先求 $Y = y_0$ 条件下 $X$ 的条件概率密度，再作积分，即先求</p>
+            <p>$$f_{X|Y}(x|y_0) = \frac{f(x,y_0)}{f_Y(y_0)}$$，则 $P\{x_1 \leq X \leq x_2 | Y = y_0\} = \int_{x_1}^{x_2}\frac{f(x,y_0)}{f_Y(y_0)}dx$（见例5.3）</p>
+        </div>
+        
+        <div class="formula-box">
+            <p>② $P(AB) = P(B)P(A|B) (P(B) \gt 0)$</p>
+            <p>$$= P(A)P(B|A) (P(A) \gt 0)$$</p>
+            <p>$$= P(A) + P(B) - P(A + B)$$ （由"二、④"知）</p>
+            <p>$$= P(A) - P(A\overline{B})$$ （由"二、③"知）</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>当 $P(A_iA_j) \gt 0$ 时，$P(A_iA_jA_k) = P(A_i)P(A_j|A_i)P(A_k|A_iA_j)$</p>
+        </div>
+        
+        <div class="formula-box">
+            <p>③ 全概率公式：$A_1$，$A_2$，$\cdots$，$A_n$为完备事件组，$P(A_i) \gt 0 (i=1,2,\cdots,n)$，则</p>
+            <p>$$P(B) = \sum_{i=1}^{n}P(A_i)P(B|A_i)$$</p>
+            <p>④ 贝叶斯公式：承接"③"，若已知事件$B$发生了，执果索因，有</p>
+            <p>$$P(A_j|B) = \frac{P(A_jB)}{P(B)} = \frac{P(A_j)P(B|A_j)}{\sum_{i=1}^{n}P(A_i)P(B|A_i)}, j = 1,2,\cdots,n$$</p>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">
+                例 1.3 设$A$，$B$，$C$为随机事件，且$A$与$B$互不相容，$A$与$C$互不相容，$B$与$C$相互独立，
+            </div>
+            <div class="example-content">
+                <p>$P(A) = P(B) = P(C) = \displaystyle\frac{1}{3}$，则 $P(B \cup C | A \cup B \cup C) = $ ______</p>
+                
+                <div class="solution">
+                    <span class="solution-label">【解】</span>
+                    <p>应填 $\displaystyle\frac{5}{8}$</p>
+                    <p>由题意得，$P(AB) = 0, P(AC) = 0, P(BC) = P(B)P(C) = \displaystyle\frac{1}{9}$</p>
+                    <p>$$P(B \cup C | A \cup B \cup C) = \frac{P[(B \cup C) \cap (A \cup B \cup C)]}{P(A \cup B \cup C)}$$</p>
+                    <p>$$= \frac{P(B) + P(C) - P(BC)}{P(A) + P(B) + P(C) - P(AB) - P(AC) - P(BC) + P(ABC)}$$</p>
+                    <p>$$= \frac{\frac{1}{3} + \frac{1}{3} - \frac{1}{9}}{\frac{1}{3} + \frac{1}{3} + \frac{1}{3} - 0 - 0 - \frac{1}{9} + 0} = \frac{\frac{2}{3} - \frac{1}{9}}{\frac{8}{9}} = \frac{\frac{5}{9}}{\frac{8}{9}} = \frac{5}{8}$$</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="method4">
+        <h2>四、用单调性处理事件概率</h2>
+        <p>利用概率的单调性质，通过事件之间的包含关系来比较概率大小。</p>
+        
+        <div class="formula-box">
+            <h4>概率单调性体系法</h4>
+            <p>① $0 \leq P(A) \leq 1$</p>
+            <p>② 若$A \subseteq B$，则 $P(A) \leq P(B)$</p>
+            <p>③ 由于 $AB \subseteq A \subseteq A + B$，故 $P(AB) \leq P(A) \leq P(A + B)$</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>这些结果是显而易见的，由单调性推出的关系是隐藏条件，涉及不等式或描述"时，可考虑。</p>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">
+                例 1.5 对任意的事件$A$，$B$，$C$，证明：
+            </div>
+            <div class="example-content">
+                <p>(1) $P(AB) + P(AC) + P(BC) \leq P(A) + P(B) + P(C)$</p>
+                <p>(2) 当 $P(ABC) = \displaystyle\frac{1}{2}$ 时，$P(AB) + P(AC) + P(BC) \geq P(A) + P(B) + P(C) - \displaystyle\frac{1}{2}$</p>
+                
+                <div class="solution">
+                    <span class="solution-label">【证】</span>
+                    <p>(1) 因为</p>
+                    <p>$$AB \subseteq B, \quad AC \subseteq A, \quad BC \subseteq C$$</p>
+                    <p>故根据单调性，可知</p>
+                    <p>$$P(AB) \leq P(B), \quad P(AC) \leq P(A), \quad P(BC) \leq P(C)$$</p>
+                    <p>故 $$P(AB) + P(AC) + P(BC) \leq P(A) + P(B) + P(C)$$</p>
+                    
+                    <p>(2) $$1 \geq P(A \cup B \cup C)$$</p>
+                    <p>$$= P(A) + P(B) + P(C) - P(AB) - P(AC) - P(BC) + P(ABC)$$</p>
+                    <p>故 $$P(AB) + P(AC) + P(BC) \geq P(A) + P(B) + P(C) + \frac{1}{2} - 1$$</p>
+                    <p>$$= P(A) + P(B) + P(C) - \frac{1}{2}$$</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="method5">
+        <h2>五、用最值关系式处理事件概率</h2>
+        <p>当遇到与max{X,Y}，min{X,Y}有关的事件时，使用最值关系式是经常要用到的方法。</p>
+        
+        <div class="formula-box">
+            <h4>最值关系式集合</h4>
+            <p>① $\{\max\{X,Y\} \leq a\} = \{X \leq a\} \cap \{Y \leq a\}$</p>
+            <p>② $\{\max\{X,Y\} \gt a\} = \{X \gt a\} \cup \{Y \gt a\}$</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>$P\{\max\{X,Y\} \leq a\} = 1 - P\{\max\{X,Y\} \gt a\}$</p>
+        </div>
+        
+        <div class="formula-box">
+            <p>③ $\{\min\{X,Y\} \leq a\} = \{X \leq a\} \cup \{Y \leq a\}$</p>
+            <p>④ $\{\min\{X,Y\} \gt a\} = \{X \gt a\} \cap \{Y \gt a\}$</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>$P\{\min\{X,Y\} \leq a\} = 1 - P\{\min\{X,Y\} \gt a\}$</p>
+        </div>
+        
+        <div class="formula-box">
+            <p>⑤ $\{\max\{X,Y\} \leq a\} \subseteq \{\min\{X,Y\} \leq a\}$</p>
+            <p>⑥ $\{\min\{X,Y\} \gt a\} \subseteq \{\max\{X,Y\} \gt a\}$</p>
+            <p>⑦ $\displaystyle\max\{X,Y\} = \frac{X + Y + |X - Y|}{2}$</p>
+            <p>⑧ $\displaystyle\min\{X,Y\} = \frac{X + Y - |X - Y|}{2}$</p>
+            <p>⑨ $\max\{X,Y\} + \min\{X,Y\} = X + Y$</p>
+            <p>⑩ $\max\{X,Y\} - \min\{X,Y\} = |X - Y|$</p>
+            <p>⑪ $\max\{X,Y\} \cdot \min\{X,Y\} = XY$</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>⑦～⑩，尤者max(min)，往往max(min)，往往彻化。</p>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">
+                例 1.6 设$X$，$Y$为连续型随机变量，且$P(X \geq 0, Y \geq 0) = \displaystyle\frac{3}{7}$，$P(X \geq 0) = P(Y \geq 0) = \displaystyle\frac{4}{7}$，求下列事件的概率：
+            </div>
+            <div class="example-content">
+                <p>(1) $A = \{\max\{X,Y\} \geq 0\}$；(2) $B = \{\max\{X,Y\} \geq 0, \min\{X,Y\} \lt 0\}$</p>
+                
+                <div class="solution">
+                    <span class="solution-label">【解】</span>
+                    <p>(1) 由于 $A = \{\max\{X,Y\} \geq 0\} = \{X \geq 0\} \cup \{Y \geq 0\}$，故</p>
+                    <p>$$P(A) = P(X \geq 0) + P(Y \geq 0) - P(X \geq 0, Y \geq 0) = \frac{4}{7} + \frac{4}{7} - \frac{3}{7} = \frac{5}{7}$$</p>
+                    
+                    <p>(2) 用全集分解，</p>
+                    <p>$$A = \{\max\{X,Y\} \geq 0\} = \{\max\{X,Y\} \geq 0, \Omega\}$$</p>
+                    <p>$$= \{\max\{X,Y\} \geq 0\} \cap (\{\min\{X,Y\} \lt 0\} \cup \{\min\{X,Y\} \geq 0\})$$</p>
+                    <p>$$= \{\max\{X,Y\} \geq 0, \min\{X,Y\} \lt 0\} \cup \{\max\{X,Y\} \geq 0, \min\{X,Y\} \geq 0\}$$</p>
+                    <p>$$= B \cup \{\min\{X,Y\} \geq 0\} = B \cup \{X \geq 0, Y \geq 0\}$$</p>
+                    
+                    <p>故 $$P(B) = P(A) - P(X \geq 0, Y \geq 0) = \frac{5}{7} - \frac{3}{7} = \frac{2}{7}$$</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>还有不少涉及 max、min 的问题，如例5.4，例6.2，不一而尺。</p>
+        </div>
+    </section>
+    
+    <section id="method6">
+        <h2>六、用独立、有利或抑止处理事件概率</h2>
+        
+        <h3>(1) 定义</h3>
+        <p>设$A$，$B$为两个事件。</p>
+        
+        <div class="formula-box">
+            <p>① 若$P(AB) = P(A)P(B)$，则称事件$A$与$B$相互独立。</p>
+            <p>② 若$P(AB) \gt P(A)P(B)$，则称事件$A$与$B$相互有利。</p>
+            <p>③ 若$P(AB) \lt P(A)P(B)$，则称事件$A$与$B$相互抑止。</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>设$A$，$A_2$，$\cdots$，$A_n$为$n(n \geq 2)$个事件，如果对其中任意有限个事件$A_{i_1}$，$A_{i_2}$，$\cdots$，$A_{i_k}(2 \leq k \leq n)$，有</p>
+            <p>$$P(A_{i_1}A_{i_2}\cdots A_{i_k}) = P(A_{i_1})P(A_{i_2})\cdots P(A_{i_k})$$</p>
+            <p>则称$n$个事件$A_1$，$A_2$，$\cdots$，$A_n$相互独立。</p>
+            <p>常考$n=3$时的情形。设$A_1$，$A_2$，$A_3$为三个事件，若同时满足</p>
+            <p>$$P(A_1A_2) = P(A_1)P(A_2)$$ ①</p>
+            <p>$$P(A_1A_3) = P(A_1)P(A_3)$$ ②</p>
+            <p>$$P(A_2A_3) = P(A_2)P(A_3)$$ ③</p>
+            <p>$$P(A_1A_2A_3) = P(A_1)P(A_2)P(A_3)$$ ④</p>
+            <p>则称事件$A_1$，$A_2$，$A_3$相互独立。当去掉上述④式后，称只满足①，②，③式的事件$A_1$，$A_2$，$A_3$两两独立。</p>
+        </div>
+        
+        <h3>(2) 重要结论</h3>
+        
+        <div class="formula-box">
+            <p>① 若$A_1$，$A_2$，$\cdots$，$A_n$相互独立，则</p>
+            <p>$$P(A_1A_2\cdots A_n) = P(A_1)P(A_2)\cdots P(A_n)$$</p>
+            
+            <p>② 若$A_1$，$A_2$，$\cdots$，$A_n(n \gt 3)$ 相互独立，则</p>
+            <p>$$P\left(\bigcup_{i=1}^{n}A_i\right) = 1 - P\left(\overline{\bigcup_{i=1}^{n}A_i}\right) = 1 - P\left(\bigcap_{i=1}^{n}\overline{A_i}\right)$$</p>
+            <p>$$= 1 - \prod_{i=1}^{n}P(\overline{A_i}) = 1 - \prod_{i=1}^{n}[1 - P(A_i)]$$</p>
+            
+            <p>③ $A$与$B$相互独立 $\Leftrightarrow$ $A$与$\overline{B}$相互独立 $\Leftrightarrow$ $\overline{A}$与$B$相互独立 $\Leftrightarrow$ $\overline{A}$与$\overline{B}$相互独立。</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>将相互独立的事件组中的任何几个事件换成各自的对立事件，所得的新事件组仍相互独立。</p>
+        </div>
+        
+        <div class="formula-box">
+            <p>④ $A$与$B$相互有利 $\Leftrightarrow$ $A$与$\overline{B}$相互抑止 $\Leftrightarrow$ $\overline{A}$与$B$相互抑止 $\Leftrightarrow$ $\overline{A}$与$\overline{B}$相互有利。</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>证 $A$ 与 $B$ 相互有利，则 $P(AB) \gt P(A)P(B)$，于是 $P(A) - P(AB) \lt P(A) - P(A)P(B)$，即 $P(A\overline{B}) \lt P(A)P(\overline{B})$，故 $A$ 与 $\overline{B}$ 相互抑止。</p>
+            <p>以上过程可逆。</p>
+            <p>同理，可证 $\overline{A}$ 与 $B$ 相互抑止。</p>
+            <p>又由 $A$ 与 $B$ 相互有利，且 $P(A) = 1 - P(\overline{A})$，$P(B) = 1 - P(\overline{B})$，$P(AB) = 1 - P(\overline{AB}) = 1 - P(\overline{A} \cup \overline{B}) =$</p>
+            <p>$1 - P(\overline{A}) - P(\overline{B}) + P(\overline{A}\overline{B})$，故 $1 - P(\overline{A}) - P(\overline{B}) + P(\overline{A}\overline{B}) \gt [1 - P(\overline{A})][1 - P(\overline{B})]$，于是$P(\overline{A}\overline{B}) \gt P(\overline{A})P(\overline{B})$，</p>
+            <p>故 $\overline{A}$ 与 $\overline{B}$ 相互有利。</p>
+            <p>以上过程可逆。</p>
+        </div>
+        
+        <div class="formula-box">
+            <p>⑤ 对独立事件组（不含相同事件）作运算，得到的新事件组仍独立，如$A$，$B$，$C$，$D$相互独立，则</p>
+            <p>$AB$与$CD$相互独立，$A$与$BC - D$相互独立。</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>直接使用，无须证明。</p>
+        </div>
+        
+        <div class="formula-box">
+            <p>⑥ 若$P(A) = 0$或$P(A) = 1$，则$A$与任意事件$B$相互独立。</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>证 若 $P(A) = 0$，由"四、③"，有 $P(AB) \leq P(A)$，故 $0 \leq P(AB) \leq P(A) = 0$，则 $P(AB) = 0$，</p>
+            <p>于是 $P(A)P(B) = P(AB)$；</p>
+            <p>若 $P(A) = 1$，则 $P(\overline{A}) = 1 - P(A) = 0$，又由"四、③"，有 $0 \leq P(B\overline{A}) \leq P(\overline{A}) = 0$，如 $P(B\overline{A}) = 0$，又</p>
+            <p>$P(B\overline{A}) = P(B) - P(AB)$，故 $P(B) = P(AB)$，即 $P(A)P(B) = P(AB)$。</p>
+        </div>
+        
+        <div class="formula-box">
+            <p>⑦ 若$0 \lt P(A) \lt 1$，$0 \lt P(B) \lt 1$，且$A$与$B$互斥或存在包含关系，则$A$与$B$一定不独立。</p>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>证 若 $AB = \varnothing$，则 $P(AB) = 0 \neq P(A)P(B)$，故 $A$，$B$ 不独立。</p>
+            <p>若 $A \subseteq B$，则 $AB = A$，从而 $P(AB) = P(A) \neq P(A)P(B)$，故 $A$，$B$ 不独立。</p>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">
+                例 1.7 若$P(A) \gt 0$，则"$A$与$B$相互独立"是"$P(B|A) = P(B)$"的（&nbsp;&nbsp;&nbsp;&nbsp;）
+            </div>
+            <div class="example-content">
+                <p>(A) 充分非必要条件 &nbsp;&nbsp;&nbsp; (B) 必要非充分条件</p>
+                <p>(C) 充要条件 &nbsp;&nbsp;&nbsp; (D) 既非充分也非必要条件</p>
+                
+                <div class="solution">
+                    <span class="solution-label">【解】</span>
+                    <p>应选（C）</p>
+                    <p>充分性：由$A$与$B$相互独立，有$P(AB) = P(A)P(B)$，于是$P(B|A) = \displaystyle\frac{P(AB)}{P(A)} = P(B)$</p>
+                    <p>必要性：由$P(B|A) = P(B)$，知$P(AB) = P(B|A)P(A) = P(A)P(B)$，则$A$与$B$相互独立。故选（C）</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">
+                例 1.8 若$0 \lt P(A) \lt 1$，且给出两式①$P(B|\overline{A}) = P(B|A)$，②$P(B|A) + P(\overline{B}|\overline{A}) = 1$，则（&nbsp;&nbsp;&nbsp;&nbsp;）
+            </div>
+            <div class="example-content">
+                <p>(A) ①是$A$与$B$独立的充要条件，②不是 &nbsp;&nbsp;&nbsp; (B) ②是$A$与$B$独立的充要条件，①不是</p>
+                <p>(C) ①是$A$与$B$独立的充要条件，②也是 &nbsp;&nbsp;&nbsp; (D) ①不是$A$与$B$独立的充要条件，②也不是</p>
+                
+                <div class="solution">
+                    <span class="solution-label">【解】</span>
+                    <p>应选（C）</p>
+                    <p>由$P(B|\overline{A}) = P(B|A)$，有$\displaystyle\frac{P(B\overline{A})}{P(\overline{A})} = \frac{P(B) - P(AB)}{1 - P(A)} = \frac{P(AB)}{P(A)}$，即</p>
+                    <p>$$P(A)P(B) - P(A)P(AB) = P(AB) - P(A)P(AB)$$</p>
+                    <p>也即$P(A)P(B) = P(AB)$。上述过程可逆，故①成立。又$P(B|\overline{A}) = 1 - P(\overline{B}|\overline{A})$，故②成立。选（C）</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">
+                例 1.9 若$P(A) \gt 0$，则"$P(AB) \gt P(A)P(B)$"是"$P(B|A) \gt P(B)$"的（&nbsp;&nbsp;&nbsp;&nbsp;）
+            </div>
+            <div class="example-content">
+                <p>(A) 充分非必要条件 &nbsp;&nbsp;&nbsp; (B) 必要非充分条件</p>
+                <p>(C) 充要条件 &nbsp;&nbsp;&nbsp; (D) 既非充分也非必要条件</p>
+                
+                <div class="solution">
+                    <span class="solution-label">【解】</span>
+                    <p>应选（C）</p>
+                    <p>由于$P(AB) \gt P(A)P(B)$，于是$P(B|A) = \displaystyle\frac{P(AB)}{P(A)} \gt \frac{P(A)P(B)}{P(A)} = P(B)$</p>
+                    <p>以上过程可逆，故选（C）</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>若$P(B) \gt 0$，则$A$与$B$相互有利 $\Leftrightarrow$ $P(A|B) \gt P(A)$</p>
+        </div>
+        
+        <div class="example">
+            <div class="example-header">
+                例 1.10 若$0 \lt P(A) \lt 1$，则"$P(AB) \gt P(A)P(B)$"是"$P(B|A) \gt P(B|\overline{A})$"的（&nbsp;&nbsp;&nbsp;&nbsp;）
+            </div>
+            <div class="example-content">
+                <p>(A) 充分非必要条件 &nbsp;&nbsp;&nbsp; (B) 必要非充分条件</p>
+                <p>(C) 充要条件 &nbsp;&nbsp;&nbsp; (D) 既非充分也非必要条件</p>
+                
+                <div class="solution">
+                    <span class="solution-label">【解】</span>
+                    <p>应选（C）</p>
+                    <p>由于$P(AB) \gt P(A)P(B)$，于是$P(AB) - P(A)P(AB) \gt P(A)P(B) - P(A)P(AB)$，即$\displaystyle\frac{P(AB)}{P(A)} \gt \frac{P(B) - P(AB)}{1 - P(A)} =$</p>
+                    <p>$\displaystyle\frac{P(B\overline{A})}{P(\overline{A})}$，也即$P(B|A) \gt P(B|\overline{A})$</p>
+                    <p>以上过程可逆，选（C）</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="note-box">
+            <strong>【注】</strong>
+            <p>复杂随机事件的转换等价表述（$D_{22}$）是核心，要关结积累。如：</p>
+            <p>① 见到求"既…，又…"的概率，一般记"既"之后为$A$，"又"之后为$B$，写成$P(AB)$；更易出现的是"既不…，又不…"，同理可写成$P(\overline{A}\overline{B})$，显而易见，这是使用对立思想的场合，于</p>
+            <p>是有$P(\overline{A}\overline{B}) = 1 - P(\overline{\overline{A}\overline{B}}) = 1 - P(A \cup B)$；至于"至少有…"，一般也是用对立思想处理。</p>
+            <p>② 见如"已知…"、"当…发生时"，求概率，方向上就是条件概率，是在求$P(A|B)$，可考虑条件</p>
+            <p>概率公式、乘法公式、全概率公式与贝叶斯公式。</p>
+            <p>③ 见到"不等号"或"不等关系"，方向上就是单调性或独立性中的相互有利、相互抑止。</p>
+            <p>④ 把握性"最值关系式"的形式化归体系。</p>
+            <p>这就是针对解题的复习方法。</p>
+        </div>
+    </section>
+    
+    <footer>
+        <p>&copy; 2025 概率论与数理统计教程 | 交互式学习平台</p>
+        <p style="margin-top: 10px; font-size: 0.9em;">本网页需要网络连接以正确加载MathJax数学公式</p>
+    </footer>
+</div>
+
+<div class="scroll-top" id="scrollTop">↑</div>
+
+<script>
+    // 折叠/展开功能
+    document.querySelectorAll('.example-header').forEach(header => {
+        header.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            content.classList.toggle('show');
+        });
+    });
+    
+    // 平滑滚动
+    document.querySelectorAll('nav a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+    
+    // 返回顶部按钮
+    const scrollTopBtn = document.getElementById('scrollTop');
+    
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 300) {
+            scrollTopBtn.classList.add('show');
+        } else {
+            scrollTopBtn.classList.remove('show');
+        }
+    });
+    
+    scrollTopBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // 导航高亮
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('nav a');
+    
+    window.addEventListener('scroll', function() {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (pageYOffset >= sectionTop - 200) {
+                current = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.style.background = '#f27d00';
+            if (link.getAttribute('href') === '#' + current) {
+                link.style.background = '#f7d117';
+                link.style.color = '#343434';
+            }
+        });
+    });
+    
+    // 方法卡片交互提示
+    document.querySelectorAll('.method-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const method = this.querySelector('h4').textContent;
+            alert('你选择了：' + method + '\n\n向下滚动查看详细内容！');
+        });
+    });
+    
+    // 页面加载完成提示
+    window.addEventListener('load', function() {
+        console.log('✅ 概率论教程页面加载完成！');
+        console.log('📚 包含6种解题方法和多个交互式例题');
+        console.log('🔢 所有数学公式由MathJax渲染');
+    });
+</script>
+</body>
+</html>

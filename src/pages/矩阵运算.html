@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第3讲 矩阵运算三个解题法 - 交互式教程</title>
+    
+    <!-- MathJax配置 - 完整版本 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            CommonHTML: {
+                scale: 110
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --primary-cyan: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --bg-white: #ffffff;
+            --text-dark: #343434;
+            --shadow: rgba(52, 52, 52, 0.1);
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #fef9f3 0%, #f0f8f5 100%);
+            min-height: 100vh;
+        }
+        
+        /* 导航栏 */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--primary-cyan) 0%, #8bc9b8 100%);
+            padding: 30px 20px;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px var(--shadow);
+            z-index: 1000;
+        }
+        
+        nav h2 {
+            color: var(--bg-white);
+            font-size: 1.3em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary-orange);
+        }
+        
+        nav ul {
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin: 12px 0;
+        }
+        
+        nav ul li a {
+            color: var(--text-dark);
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        nav ul li a:hover {
+            background: var(--bg-white);
+            color: var(--primary-orange);
+            transform: translateX(5px);
+        }
+        
+        /* 主内容区 */
+        .container {
+            margin-left: 280px;
+            padding: 40px 60px;
+            max-width: 1400px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 50px 0;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--bg-white);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(242, 125, 0, 0.3);
+        }
+        
+        header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        /* 章节样式 */
+        section {
+            background: var(--bg-white);
+            padding: 35px;
+            margin: 30px 0;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px var(--shadow);
+            border-left: 6px solid var(--primary-orange);
+        }
+        
+        section h2 {
+            color: var(--primary-orange);
+            font-size: 2em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary-cyan);
+        }
+        
+        section h3 {
+            color: var(--text-dark);
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid var(--primary-yellow);
+        }
+        
+        /* 折叠区域 */
+        details {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 2px solid var(--primary-cyan);
+        }
+        
+        summary {
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.2em;
+            color: var(--primary-orange);
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        
+        summary:hover {
+            background: var(--primary-yellow);
+            color: var(--text-dark);
+        }
+        
+        details[open] summary {
+            margin-bottom: 15px;
+            border-bottom: 2px dashed var(--primary-cyan);
+        }
+        
+        /* 重要提示框 */
+        .note {
+            background: linear-gradient(135deg, #fff9e6 0%, #fef4d9 100%);
+            border-left: 6px solid var(--primary-yellow);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(247, 209, 23, 0.2);
+        }
+        
+        .note strong {
+            color: var(--primary-orange);
+            font-size: 1.1em;
+        }
+        
+        /* 例题样式 */
+        .example {
+            background: linear-gradient(135deg, #e8f5f1 0%, #d4ede5 100%);
+            border: 2px solid var(--primary-cyan);
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 12px;
+            position: relative;
+        }
+        
+        .example::before {
+            content: "📝 例题";
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: var(--primary-orange);
+            color: var(--bg-white);
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+        
+        .solution {
+            background: #f0f8ff;
+            border-left: 4px solid #4a90e2;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        .solution strong {
+            color: #4a90e2;
+        }
+        
+        /* 数学公式增强 */
+        .mjx-chtml {
+            font-size: 1.15em !important;
+        }
+        
+        .formula-block {
+            background: #fafafa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 2px dashed var(--primary-cyan);
+            overflow-x: auto;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        
+        th {
+            background: var(--primary-orange);
+            color: var(--bg-white);
+            font-weight: 700;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+        
+        li {
+            margin: 10px 0;
+        }
+        
+        /* 按钮 */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--primary-orange);
+            color: var(--bg-white);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(242, 125, 0, 0.3);
+        }
+        
+        .btn:hover {
+            background: #ff9933;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(242, 125, 0, 0.4);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 968px) {
+            nav {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .container {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 2em;
+            }
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-cyan);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-orange);
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        section {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        .highlight {
+            background: var(--primary-yellow);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航菜单 -->
+    <nav>
+        <h2>📚 目录导航</h2>
+        <ul>
+            <li><a href="#intro">课程介绍</a></li>
+            <li><a href="#section1">一、矩阵乘法形状大观</a></li>
+            <li><a href="#section2">二、证明A=O</a></li>
+            <li><a href="#section3">三、计算A^n</a></li>
+            <li><a href="#section4">四、A^T A, A*, A^-1</a></li>
+            <li><a href="#section5">五、分块矩阵</a></li>
+            <li><a href="#section6">六、求解矩阵方程</a></li>
+        </ul>
+    </nav>
+    
+    <!-- 主内容区 -->
+    <div class="container">
+        <header id="intro">
+            <h1>🎯 第3讲 矩阵运算</h1>
+            <p>三个解题法：目标导向 + 常规操作 + 化归经典形式</p>
+        </header>
+        
+        <!-- 课程框架 -->
+        <section>
+            <h2>🔍 解题方法框架</h2>
+            <div class="note">
+                <strong>核心理念：</strong>矩阵运算的核心是<span class="highlight">知阵运算 → (O₃(旧住目标)) + D₁(常规操作) + D₂₃(化归经典形式)</span>
+            </div>
+            
+            <h3>六个解题目标</h3>
+            <table>
+                <tr>
+                    <th>目标</th>
+                    <th>核心方法</th>
+                    <th>关键技巧</th>
+                </tr>
+                <tr>
+                    <td>1. 矩阵乘法</td>
+                    <td>形状大观</td>
+                    <td>$D_1$(常规操作) + $D_{23}$(化归经典形式)</td>
+                </tr>
+                <tr>
+                    <td>2. 证$A=O$</td>
+                    <td>$O_1$(旧住目标1)</td>
+                    <td>+ $D_1$(常规操作) + $D_{23}$(化归经典形式)</td>
+                </tr>
+                <tr>
+                    <td>3. 计算$A^n$</td>
+                    <td>$O_2$(旧住目标2)</td>
+                    <td>+ $D_1$(常规操作) + $D_{23}$(化归经典形式)</td>
+                </tr>
+                <tr>
+                    <td>4. $A^T A$, $A^*$, $A^{-1}$与初等矩阵</td>
+                    <td>$O_3$(旧住目标3)</td>
+                    <td>+ $D_1$(常规操作) + $D_2$(脱胎换骨)</td>
+                </tr>
+                <tr>
+                    <td>5. 分块矩阵</td>
+                    <td>$O_4$(旧住目标4)</td>
+                    <td>+ $D_1$(常规操作) + $D_{23}$(化归经典形式)</td>
+                </tr>
+                <tr>
+                    <td>6. 求解矩阵方程</td>
+                    <td>$O_5$(旧住目标5)</td>
+                    <td>+ $D_1$(常规操作) + $D_2$(脱胎换骨)</td>
+                </tr>
+            </table>
+        </section>
+        
+        <!-- 第一部分：矩阵乘法形状大观 -->
+        <section id="section1">
+            <h2>一、矩阵乘法的形状大观</h2>
+            <p><strong>方法：</strong>$D_1$(常规操作) + $D_{23}$(化归经典形式)</p>
+            
+            <h3>📌 十种基本形状</h3>
+            
+            <details open>
+                <summary>基本形状1-5</summary>
+                <div class="formula-block">
+                    <p><strong>① 行向量 × 列向量 = 数</strong></p>
+                    $$[\ ] \times \begin{bmatrix} \\ \\ \end{bmatrix} = \square$$
+                    <p>内积：大小相乘求和。$[x_1, x_2, x_3] \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} = x_1 + x_2 + x_3$ 行1阵</p>
+                    
+                    <p><strong>② 列向量 × 行向量 = 矩阵</strong></p>
+                    $$\begin{bmatrix} \\ \\ \end{bmatrix} \times [\ ] = \begin{bmatrix} \ & \ \\ \ & \ \end{bmatrix}$$
+                    <p>列1阵：行向量复制，如$\begin{bmatrix} 1 \\ 1 \end{bmatrix} \begin{bmatrix} \alpha^T \\ \alpha^T \end{bmatrix}$；行1阵：列向量复制</p>
+                    
+                    <p><strong>③ $\beta[1,1,\dots,1] = [\beta, \beta, \dots, \beta]$，列向量求和，如$\frac{1}{3}[1,1,1] \begin{bmatrix} x_{11} & x_{12} & x_{13} \\ x_{21} & x_{22} & x_{23} \\ x_{31} & x_{32} & x_{33} \end{bmatrix} = [\frac{1}{3}\sum_{i=1}^3 x_{i1}, \frac{1}{3}\sum_{i=1}^3 x_{i2}, \frac{1}{3}\sum_{i=1}^3 x_{i3}] = [\bar{x}_1, \bar{x}_2, \bar{x}_3] \stackrel{\Delta}{=} EX$，质心阵。</strong></p>
+                    
+                    <p><strong>④ 行向量求和</strong></p>
+                    $$\begin{bmatrix} x_{11} & x_{12} & x_{13} \\ x_{21} & x_{22} & x_{23} \\ x_{31} & x_{32} & x_{33} \end{bmatrix} \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} = \begin{bmatrix} \sum_{j=1}^3 x_{1j} \\ \sum_{j=1}^3 x_{2j} \\ \sum_{j=1}^3 x_{3j} \end{bmatrix}$$
+                    
+                    <p><strong>⑤ 行1、列1夹通阵：全求和，如$[1,1,1] \begin{bmatrix} x_{11} & x_{12} & x_{13} \\ x_{21} & x_{22} & x_{23} \\ x_{31} & x_{32} & x_{33} \end{bmatrix} \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} = \sum_{i=1}^3 \sum_{j=1}^3 x_{ij} = a$</strong></p>
+                    <p>且该形式$a$代表它是一个1×1的矩阵，即普通量，于是$a^T = a$。</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>基本形状6-10</summary>
+                <div class="formula-block">
+                    <p><strong>⑥ 列放缩</strong></p>
+                    $$\begin{bmatrix} \ & \ & \ \end{bmatrix} \begin{bmatrix} \lambda_1 & & \\ & \lambda_2 & \\ & & \lambda_3 \end{bmatrix} = [\lambda_1 \alpha_1, \lambda_2 \alpha_2, \lambda_3 \alpha_3]$$
+                    
+                    <p><strong>⑦ 行放缩</strong></p>
+                    $$\begin{bmatrix} \lambda_1 & & \\ & \lambda_2 & \\ & & \lambda_3 \end{bmatrix} \begin{bmatrix} \ \\ \ \\ \ \end{bmatrix} = \begin{bmatrix} \lambda_1 \beta_1 \\ \lambda_2 \beta_2 \\ \lambda_3 \beta_3 \end{bmatrix}, \quad \mu_i (i=1,2,3) \text{右行备查}$$
+                    
+                    <p><strong>⑧ 行、列放缩</strong></p>
+                    $$\begin{bmatrix} \lambda_1 & & \\ & \lambda_2 & \\ & & \lambda_3 \end{bmatrix} \begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \\ a_{31} & a_{32} \end{bmatrix} \begin{bmatrix} \lambda_1 & & \\ & \lambda_2 & \end{bmatrix} = \begin{bmatrix} \lambda_1^2 a_{11} & \lambda_1 \lambda_2 a_{12} \\ \lambda_1 \lambda_2 a_{21} & \lambda_2^2 a_{22} \\ \lambda_1 \lambda_3 a_{31} & \lambda_2 \lambda_3 a_{32} \end{bmatrix}$$
+                    
+                    <p><strong>⑨ 副1阵：换列阵</strong></p>
+                    $$\begin{bmatrix} \ & \ & \ \end{bmatrix} \begin{bmatrix} & & 1 \\ & 1 & \\ 1 & & \end{bmatrix} = [\alpha_3, \alpha_2, \alpha_1]$$
+                    
+                    <div class="note">
+                        <strong>【注】</strong>$[\alpha_1, \alpha_2, \alpha_3, \alpha_4] \begin{bmatrix} 0&0&0&1 \\ 0&1&0&0 \\ 0&0&1&0 \\ 1&0&0&0 \end{bmatrix} = [\alpha_4, \alpha_2, \alpha_3, \alpha_1]$
+                    </div>
+                    
+                    <p><strong>⑩ 相似变换</strong></p>
+                    $$\begin{bmatrix} 1&1&1 \\ 0&1&1 \\ 0&0&1 \end{bmatrix} \begin{bmatrix} 1 & & \\ & 2 & \\ & & 3 \end{bmatrix} \begin{bmatrix} 1&-1&0 \\ 0&1&-1 \\ 0&0&1 \end{bmatrix} = \begin{bmatrix} 1&1&1 \\ 0&2&1 \\ 0&0&3 \end{bmatrix}$$
+                </div>
+            </details>
+        </section>
+        
+        <!-- 第二部分：证明A=O -->
+        <section id="section2">
+            <h2>二、证明 $A = O$</h2>
+            <p><strong>方法：</strong>$O_1$(旧住目标1) + $D_1$(常规操作) + $D_{23}$(化归经典形式)</p>
+            
+            <div class="note">
+                <strong>证$A = O$可考虑由如下角度获得：</strong>
+                <ul>
+                    <li>① $r(A) = 0$，则$A = O$</li>
+                    <li>② $r(A) < n-1$，则$A^* = O$</li>
+                    <li>③ $\text{tr}(AA^T) = 0$，则$A = O$（需要先了解什么？答案在各项诸如"饱、1.②"）</li>
+                    <li>④ $A$的行向量与$B$的列向量均正交，则$AB = \begin{bmatrix} \alpha_1 \\ \vdots \\ \alpha_n \end{bmatrix} [\beta_1, \cdots, \beta_m] = O$</li>
+                </ul>
+            </div>
+            
+            <div class="example">
+                <p><strong>例3.1</strong> 设$A$为3阶实矩阵，$(A^T - A)A = O$，证明$A = A^T$。</p>
+                <div class="solution">
+                    <p><strong>【证】</strong>令$B = A^T - A$，则</p>
+                    <div class="formula-block">
+                        $$BB^T = (A^T - A)(A - A^T) = A^T A - (A^T)^2 - A^2 + AA^T$$
+                        $$= AA^T - (A^T)^2 = AA^T - (A^2)^T$$
+                        $$= AA^T - A^T A$$
+                    </div>
+                    <p>故$\text{tr}(BB^T) = \text{tr}(AA^T) - \text{tr}(A^T A) = 0$，因此$B = O$，即$A = A^T$。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 第三部分：计算A^n -->
+        <section id="section3">
+            <h2>三、计算 $A^n$</h2>
+            <p><strong>方法：</strong>$O_2$(旧住目标2) + $D_1$(常规操作) + $D_{23}$(化归经典形式)</p>
+            
+            <p>由$m \times n$个数$a_{ij}$ ($i=1,2,\cdots,m; j=1,2,\cdots,n$)排成的$m$行$n$列的矩形表格</p>
+            <div class="formula-block">
+                $$\begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ a_{21} & a_{22} & \cdots & a_{2n} \\ \vdots & \vdots & & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} \end{bmatrix}$$
+            </div>
+            <p>称为一个$m \times n$矩阵，简记为$A$或$(a_{ij})_{m \times n}$。当$m = n$时，称$A$为$n$阶方阵。</p>
+            
+            <h3>1. $A$为方阵且$r(A) = 1$</h3>
+            <div class="formula-block">
+                <p>若$a_i, b_i$ ($i=1,2,3$)不全为0，$A = \begin{bmatrix} a_1 b_1 & a_1 b_2 & a_1 b_3 \\ a_2 b_1 & a_2 b_2 & a_2 b_3 \\ a_3 b_1 & a_3 b_2 & a_3 b_3 \end{bmatrix} = \begin{bmatrix} a_1 \\ a_2 \\ a_3 \end{bmatrix} [b_1, b_2, b_3] \stackrel{\text{记}}{=} \alpha \beta^T$，则$r(A) = 1$，且</p>
+                
+                $$A^n = (\alpha \beta^T)(\alpha \beta^T) \cdots (\alpha \beta^T) = \alpha (\beta^T \alpha)(\beta^T \alpha) \cdots (\beta^T \alpha) \beta^T = \left(\sum_{i=1}^3 a_i b_i\right)^{n-1} A = [\text{tr}(A)]^{n-1} A$$
+            </div>
+            <p>对于$m$ ($m > 3$)阶方阵，若$r(A) = 1$，同样有$A^n = [\text{tr}(A)]^{n-1} A$。</p>
+            
+            <div class="example">
+                <p><strong>例3.2</strong> 设$A = \begin{bmatrix} 2&6&-4 \\ -1&-3&2 \\ 3&9&-6 \end{bmatrix}$，则$A^{10} = \_\_\_\_\_\_$。</p>
+                <div class="solution">
+                    <p><strong>【解】</strong>应填$-7^9 A = \begin{bmatrix} 2&6&-4 \\ -1&-3&2 \\ 3&9&-6 \end{bmatrix}$</p>
+                    <p>详看这样写法，第一列去凑出该方程符号，也就提供其为正常复形</p>
+                    <p>由题可得$A = \begin{bmatrix} 2 \\ -1 \\ 3 \end{bmatrix} [1,3,-2]$，故</p>
+                    $$A^{10} = \begin{bmatrix} 2 \\ -1 \\ 3 \end{bmatrix} [1,3,-2] \begin{bmatrix} 2 \\ -1 \\ 3 \end{bmatrix} [1,3,-2] \cdots \begin{bmatrix} 2 \\ -1 \\ 3 \end{bmatrix} [1,3,-2] = (-7)^9 A = -7^9 \begin{bmatrix} 2&6&-4 \\ -1&-3&2 \\ 3&9&-6 \end{bmatrix}$$
+                    <p>—9个 (-7) 相乘</p>
+                </div>
+            </div>
+            
+            <h3>2. 试算$A^2$ {或$A^3$}，找规律</h3>
+            <ul>
+                <li>(1) 若$A^2 = kA$，则$A^n = k^{n-1} A$（本讲的"三、1."是这里的特殊情形）。</li>
+                <li>(2) 若$A^2 = kE$，则$\begin{cases} A^{2n} = k^n E \text{ (若}k = -1\text{，则}A^4 = E\text{)} \\ A^{2n+1} = k^n A \end{cases}$</li>
+            </ul>
+            <p>亦有可能试算$A^3$，如$A^3 = kA$，这些次数不会太高。</p>
+            
+            <div class="example">
+                <p><strong>例3.3</strong> 若$A = \begin{bmatrix} 1&a&b \\ 0&1&a \\ 0&0&1 \end{bmatrix}$，则当$n \geq 2$时，$A^n = \_\_\_\_\_\_$。</p>
+                <div class="solution">
+                    <p><strong>【解】</strong>应填$\begin{bmatrix} 1 & na & C_n^2 a^2 + nb \\ 0&1&na \\ 0&0&1 \end{bmatrix}$</p>
+                    <p>试算：</p>
+                    $$A^2 = \begin{bmatrix} 1&2a&a^2+2b \\ 0&1&2a \\ 0&0&1 \end{bmatrix}, A^3 = \begin{bmatrix} 1&3a&C_3^2 a^2 + 3b \\ 0&1&3a \\ 0&0&1 \end{bmatrix}, \cdots$$
+                    <p>归纳得，当$n \geq 2$时，$A^n = \begin{bmatrix} 1 & na & C_n^2 a^2 + nb \\ 0&1&na \\ 0&0&1 \end{bmatrix}$</p>
+                </div>
+            </div>
+            
+            <h3>3. $A \stackrel{\text{分解}}{=} B + C$</h3>
+            <p>若$A = B + C$，$BC = CB$，则</p>
+            <div class="formula-block">
+                $$A^n = (B+C)^n = B^n + nB^{n-1}C + \frac{n(n-1)}{2}B^{n-2}C^2 + \cdots + C^n$$
+            </div>
+            <ul>
+                <li>(1) 若$B = E$，则$A^n = E + nC + \frac{n(n-1)}{2}C^2 + \cdots + C^n$</li>
+                <li>(2) 若$BC = CB = O$，则$A^n = B^n + C^n$</li>
+            </ul>
+            
+            <div class="example">
+                <p><strong>例3.5</strong> 设$A = \begin{bmatrix} 1&1&-1 \\ 0&1&1 \\ 0&0&1 \end{bmatrix}$，则$A^{10} = \_\_\_\_\_\_$。</p>
+                <div class="solution">
+                    <p><strong>【解】</strong>应填$\begin{bmatrix} 1&10&35 \\ 0&1&10 \\ 0&0&1 \end{bmatrix}$</p>
+                    <p>记$A = E + B$，其中$B = \begin{bmatrix} 0&1&-1 \\ 0&0&1 \\ 0&0&0 \end{bmatrix}$，$B^2 = \begin{bmatrix} 0&0&1 \\ 0&0&0 \\ 0&0&0 \end{bmatrix}$，$B^3 = O$，则</p>
+                    $$A^{10} = (E+B)^{10} = E^{10} + 10E^9 B + \frac{10 \times 9}{2}E^8 B^2$$
+                    $$= \begin{bmatrix} 1&0&0 \\ 0&1&0 \\ 0&0&1 \end{bmatrix} + \begin{bmatrix} 0&10&-10 \\ 0&0&10 \\ 0&0&0 \end{bmatrix} + \begin{bmatrix} 0&0&45 \\ 0&0&0 \\ 0&0&0 \end{bmatrix}$$
+                    $$= \begin{bmatrix} 1&10&35 \\ 0&1&10 \\ 0&0&1 \end{bmatrix}$$
+                </div>
+            </div>
+            
+            <div class="note">
+                <strong>【注】</strong>因为$A$只有1个线性无关的特征向量，所以不可相似对角化，故不能用$A^n = PAP^{-1}$求$A^n$。
+            </div>
+        </section>
+        
+        <!-- 第四部分：A^T A, A*, A^-1与初等矩阵 -->
+        <section id="section4">
+            <h2>四、$A^T A$，$A^*$，$A^{-1}$与初等矩阵</h2>
+            <p><strong>方法：</strong>$O_3$(旧住目标3) + $D_1$(常规操作) + $D_2$(脱胎换骨)</p>
+            
+            <h3>1. $A^T A$</h3>
+            <p>这里$A$为$n$阶实矩阵，称$A^T A$为格拉姆矩阵。</p>
+            
+            <p>以3阶矩阵为例，记$A = [\alpha_1, \alpha_2, \alpha_3]$，则$A^T = \begin{bmatrix} \alpha_1^T \\ \alpha_2^T \\ \alpha_3^T \end{bmatrix}$，于是</p>
+            <div class="formula-block">
+                $$A^T A = \begin{bmatrix} \|\alpha_1\|^2 & (\alpha_1, \alpha_2) & (\alpha_1, \alpha_3) \\ (\alpha_2, \alpha_1) & \|\alpha_2\|^2 & (\alpha_2, \alpha_3) \\ (\alpha_3, \alpha_1) & (\alpha_3, \alpha_2) & \|\alpha_3\|^2 \end{bmatrix}$$
+            </div>
+            
+            <p><strong>性质：</strong></p>
+            <ul>
+                <li>① 若$A^T A = \begin{bmatrix} 1&0&0 \\ 0&2&0 \\ 0&0&3 \end{bmatrix}$，则$\|\alpha_1\| = 1, \|\alpha_2\| = \sqrt{2}, \|\alpha_3\| = \sqrt{3}$，且$\alpha_1, \alpha_2, \alpha_3$两两正交。</li>
+                <li>② 若$\text{tr}(A^T A) = 0$，则$\|\alpha_1\|^2 + \|\alpha_2\|^2 + \|\alpha_3\|^2 = 0$，于是$\alpha_1 = \alpha_2 = \alpha_3 = 0$，即$A = O$。</li>
+                <li>③ $A^T Ax = 0$与$Ax = 0$同解。</li>
+                <li>④ $r(A) = r(A^T) = r(A^T A)$</li>
+                <li>⑤ 设$A^T A = B$，其中$B$为已知的正定矩阵，如何求$A$？<br>
+                由条件知存在可逆矩阵$P$，使得$P^T BP = E$。<br>
+                由于$A^T A = B$，则$x^T A^T Ax = x^T Bx$，即$(Ax)^T Ax = x^T Bx$，令$f = x^T Ax$，<span class="highlight">配方法</span>$y^T P^T BPy = y^T Ey = y^T y$，<br>
+                故$y = Ax$，又$x = Py$，即$A = P^{-1}$。</li>
+            </ul>
+            
+            <h3>2. $A^*$</h3>
+            <p><strong>(1) 定义</strong></p>
+            <div class="formula-block">
+                $$A^* = \begin{bmatrix} A_{11} & A_{21} & \cdots & A_{n1} \\ A_{12} & A_{22} & \cdots & A_{n2} \\ \vdots & \vdots & & \vdots \\ A_{1n} & A_{2n} & \cdots & A_{nn} \end{bmatrix}$$
+            </div>
+            <p>其中$A_{ij}$是$a_{ij}$的代数余子式，$A^*$叫作$A$的伴随矩阵。</p>
+            
+            <p><strong>(2) 公式</strong></p>
+            <p>设$A$，$B$为$n$ ($n \geq 2$)阶矩阵，其中⑤、⑥、⑦要求$A$可逆，则</p>
+            <ul>
+                <li>① $AA^* = A^* A = |A|E$</li>
+                <li>② $|A^*| = |A|^{n-1}$</li>
+                <li>③ $(A^*)^* = (A^*)^T$</li>
+                <li>④ $(kA)^* = k^{n-1} A^*$，$(-A)^* = (-1)^{n-1} A^*$</li>
+                <li>⑤ $A^{-1} = \frac{1}{|A|} A^*$</li>
+                <li>⑥ $A^* = |A| A^{-1}$</li>
+                <li>⑦ $(A^*)^{-1} = \frac{1}{|A|} A = (A^{-1})^*$</li>
+                <li>⑧ $(A^*)^* = |A|^{n-2} A$</li>
+                <li>⑨ $|(A^*)^*| = |A|^{(n-1)^2}$</li>
+                <li>⑩ $(AB)^* = B^* A^*$</li>
+            </ul>
+            
+            <div class="note">
+                <strong>【注】</strong>证 当$|AB| \neq 0$时，$(AB)^* = |AB|(AB)^{-1} = |B||A| B^{-1} A^{-1} = B^* A^*$。<span class="highlight">这个证明方法为"破→劝导"</span>
+                <p>当$|AB| = 0$时，令$A_t = A + tE$，$B_t = B + tE$，使得$|A + tE| \neq 0$，即$A + tE$不满尺条件$T$。</p>
+                <p>由于在考研范围内，$A + tE$的元素均是$t$的连续函数，令$t \to 0$，有$(AB)^* = B^* A^*$。</p>
+                <p>其中，<strong>扰动法（搅动法）</strong>：在$n$阶矩阵$B$满尺条件$T$时，令$A + tE = B$，显然$A + tE$不满尺条件$T$。由于在考研范围内，$A + tE$的元素均是$t$的多项式，也即$t$的连续函数，故当$t \to 0$时，$A + tE \to A$，即$A$亦满尺条件。</p>
+            </div>
+            
+            <p><strong>(3) 秩</strong></p>
+            <div class="formula-block">
+                <p>设$A$是$n$阶方阵，$A^*$是$A$的伴随矩阵，则$r(A^*) = \begin{cases} n, & r(A) = n \\ 1, & r(A) = n-1 \\ 0, & r(A) < n-1 \end{cases}$</p>
+            </div>
+            
+            <h3>3. $A^{-1}$</h3>
+            <p><strong>(1) 定义</strong></p>
+            <p>对于方阵$A$，$B$，若$AB = E$，且$A$互为逆矩阵，且$A^{-1} = B$，$B^{-1} = A$，$AB = BA$。</p>
+            
+            <p><strong>(2) 性质</strong></p>
+            <ul>
+                <li>① $(A^{-1})^{-1} = A$</li>
+                <li>② $(AB)^{-1} = B^{-1} A^{-1}$（穿脱原则）</li>
+                <li>③ $k \neq 0$，$(kA)^{-1} = \frac{1}{k} A^{-1}$</li>
+                <li>④ $(A^*)^{-1} = (A^{-1})^*$</li>
+                <li>⑤ $|A^{-1}| = \frac{1}{|A|}$</li>
+            </ul>
+            
+            <p><strong>(3) 求$A^{-1}$</strong></p>
+            <ul>
+                <li><strong>① 具体型</strong><br>
+                a. $A^{-1} = \frac{1}{|A|} A^*$<br>
+                b. $[A, E] \xrightarrow{\text{初等行变换}} [E, A^{-1}]$</li>
+                <li><strong>② 抽象型</strong><br>
+                a. 由题设式子恒等变形，创造$AB = E$，则$A^{-1} = B$<br>
+                b. 由题设式子恒等变形，创造$A = BC$，若$B$，$C$均可逆，则$A^{-1} = C^{-1} B^{-1}$</li>
+            </ul>
+            
+            <p><strong>(4) $A_{n\times n}$可逆的充要条件大观</strong></p>
+            <div class="note">
+                <p>$A_{n\times n}$可逆 $\Leftrightarrow$ ① 存在方阵$B$，使$AB = BA = E$</p>
+                <p>$\Leftrightarrow$ ② 存在$B$，使$BA = E$ | 与定义联系</p>
+                <p>$\Leftrightarrow$ ③ 存在$B$，使$AB = E$</p>
+                <p>$\Leftrightarrow$ ④ $|A| \neq 0$ ——与行列式联系</p>
+                <p>$\Leftrightarrow$ ⑤ $A$的等价标准形为$E$</p>
+                <p>$\Leftrightarrow$ ⑥ $A$可经初等行变换化为$E$ (即$P_r \cdots P_1 A = E$) | 与初等变换、初等矩阵联系</p>
+                <p>$\Leftrightarrow$ ⑦ $A$可经初等列变换化为$E$ (即$AP_1 \cdots P_s = E$)</p>
+                <p>$\Leftrightarrow$ ⑧ $A$可分解为若干个初等矩阵乘积</p>
+                <p>$\Leftrightarrow$ ⑨ $r(A) = n$</p>
+                <p>$\Leftrightarrow$ ⑩ $\forall C_{n\times 1}$，$r(AC) = r(C)$</p>
+                <p>$\Leftrightarrow$ ⑪ $\forall C_{1\times n}$，$r(CA) = r(C)$ | 与秩联系</p>
+                <p>$\Leftrightarrow$ ⑫ $\forall C_{n\times 1}$，$r(CA) = r(C)$</p>
+                <p>$\Leftrightarrow$ ⑬ $\forall C_{1\times n}$，$r(CA) = r(C)$</p>
+                <p>$\Leftrightarrow$ ⑭ $Ax = 0$只有零解</p>
+                <p>$\Leftrightarrow$ ⑮ $\forall \beta_{n\times 1}$，$Ax = \beta$有唯一解 | 与方程组的解联系</p>
+                <p>$\Leftrightarrow$ ⑯ $\forall \beta_{n\times 1}$，$Ax = \beta$有解</p>
+                <p>$\Leftrightarrow$ ⑰ $AX = O_{n\times s}$ ($\forall s \in \mathbb{Z}^+$) 只有零解</p>
+                <p>$\Leftrightarrow$ ⑱ $\forall C_{n\times s}$，$AX = C$有唯一解</p>
+                <p>$\Leftrightarrow$ ⑲ $\forall C_{n\times s}$，$AX = C$有解</p>
+                <p>$\Leftrightarrow$ ⑳ $A$的列向量组线性无关 $\Leftrightarrow$ $A$的任一列向量都不能由其余列向量组线性表示</p>
+                <p>$\Leftrightarrow$ ㉑ $A$的行向量组线性无关 $\Leftrightarrow$ $A$的任一行向量都不能由其余行向量线性表示 | 性表示联系</p>
+                <p>$\Leftrightarrow$ ㉒ $A$的列向量组是$\mathbb{R}^n$的一个基</p>
+                <p>$\Leftrightarrow$ ㉓ $A$的行向量组是$\mathbb{R}^n$的一个基</p>
+                <p>$\Leftrightarrow$ ㉔ 0不是$A$的特征值——与特征值联系</p>
+                <p>$\Leftrightarrow$ ㉕ $A^T A$正定</p>
+                <p>$\Leftrightarrow$ ㉖ $AA^T$正定 | 与正定性联系</p>
+                <p>$\Leftrightarrow$ ㉗ $A^T A$的特征值全为正</p>
+                <p>$\Leftrightarrow$ ㉘ $A^T A$与$E$合同</p>
+                <p>$\Leftrightarrow$ ㉙ $A^T A$的正惯性指数为$n$</p>
+                <p>$\Leftrightarrow$ ㉚ $A^T A$的顺序主子式全为正</p>
+            </div>
+            
+            <h3>4. 初等矩阵</h3>
+            <p><strong>(1) 初等矩阵的性质</strong></p>
+            <ul>
+                <li>① $|E_{ij}| = -1$，$|E_{ij}(k)| = 1$，$|E_i(k)| = k$</li>
+                <li>② $E_i^T = E_i$，$E_{ij}^T(k) = E_{ji}(k)$，$E_i^T(k) = E_i(k)$</li>
+                <li>③ $E_{ij}^{-1} = E_{ij}$，$E_{ij}^{-1}(k) = E_{ij}(-k)$，$E_i^{-1}(k) = E_i(\frac{1}{k})$</li>
+                <li>④ $E_i^* = |E_i| E_{ij}$，$E_{ij}(k)^* = E_{ij}(-k)$；<br>
+                $E_i^*(k) = |E_i(k)| E_i^{-1}(k) = kE_i(\frac{1}{k})$</li>
+            </ul>
+            
+            <p><strong>(2) 初等变换使用的各种场合</strong></p>
+            <ul>
+                <li>① 用于联系初等变换、后行列式的关系</li>
+                <li>若$E_i A = B$，则$|-A| = |B|$；若$E_i(k)A = B$，则$k|A| = |B|$；若$E_{ij}(k)A = B$，则$|A| = |B|$</li>
+                <li>② 用于求逆矩阵</li>
+                <li>若$A$可逆，则$[A, E] \xrightarrow{\text{行}} [E, A^{-1}]$或$\begin{bmatrix} A \\ E \end{bmatrix} \xrightarrow{\text{列}} \begin{bmatrix} E \\ A^{-1} \end{bmatrix}$</li>
+                <li>③ 用于求矩阵的秩（可行可列）</li>
+                <li>④ 用于解线性方程组</li>
+                <li>若$Ax = \beta$，则$[A, \beta] \xrightarrow{\text{行}} [PA, P\beta]$</li>
+                <li>⑤ 用于解矩阵方程</li>
+                <li>若$AX = B$，且$A$可逆，则$X = A^{-1}B$，于是$[A, B] \xrightarrow{\text{行}} [E, A^{-1}B]$；或若$XA = B$，且$A$可逆，则$X = BA^{-1}$</li>
+            </ul>
+        </section>
+        
+        <!-- 第五部分：分块矩阵 -->
+        <section id="section5">
+            <h2>五、分块矩阵</h2>
+            <p><strong>方法：</strong>$O_4$(旧住目标4) + $D_1$(常规操作) + $D_{23}$(化归经典形式)</p>
+            
+            <h3>1. 定义</h3>
+            <p>用几条横线和纵线把一个矩阵分成若干小块，每一小块称为原矩阵的子块。把子块看作原矩阵的一个元素，就得到了分块矩阵。</p>
+            <p>如矩阵$A$按行分块：</p>
+            <div class="formula-block">
+                $$A = \begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ a_{21} & a_{22} & \cdots & a_{2n} \\ \vdots & \vdots & & \vdots \\ \hdashline a_{m1} & a_{m2} & \cdots & a_{mn} \end{bmatrix} = \begin{bmatrix} A_1 \\ A_2 \\ \vdots \\ A_m \end{bmatrix}$$
+            </div>
+            <p>其中$A_i = [a_{i1}, a_{i2}, \cdots, a_{in}]$ ($i=1,2,\cdots,m$)是$A$的子块。</p>
+            
+            <p>矩阵$B$按列分块：</p>
+            <div class="formula-block">
+                $$B = \begin{bmatrix} b_{11} & b_{12} & \cdots & b_{1n} \\ b_{21} & b_{22} & \cdots & b_{2n} \\ \vdots & \vdots & & \vdots \\ b_{m1} & b_{m2} & \cdots & b_{mn} \end{bmatrix} = [B_1, B_2, \cdots, B_n]$$
+            </div>
+            <p>其中$B_j = [b_{1j}, b_{2j}, \cdots, b_{mj}]^T$ ($j=1,2,\cdots,n$)是$B$的子块。</p>
+            
+            <h3>2. 运算</h3>
+            <details>
+                <summary>点击查看分块矩阵运算法则</summary>
+                <div class="formula-block">
+                    <p><strong>(1) 转置：</strong>$\begin{bmatrix} A & B \\ C & D \end{bmatrix}^T = \begin{bmatrix} A^T & C^T \\ B^T & D^T \end{bmatrix}$</p>
+                    
+                    <div class="note">
+                        <strong>【注】</strong>如$[A, B]^T = \begin{bmatrix} A^T \\ B^T \end{bmatrix}$
+                    </div>
+                    
+                    <p><strong>(2) 加法：</strong>同型，且分法一致，则$\begin{bmatrix} A_1 & A_2 \\ A_3 & A_4 \end{bmatrix} + \begin{bmatrix} B_1 & B_2 \\ B_3 & B_4 \end{bmatrix} = \begin{bmatrix} A_1+B_1 & A_2+B_2 \\ A_3+B_3 & A_4+B_4 \end{bmatrix}$</p>
+                    
+                    <p><strong>(3) 数乘：</strong>$k\begin{bmatrix} A & B \\ C & D \end{bmatrix} = \begin{bmatrix} kA & kB \\ kC & kD \end{bmatrix}$</p>
+                    
+                    <p><strong>(4) 乘法：</strong>$\begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} X & Y \\ Z & W \end{bmatrix} = \begin{bmatrix} AX+BZ & AY+BW \\ CX+DZ & CY+DW \end{bmatrix}$，其中矩阵相乘、相加要满足相应的运算规律。</p>
+                    
+                    <div class="note">
+                        <strong>【注】</strong>对于(4)的运算要注意，分块矩阵相乘后，左边的份在左边，右边的份在右边。
+                    </div>
+                    
+                    <p><strong>(5) 若$A$，$B$分别为$m$，$n$阶方阵，则分块对角矩阵的解为</strong></p>
+                    $$\begin{bmatrix} A & O^T \\ O & B \end{bmatrix}^T = \begin{bmatrix} A^T & O \\ O & B^T \end{bmatrix}$$
+                    
+                    <p><strong>(6) 已知$A = \begin{bmatrix} B & O \\ D & C \end{bmatrix}$，其中$B$是$r$阶可逆矩阵，$C$是$s$阶可逆矩阵，则$A$可逆，且</strong></p>
+                    $$A^{-1} = \begin{bmatrix} B^{-1} & O \\ -C^{-1}DB^{-1} & C^{-1} \end{bmatrix}$$
+                </div>
+            </details>
+            
+            <h3>3. 重要结论</h3>
+            <div class="example">
+                <p><strong>例3.18</strong> 设$A$，$B$为$n$阶矩阵，记$r(X)$为矩阵$X$的秩，$[X, Y]$表示分块矩阵，则( )。</p>
+                <p>(A) $r([A, AB]) = r(A)$</p>
+                <p>(B) $r([A, BA]) = r(A)$</p>
+                <p>(C) $r([A, B]) = \max\{r(A), r(B)\}$</p>
+                <p>(D) $r([A, B]) = r([A^T, B^T])$</p>
+                
+                <div class="solution">
+                    <p><strong>【解】</strong>应选(A)。</p>
+                    <p><strong>法一</strong> 一方面，$A$是$[A, AB]$的子矩阵，因此$r([A, AB]) \geq r(A)$。</p>
+                    <p>另一方面，$[A, AB]$是$A$与$[E, B]$的乘积，即$[A, AB] \leq r(A)$。因此$r([A, AB]) \leq r(A)$。</p>
+                    <p><strong>法二</strong> 设$C = AB$，则$C$的列向量可由$A$的列向量组线性表示，故$r([A, AB]) = r([A, C]) = r(A)$，选(A)。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 第六部分：求解矩阵方程 -->
+        <section id="section6">
+            <h2>六、求解矩阵方程</h2>
+            <p><strong>方法：</strong>$O_5$(旧住目标5) + $D_1$(常规操作) + $D_2$(脱胎换骨)</p>
+            
+            <h3>1. 定义</h3>
+            <p>含有未知矩阵的方程称为矩阵方程。</p>
+            
+            <h3>2. 化简</h3>
+            <p>解矩阵方程，应先根据题设条件和矩阵的运算规则，将方程进行恒等变形，使方程化成$AX = B$，$XA = B$或$AXB = C$的形式，其化简手段如下：</p>
+            
+            <ul>
+                <li>(1) 消公因式，即若$CA = CB$，且$C$可逆，则$A = B$</li>
+            </ul>
+            
+            <div class="note">
+                <strong>【注】</strong>还有以下结论：
+                <ul>
+                    <li>(1) 若$CA = CB$，$C$列满秩，则$A = B$；</li>
+                    <li>(2) 若$AC = BC$，$C$行满秩，则$A = B$。</li>
+                </ul>
+            </div>
+            
+            <ul>
+                <li>(2) 提取公因式，即$CA + CB = C(A+B)$</li>
+                <li>(3) 移项，即将已知表达式与未知表达式分别移至方程的两边</li>
+                <li>(4) 利用公式</li>
+            </ul>
+            
+            <p>公式包括：</p>
+            <div class="formula-block">
+                <ul>
+                    <li>① $AA^* = |A|E$，若$A$可逆，则$A^* = |A|A^{-1}$，$(A^*)^T = |A|^{n-2}A$ ($n \geq 2$)</li>
+                    <li>② $A^2 - E = (A+E)(A-E) = (A-E)(A+E)$，$A^2 \pm E = (A \pm E)(A^2 \mp A + E)$</li>
+                    <li>③ $A^T B^T = (BA)^T$，$A^T B^* = (BA)^*$，若$A$，$B$可逆，则$A^{-1}B^{-1} = (BA)^{-1}$</li>
+                    <li>④ 若$A$可逆，则$(A^{-1})^T = (A^T)^{-1}$，$(A^{-1})^T = (A^T)^{-1}$，$(A^*)^T = (A^T)^*$</li>
+                </ul>
+            </div>
+            
+            <h3>3. 求解</h3>
+            <p><strong>(1) 若$A$可逆，或$A$，$B$均可逆，则可得"2."中方程的解分别为$X = A^{-1}B$，$X = BA^{-1}$，$X = A^{-1}CB^{-1}$</strong></p>
+            
+            <p><strong>(2) 若$A$不可逆，如$AX = B$，则将$X$和$B$按列分块，得</strong></p>
+            $$A[\xi_1, \xi_2, \cdots, \xi_n] = [\beta_1, \beta_2, \cdots, \beta_n]，即A\xi_i = \beta_i, i=1,2,\cdots,n$$
+            <p>求解上述线性方程组，得解$\xi_i$，从而得$X = [\xi_1, \xi_2, \cdots, \xi_n]$。</p>
+            
+            <p><strong>(3) 若无法化成上述几种形式，则应该按未知矩阵为$X = (x_{ij})$，直接代入方程得到含未知量为$x_{ij}$的线性方程组，求得$X$的元素$x_{ij}$，从而求得未知矩阵$X$（即用待定元素法求$X$）。</strong></p>
+            
+            <p><strong>(4) 设$A$为$m \times n$矩阵，$B$为$m \times s$矩阵，则矩阵方程$AX = B$有解的充分必要条件为</strong></p>
+            $$r(A) = r([A, B])$$
+            
+            <div class="example">
+                <p><strong>例3.19</strong> 已知$a$是常数，且矩阵$A = \begin{bmatrix} 1&2&a \\ 1&3&0 \\ 2&7&-a \end{bmatrix}$可经初等列变换化为矩阵$B = \begin{bmatrix} 1&a&2 \\ 0&1&1 \\ -1&1&1 \end{bmatrix}$</p>
+                <p>(1) 求$a$；</p>
+                <p>(2) 求满足$AP = B$的可逆矩阵$P$。</p>
+                
+                <div class="solution">
+                    <p><strong>【解】</strong>(1) 对矩阵$A$，$B$分别施以初等行变换，得</p>
+                    <div class="formula-block">
+                        $$A = \begin{bmatrix} 1&2&a \\ 1&3&0 \\ 2&7&-a \end{bmatrix} \xrightarrow{\text{初等行变换}} \begin{bmatrix} 1&2&a \\ 0&1&-a \\ 0&3&-3a \end{bmatrix} \to \begin{bmatrix} 1&0&3a \\ 0&1&-a \\ 0&0&0 \end{bmatrix}$$
+                        
+                        $$B = \begin{bmatrix} 1&a&2 \\ 0&1&1 \\ -1&1&1 \end{bmatrix} \to \begin{bmatrix} 1&0&2-a \\ 0&1&1 \\ 0&a+1&3 \end{bmatrix} \to \begin{bmatrix} 1&0&0 \\ 0&1&1 \\ 0&0&2-a \end{bmatrix}$$
+                    </div>
+                    <p>由题设知$r(A) = r(B)$，故$a = 2$。</p>
+                    
+                    <p><strong>(2)</strong> 由(1)知$a = 2$。对矩阵$[A, B]$施以初等行变换，得</p>
+                    <div class="formula-block">
+                        $$[A, B] = \begin{bmatrix} 1&2&2&|&1&2&2 \\ 1&3&0&|&0&1&1 \\ 2&7&-2&|&-1&1&1 \end{bmatrix} \to \cdots \to \begin{bmatrix} 1&0&6&|&3&4&4 \\ 0&1&-2&|&-1&-1&-1 \\ 0&0&0&|&0&0&0 \end{bmatrix}$$
+                    </div>
+                    <p>记$B = [\beta_1, \beta_2, \beta_3]$，由于</p>
+                    $$A\begin{bmatrix} -6 \\ 2 \\ 1 \end{bmatrix} = 0, A\begin{bmatrix} 3 \\ -1 \\ 0 \end{bmatrix} = \beta_1, A\begin{bmatrix} 4 \\ -1 \\ 0 \end{bmatrix} = \beta_2, A\begin{bmatrix} 4 \\ -1 \\ 0 \end{bmatrix} = \beta_3$$
+                    <p>故$AX = B$的解为</p>
+                    $$X = \begin{bmatrix} 3-6k_1 & 4-6k_2 & 4-6k_3 \\ -1+2k_1 & -1+2k_2 & -1+2k_3 \\ k_1 & k_2 & k_3 \end{bmatrix}$$
+                    <p>其中$k_1, k_2, k_3$为任意常数。</p>
+                    <p>由于$|X| = k_1 - k_2$，因此满足$AP = B$的可逆矩阵为</p>
+                    $$P = \begin{bmatrix} 3-6k_1 & 4-6k_2 & 4-6k_3 \\ -1+2k_1 & -1+2k_2 & -1+2k_3 \\ k_1 & k_2 & k_3 \end{bmatrix}$$
+                    <p>其中$k_1, k_2, k_3$为任意常数，且$k_2 \neq k_3$。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 返回顶部按钮 -->
+        <div style="text-align: center; margin: 50px 0;">
+            <button class="btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                ⬆️ 返回顶部
+            </button>
+        </div>
+        
+        <!-- 页脚 -->
+        <footer style="text-align: center; padding: 30px; background: var(--primary-cyan); color: var(--text-dark); border-radius: 15px; margin-top: 40px;">
+            <p style="font-size: 1.1em; font-weight: 600;">📘 线性代数系列教程</p>
+            <p style="margin-top: 10px; opacity: 0.9;">掌握矩阵运算的三个解题法，提升线性代数解题能力</p>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                <strong>重要提示：</strong>本页面使用MathJax渲染数学公式，需要网络连接。<br>
+                请确保浏览器允许加载外部脚本。
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 高亮当前章节
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.style.background = '';
+                if (link.getAttribute('href') === '#' + current) {
+                    link.style.background = 'var(--bg-white)';
+                    link.style.color = 'var(--primary-orange)';
+                }
+            });
+        });
+        
+        // 打印友好提示
+        console.log('%c📚 第3讲 矩阵运算 - 交互式教程', 'font-size: 24px; color: #f27d00; font-weight: bold;');
+        console.log('%c本教程包含完整的LaTeX数学公式支持', 'font-size: 14px; color: #a6d6c9;');
+        console.log('%c如果公式未正常显示，请检查网络连接', 'font-size: 12px; color: #343434;');
+    </script>
+</body>
+</html>
+
