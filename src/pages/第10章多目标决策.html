@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第10章 多目标决策 - 交互式教程</title>
+    
+    <!-- MathJax配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --secondary-green: #a6d6c9;
+            --accent-yellow: #f7d117;
+            --bg-white: #ffffff;
+            --text-dark: #343434;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #fef9f3 0%, #e8f5f1 100%);
+            min-height: 100vh;
+        }
+        
+        /* 导航栏 */
+        nav {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #d66900 100%);
+            color: var(--bg-white);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            padding: 0 2rem;
+        }
+        
+        nav a {
+            color: var(--bg-white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+        
+        nav a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* 标题样式 */
+        h1 {
+            text-align: center;
+            color: var(--primary-orange);
+            font-size: 2.5rem;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--bg-white);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: var(--primary-orange);
+            font-size: 2rem;
+            margin: 2rem 0 1rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--secondary-green) 0%, #93cabb 100%);
+            border-radius: 10px;
+            border-left: 5px solid var(--primary-orange);
+        }
+        
+        h3 {
+            color: var(--primary-orange);
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem 0;
+            padding-left: 1rem;
+            border-left: 4px solid var(--accent-yellow);
+        }
+        
+        h4 {
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+        
+        /* 章节卡片 */
+        .section {
+            background: var(--bg-white);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        /* 段落样式 */
+        p {
+            margin: 1rem 0;
+            text-align: justify;
+        }
+        
+        /* 强调文本 */
+        .highlight {
+            background: var(--accent-yellow);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        /* 表格样式 */
+        .table-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-white);
+        }
+        
+        th {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #d66900 100%);
+            color: var(--bg-white);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 0.8rem;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:hover {
+            background: #f8f8f8;
+        }
+        
+        /* 公式容器 */
+        .formula-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #fff3d9 100%);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-yellow);
+            overflow-x: auto;
+        }
+        
+        /* 可折叠内容 */
+        .collapsible {
+            background: var(--secondary-green);
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 1rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .collapsible:hover {
+            background: #93cabb;
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s ease;
+        }
+        
+        .collapsible.active:after {
+            transform: rotate(-180deg);
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .content-inner {
+            padding: 1.5rem;
+        }
+        
+        /* 步骤样式 */
+        .steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+        
+        .steps li {
+            counter-increment: step-counter;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--bg-white);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-orange);
+            position: relative;
+            padding-left: 4rem;
+        }
+        
+        .steps li:before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-orange);
+            color: var(--bg-white);
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* 注意框 */
+        .note {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #ff9800;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            background: var(--primary-orange);
+            color: var(--bg-white);
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(242, 125, 0, 0.3);
+        }
+        
+        .btn:hover {
+            background: #d66900;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(242, 125, 0, 0.4);
+        }
+        
+        /* 示例框 */
+        .example {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            border-left: 4px solid #9c27b0;
+        }
+        
+        .example-title {
+            font-weight: 700;
+            color: #7b1fa2;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                padding: 1rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .section {
+                padding: 1rem;
+            }
+            
+            table {
+                font-size: 0.85rem;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+        
+        /* MathJax公式大小调整 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        /* 返回顶部按钮 */
+        #backToTop {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-orange);
+            color: var(--bg-white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        #backToTop:hover {
+            background: #d66900;
+            transform: translateY(-5px);
+        }
+        
+        /* 图表容器 */
+        .diagram {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--bg-white);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .diagram-title {
+            font-weight: 600;
+            color: var(--primary-orange);
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <ul>
+            <li><a href="#intro">章节概述</a></li>
+            <li><a href="#delphi">特尔菲法</a></li>
+            <li><a href="#ahp">层次分析法</a></li>
+            <li><a href="#dea">数据包络分析法</a></li>
+            <li><a href="#exercises">习题</a></li>
+        </ul>
+    </nav>
+    
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 标题 -->
+        <h1>第10章 多目标决策</h1>
+        
+        <!-- 章节概述 -->
+        <section id="intro" class="section">
+            <h2>📚 章节概述</h2>
+            <p>
+                本章介绍三种重要的多目标决策方法，它们突破了传统的数量分析限制，为更合理地制定决策开辟了思路。
+                这些方法的主要优点是简明直观，避免了专家会议的许多弊病。
+            </p>
+            
+            <div class="note">
+                <strong>💡 学习目标：</strong>
+                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                    <li>掌握特尔菲法的基本步骤和应用</li>
+                    <li>理解层次分析法（AHP）的原理和计算方法</li>
+                    <li>学习数据包络分析法（DEA）的模型和经济含义</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- 10.1 特尔菲法 -->
+        <section id="delphi" class="section">
+            <h2>10.1 特尔菲法（Delphi Method）</h2>
+            
+            <h3>📖 方法简介</h3>
+            <p>
+                <span class="highlight">特尔菲法又称专家法</span>，是美国兰德公司于1964年首先用于决策领域的。
+                它是一种重要的多目标决策方法，突破了传统的数量分析限制，为更合理地制定决策开辟了思路。
+                它的主要优点是简明直观，避免了专家会议的许多弊病。
+            </p>
+            
+            <button class="collapsible">🔍 基本原理</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>
+                        特尔菲法是请一批有经验的专家（老手）对如何确定各目标权重发表意见，然后用统计平均方法估算出各目标的权重值。
+                        在此例中，首先应对各个目标 $f_j$ 标准化，即对每一目标事先给定一个标准值 $f_{j\Pi}$，
+                        然后将所有目标按以相应的标准值，得无量纲化的目标值，即
+                    </p>
+                    <div class="formula-box">
+                        $$\tilde{f}_j = \frac{f_j}{f_{j\Pi}} \quad (j=1,2,\cdots,p)$$
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">📋 具体步骤</button>
+            <div class="content">
+                <div class="content-inner">
+                    <ol class="steps">
+                        <li>
+                            <strong>构建判断矩阵</strong><br>
+                            把较为详尽的背景资料发送给选定的 $n$ 位专家，请专家们分别各自独立估计各目标的权重，结果列入表10.1中。
+                            
+                            <div class="table-container" style="margin-top: 1rem;">
+                                <table>
+                                    <caption style="padding: 1rem; font-weight: 600;">表 10.1</caption>
+                                    <thead>
+                                        <tr>
+                                            <th>专家数</th>
+                                            <th>$f_1$</th>
+                                            <th>$f_2$</th>
+                                            <th>...</th>
+                                            <th>$f_p$</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>$w_{11}$</td>
+                                            <td>$w_{12}$</td>
+                                            <td>......</td>
+                                            <td>$w_{1p}$</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>$w_{21}$</td>
+                                            <td>$w_{22}$</td>
+                                            <td>......</td>
+                                            <td>$w_{2p}$</td>
+                                        </tr>
+                                        <tr>
+                                            <td>⋮</td>
+                                            <td>......</td>
+                                            <td>......</td>
+                                            <td>......</td>
+                                            <td>......</td>
+                                        </tr>
+                                        <tr>
+                                            <td>$n$</td>
+                                            <td>$w_{n1}$</td>
+                                            <td>$w_{n2}$</td>
+                                            <td>......</td>
+                                            <td>$w_{np}$</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </li>
+                        
+                        <li>
+                            <strong>计算样本平均值</strong><br>
+                            计算各目标权重的样本平均值，即
+                            <div class="formula-box">
+                                $$\overline{M}(w_j) = \frac{1}{n}\sum_{i=1}^{n}w_{ij} \quad (j=1,2,\cdots,p)$$
+                            </div>
+                            每一位专家对各目标权重估计值与平均估计值的偏差
+                            <div class="formula-box">
+                                $$\Delta_{ij} = w_{ij} - \overline{M}(w_j)$$
+                            </div>
+                        </li>
+                        
+                        <li>
+                            <strong>进行偏差分析</strong><br>
+                            进一步分析 $\overline{M}(w_j)$ 是否合理，特别让估计值偏差 $\Delta_{ij}$ 较大的专家充分发表意见，
+                            消除估计中的一些误差。
+                        </li>
+                        
+                        <li>
+                            <strong>迭代计算</strong><br>
+                            附上进一步的补充资料后，请各专家重新对各目标权重值做出估计 $w_{ij}$，再一次计算平均估计值及方差
+                            <div class="formula-box">
+                                $$\overline{M}(w_j) = \frac{1}{n}\sum_{i=1}^{n}w_{ij} \quad (j=1,2,\cdots,p)$$
+                            </div>
+                            <div class="formula-box">
+                                $$\overline{D}(w_j) = \frac{1}{n-1}\sum_{i=1}^{n}[w_{ij} - \overline{M}(w_j)]^2$$
+                            </div>
+                            重复上述步骤，经过几次反复后，直至第 $k$ 步估计方差小于或等于预先给定的标准 $\varepsilon$ ($\varepsilon > 0$)。
+                        </li>
+                        
+                        <li>
+                            <strong>确定最终权重</strong><br>
+                            将第 $k$ 步得到的平均估计值 $\overline{M}(w_j)$ 及 $\overline{D}(w_j)$ 再送交各位专家，
+                            请他们作最后的判断，给出各目标权重的最终估计值 $w'_j$ ($i=1,2,\cdots,n$, $j=1,2,\cdots,p$)。
+                        </li>
+                        
+                        <li>
+                            <strong>信任度评估</strong><br>
+                            同时还要请每位专家标出各自对给估计值的"信任度" $t_{ij}$ ($i=1,2,\cdots,n$, $j=1,2,\cdots,p$, 
+                            $t_{ij}$ 表示第 $i$ 位专家就第 $j$ 个目标权重估计值给出的"信任度"）。
+                            <div class="warning">
+                                <strong>⚠️ 注意：</strong>信任度表示专家对自己所做估计的把握程度，且规定信任度取值于 $[0,1]$，
+                                当专家有绝对把握时，$t_{ij}=1$；当专家毫无把握时，$t_{ij}=0$；除去上述两种极端情形外，$0 < t_{ij} < 1$。
+                            </div>
+                        </li>
+                        
+                        <li>
+                            <strong>确定最终目标权重</strong><br>
+                            确定最终的目标函数权重估计值。令
+                            <div class="formula-box">
+                                $$M_\lambda^{(j)} = \{i : t_{ij} \geq \lambda, i=1,2,\cdots,n\}$$
+                            </div>
+                            其中 $\lambda$ 是预先给定的标准，且 $0 < \lambda < 1$。所以，第 $j$ 个目标权重的最终估计值
+                            <div class="formula-box">
+                                $$\overline{w}_j = \frac{1}{|M_\lambda^{(j)}|}\sum_{i\in M_\lambda^{(j)}}w'_{ij}$$
+                            </div>
+                            其中 $|M_\lambda^{(j)}|$ 表示集合 $M_\lambda^{(j)}$ 中元素的个数。
+                        </li>
+                    </ol>
+                    
+                    <div class="note">
+                        <strong>💡 提示：</strong>
+                        这种方法实质是先以 $\lambda$ 为尺子，将信任度达不到 $\lambda$ 的估计值全部删除，
+                        以余下估计值的平均值作为权重的最终估计值。
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">🎯 构造综合评价函数</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>最后，可构造线性加权评价函数为</p>
+                    <div class="formula-box">
+                        $$U[F(\boldsymbol{X})] = \sum_{j=1}^{p}\overline{w}_j f_j(\boldsymbol{X})$$
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 10.2 层次分析法 -->
+        <section id="ahp" class="section">
+            <h2>10.2 层次分析法（AHP）</h2>
+            
+            <h3>📖 方法简介</h3>
+            <p>
+                <span class="highlight">层次分析法（Analytic Hierarchy Process，简称AHP）</span>是由美国匹兹堡大学教授 T. L. Saaty 
+                在20世纪70年代中期提出的。它的基本思想是把一个复杂的问题分解为各个组成因素，并将这些因素按支配关系分组，
+                从而形成一个有序的递阶层次结构。
+            </p>
+            
+            <button class="collapsible">🏗️ 10.2.1 简单情形——单层次模型</button>
+            <div class="content">
+                <div class="content-inner">
+                    <h4>1. 单层次模型结构</h4>
+                    <p>
+                        如图10.1所示，此模型由一个目标 $C$ 及隶属于它的 $n$ 个评价元素 $A_1, A_2, \cdots, A_n$ 和决策者组成。
+                        由决策者在这个目标意义下对这 $n$ 个元素进行评价，对它们进行优劣排序并做出相对重要性的权衡。
+                    </p>
+                    
+                    <div class="diagram">
+                        <svg width="400" height="200" viewBox="0 0 400 200">
+                            <!-- 目标C -->
+                            <rect x="150" y="20" width="100" height="40" fill="#a6d6c9" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="200" y="45" text-anchor="middle" font-size="18" font-weight="bold">C</text>
+                            
+                            <!-- 连接线 -->
+                            <line x1="200" y1="60" x2="80" y2="140" stroke="#343434" stroke-width="2"/>
+                            <line x1="200" y1="60" x2="200" y2="140" stroke="#343434" stroke-width="2"/>
+                            <line x1="200" y1="60" x2="320" y2="140" stroke="#343434" stroke-width="2"/>
+                            
+                            <!-- 元素A1 -->
+                            <rect x="40" y="140" width="80" height="40" fill="#f7d117" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="80" y="165" text-anchor="middle" font-size="16">A₁</text>
+                            
+                            <!-- 元素A2 -->
+                            <rect x="160" y="140" width="80" height="40" fill="#f7d117" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="200" y="165" text-anchor="middle" font-size="16">A₂</text>
+                            
+                            <!-- 省略号 -->
+                            <text x="260" y="165" text-anchor="middle" font-size="24">⋯</text>
+                            
+                            <!-- 元素An -->
+                            <rect x="280" y="140" width="80" height="40" fill="#f7d117" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="320" y="165" text-anchor="middle" font-size="16">Aₙ</text>
+                        </svg>
+                        <p class="diagram-title">图 10.1 单层次模型结构</p>
+                    </div>
+                    
+                    <h4>2. 思想</h4>
+                    <p>
+                        AHP方法的基本思想就是将决策者对这 $n$ 个元素优劣的整体判断转变为对这 $n$ 个元素的两两比较，
+                        然后再转为对这 $n$ 个元素的整体优劣排序判断及确定各元素的权重。
+                    </p>
+                    
+                    <h4>3. 计算步骤</h4>
+                    
+                    <h5>(1) 构造两两比较判断矩阵</h5>
+                    <p>
+                        在单层次结构模型中，假定目标元素为 $C_K$，同与之相连的有关元素 $A_1, A_2, \cdots, A_n$ 有支配关系。
+                        假定以上一层次某目标元素 $C_K$ 作为准则，通过向决策者询问在原则 $C_K$ 下元素 $A_i$ 对元素 $A_j$ 的优劣比较，
+                        构造一判断矩阵，其形式为：
+                    </p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>$C_K$</th>
+                                    <th>$A_1$</th>
+                                    <th>$A_2$</th>
+                                    <th>⋯</th>
+                                    <th>$A_n$</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>$A_1$</td>
+                                    <td>$a_{11}$</td>
+                                    <td>$a_{12}$</td>
+                                    <td>⋯</td>
+                                    <td>$a_{1n}$</td>
+                                </tr>
+                                <tr>
+                                    <td>$A_2$</td>
+                                    <td>$a_{21}$</td>
+                                    <td>$a_{22}$</td>
+                                    <td>⋯</td>
+                                    <td>$a_{2n}$</td>
+                                </tr>
+                                <tr>
+                                    <td>⋮</td>
+                                    <td>⋮</td>
+                                    <td>⋮</td>
+                                    <td>⋮</td>
+                                    <td>⋮</td>
+                                </tr>
+                                <tr>
+                                    <td>$A_n$</td>
+                                    <td>$a_{n1}$</td>
+                                    <td>$a_{n2}$</td>
+                                    <td>⋯</td>
+                                    <td>$a_{nn}$</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <p>
+                        其中 $a_{ij}$ 表示：对于 $C_K$ 来说，$A_i$ 对 $A_j$ 相对重要性的数值体现，通常 $a_{ij}$ 可取 1, 2, ⋯, 9 以及它们的倒数作为标度，
+                        含义如表10.2所示。
+                    </p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <caption style="padding: 1rem; font-weight: 600;">表 10.2 标度的含义</caption>
+                            <thead>
+                                <tr>
+                                    <th>标度</th>
+                                    <th>含义</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>表示两个元素相比，具有同样重要性</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>表示两个元素相比，一个元素比另一个元素稍微重要</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>表示两个元素相比，一个元素比另一个元素明显重要</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>表示两个元素相比，一个元素比另一个元素强烈重要</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>表示两个元素相比，一个元素比另一个元素极端重要</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <p class="note">2, 4, 6, 8 为上述相邻判断的中值。</p>
+                    
+                    <p>判断矩阵中的元素具有下述性质：</p>
+                    <div class="formula-box">
+                        ① $a_{ij} > 0$ &nbsp;&nbsp; $(i,j=1,2,\cdots,n)$;<br>
+                        ② $a_{ij} = 1/a_{ji}$ &nbsp;&nbsp; $(i,j=1,2,\cdots,n)$;<br>
+                        ③ $a_{ij} = a_{ik}/a_{jk}$ &nbsp;&nbsp; $(i,j=1,2,\cdots,n)$
+                    </div>
+                    
+                    <h5>(2) 计算单一准则下元素的相对重要性（层次单排序）</h5>
+                    <p>
+                        这一步要根据判断矩阵，计算对于目标元素而言各元素的相对重要性次序的权值。计算判断矩阵 $\boldsymbol{A}$ 的最大特征根 
+                        $\lambda_{\max}$ 和其对应的经归一化后的特征向量 $\boldsymbol{W} = [w_1 \quad w_2 \quad \cdots \quad w_n]^{\mathrm{T}}$。
+                        即首先对于判断矩阵 $\boldsymbol{A}$ 求解最大特征根问题：
+                    </p>
+                    <div class="formula-box">
+                        $$\boldsymbol{AW} = \lambda_{\max}\boldsymbol{W}$$
+                    </div>
+                    <p>
+                        得特征向量 $\boldsymbol{W}$ 并将其归一化，将归一化后所得到的特征向量 $\boldsymbol{W} = [w_1 \quad w_2 \quad \cdots \quad w_n]^{\mathrm{T}}$ 
+                        作为本层次元素 $A_1, A_2, \cdots, A_n$ 对于目标元素 $C_K$ 的排序权值。
+                    </p>
+                    
+                    <p>计算 $\lambda_{\max}$ 和 $\boldsymbol{W}$ 一般采用近似计算的方根法，步骤如下：</p>
+                    
+                    <ol class="steps">
+                        <li>将判断矩阵 $\boldsymbol{A}$ 中元素按行相乘：即 $\prod_{j=1}^{n}a_{ij}$ ($i=1,2,\cdots,n$)</li>
+                        <li>计算 $\overline{w}_i = \sqrt[n]{\prod_{j=1}^{n}a_{ij}}$</li>
+                        <li>将 $\overline{w}_i$ 归一化得 $w_i = \frac{\overline{w}_i}{\sum_{j=1}^{n}\overline{w}_j}$，
+                            $\boldsymbol{W} = [w_1 \quad w_2 \quad \cdots \quad w_n]^{\mathrm{T}}$ 为所求特征向量</li>
+                        <li>计算最大特征根 $\lambda_{\max} = \sum_{i=1}^{n}\frac{(\boldsymbol{AW})_i}{nw_i}$，
+                            其中，$(\boldsymbol{AW})_i$ 表示向量 $\boldsymbol{AW}$ 的第 $i$ 个元素</li>
+                    </ol>
+                    
+                    <h5>(3) 单层次判断矩阵 $\boldsymbol{A}$ 的一致性检验</h5>
+                    <p>
+                        在单层次判断矩阵 $\boldsymbol{A}$ 中，当 $a_{ij} = \frac{a_{ik}}{a_{jk}}$ 时，称判断矩阵为一致性矩阵。
+                        由于客观事物的复杂性和人们的偏爱不同，判断矩阵很难有严格的一致性，但应该要求有大致的一致性。
+                        因此，在得到 $\lambda_{\max}$ 后，还需对判断矩阵的一致性进行检验。
+                    </p>
+                    
+                    <p>进行一致性检验的步骤如下：</p>
+                    
+                    <h6>① 计算一致性指标</h6>
+                    <div class="formula-box">
+                        $$C.I. = \frac{\lambda_{\max} - n}{n-1}$$
+                    </div>
+                    <p>式中 $n$ 为判断矩阵的阶数。</p>
+                    
+                    <h6>② 计算平均随机一致性指标 $R.I.$</h6>
+                    <p>
+                        它是多次重复进行随机判断矩阵特征值的计算后取算术平均数得到的，表10.3给出1～15阶矩阵重复计算1000次的平均随机一致性指标值：
+                    </p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <caption style="padding: 1rem; font-weight: 600;">表 10.3</caption>
+                            <thead>
+                                <tr>
+                                    <th>阶数</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th>6</th>
+                                    <th>7</th>
+                                    <th>8</th>
+                                    <th>9</th>
+                                    <th>10</th>
+                                    <th>11</th>
+                                    <th>12</th>
+                                    <th>13</th>
+                                    <th>14</th>
+                                    <th>15</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>$R.I.$</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0.52</td>
+                                    <td>0.89</td>
+                                    <td>1.12</td>
+                                    <td>1.26</td>
+                                    <td>1.36</td>
+                                    <td>1.41</td>
+                                    <td>1.46</td>
+                                    <td>1.49</td>
+                                    <td>1.52</td>
+                                    <td>1.54</td>
+                                    <td>1.56</td>
+                                    <td>1.58</td>
+                                    <td>1.59</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h6>③ 计算一致性比例</h6>
+                    <div class="formula-box">
+                        $$C.R. = \frac{C.I.}{R.I.}$$
+                    </div>
+                    <p>
+                        当 $C.R. < 0.1$ 时，一般认为判断矩阵的一致性是可以接受的，否则应修改矩阵使之符合一致性要求。
+                    </p>
+                    
+                    <h4>4. 原理</h4>
+                    <p>
+                        将判断矩阵 $\boldsymbol{A}$ 的最大特征根 $\lambda_{\max}$ 对应的特征向量经归一化后得 
+                        $\boldsymbol{W} = [w_1 \quad w_2 \quad \cdots \quad w_n]^{\mathrm{T}}$，
+                        将 $\boldsymbol{W}$ 作为本层次元素 $A_1, A_2, \cdots, A_n$ 的排序权重。对于目标元素 $C_K$，
+                        其排序权值的确定原理如下：
+                    </p>
+                    <p>
+                        假定 $n$ 个物体归一化后的重量分别为 $w_1, w_2, \cdots, w_n$，它们之间两两比较的相对重量可用矩阵表示为
+                    </p>
+                    <div class="formula-box">
+                        $$\boldsymbol{A} = \begin{bmatrix}
+                        w_1/w_1 & w_1/w_2 & \cdots & w_1/w_n \\
+                        w_2/w_1 & w_2/w_2 & \cdots & w_2/w_n \\
+                        \vdots & \vdots & & \vdots \\
+                        w_n/w_1 & w_n/w_2 & \cdots & w_n/w_n
+                        \end{bmatrix}$$
+                    </div>
+                    <p>若用重量向量 $\boldsymbol{W} = [w_1 \quad w_2 \quad \cdots \quad w_n]^{\mathrm{T}}$ 右乘 $\boldsymbol{A}$，得</p>
+                    <div class="formula-box">
+                        $$\boldsymbol{AW} = \begin{bmatrix}
+                        w_1/w_1 & w_1/w_2 & \cdots & w_1/w_n \\
+                        w_2/w_1 & w_2/w_2 & \cdots & w_2/w_n \\
+                        \vdots & \vdots & & \vdots \\
+                        w_n/w_1 & w_n/w_2 & \cdots & w_n/w_n
+                        \end{bmatrix}
+                        \begin{bmatrix} w_1 \\ w_2 \\ \vdots \\ w_n \end{bmatrix}
+                        = n\begin{bmatrix} w_1 \\ w_2 \\ \vdots \\ w_n \end{bmatrix}
+                        = n\boldsymbol{W}$$
+                    </div>
+                    <p>即得 $\boldsymbol{AW} = n\boldsymbol{W}$。</p>
+                    
+                    <div class="note">
+                        <strong>💡 关键结论：</strong>
+                        <p>矩阵 $\boldsymbol{A}$ 具有以下特点：</p>
+                        <ul style="margin-left: 2rem;">
+                            <li>① $a_{ij} > 0$ &nbsp;&nbsp; $(i,j=1,2,\cdots,n)$</li>
+                            <li>② $a_{ij} = 1/a_{ji}$ &nbsp;&nbsp; $(i,j=1,2,\cdots,n)$</li>
+                            <li>③ $a_{ij} = a_{ik}/a_{jk}$ &nbsp;&nbsp; $(i,j=1,2,\cdots,n)$</li>
+                        </ul>
+                        <p>
+                            根据矩阵理论，矩阵 $\boldsymbol{A}$ 是正互反一致性矩阵（①，②，③的特性分别为正的、互反的、一致的）。
+                            该矩阵一定存在唯一一个不为零的最大特征值 $\lambda_{\max}$，且 $\lambda_{\max} = n$。
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">🏗️ 10.2.2 一般情形——多层次模型</button>
+            <div class="content">
+                <div class="content-inner">
+                    <h4>利用AHP求解一般的多层次结构问题的基本步骤如下。</h4>
+                    
+                    <h5>1. 建立递阶层次结构</h5>
+                    <p>
+                        首先对问题所涉及的因素进行分类，构造一个各因素之间相互联结的递阶层次结构模型。
+                        处于最上面的层次一般是问题的预定目标，通常只有一个元素，中间层的元素一般是准则，子准则，
+                        最低层一般是决策方案。一个典型的层次结构如图10.2所示。
+                    </p>
+                    
+                    <div class="diagram">
+                        <svg width="600" height="350" viewBox="0 0 600 350">
+                            <!-- 目标层 -->
+                            <rect x="220" y="20" width="160" height="40" fill="#f27d00" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="300" y="45" text-anchor="middle" font-size="16" fill="white" font-weight="bold">决策目标</text>
+                            <text x="100" y="45" text-anchor="middle" font-size="14" font-weight="bold">目标层</text>
+                            
+                            <!-- 准则层 -->
+                            <text x="100" y="125" text-anchor="middle" font-size="14" font-weight="bold">准则层</text>
+                            <rect x="80" y="100" width="100" height="40" fill="#a6d6c9" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="130" y="125" text-anchor="middle" font-size="14">准则1</text>
+                            
+                            <rect x="250" y="100" width="100" height="40" fill="#a6d6c9" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="300" y="125" text-anchor="middle" font-size="14">准则2</text>
+                            
+                            <text x="420" y="125" text-anchor="middle" font-size="18">⋯</text>
+                            
+                            <rect x="470" y="100" width="100" height="40" fill="#a6d6c9" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="520" y="125" text-anchor="middle" font-size="14">准则k</text>
+                            
+                            <!-- 子准则层 -->
+                            <text x="100" y="215" text-anchor="middle" font-size="14" font-weight="bold">子准则层</text>
+                            <rect x="50" y="190" width="80" height="40" fill="#f7d117" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="90" y="215" text-anchor="middle" font-size="12">子准则1</text>
+                            
+                            <rect x="170" y="190" width="80" height="40" fill="#f7d117" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="210" y="215" text-anchor="middle" font-size="12">子准则2</text>
+                            
+                            <text x="290" y="215" text-anchor="middle" font-size="18">⋯</text>
+                            
+                            <rect x="330" y="190" width="80" height="40" fill="#f7d117" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="370" y="215" text-anchor="middle" font-size="12">子准则m</text>
+                            
+                            <!-- 方案层 -->
+                            <text x="100" y="305" text-anchor="middle" font-size="14" font-weight="bold">方案层</text>
+                            <rect x="80" y="280" width="80" height="40" fill="#ffffff" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="120" y="305" text-anchor="middle" font-size="12">方案1</text>
+                            
+                            <rect x="220" y="280" width="80" height="40" fill="#ffffff" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="260" y="305" text-anchor="middle" font-size="12">方案2</text>
+                            
+                            <text x="340" y="305" text-anchor="middle" font-size="18">⋯</text>
+                            
+                            <rect x="380" y="280" width="80" height="40" fill="#ffffff" stroke="#343434" stroke-width="2" rx="5"/>
+                            <text x="420" y="305" text-anchor="middle" font-size="12">方案n</text>
+                            
+                            <!-- 连接线 -->
+                            <line x1="300" y1="60" x2="130" y2="100" stroke="#343434" stroke-width="2"/>
+                            <line x1="300" y1="60" x2="300" y2="100" stroke="#343434" stroke-width="2"/>
+                            <line x1="300" y1="60" x2="520" y2="100" stroke="#343434" stroke-width="2"/>
+                            
+                            <line x1="130" y1="140" x2="90" y2="190" stroke="#343434" stroke-width="1.5"/>
+                            <line x1="130" y1="140" x2="210" y2="190" stroke="#343434" stroke-width="1.5"/>
+                            <line x1="300" y1="140" x2="370" y2="190" stroke="#343434" stroke-width="1.5"/>
+                            
+                            <line x1="90" y1="230" x2="120" y2="280" stroke="#343434" stroke-width="1.5"/>
+                            <line x1="210" y1="230" x2="260" y2="280" stroke="#343434" stroke-width="1.5"/>
+                            <line x1="370" y1="230" x2="420" y2="280" stroke="#343434" stroke-width="1.5"/>
+                            
+                            <!-- 虚线表示省略 -->
+                            <text x="90" y="270" text-anchor="middle" font-size="20">⋮</text>
+                            <text x="210" y="270" text-anchor="middle" font-size="20">⋮</text>
+                            <text x="370" y="270" text-anchor="middle" font-size="20">⋮</text>
+                        </svg>
+                        <p class="diagram-title">图 10.2 多层次结构模型</p>
+                    </div>
+                    
+                    <h5>2. 构造两两比较判断矩阵</h5>
+                    <p>按前述方法构造各单层次的两两比较判断矩阵。</p>
+                    
+                    <h5>3. 计算单一准则下元素的相对重要性（单层次模型）</h5>
+                    <p>
+                        这一步要根据判断矩阵计算对上一层某元素而言本层次与之有联系的各元素的相对重要性次序的权值。
+                        即把各判断矩阵 $\boldsymbol{A}$ 视为单层次子模型，按上述单层次模型中的方法去求解特征根问题：
+                        $\boldsymbol{AW} = \lambda_{\max}\boldsymbol{W}$。
+                    </p>
+                    <p>
+                        所得特征向量 $\boldsymbol{W}$ 经归一化后作为本层次元素 $A_1, A_2, \cdots, A_n$ 对于上一层次元素的排序权值。
+                    </p>
+                    <p>$\lambda_{\max}$ 和 $\boldsymbol{W}$ 的计算方法前面已述及，在此不再重复。</p>
+                    
+                    <h5>4. 判断矩阵的一致性检验</h5>
+                    <p>
+                        在得到 $\lambda_{\max}$ 和所对应的特征向量 $\boldsymbol{W} = [w_1 \quad w_2 \quad \cdots \quad w_n]^{\mathrm{T}}$ 后，
+                        还需要检验各判断矩阵的一致性。进行一致性检验的步骤与单层次模型完全相同。
+                    </p>
+                    
+                    <h5>5. 计算各层次上元素的组合权重（层次总排序）</h5>
+                    <p>
+                        层次总排序需要从上到下逐层进行。对于最高层，它的层次单排序即为总排序。
+                        如果上一层所有元素 $A_1, A_2, \cdots, A_m$ 的组合权重已知，权值分别为 $a_1, a_2, \cdots, a_m$，
+                        与 $A_i$ 相应的本层元素 $B_1, B_2, \cdots, B_n$ 的单排序结果为 $b_1^i, b_2^i, \cdots, b_n^i$ ($i=1,2,\cdots,m$)。
+                        若 $B_j$ 与 $A_i$ 无联系时，$b_j^i=0$，则本层次元素的组合权重可根据表10.4进行计算。显然有 $\sum_{j=1}^{n}b_j=1$。
+                    </p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <caption style="padding: 1rem; font-weight: 600;">表 10.4</caption>
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">层次B</th>
+                                    <th colspan="4">层次 A</th>
+                                    <th rowspan="2">B层次元素组合权重</th>
+                                </tr>
+                                <tr>
+                                    <th>$A_1$</th>
+                                    <th>$A_2$</th>
+                                    <th>......</th>
+                                    <th>$A_m$</th>
+                                </tr>
+                                <tr>
+                                    <th>权重</th>
+                                    <th>$a_1$</th>
+                                    <th>$a_2$</th>
+                                    <th>......</th>
+                                    <th>$a_m$</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>$B_1$</td>
+                                    <td>$b_1^1$</td>
+                                    <td>$b_1^2$</td>
+                                    <td>......</td>
+                                    <td>$b_1^m$</td>
+                                    <td>$b_1 = \sum_{i=1}^{m}a_ib_1^i$</td>
+                                </tr>
+                                <tr>
+                                    <td>$B_2$</td>
+                                    <td>$b_2^1$</td>
+                                    <td>$b_2^2$</td>
+                                    <td>......</td>
+                                    <td>$b_2^m$</td>
+                                    <td>$b_2 = \sum_{i=1}^{n}a_ib_2^i$</td>
+                                </tr>
+                                <tr>
+                                    <td>⋮</td>
+                                    <td>⋮</td>
+                                    <td>⋮</td>
+                                    <td>⋮</td>
+                                    <td>⋮</td>
+                                    <td>⋮</td>
+                                </tr>
+                                <tr>
+                                    <td>$B_n$</td>
+                                    <td>$b_n^1$</td>
+                                    <td>$b_n^2$</td>
+                                    <td>......</td>
+                                    <td>$b_n^m$</td>
+                                    <td>$b_n = \sum_{i=1}^{m}a_ib_n^i$</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h5>6. 评价层次总排序计算结果的一致性</h5>
+                    <p>
+                        为评价层次总排序计算结果的一致性，也需计算与层次单排序相类似的检验量。设 $C.I.$ 为层次总排序一致性指标；
+                        $R.I.$ 为层次总排序随机一致性指标。其计算公式为
+                    </p>
+                    <div class="formula-box">
+                        $$C.I. = \sum_{i=1}^{m}a_iC.I._i$$
+                    </div>
+                    <p>$C.I._i$ 为 $A_i$ 相应的 $B$ 层次中判断矩阵的一致性指标。</p>
+                    <div class="formula-box">
+                        $$R.I. = \sum_{i=1}^{m}a_iR.I._i$$
+                    </div>
+                    <p>$R.I._i$ 为 $A_i$ 相对应的 $B$ 层次中判断矩阵的随机一致性指标。</p>
+                    <p>同样的方法，总的一致性指标：</p>
+                    <div class="formula-box">
+                        $$C.R. = \frac{C.I.}{R.I.}$$
+                    </div>
+                    <p>
+                        当 $C.R. < 0.10$，认为层次总排序的结果具有满意的一致性。若不满足一致性条件，需对判断矩阵进行调整。
+                    </p>
+                    <p>AHP的最终结果是得到相对于总目标存决策方案的优先顺序权重，并据此作出决策。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">📊 10.2.3 应用案例</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="example">
+                        <div class="example-title">例 10.1 某企业留成利润要决策如何使用</div>
+                        <p>
+                            根据各方意见，提出的决策方案有发奖金、扩建集体福利设施、建图书馆、购买新设备。
+                            在决策时要考虑调动职工劳动积极性、提高职工技术文化水平、改善职工物质文化生活三方面，
+                            据此构造各因素之间相互联结的层次结构模型如图10.3所示。
+                        </p>
+                        
+                        <p style="margin-top: 1.5rem;"><strong>构造第二层相对于第一层的判断矩阵：</strong></p>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>$A-C$</th>
+                                        <th>$C_1$</th>
+                                        <th>$C_2$</th>
+                                        <th>$C_3$</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>$C_1$</td>
+                                        <td>1</td>
+                                        <td>1/5</td>
+                                        <td>1/3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$C_2$</td>
+                                        <td>5</td>
+                                        <td>1</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$C_3$</td>
+                                        <td>3</td>
+                                        <td>1/3</td>
+                                        <td>1</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <p>通过计算得判断矩阵的特征向量和特征值分别为</p>
+                        <div class="formula-box">
+                            $$\boldsymbol{W} = [0.105 \quad 0.637 \quad 0.258]^{\mathrm{T}}$$
+                            $$\lambda_{\max} = 3.039$$
+                        </div>
+                        
+                        <p>对判断矩阵进行一致性检验，即计算 $C.I.$ 和 $C.R.$：</p>
+                        <div class="formula-box">
+                            $$C.I. = 0.019$$
+                            $$C.R. = 0.033 < 0.1$$
+                        </div>
+                        <p>说明判断矩阵的一致性可以接受。</p>
+                        
+                        <p>同样可以构造第三层各元素相对于第二层元素的判断矩阵：</p>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>$C_1-D$</th>
+                                        <th>$D_1$</th>
+                                        <th>$D_2$</th>
+                                        <th>$D_3$</th>
+                                        <th>$D_4$</th>
+                                        <th>$D_5$</th>
+                                        <th>结果</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>$D_1$</td>
+                                        <td>1</td>
+                                        <td>2</td>
+                                        <td>3</td>
+                                        <td>4</td>
+                                        <td>7</td>
+                                        <td rowspan="5" style="vertical-align: middle;">
+                                            $\boldsymbol{W} = [0.435 \quad 0.268 \quad 0.088 \quad 0.147 \quad 0.062]^{\mathrm{T}}$<br>
+                                            $\lambda_{\max} = 5.126$<br>
+                                            $C.I = 0.032$<br>
+                                            $C.R. = 0.028 < 0.1$
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>$D_2$</td>
+                                        <td>1/2</td>
+                                        <td>1</td>
+                                        <td>3</td>
+                                        <td>2</td>
+                                        <td>5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$D_3$</td>
+                                        <td>1/3</td>
+                                        <td>1/3</td>
+                                        <td>1</td>
+                                        <td>1/2</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$D_4$</td>
+                                        <td>1/4</td>
+                                        <td>1/2</td>
+                                        <td>2</td>
+                                        <td>1</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$D_5$</td>
+                                        <td>1/7</td>
+                                        <td>1/5</td>
+                                        <td>1</td>
+                                        <td>1/3</td>
+                                        <td>1</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <p>计算结果如表10.5所示。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 10.3 数据包络分析法 -->
+        <section id="dea" class="section">
+            <h2>10.3 数据包络分析法（DEA）</h2>
+            
+            <h3>📖 方法简介</h3>
+            <p>
+                <span class="highlight">数据包络分析（Data Envelopment Analysis，简记DEA）</span>是著名运筹学家 A. Charnes 和 W. W. Cooper 
+                等以相对效率概念为基础发展起来的一种效率评价方法。自1978年第一个DEA模型——$\mathrm{C}^2\mathrm{R}$ 模型（也称CCR模型）
+                提出以来，有关的理论研究不断深入，应用领域日益广泛。
+            </p>
+            <p>
+                事实证明，DEA方法现已成为管理科学、系统工程、决策分析和评价技术等领域一种重要的分析工具和手段。
+            </p>
+            
+            <div class="note">
+                <strong>💡 基本思想：</strong>
+                <p>
+                    DEA是使用数学规划模型比较决策单元间的相对效率，对决策单元做出评价的方法。一个决策单元（Decision Making Unit，简记DMU）
+                    在某种程度上是一种约定。它可以是学校、医院、法院、军事基地，也可以是银行或企业。
+                </p>
+            </div>
+            
+            <button class="collapsible">🔍 10.3.1 DEA的基本模型——$\mathrm{C}^2\mathrm{R}$ 模型</button>
+            <div class="content">
+                <div class="content-inner">
+                    <h4>1. $\mathrm{C}^2\mathrm{R}$ 模型的基本形式</h4>
+                    <p>
+                        现在介绍DEA的最基本模型——$\mathrm{C}^2\mathrm{R}$ 模型。假设有 $n$ 个决策单元，每个决策单元都有 
+                        $m$ 种类型的"输入"，以及 $s$ 种类型的"输出"，分别表示该单元"耗费的资源"和"工作的成效"，
+                        如图10.4所示。图中，$x_{ij}$ 为第 $j$ 个决策单元对第 $i$ 种类型输入的投入量；$y_{rj}$ 为第 $j$ 个决策单元对第 $r$ 
+                        种类型输出的产出量；$v_i$ 为对第 $i$ 种类型输入的一种度量（"权"）；$u_r$ 为对第 $r$ 种类型输出的一种度量（"权"）。
+                    </p>
+                    
+                    <p>
+                        假设 $x_{ij} > 0$, $y_{rj} > 0$, $v_i \geq 0$, $u_r \geq 0$ ($i=1,2,\cdots,m$; $r=1,2,\cdots,s$; $j=1,2,\cdots,n$)。
+                        $x_{ij}$ 及 $y_{rj}$ 均已已知的数据，在实际问题中，一般可以根据历史资料或预测得到，$v_i$ 及 $u_r$ 为"权"变量。
+                    </p>
+                    
+                    <p>
+                        记 $\boldsymbol{X}_j = [x_{1j} \quad \cdots \quad x_{mj}]^{\mathrm{T}}$, 
+                        $\boldsymbol{Y}_j = [y_{1j} \quad \cdots \quad y_{sj}]^{\mathrm{T}}$ ($j=1,\cdots,n$)，
+                        则可用 $(\boldsymbol{X}_j, \boldsymbol{Y}_j)$ 表示第 $j$ 个决策单元 $\mathrm{DMU}_j$。
+                    </p>
+                    
+                    <p>对应于权系数 $\boldsymbol{v} = [v_1 \quad \cdots \quad v_m]^{\mathrm{T}}$, 
+                        $\boldsymbol{u} = [u_1 \quad \cdots \quad u_s]^{\mathrm{T}}$，每个决策单元都有相应的效率评价指标</p>
+                    <div class="formula-box">
+                        $$h_{ij} = \frac{\boldsymbol{u}^{\mathrm{T}}\boldsymbol{Y}_j}{\boldsymbol{v}^{\mathrm{T}}\boldsymbol{X}_j} 
+                        \quad (j=1,2,\cdots,n)$$
+                    </div>
+                    
+                    <p>总可以适当选择权系数 $\boldsymbol{v}$ 和 $\boldsymbol{u}$，使其满足 $h_j \leq 1$ ($j=1,2,\cdots,n$)。</p>
+                    
+                    <p>
+                        现在对第 $j_0$ 个决策单元进行效率评价。简记 $\mathrm{DMU}_{j_0}$ 为 $\mathrm{DMU}_0$，
+                        $[\boldsymbol{X}_{j_0} \quad \boldsymbol{Y}_{j_0}]$ 为 $[\boldsymbol{X}_0 \quad \boldsymbol{Y}_0]$，
+                        $h_{j_0}$ 为 $h_0$，$1 \leq j_0 \leq n$。在各决策单元的效率评价指标均不超过1的条件下，选择权系数 $\boldsymbol{v}$ 及 $\boldsymbol{u}$，
+                        使 $h_0$ 最大。于是构成如下的最优化模型：
+                    </p>
+                    
+                    <div class="formula-box">
+                        $$(\mathrm{P})\begin{cases}
+                        \max & h_0 = \frac{\boldsymbol{u}^{\mathrm{T}}\boldsymbol{Y}_0}{\boldsymbol{v}^{\mathrm{T}}\boldsymbol{X}_0} = V_{\mathrm{P}} \\
+                        \text{s.t.} & h_j = \frac{\boldsymbol{u}^{\mathrm{T}}\boldsymbol{Y}_j}{\boldsymbol{v}^{\mathrm{T}}\boldsymbol{X}_j} \leq 1 
+                        \quad (j=1,2,\cdots,n) \\
+                        & \boldsymbol{v} \geq 0, \boldsymbol{u} \geq 0
+                        \end{cases}$$
+                    </div>
+                    
+                    <p>
+                        这个原始规划模型是一个分式规划。利用 Charnes-Cooper 变换，可以将(P)转化为一个等价的线性规划问题。令
+                    </p>
+                    <div class="formula-box">
+                        $$t = 1/[\boldsymbol{v}^{\mathrm{T}}\boldsymbol{X}_0], \quad \boldsymbol{w} = t\boldsymbol{v}, \quad 
+                        \boldsymbol{\mu} = t\boldsymbol{u}$$
+                    </div>
+                    
+                    <p>原分式规划可转化为</p>
+                    <div class="formula-box">
+                        $$(\mathrm{P}_1)\begin{cases}
+                        \max & \boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{Y}_0 = V_{\mathrm{P}_1} \\
+                        \text{s.t.} & \boldsymbol{w}^{\mathrm{T}}\boldsymbol{X}_j - \boldsymbol{\mu}^{\mathrm{T}}\boldsymbol{Y}_j \geq 0 
+                        \quad (j=1,2,\cdots,n) \\
+                        & \boldsymbol{w}^{\mathrm{T}}\boldsymbol{X}_0 = 1 \\
+                        & \boldsymbol{w} \geq 0, \boldsymbol{\mu} \geq 0
+                        \end{cases}$$
+                    </div>
+                    
+                    <p>线性规划问题($\mathrm{P}_1$)的对偶问题为（加入松弛向量 $\boldsymbol{S}^+$ 及 $\boldsymbol{S}^-$ 以后）</p>
+                    <div class="formula-box">
+                        $$(\mathrm{D}_1)\begin{cases}
+                        \min & \theta = V_{\mathrm{D}_1} \\
+                        \text{s.t.} & \sum_{j=1}^{n}\boldsymbol{X}_j\lambda_j + \boldsymbol{S}^- = \theta\boldsymbol{X}_0 \\
+                        & \sum_{j=1}^{n}\boldsymbol{Y}_j\lambda_j - \boldsymbol{S}^+ = \boldsymbol{Y}_0 \\
+                        & \lambda_j \geq 0 \quad (j=1,2,\cdots,n); \boldsymbol{S}^+ \geq 0; \boldsymbol{S}^- \geq 0
+                        \end{cases}$$
+                    </div>
+                    
+                    <div class="note">
+                        <strong>💡 定义和定理：</strong>
+                        <p>
+                            <strong>定义 10.1</strong> 若线性规划问题($\mathrm{P}_1$)的最优解 $\boldsymbol{w}^0$ 及 $\boldsymbol{\mu}^0$ 
+                            满足 $V_{\mathrm{P}_1} = \boldsymbol{\mu}^{0\mathrm{T}}\boldsymbol{Y}_0 = 1$，则称 $\mathrm{DMU}_{j_0}$ 
+                            为弱 DEA 有效。
+                        </p>
+                        <p>
+                            <strong>定义 10.2</strong> 若线性规划问题($\mathrm{P}_1$)存在某一最优解 $\boldsymbol{w}^0$ 与 $\boldsymbol{\mu}^0$ 
+                            满足 $V_{\mathrm{P}_1} = \boldsymbol{\mu}^{0\mathrm{T}}\boldsymbol{Y}_0 = 1$，并且 
+                            $\boldsymbol{w}^0 > 0$, $\boldsymbol{\mu}^0 > 0$，则称 $\mathrm{DMU}_{j_0}$ 为 DEA 有效。
+                        </p>
+                        <p>
+                            <strong>定理 10.1</strong> ① $\mathrm{DMU}_{j_0}$ 为弱 DEA 有效的充要条件为规划问题($\mathrm{D}_1$)的最优值 
+                            $V_{\mathrm{D}_1} = 1$；② $\mathrm{DMU}_{j_0}$ 为 DEA 有效的充要条件为规划问题($\mathrm{D}_1$)的最优值 
+                            $V_{\mathrm{D}_1} = 1$，并且它的每个最优解 $\lambda^0 = [\lambda_1^0 \quad \cdots \quad \lambda_n^0]^{\mathrm{T}}$, 
+                            $\boldsymbol{S}^{-0}$, $\boldsymbol{S}^{+0}$, $\theta^0$ 均满足 
+                            $\boldsymbol{S}^{-0} = \boldsymbol{S}^{+0} = 0$。
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">💰 10.3.2 DEA有效性($\mathrm{C}^2\mathrm{R}$)的经济含义</button>
+            <div class="content">
+                <div class="content-inner">
+                    <h4>1. 基本概念</h4>
+                    
+                    <h5>(1) 生产可能集</h5>
+                    <p>DEA 方法一般基于一定的生产可能集概念讨论各 DMU 的生产有效性。</p>
+                    
+                    <div class="note">
+                        <strong>定义 10.3</strong> 称集 $T = \{(\boldsymbol{X}, \boldsymbol{Y}) | \text{产出 } \boldsymbol{Y} 
+                        \text{ 能用输入 } \boldsymbol{X} \text{ 生产出来}\}$ 为所有可能的生产活动构成的生产可能集。
+                    </div>
+                    
+                    <p>
+                        设某种生产活动的投入量 $\boldsymbol{X} = [x_1 \quad \cdots \quad x_m]^{\mathrm{T}}$，产出量 
+                        $\boldsymbol{Y} = [y_1 \quad y_2 \quad \cdots \quad y_s]^{\mathrm{T}}$，于是可用 
+                        $(\boldsymbol{X}, \boldsymbol{Y})$ 表示该种生产活动。考虑 $n$ 个决策单元，对应的生产活动分别是 
+                        $(\boldsymbol{X}_j, \boldsymbol{Y}_j)$ ($j=1,2,\cdots,n$)。通常称由 
+                        $(\boldsymbol{X}_j, \boldsymbol{Y}_j)$ ($j=1,2,\cdots,n$)组成的集合
+                    </p>
+                    <div class="formula-box">
+                        $$\hat{T} = \{(\boldsymbol{X}_1, \boldsymbol{Y}_1), (\boldsymbol{X}_2, \boldsymbol{Y}_2), \cdots, 
+                        (\boldsymbol{X}_n, \boldsymbol{Y}_n)\}$$
+                    </div>
+                    <p>
+                        为参考集。目的是根据上述参考集 $\hat{T}$ 去估计生产可能集 $T$，并确定哪些决策单元的生产活动是相对有效的。
+                    </p>
+                    
+                    <p>在 $\mathrm{C}^2\mathrm{R}$ 模型中，一般假设 $T$ 满足以下公理。</p>
+                    
+                    <div class="formula-box">
+                        <p>
+                            <strong>1) 凸性</strong> 对任何 $(\boldsymbol{X}, \boldsymbol{Y}) \in T$, 
+                            $(\hat{\boldsymbol{X}}, \hat{\boldsymbol{Y}}) \in T$，对任何 $\lambda \in [0,1]$，都有：
+                        </p>
+                        $$\lambda(\boldsymbol{X}, \boldsymbol{Y}) + (1-\lambda)(\hat{\boldsymbol{X}}, \hat{\boldsymbol{Y}}) 
+                        = (\lambda\boldsymbol{X} + (1-\lambda)\hat{\boldsymbol{X}}, \lambda\boldsymbol{Y} + (1-\lambda)\hat{\boldsymbol{Y}}) 
+                        \in T$$
+                        <p>
+                            即若分别以 $\boldsymbol{X}$ 和 $\hat{\boldsymbol{X}}$ 的 $\lambda$ 及 $1-\lambda$ 倍之和作为新的投入量，
+                            则可以得到原产出相同比例之和的新的产出。
+                        </p>
+                    </div>
+                    
+                    <div class="formula-box">
+                        <p>
+                            <strong>2) 锥性</strong> 对任何 $(\boldsymbol{X}, \boldsymbol{Y}) \in T$ 和对任何 $k \geq 0$，都有 
+                            $k(\boldsymbol{X}, \boldsymbol{Y}) = (k\boldsymbol{X}, k\boldsymbol{Y}) \in T$。
+                            即若以投入量 $\boldsymbol{X}$ 的 $k$ 倍进行输入，那么输出量为原来产出的 $k$ 倍是可能的。
+                        </p>
+                    </div>
+                    
+                    <div class="formula-box">
+                        <p>
+                            <strong>3) 无效性</strong> 对任意 $(\boldsymbol{X}, \boldsymbol{Y}) \in T$；对任何 
+                            $\hat{\boldsymbol{X}} \geq \boldsymbol{X}$，都有 $(\hat{\boldsymbol{X}}, \boldsymbol{Y}) \in T$；
+                            对任何 $\hat{\boldsymbol{Y}} \leq \boldsymbol{Y}$，都有 $(\boldsymbol{X}, \hat{\boldsymbol{Y}}) \in T$。
+                            即在原来的基础上，单方面增加投入或减少产出总是可能的生产活动，也就是说，浪费是存在的。
+                        </p>
+                    </div>
+                    
+                    <div class="formula-box">
+                        <p>
+                            <strong>4) 最小性</strong> 生产可能集 $T$ 是满足上述条件 1)～3)的所有集合的交集。
+                        </p>
+                    </div>
+                    
+                    <p>
+                        显然观察到的经验生产活动 $(\boldsymbol{X}_j, \boldsymbol{Y}_j) \in T$ ($j=1,2,\cdots,n$)，
+                        在满足上述条件 1)～3)的基础上，对于已有的观测值 $(\boldsymbol{X}_j, \boldsymbol{Y}_j)$ ($j=1,2,\cdots,n$)，
+                        可得生产可能集
+                    </p>
+                    <div class="formula-box">
+                        $$T_{\text{CCR}} = \{(\boldsymbol{X}, \boldsymbol{Y}) | k \cdot \sum_{j=1}^{n}\tau_j\boldsymbol{X}_j < \boldsymbol{X}, 
+                        k \cdot \sum_{j=1}^{n}\boldsymbol{Y}_j\tau_j \geq \boldsymbol{Y}, \tau_j \geq 0, \sum_{j=1}^{n}\tau_j = 1, k > 0 \\
+                        (j=1,2,\cdots,n)\}$$
+                    </div>
+                    <p>若令 $k\tau_j = \lambda_j$ ($j=1,2,\cdots,n$)，上式变为</p>
+                    <div class="formula-box">
+                        $$T_{\text{CCR}} = \{(\boldsymbol{X}, \boldsymbol{Y}) | \sum_{j=1}^{n}\lambda_j\boldsymbol{X}_j \leq \boldsymbol{X}, 
+                        \sum_{j=1}^{n}\boldsymbol{Y}_j\lambda_j \geq \boldsymbol{Y}, \lambda_j \geq 0(j=1,2,\cdots,n)\}$$
+                    </div>
+                    
+                    <p>
+                        由于上述生产可能集是基于已有的观测值 $(\boldsymbol{X}_j, \boldsymbol{Y}_j)$ ($j=1,2,\cdots,n$)得到的，
+                        习惯上称 $T_{\text{CCR}}$ 为决策单元的经验生产可能集（CCR），它为一凸锥（图10.5）。
+                    </p>
+                    
+                    <h5>(2) 生产函数与规模收益</h5>
+                    
+                    <div class="note">
+                        <strong>定义 10.4</strong> 设 $(\boldsymbol{X}, \boldsymbol{Y}) \in T$，若不存在 
+                        $(\boldsymbol{X}, \boldsymbol{Y}') \in T$，且 $\boldsymbol{Y} \leq \boldsymbol{Y}'$，
+                        则称 $(\boldsymbol{X}, \boldsymbol{Y})$ 为"技术有效"生产活动。
+                    </div>
+                    
+                    <div class="note">
+                        <strong>定义 10.5</strong> 对生产可能集 $T$，所有有效生产活动点 $(\boldsymbol{X}, \boldsymbol{Y})$ 
+                        构成的 $R^{m+s}$ 空间的超曲面
+                        $$\boldsymbol{Y} = f(\boldsymbol{X})$$
+                        称为生产函数。
+                    </div>
+                    
+                    <p>
+                        显然，生产函数表示在一定的技术条件下且生产处于最理想状态时，投入量为 $\boldsymbol{X}$ 所能获得的最大产出量为 
+                        $\boldsymbol{Y}$。处于生产函数上的生产活动均为"技术有效"生产活动。易知生产函数中 $\boldsymbol{Y}$ 
+                        为关于 $\boldsymbol{X}$ 的增函数。
+                    </p>
+                    
+                    <p>
+                        在经济生产活动分析中，人们还常常使用规模收益的概念来反映产出 $\boldsymbol{Y}$ 对投入 $\boldsymbol{X}$ 
+                        的相对不减性程度，为此，给出如下定义。
+                    </p>
+                    
+                    <div class="note">
+                        <strong>定义 10.6</strong> 设 $(\boldsymbol{X}, \boldsymbol{Y}) \in T$，令<br>
+                        $\alpha(\beta) \triangleq \max\{\alpha | (\beta\boldsymbol{X}, \alpha\boldsymbol{Y}) \in T \quad \beta \neq 1\}$<br>
+                        $\rho \triangleq \lim_{\beta \to 1}\frac{\alpha(\beta) - 1}{\beta - 1}$<br>
+                        若 $\rho > 1$，称 $(\boldsymbol{X}, \boldsymbol{Y})$ 对应的 DMU 为规模收益递增；$\rho < 1$，
+                        称为规模收益递减；$\rho = 1$，称为规模收益不变。（这里假设上式极限总是存在的）
+                    </div>
+                    
+                    <h4>2. DEA 有效性($\mathrm{C}^2\mathrm{R}$)的经济含义</h4>
+                    
+                    <p>检验 $\mathrm{DMU}_{j_0}$ 的 DEA 有效性，即考虑规划问题：</p>
+                    <div class="formula-box">
+                        $$(\mathrm{D}_1)\begin{cases}
+                        \min & \theta = V_{\mathrm{D}_1} \\
+                        \text{s.t.} & \sum_{j=1}^{n}\boldsymbol{X}_j\lambda_j \leq \theta\boldsymbol{X}_0 \\
+                        & \sum_{j=1}^{n}\boldsymbol{Y}_j\lambda_j \geq \boldsymbol{Y}_0 \\
+                        & \lambda_j \geq 0 \quad (j=1,2,\cdots,n)
+                        \end{cases}$$
+                    </div>
+                    
+                    <p>由于 $(\boldsymbol{X}_0, \boldsymbol{Y}_0)$ 位于生产可能集 $T_{\text{CCR}}$ 内，由</p>
+                    <div class="formula-box">
+                        $$T_{\text{CCR}} = \{(\boldsymbol{X}, \boldsymbol{Y}) | \sum_{j=1}^{n}\lambda_j\boldsymbol{X}_j \leq \boldsymbol{X}, 
+                        \sum_{j=1}^{n}\boldsymbol{Y}_j\lambda_j \geq \boldsymbol{Y}, \lambda_j \geq 0(j=1,2,\cdots,n)\}$$
+                    </div>
+                    
+                    <p>
+                        可以看出，规划问题($\mathrm{D}_1$)致力于在生产可能集 $T$ 内，保持产出 $\boldsymbol{Y}_0$ 不变，
+                        同时将投入量 $\boldsymbol{X}_0$ 按同一比例尽量减少。如果 $\boldsymbol{X}_0$ 不能按同一比例减少，
+                        即 ($\mathrm{D}_1$) 的最优值 $V_0 = \theta^0 = 1$，则表明 $\mathrm{DMU}_{j_0}$ 是有效的生产活动。
+                    </p>
+                    
+                    <div class="warning">
+                        <strong>⚠️ 重要结论：</strong>
+                        <p>
+                            根据前面 DEA 有效的定义和生产活动技术有效的定义可知，DEA 有效($\mathrm{C}^2\mathrm{R}$)的 DMU 必是技术有效的 DMU。
+                            同时，$\mathrm{C}^2\mathrm{R}$ 定义的生产可能集 $T_{\text{CCR}}$ 为凸锥（图10.5），可证 DEA 有效的 
+                            $\mathrm{DMU}_j$ 对应的生产点 $(\boldsymbol{X}_0, \boldsymbol{Y}_0)$ 必位于此凸锥生产前沿面 $OA$ 上，
+                            而 $OA$ 对应的各生产点均是规模有效生产点（参见前面规模收益不变则规模有效的定义及图10.6），
+                            因而 DEA 有效的 DMU 必规模有效。
+                        </p>
+                    </div>
+                    
+                    <p>
+                        综上所述，DEA 有效($\mathrm{C}^2\mathrm{R}$)等价于技术有效和规模有效。因此，在 $\mathrm{C}^2\mathrm{R}$ 模型中，
+                        决策单元的 DEA 有效性是同时针对规模有效性和技术有效性而言的。
+                    </p>
+                </div>
+            </div>
+            
+            <button class="collapsible">📊 案例分析与练习</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="example">
+                        <div class="example-title">例 10.2 考虑下述四个双输入、双输出的 DMU：</div>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>决策单元</th>
+                                        <th>$\mathrm{DMU}_1$</th>
+                                        <th>$\mathrm{DMU}_2$</th>
+                                        <th>$\mathrm{DMU}_3$</th>
+                                        <th>$\mathrm{DMU}_4$</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>输入1</td>
+                                        <td>2</td>
+                                        <td>3</td>
+                                        <td>4</td>
+                                        <td>3.5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>输入2</td>
+                                        <td>3</td>
+                                        <td>1</td>
+                                        <td>5.2</td>
+                                        <td>3.5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>输出1</td>
+                                        <td>1</td>
+                                        <td>2</td>
+                                        <td>2.5</td>
+                                        <td>4.3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>输出2</td>
+                                        <td>1.2</td>
+                                        <td>3.2</td>
+                                        <td>2.8</td>
+                                        <td>2.7</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <p>先对 $\mathrm{DMU}_1$ 进行分析，为此建立如下面双输入的 CCR 模型：</p>
+                        <div class="formula-box">
+                            $$\begin{cases}
+                            \min & \theta = \varepsilon \cdot (S_1^+ + S_2^+ + S_1^- + S_2^-) \\
+                            \text{s.t.} & 2\lambda_1 + 3\lambda_2 + 4\lambda_3 + 3.5\lambda_4 + S_1^- = 2\theta \\
+                            & 3\lambda_1 + \lambda_2 + 5.2\lambda_3 + 3.5\lambda_4 + S_2^- = 3\theta \\
+                            & \lambda_1 + 2\lambda_2 + 2.5\lambda_3 + 4.3\lambda_4 - S_1^+ = 1 \\
+                            & 1.2\lambda_1 + 3.2\lambda_2 + 2.8\lambda_3 + 2.7\lambda_4 - S_2^+ = 1.2 \\
+                            & \lambda_1 \geq 0, \lambda_2 \geq 0, \lambda_3 \geq 0, \lambda_4 \geq 0 \\
+                            & S_1^- \geq 0, S_2^- \geq 0, S_1^+ \geq 0, S_2^+ \geq 0
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>令 $\varepsilon = 10^{-6}$，可求得最优解为</p>
+                        <div class="formula-box">
+                            $$\theta^* = 0.608\ 9, \lambda_2^* = 0.294\ 3, \lambda_4^* = 0.095\ 7, S_2^{-*} = 1.197\ 4$$
+                        </div>
+                        
+                        <p>因而根据定理 10.3 知，$\mathrm{DMU}_1$ 为非 DEA 有效。</p>
+                        
+                        <p>
+                            类似地，对于 $\mathrm{DMU}_2$、$\mathrm{DMU}_3$ 和 $\mathrm{DMU}_4$ 可建立相应的规划模型，
+                            并分别求得对应的最优解为
+                        </p>
+                        <div class="formula-box">
+                            $\mathrm{DMU}_2$: $\theta^* = 1$, $\lambda_2^* = 1$<br>
+                            $\mathrm{DMU}_3$: $\theta^* = 0.725\ 8$, $\lambda_2^* = 0.632\ 8$, $\lambda_4^* = 0.287\ 1$, 
+                            $S_2^{-*} = 2.136\ 5$<br>
+                            $\mathrm{DMU}_4$: $\theta^* = 1$, $\lambda_4^* = 1$
+                        </div>
+                        
+                        <p>
+                            于是根据定理10.3，$\mathrm{DMU}_2$、$\mathrm{DMU}_4$ 为 DEA 有效，而 $\mathrm{DMU}_1$、$\mathrm{DMU}_3$ 
+                            为非 DEA 有效。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 习题部分 -->
+        <section id="exercises" class="section">
+            <h2>📝 习题 10</h2>
+            
+            <div class="example">
+                <div class="example-title">10.1 AHP综合决策问题</div>
+                <p>
+                    某公司欲确定下一年度广告宣传方式，宣传媒介有电头($C_1$)、报纸($C_2$)和电视($C_3$)三种。
+                    公司选择宣传方式的标准有观众(读者)人数($B_1$)、宣传效果($B_2$)和广告费用($B_3$)。已知各元素的相对重要度如下：
+                </p>
+                
+                <div class="table-container" style="margin-top: 1rem;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>$A$</th>
+                                <th>$B_1$</th>
+                                <th>$B_2$</th>
+                                <th>$B_3$</th>
+                                <th>$W_1^0$</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>$B_1$</td>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>1/2</td>
+                                <td>0.484</td>
+                            </tr>
+                            <tr>
+                                <td>$B_2$</td>
+                                <td></td>
+                                <td>1</td>
+                                <td>1/3</td>
+                                <td>0.168</td>
+                            </tr>
+                            <tr>
+                                <td>$B_3$</td>
+                                <td></td>
+                                <td></td>
+                                <td>1</td>
+                                <td>0.348</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <p style="margin-top: 1rem;"><strong>要求：</strong>(1)建立多级递阶结构；(2)排列三种宣传方式的优劣顺序。</p>
+            </div>
+            
+            <div class="example" style="margin-top: 2rem;">
+                <div class="example-title">10.2 填空题</div>
+                <p>
+                    一个方阵 $\boldsymbol{A} = (a_{ij})_{n\times n}$ 称为是正互反一致性矩阵，是指 $\boldsymbol{A}$ 满足：
+                    ① 正的，即 $a_{ij} > 0$，② 互反的，即 __________，③ 一致的，即 __________。
+                    层次分析法中比较判断矩阵应是这样的矩阵，但由于其确定过程是采用主观判断，
+                    有可能使第③条不满足，因此要对矩阵进行 __________ 检验。
+                </p>
+            </div>
+        </section>
+        
+        <!-- 页脚 -->
+        <footer style="text-align: center; padding: 2rem; margin-top: 3rem; background: var(--secondary-green); border-radius: 10px;">
+            <p style="margin-bottom: 0.5rem;">📚 <strong>管理科学基础 - 第10章</strong></p>
+            <p style="color: #666;">多目标决策交互式教程</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
+                本教程基于PDF文档创建，包含完整的数学公式和交互功能
+            </p>
+        </footer>
+    </div>
+    
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" onclick="scrollToTop()">↑</button>
+    
+    <!-- JavaScript -->
+    <script>
+        // 可折叠内容功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const collapsibles = document.querySelectorAll('.collapsible');
+            
+            collapsibles.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    const content = this.nextElementSibling;
+                    
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                    }
+                });
+            });
+        });
+        
+        // 返回顶部功能
+        window.onscroll = function() {
+            const backToTopButton = document.getElementById("backToTop");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTopButton.style.display = "block";
+            } else {
+                backToTopButton.style.display = "none";
+            }
+        };
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+<!-- 
+使用说明：
+1. 保存为 .html 文件：将此代码保存为 "多目标决策教程.html"
+2. 需要网络连接：MathJax需要从CDN加载数学公式渲染库
+3. 浏览器打开：使用Chrome、Firefox、Safari等现代浏览器打开
+4. 测试功能：
+   - 点击导航栏可快速跳转到各章节
+   - 点击可折叠按钮展开/收起内容
+   - 右下角的返回顶部按钮可快速回到页面顶部
+   - 所有数学公式应正确显示
+
+技术特点：
+- 完整的MathJax配置，支持所有LaTeX数学公式
+- 响应式设计，适配桌面和移动设备
+- 使用指定的配色方案（橙色、绿色、黄色等）
+- 交互式可折叠内容
+- 平滑滚动和动画效果
+- 语义化HTML5标签
+- 优化的表格显示
+- 清晰的层次结构和视觉层次
+-->

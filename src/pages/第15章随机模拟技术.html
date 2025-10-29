@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第15章 随机模拟技术 - 交互式教程</title>
+    
+    <!-- MathJax 配置 - 完整配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: #343434;
+            background: linear-gradient(135deg, #a6d6c9 0%, #ffffff 50%, #f7d117 100%);
+            background-attachment: fixed;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+            min-height: 100vh;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00, #f7d117);
+            color: #ffffff;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 5px solid #a6d6c9;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: #343434;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        nav li {
+            margin: 5px 10px;
+        }
+        
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            display: block;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            transform: translateY(-2px);
+        }
+        
+        main {
+            padding: 40px 30px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 5px solid #f27d00;
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        h3 {
+            color: #343434;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid #f7d117;
+        }
+        
+        h4 {
+            color: #f27d00;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .formula {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #a6d6c9;
+            text-align: center;
+            overflow-x: auto;
+        }
+        
+        .collapsible {
+            background: #f27d00;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            border-radius: 5px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        
+        .collapsible:hover {
+            background: #d96d00;
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.active:after {
+            transform: rotate(-180deg);
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f8f9fa;
+            border-radius: 0 0 5px 5px;
+            padding: 0 20px;
+        }
+        
+        .content.show {
+            max-height: 5000px;
+            padding: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: #ffffff;
+        }
+        
+        th {
+            background: #f27d00;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tr:hover {
+            background: #fff3e0;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        .note {
+            background: #fff3e0;
+            border-left: 4px solid #f7d117;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .note strong {
+            color: #f27d00;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .flowchart {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .flowchart-box {
+            display: inline-block;
+            padding: 15px 25px;
+            margin: 10px;
+            background: #a6d6c9;
+            color: #343434;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .flowchart-diamond {
+            display: inline-block;
+            padding: 15px 25px;
+            margin: 10px;
+            background: #f7d117;
+            color: #343434;
+            transform: rotate(45deg);
+            font-weight: 500;
+        }
+        
+        .flowchart-diamond span {
+            display: block;
+            transform: rotate(-45deg);
+        }
+        
+        .arrow {
+            color: #f27d00;
+            font-size: 2em;
+            display: block;
+            margin: 5px 0;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        footer {
+            background: #343434;
+            color: #ffffff;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: #d96d00;
+            transform: translateY(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            main {
+                padding: 20px 15px;
+            }
+            
+            section {
+                padding: 20px 15px;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第15章 随机模拟技术</h1>
+            <p>管理科学基础 - 交互式教程</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#section1">15.1 模拟过程</a></li>
+                <li><a href="#section2">15.2 人工模拟</a></li>
+                <li><a href="#section3">15.3 产生方法</a></li>
+                <li><a href="#section4">15.4 模拟语言</a></li>
+                <li><a href="#exercises">习题</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <section id="section1">
+                <h2>15.1 模拟过程的主要步骤</h2>
+                
+                <p>模拟又称仿真，是一种基于数值方法对系统进行分析的技术。它首先为所要研究的系统设计一个模型，通过实验对系统状态的变化进行观察和统计，从而得到系统的基本性能。模拟是在管理中应用最广泛的计量方法之一。当用定量方法研究经济管理问题时，遇到以下某种情况：</p>
+                
+                <ol>
+                    <li>现实系统比较复杂或存在许多随机因素，各部分或因素之间的关系不能用数学模型去表达；</li>
+                    <li>有些问题虽然能够建立数学模型，但由于模型中随机因素很多，难于用解析方法求解；</li>
+                    <li>实际的环境难以观察到；</li>
+                    <li>观察一个系统可能代价昂贵；</li>
+                    <li>不可能有足够的时间来观察系统；</li>
+                    <li>对系统的实际运行或观察造成太大的破坏性。</li>
+                </ol>
+                
+                <p>建立和运用有效的模拟模型需要很多技巧，为了使模拟得出有意义的结论，需要作长时间的复杂分析。尽管如此，模拟仍是一种有效的方法，尤其适用于复杂的运筹学研究和系统分析。</p>
+                
+                <div class="note">
+                    <strong>注意：</strong>有效的模拟需要大量的计划和组织工作，模拟过程一般必须通过下列步骤实现。
+                </div>
+                
+                <button class="collapsible">点击展开：模拟过程步骤详解</button>
+                <div class="content">
+                    <h3>1. 问题识别</h3>
+                    <p>首先要对系统本身进行研究和分析，明确求解问题的目标，并决定是否要用模拟方法解决问题。</p>
+                    
+                    <h3>2. 建立模型</h3>
+                    <p>根据问题的目标和所研究的对象，建立适合于模拟求解的模型。被确定的模型应成为对真实系统的合理抽象，并将所要用的模型化为公式。有两类常用的模拟模型，即<span class="highlight">事件间隔模型</span>和<span class="highlight">固定时间增量模型</span>。</p>
+                    
+                    <p>前一种模型是指其状态仅在事件发生的时刻变化。例如研究一部机器加工作业的延迟，可用点随机过程描述：令 $S_n$ 表示作业 $n$ 的加工时间；$A_n$ 表示作业 $n$ 与 $n+1$ 的到达时间；$W_n$ 表示作业 $n$ 的等待时间，那么，当 $n=0,1,2,\cdots$ 时，便有</p>
+                    
+                    <div class="formula">
+                        $$W_{n+1} = \max[W_n + S_n - A_n, 0] \tag{15.1}$$
+                    </div>
+                    
+                    <p>一旦给定 $W_{n+1}, S_n$ 与 $A_n$ 等待时间的序列即可产生出来。后一种模型是指其状态在任意相等的时间间隔发生变化。例如在排序问题中，一天可分成若干15 min的间隔，用 $A(t)$ 表示 $t$ 到 $t+15$ 新需求数，$t=0,15,30,\cdots$，同时，完成加工的作业数为 $C(t)$，则从 $t$ 到 $t+15$ 净增加的作业数为 $Z(t)=A(t)-C(t)$。如果 $t$ 时的作业数为 $Q(t)$，则</p>
+                    
+                    <div class="formula">
+                        $$Q(t+15) = \max[Q(t) + Z(t), 0] \tag{15.2}$$
+                    </div>
+                    
+                    <p>于是就可利用数据估计 $Z(t)$ 的分布，同时递推 $Q(t)$。</p>
+                    
+                    <h3>3. 模拟</h3>
+                    <p>模型设计完成后，将进行实际的模拟，一般要经过下列过程。</p>
+                    
+                    <h4>(1) 确定随机变量及其分布</h4>
+                    <p>通常的模拟模型利用随机变量来描述真实事件。方程(15.1)和(15.2)中的 $S_n, A_n$ 及 $Z(t)$ 都可视为随机变量。按下来要确定各个随机变量的分布，只有分布已知，模拟才能实现。这就需要利用统计方法计算随机变量的累积分布函数。例如设随机变量的取值区间分为 $n$ 个间隔，且 $f_i$ 为第 $i$ 个间隔的频率，那么累加到第 $j$ 个间隔并包括第 $j$ 个间隔的累计频率</p>
+                    
+                    <div class="formula">
+                        $$F_j = \sum_{i=1}^{j} f_i \tag{15.3}$$
+                    </div>
+                    
+                    <h4>(2) 产生均匀分布的随机数</h4>
+                    <p>要产生随机变量模拟数据，首先要获得均匀分布的随机数，即在[0,1]区间上均匀分布的随机变量的实现值。在计算机上产生均匀随机数的常用算法是同余数法。利用均匀随机数能够产生具有其他分布随机变量的模拟数据。</p>
+                    
+                    <h4>(3) 产生随机变量的模拟数据</h4>
+                    <p>假设需要产生与问题相关的分布函数 $F(x)$ 的模拟数据，即实现随机变量 $X$。这里 $F(x) = P(X \leq x)$。</p>
+                    
+                    <div class="note">
+                        <strong>定理 15.1</strong> 设 $R$ 是服从[0,1]区间上均匀分布的随机变量，$X$ 的分布函数为 $F_X(x)$，则 $X = F_X^{-1}(x)$。
+                    </div>
+                    
+                    <h4>(4) 模型演算</h4>
+                    <p>这一步是产生在某种方式下由随机变量 $X_1, X_2, \cdots, X_n$ 所决定的响应 $W$，即 $W = f(X_1, X_2, \cdots, X_n)$，例如式(15.1)和式(15.2)就说明这种情形。$W$ 的分布依赖于 $X_i$ 分布的参数、问题的起始条件和模拟过程的运行长度。
+                    </p>
+                    
+                    <h3>4. 结果分析</h3>
+                    <p>利用模拟模型的结果可以研究现实系统，通过对输出数据的分析可以找出系统运行的制约因素及影响系统性状的主要变量，进而可以优化设计系统。</p>
+                    
+                    <p>经过分析，如果目标已经满足，那么模拟过程也告一段落，可是因为模拟是一个反复试验不断探索的过程，所以目标常常不能满足。在这种情况下一般有两种选择：一种是修改模型，使它在模拟过程中易于辨别，然后重新进行实验；另一种是使用原来的模型，但要改变原来的试验设计重新试验。上述模拟过程如图15.1所示。</p>
+                </div>
+                
+                <div class="flowchart">
+                    <h3>图15.1 模拟过程流程图</h3>
+                    <div class="flowchart-box">问题识别</div>
+                    <div class="arrow">↓</div>
+                    <div class="flowchart-box">是否采用模拟技术？</div>
+                    <div class="arrow">↓ Y</div>
+                    <div class="flowchart-box">建立模型</div>
+                    <div class="arrow">↓</div>
+                    <div class="flowchart-box">确定随机变量及其分布</div>
+                    <div class="arrow">↓</div>
+                    <div class="flowchart-box">产生均匀随机数</div>
+                    <div class="arrow">↓</div>
+                    <div class="flowchart-box">产生随机变量的模拟数据</div>
+                    <div class="arrow">↓</div>
+                    <div class="flowchart-box">模型演算试验</div>
+                    <div class="arrow">↓</div>
+                    <div class="flowchart-box">结果分析</div>
+                    <div class="arrow">↓</div>
+                    <div class="flowchart-box">修正模型 / 是否满意？/ 修正试验参数</div>
+                    <div class="arrow">↓ Y</div>
+                    <div class="flowchart-box">决策</div>
+                </div>
+            </section>
+            
+            <section id="section2">
+                <h2>15.2 一个人工模拟的例子</h2>
+                
+                <p>为了实际说明模拟技术的一般原理和步骤，现举一人工模拟的例子。</p>
+                
+                <button class="collapsible">点击展开：问题分析</button>
+                <div class="content">
+                    <h3>1. 问题分析</h3>
+                    <p>某厂需外订电动机作为产品的组成部分。为保证生产的正常进行，对生产过程中所需的电动机需要有一定数量的储备，又为了使被疲劳电动机得到补充，需要每隔一定时期提出订货。</p>
+                    
+                    <p>由于电动机的消耗量和订货提前期往往是随机的，因而可能发生供应上的缺货。这就需要选择一个好的存贮策略，使订货费、存贮费以及由于缺货造成的损失这三者费用总和最小。</p>
+                    
+                    <p>据统计，该厂每天需要的电动机数量及频率如表15.1所示，订货提前期(从发出订货到收到订货的时间)及其频率如表15.2所示。该厂每次订货时间不定，但每次订货量均为120台。该厂每日对库存进行盘点，当发现库存量低于订货点储备 $P$ 时即提出订货。已知存贮费 $K_C = 0.10$ 元/台·天，缺货损失费 $K_S = 0.50$ 元/(台·天)，订购费 $R = 10$ 元/次，要求选择一个合理的订货点 $P$，使该厂在订货、储备和缺货造成的损失费用的总和最少。</p>
+                    
+                    <table>
+                        <caption><strong>表 15.1</strong> 每天需要的电动机数量及频率</caption>
+                        <thead>
+                            <tr>
+                                <th>每天需要的电动机数</th>
+                                <th>17</th>
+                                <th>18</th>
+                                <th>19</th>
+                                <th>20</th>
+                                <th>21</th>
+                                <th>22</th>
+                                <th>23</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>频率</td>
+                                <td>0.05</td>
+                                <td>0.10</td>
+                                <td>0.20</td>
+                                <td>0.30</td>
+                                <td>0.20</td>
+                                <td>0.10</td>
+                                <td>0.05</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <table>
+                        <caption><strong>表 15.2</strong> 订货提前期及频率</caption>
+                        <thead>
+                            <tr>
+                                <th>订货提前期</th>
+                                <th>1</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>频率</td>
+                                <td>0.10</td>
+                                <td>0.20</td>
+                                <td>0.40</td>
+                                <td>0.20</td>
+                                <td>0.10</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="collapsible">点击展开：建立模型</button>
+                <div class="content">
+                    <h3>2. 建立模型</h3>
+                    <p>首先确定系统所涉及的变量如下：</p>
+                    <ul>
+                        <li>$I_k$ ——第 $k$ 天(第 $k-1$ 天末)时的电动机库存量；</li>
+                        <li>$Q$ ——每批订购数量，$Q = 120$；</li>
+                        <li>$P$ ——订货点储备量；</li>
+                        <li>$D_k$ ——第 $k$ 天的需求量；</li>
+                        <li>$L_k$ ——第 $k$ 天发出订货时的订货提前期；</li>
+                        <li>$C_k$ ——第 $k$ 天的存贮费；</li>
+                        <li>$S_k$ ——第 $k$ 天发生的缺货损失；</li>
+                        <li>$TM_k$ ——第 $k$ 天开始(第 $k-1$ 天末)累计的订货费、存贮费和缺货损失费的总和；</li>
+                        <li>$R_k$ ——第 $k$ 天发生的订货费，即 $R_k = 10$。</li>
+                    </ul>
+                    
+                    <p>其中 $k = 1,2,\cdots,n$ 为模拟天数。</p>
+                    
+                    <p>根据以上分析，得出问题的数学模型为</p>
+                    
+                    <div class="formula">
+                        $$\min TM_k(P, C_k, L_k) = \sum_{i=1}^{n} (C_k + S_k + R_k)$$
+                    </div>
+                    
+                    <p>其中</p>
+                    <div class="formula">
+                        $$C_k = K_C(I_k - D_k) \quad (I_k \geq D_k)$$
+                        $$S_k = K_S(D_k - I_k) \quad (I_k \lt D_k)$$
+                        $$R_k = \begin{cases}
+                        10 & \text{第 } k \text{ 天发生订货} \\
+                        0 & \text{第 } k \text{ 天不发生订货}
+                        \end{cases}$$
+                    </div>
+                    
+                    <p>问题中的需求量 $D_k$ 及订货提前期 $L_k$ 是不可预测的随机因素，用数学模型来研究是比较困难的，而用模拟方法则能够克服这种困难。</p>
+                </div>
+                
+                <button class="collapsible">点击展开：模拟过程</button>
+                <div class="content">
+                    <h3>3. 模拟</h3>
+                    
+                    <h4>(1) 确定随机变量及其分布</h4>
+                    <p>本例中的需求量 $D_k$ 及订货提前期 $L_k$ 是随机变量。根据其频率分布来计算累积分布函数，计算结果见表15.3和表15.4，同时进行随机数的分配。</p>
+                    
+                    <table>
+                        <caption><strong>表 15.3</strong> 需求量分布</caption>
+                        <thead>
+                            <tr>
+                                <th>每日需求量</th>
+                                <th>相对频率分布</th>
+                                <th>相对累积频率分布</th>
+                                <th>对应的随机数</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>17</td><td>0.05</td><td>0.05</td><td>00~04</td></tr>
+                            <tr><td>18</td><td>0.10</td><td>0.15</td><td>05~14</td></tr>
+                            <tr><td>19</td><td>0.20</td><td>0.35</td><td>15~34</td></tr>
+                            <tr><td>20</td><td>0.30</td><td>0.65</td><td>35~64</td></tr>
+                            <tr><td>21</td><td>0.20</td><td>0.85</td><td>65~84</td></tr>
+                            <tr><td>22</td><td>0.10</td><td>0.95</td><td>85~94</td></tr>
+                            <tr><td>23</td><td>0.05</td><td>1.00</td><td>95~99</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <table>
+                        <caption><strong>表 15.4</strong> 提前期分布</caption>
+                        <thead>
+                            <tr>
+                                <th>提前期</th>
+                                <th>相对频率分布</th>
+                                <th>相对累积频率分布</th>
+                                <th>对应的随机数</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>0.10</td><td>0.10</td><td>00~09</td></tr>
+                            <tr><td>2</td><td>0.20</td><td>0.30</td><td>10~29</td></tr>
+                            <tr><td>3</td><td>0.40</td><td>0.70</td><td>30~69</td></tr>
+                            <tr><td>4</td><td>0.20</td><td>0.90</td><td>70~89</td></tr>
+                            <tr><td>5</td><td>0.10</td><td>1.00</td><td>90~99</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4>(2) 取均匀随机数</h4>
+                    <p>分别取均匀随机数表中的2位随机数作为 $D_k$ 及 $L_k$ 的随机数列，如表15.5的第3列和第5列。</p>
+                    
+                    <h4>(3) 产生模拟数据</h4>
+                    <p>根据 $D_k$ 及 $L_k$ 的分布，产生需求量 $D_k$ 及订货提前期 $L_k$ 的模拟数据列如表15.5所示。</p>
+                    
+                    <h4>(4) 模型演算试验</h4>
+                    <p>该例中模拟时的递推关系为</p>
+                    <div class="formula">
+                        $$TM_{k+1} = TM_k + C_k + S_k + R_k$$
+                    </div>
+                    
+                    <p>表15.5列出当模拟时间 $n=20$ 天，$P=60$ 时人工模拟的过程和结果。作为方案比较，又分别计算了 $P=40,50,70$ 时的方案，结果如表15.6所示。</p>
+                    
+                    <table>
+                        <caption><strong>表 15.5</strong> 模拟计算表 ($P=60$)</caption>
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>$I_k$</th>
+                                <th colspan="2">每日需求量</th>
+                                <th colspan="2">提前期</th>
+                                <th>$I_k - D_k$</th>
+                                <th>$C_k$</th>
+                                <th>$S_k$</th>
+                                <th>$R_k$</th>
+                                <th>$TM_{k+1}$</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th>随机数</th>
+                                <th>$D_k$</th>
+                                <th>随机数</th>
+                                <th>$L_k$</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>120</td><td>68</td><td>21</td><td></td><td></td><td>99</td><td>9.9</td><td></td><td></td><td>9.9</td></tr>
+                            <tr><td>2</td><td>99</td><td>34</td><td>19</td><td></td><td></td><td>80</td><td>8.0</td><td></td><td></td><td>17.9</td></tr>
+                            <tr><td>3</td><td>80</td><td>30</td><td>19</td><td></td><td></td><td>61</td><td>6.1</td><td></td><td></td><td>24.0</td></tr>
+                            <tr><td>4</td><td>61</td><td>13</td><td>18</td><td></td><td></td><td>43</td><td>4.3</td><td></td><td></td><td>28.3</td></tr>
+                            <tr><td>5</td><td>43*</td><td>70</td><td>21</td><td>53</td><td>3</td><td>22</td><td>2.2</td><td></td><td>10</td><td>40.5</td></tr>
+                            <tr><td>6</td><td>22</td><td>55</td><td>20</td><td></td><td></td><td>2</td><td>0.2</td><td></td><td></td><td>40.7</td></tr>
+                            <tr><td>7</td><td>122</td><td>74</td><td>21</td><td></td><td></td><td>101</td><td>10.1</td><td></td><td></td><td>50.8</td></tr>
+                            <tr><td>8</td><td>101</td><td>30</td><td>19</td><td></td><td></td><td>82</td><td>8.2</td><td></td><td></td><td>59.0</td></tr>
+                            <tr><td>9</td><td>82</td><td>77</td><td>21</td><td></td><td></td><td>61</td><td>6.1</td><td></td><td></td><td>65.1</td></tr>
+                            <tr><td>10</td><td>61</td><td>40</td><td>20</td><td></td><td></td><td>41</td><td>4.1</td><td></td><td></td><td>69.2</td></tr>
+                            <tr><td>11</td><td>41*</td><td>44</td><td>20</td><td>74</td><td>4</td><td>21</td><td>2.1</td><td></td><td>10</td><td>81.3</td></tr>
+                            <tr><td>12</td><td>21</td><td>22</td><td>19</td><td></td><td></td><td>2</td><td>0.2</td><td></td><td></td><td>81.5</td></tr>
+                            <tr><td>13</td><td>2</td><td>78</td><td>21</td><td></td><td></td><td>-19</td><td></td><td>9.5</td><td></td><td>91.0</td></tr>
+                            <tr><td>14</td><td>101</td><td>84</td><td>21</td><td></td><td></td><td>80</td><td>8.0</td><td></td><td></td><td>99.0</td></tr>
+                            <tr><td>15</td><td>80</td><td>26</td><td>19</td><td></td><td></td><td>61</td><td>6.1</td><td></td><td></td><td>105.1</td></tr>
+                            <tr><td>16</td><td>61</td><td>04</td><td>17</td><td></td><td></td><td>44</td><td>4.4</td><td></td><td></td><td>109.5</td></tr>
+                            <tr><td>17</td><td>44*</td><td>33</td><td>19</td><td>23</td><td>2</td><td>23</td><td>2.3</td><td></td><td>10</td><td>121.8</td></tr>
+                            <tr><td>18</td><td>143</td><td>46</td><td>20</td><td></td><td></td><td>123</td><td>12.3</td><td></td><td></td><td>134.1</td></tr>
+                            <tr><td>19</td><td>123</td><td>09</td><td>18</td><td></td><td></td><td>105</td><td>10.5</td><td></td><td></td><td>144.6</td></tr>
+                            <tr><td>20</td><td>105</td><td>52</td><td>20</td><td></td><td></td><td>85</td><td>8.5</td><td></td><td></td><td>153.1</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <p class="note">注：表中标有*的 $I_k$ 值表示当日库存低于订货点 $P$，需要订货。</p>
+                    
+                    <table>
+                        <caption><strong>表 15.6</strong> 不同方案的总费用比较</caption>
+                        <thead>
+                            <tr>
+                                <th>方案</th>
+                                <th>$P=40$</th>
+                                <th>$P=50$</th>
+                                <th>$P=60$</th>
+                                <th>$P=70$</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>总费用 $TM$</td>
+                                <td>152.5</td>
+                                <td>153.1</td>
+                                <td>153.1</td>
+                                <td>179.7</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="collapsible">点击展开：结果分析</button>
+                <div class="content">
+                    <h3>4. 结果分析</h3>
+                    <p>进行方案的技术经济分析，由模拟结果可知，当选择 $P=40$ 时，各项费用的总和最小。</p>
+                </div>
+            </section>
+            
+            <section id="section3">
+                <h2>15.3 随机变量模拟数据的产生方法</h2>
+                
+                <p>模拟中的一个关键问题是产生与真实系统相似的输入变量。这些变量大都具有随机性。因此，有效地产生具有一定分布的随机变量是一个很重要的问题。解决上述问题的基础是产生[0,1]区间上均匀分布随机变量的样本值，即均匀随机数，其他各种分布的随机变量可以通过对均匀随机数进行适当变换而得到。</p>
+                
+                <h3>15.3.1 均匀随机数的产生方法</h3>
+                
+                <p>均匀随机数可以直接从随机数表中得到。这种方法的缺点是输入计算机的速度缓慢。产生均匀随机数的另一种方法是利用物理装置或物理过程，但这种方法的结果不可再现。在计算机模拟中使用最多的是用数学公式递推产生随机数，目前普遍采用的是同余数法。但在用于工模拟而手头又无随机数表的情况下用平方取中法较为方便。</p>
+                
+                <button class="collapsible">点击展开：平方取中法</button>
+                <div class="content">
+                    <h4>(1) 平方取中法</h4>
+                    <p>任取一个 $2k$ 位的数为种子，乘方后去掉头尾取中间 $2k$ 位作为第一个随机数，再取第一个随机数为种子，按相同的方法得到第二个随机数，以此类推，就可以得到一个随机数列。这种方法的缺点是容易产生退化，一旦尾数出现0后就无法消除。此外，用这种方法得到的随机数分布均匀性较差。</p>
+                    
+                    <table>
+                        <caption><strong>表 15.7</strong> 平方取中法示例</caption>
+                        <thead>
+                            <tr>
+                                <th>$x_n$</th>
+                                <th>$x_{n+1}$</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>4</td><td>3</td></tr>
+                            <tr><td>3</td><td>6</td></tr>
+                            <tr><td>6</td><td>5</td></tr>
+                            <tr><td>5</td><td>0</td></tr>
+                            <tr><td>0</td><td>7</td></tr>
+                            <tr><td>7</td><td>2</td></tr>
+                            <tr><td>2</td><td>1</td></tr>
+                            <tr><td>1</td><td>4</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="collapsible">点击展开：同余数法</button>
+                <div class="content">
+                    <h4>(2) 同余数法</h4>
+                    <p>这种方法的递推公式为</p>
+                    <div class="formula">
+                        $$x_{n+1} = (ax_n + c) \pmod{m}$$
+                    </div>
+                    
+                    <p>其中 $x_i$ 是第 $i(i=n,n+1)$ 个随机数；$a$ 为乘子，$c$ 为增量；$m$ 为模数；$x_0$ 为种子，它们均为非负整数；$(\bmod m)$ 表示除以 $m$ 所得的余数。例如当 $m=8, a=5, c=7$ 时，选取 $x_0$ 为 $0\sim 7$ 之间的任意整数，就可得到如表15.7的循环的含8个数字的随机数序列。</p>
+                    
+                    <p>一般选择 $m=2^k(k$ 为计算机字长$), c$ 为奇数，$a-1$ 可被4整除，$x_0$ 为 $0\sim m-1$ 之间的任意整数，这样得到的随机数在 $0\sim m-1$ 之间不重复。</p>
+                </div>
+                
+                <h3>15.3.2 模拟数据的产生方法</h3>
+                
+                <p>下面介绍由随机数产生其他概率分布模拟数据的一些方法。</p>
+                
+                <button class="collapsible">点击展开：逆转换法</button>
+                <div class="content">
+                    <h4>(1) 逆转换法</h4>
+                    <p>逆转换法基于下面的定理：设 $X$ 是具有概率密度函数 $f$ 及分布函数 $F$ 的随机变量，$Y$ 是由 $Y=F(X)$ 定义的随机变量，则 $Y$ 在[0,1]上服从均匀分布。</p>
+                    
+                    <p>由此，要产生服从分布 $F$ 的随机变量，就要产生[0,1]区间上均匀分布的随机变量 $R$，然后由 $F^{-1}(R)$ 求得。</p>
+                    
+                    <div class="note">
+                        <strong>例 15.1</strong> 求任意区间 $[a,b]$ 内的均匀分布随机变量的模拟数据。
+                        
+                        <p><strong>解</strong> 将[0,1]区间的均匀随机数记作 $R$。$x$ 是[a,b]上均匀分布的随机变量。其分布密度函数为</p>
+                        
+                        <div class="formula">
+                            $$f(x) = \begin{cases}
+                            \frac{1}{b-a}, & a \leq x \leq b \\
+                            0, & \text{其他}
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>由 $f(x)$ 可得 $x$ 的分布函数</p>
+                        
+                        <div class="formula">
+                            $$F(x) = \begin{cases}
+                            0, & x \leq 0 \\
+                            \frac{x-a}{b-a}, & a \leq x \leq b \\
+                            1, & x \geq 1
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>令 $R = F(x) = \frac{x-a}{b-a}$，得 $x = a + (b-a)R$。</p>
+                    </div>
+                    
+                    <div class="note">
+                        <strong>例 15.2</strong> 产生参数为 $\mu$ 的负指数分布的模拟数据。
+                        
+                        <p><strong>解</strong> 负指数分布的概率密度函数</p>
+                        <div class="formula">
+                            $$f(x) = \mu e^{-\mu x}$$
+                        </div>
+                        
+                        <p>分布函数为</p>
+                        <div class="formula">
+                            $$F(x) = 1 - e^{-\mu x}$$
+                        </div>
+                        
+                        <p>令 $R = F(x) = 1 - e^{-\mu x}$，即 $1-R = e^{-\mu x}$，但 $1-R$ 也来自均匀分布，故令</p>
+                        <div class="formula">
+                            $$R = e^{-\mu x}$$
+                        </div>
+                        
+                        <p>则 $x = -\frac{1}{\mu}\ln R$。</p>
+                    </div>
+                    
+                    <div class="note">
+                        <strong>例 15.3</strong> 产生几何分布的模拟数据。
+                        
+                        <p><strong>解</strong> 几何分布的概率密度函数为</p>
+                        <div class="formula">
+                            $$f(x) = pq^x$$
+                        </div>
+                        
+                        <p>式中 $p=1-q, x=0,1,2,\cdots$。又有</p>
+                        <div class="formula">
+                            $$F(x) = \sum_{k=0}^{x} pq^k = (1-q)\sum_{k=0}^{x} q^k = 1 - q^{x+1}$$
+                        </div>
+                        
+                        <p>令 $R = 1 - F(x) = q^{x+1}$，则</p>
+                        <div class="formula">
+                            $$x = \frac{\ln R}{\ln q} - 1$$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">点击展开：组合法</button>
+                <div class="content">
+                    <h4>(2) 组合法</h4>
+                    <p>由于有些随机变量分布函数的逆函数不存在，有些分布函数的逆函数即使存在，但计算起来十分复杂，因此需要用其他方法寻找模拟数据。</p>
+                    
+                    <p>组合法是利用某些容易产生的随机变量来组合得到所要求的随机变量的一种方法。</p>
+                    
+                    <div class="note">
+                        <strong>例 15.4</strong> 产生泊松分布的模拟数据。
+                        
+                        <p><strong>解</strong> 已知相继两个事件出现的间隔时间为负指数分布，则在某一时间间隔内事件出现的次数服从泊松分布。根据上述关系，可以利用负指数分布的随机变量来组合得到泊松分布的模拟数据。</p>
+                        
+                        <p>设序列 $y_1, y_2, \cdots, y_n$ 服从参数为 $\lambda$ 的负指数分布，则有</p>
+                        <div class="formula">
+                            $$y_i = -\frac{1}{\lambda}\ln r_i$$
+                        </div>
+                        
+                        <p>其中 $r_i$ 是在[0,1]区间上的均匀随机数。将 $y_i$ 值按序累加，使得满足下述关系式：</p>
+                        <div class="formula">
+                            $$\sum_{i=0}^{x} y_i \leq 1 \lt \sum_{i=0}^{x+1} y_i$$
+                        </div>
+                        
+                        <p>则求得的 $x$ 就是参数为 $\lambda$ 的泊松分布的随机变量来组合得到泊松分布的模拟数据。将 $y_i$ 值代入上式，得</p>
+                        <div class="formula">
+                            $$\sum_{i=0}^{x} -\frac{1}{\lambda}\ln r_i \leq 1 \leq \sum_{i=0}^{x+1} -\frac{1}{\lambda}\ln r_i$$
+                        </div>
+                        
+                        <div class="formula">
+                            $$\ln\prod_{i=0}^{x} r_i \geq -\lambda \geq \ln\prod_{i=0}^{x+1} r_i$$
+                        </div>
+                        
+                        <p>由此得</p>
+                        <div class="formula">
+                            $$\prod_{i=0}^{x} r_i \geq e^{-\lambda} \geq \prod_{i=0}^{x+1} r_i$$
+                        </div>
+                    </div>
+                    
+                    <div class="note">
+                        <strong>例 15.5</strong> 产生爱尔朗分布的模拟数据。
+                        
+                        <p><strong>解</strong> 爱尔朗分布的概率密度函数为</p>
+                        <div class="formula">
+                            $$f(x) = \frac{(\mu k)^k x^{k-1}}{(k-1)!} e^{-\mu kx}$$
+                        </div>
+                        
+                        <p>式中 $x \gt 0, \mu \gt 0, k$ 为正整数。它是 $k$ 个互相独立的负指数分布随机变量的和，即</p>
+                        <div class="formula">
+                            $$x = \sum_{i=1}^{k} x_i$$
+                        </div>
+                        
+                        <p>$x_i$ 为负指数分布的随机变量。$x_i$ 的概率密度函数为</p>
+                        <div class="formula">
+                            $$f(x_i) = \mu k e^{-\mu kx_i}$$
+                        </div>
+                        
+                        <p>因 $x_i$ 的随机序列为 $-\frac{1}{\mu k}\ln r_i$，故有</p>
+                        <div class="formula">
+                            $$x = \sum_{i=1}^{k}\left(-\frac{1}{\mu k}\ln r_i\right) = -\frac{1}{\mu k}\ln\prod_{i=1}^{k} r_i$$
+                        </div>
+                        
+                        <p>由上式看出，为确定爱尔朗分布的模拟数据，需要有 $k$ 组[0,1]区间的均匀随机数组合而成。</p>
+                    </div>
+                    
+                    <div class="note">
+                        <strong>例 15.6</strong> 产生二项分布的模拟数据。
+                        
+                        <p><strong>解</strong> 二项分布的密度函数为</p>
+                        <div class="formula">
+                            $$f(x) = C_n^x p^x (1-p)^{n-x}$$
+                        </div>
+                        
+                        <p>式中 $p \lt 1$。若取 $n$ 个[0,1]区间的均匀随机数 $r_i$，当 $r_i \leq p$ 时，令 $x_i=1$；当 $r_i \gt p$ 时，令 $x_i=0$，则 $\sum_{i=1}^{n} x_i$ 就是二项分布的随机变量值。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">点击展开：近似法</button>
+                <div class="content">
+                    <h4>(3) 近似法</h4>
+                    <p>这种方法一般用于随机变量的分布函数公式无法求出时的情况。</p>
+                    
+                    <div class="note">
+                        <strong>例 15.7</strong> 产生正态分布的模拟随机数列。
+                        
+                        <p><strong>解</strong> 由概率论的中心极限定理知，$N$ 个具有相同分布的独立的随机变量 $R_i$ 的数学期望分别为 $\mu_i$，方差分别为 $\sigma_i^2$。当 $N$ 足够大时，随机变量 $\sum_{i=1}^{N} R_i$ 趋近于期望值为 $\sum_{i=1}^{N} \mu_i$，方差为 $\sum_{i=1}^{N} \sigma_i^2$ 的正态分布，即</p>
+                        
+                        <div class="formula">
+                            $$\sum_{i=1}^{N} R_i \sim N\left(\sum_{i=1}^{N} \mu_i, \sum_{i=1}^{N} \sigma_i^2\right)$$
+                        </div>
+                        
+                        <p>如果令 $R_i$ 是[0,1]区间均匀分布的随机变量，则</p>
+                        <div class="formula">
+                            $$f(r_i) = 1 \quad (0 \leq r_i \leq 1)$$
+                        </div>
+                        
+                        <div class="formula">
+                            $$\mu_i = E(R_i) = \int_0^1 x \cdot 1 \cdot dx = \frac{1}{2}$$
+                        </div>
+                        
+                        <div class="formula">
+                            $$\sigma_i^2 = \int_0^1 [x - E(x)]^2 \cdot 1 \cdot dx = \int_0^1 \left(x - \frac{1}{2}\right)^2 dx = \frac{1}{12}$$
+                        </div>
+                        
+                        <p>当 $N$ 足够大时有</p>
+                        <div class="formula">
+                            $$\sum_{i=1}^{N} R_i \sim N\left(\sum_{i=1}^{N} \frac{1}{2}, \sum_{i=1}^{N} \frac{1}{12}\right) = N\left(\frac{N}{2}, \frac{N}{12}\right)$$
+                        </div>
+                        
+                        <p>为了得到标准的正态分布，令</p>
+                        <div class="formula">
+                            $$Z = \frac{\sum_{i=1}^{N} R_i - \frac{N}{2}}{\sqrt{N/12}} \sim N(0,1)$$
+                        </div>
+                        
+                        <p>在实际应用时，当 $N=12$ 已足够精确了。因此，用 $N=12$ 代入上式得</p>
+                        <div class="formula">
+                            $$Z = \left(\sum_{i=1}^{12} R_i - 6\right) \sim N(0,1)$$
+                        </div>
+                        
+                        <p>因此只要分别给出12个相互独立的[0,1]区间的均匀随机数序列，就可以得到一个标准的正态分布模拟数据。</p>
+                        
+                        <p>若 $X$ 为期望值 $\mu$，方差 $\sigma^2$ 的正态分布，因有</p>
+                        <div class="formula">
+                            $$\frac{X-\mu}{\sigma} = Z$$
+                        </div>
+                        
+                        <p>故</p>
+                        <div class="formula">
+                            $$X = \mu + \sigma Z = \mu + \sigma\left(\sum_{i=1}^{12} R_i - 6\right)$$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">点击展开：舍选法</button>
+                <div class="content">
+                    <h4>(4) 舍选法</h4>
+                    <p>当随机变量分布函数的逆函数不存在，又不能用组合法、近似法时，通常采用舍选法。令 $f(x)$ 为概率密度函数，且 $0 \leq f(x) \leq M, a \leq x \leq b$，则舍选法的步骤为：</p>
+                    <ol>
+                        <li>产生两个均匀随机变量 $R_1, R_2$；</li>
+                        <li>建立 $f(x)$ 的预随机变量 $x = a + (b-a)R_1$；</li>
+                        <li>检验 $R_2 \leq f[a + (b-a)R_1]/M$ 是否成立；</li>
+                        <li>若不等式成立，则 $x = a + (b-a)R_1$ 作为模拟数据；</li>
+                        <li>若不等式不成立，则产生两个新的随机数重新进行检验。</li>
+                    </ol>
+                    
+                    <div class="note">
+                        <strong>例 15.8</strong> 产生 $\beta$ 分布的随机模拟数据。
+                        
+                        <p><strong>解</strong> $\beta$ 分布由下面的密度函数定义：</p>
+                        <div class="formula">
+                            $$f(x) = \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)\Gamma(\beta)} x^{\alpha-1}(1-x)^{\beta-1} \quad (0 \leq x \leq 1)$$
+                        </div>
+                        
+                        <p>其中 $\alpha$ 和 $\beta$ 是分布参数，并且</p>
+                        <div class="formula">
+                            $$\Gamma(\phi) = \int_0^{\infty} x^{\phi-1} e^{-x} dx$$
+                        </div>
+                        
+                        <p>首先求出：</p>
+                        <div class="formula">
+                            $$M = \frac{\alpha - 1}{\alpha + \beta - 2}$$
+                        </div>
+                        
+                        <p>仅当 $\alpha$ 和 $\beta$ 有确定值时，$M$ 才有上述关系。具体步骤如下：</p>
+                        <ol>
+                            <li>选择 $\alpha$ 和 $\beta$；</li>
+                            <li>计算 $M = (\alpha - 1)/(\alpha + \beta - 2)$；</li>
+                            <li>产生两个随机数 $R_1$ 和 $R_2$；</li>
+                            <li>若 $R_2 M \leq f(x \equiv R_1) = \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)\Gamma(\beta)} R_1^{\alpha-1}(1-R_1)^{\beta-1}$ 成立，则 $R_1$ 作为 $\beta$ 分布的模拟数据；</li>
+                            <li>若 $R_2 M \gt f(x \equiv R_1)$，则回到第③步重新开始。</li>
+                        </ol>
+                        
+                        <p>由于舍选法只需知道概率密度函数就可以产生反映这种概率分布的模拟数据，因此适用性很广。但它的缺点是，由于对每个试验点都必须计算两个均匀分布随机数，加上有些点被舍去，因此产生一个数据平均需要计算两个以上的均匀随机数，加大了工作量；另外，应用舍选法时要求概率密度函数的变量有上下限，而一般的概率密度函数大多具有很长的尾数，并常常扩展到无穷大，因此需要截断。截断后将引起误差。但当误差很小时，可以忽略不计。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section4">
+                <h2>15.4 模拟语言简介</h2>
+                
+                <p>模拟语言是一种工具。正确使用模拟语言，是模拟设计成败的关键环节，它可以保证模拟研究的经济可行性，节省大量人力。</p>
+                
+                <p>因为模拟模型不遵循任何格式化的结构，所以在模拟程序语言中使用各种各样的方法。现简单介绍几种常用的模拟语言。</p>
+                
+                <button class="collapsible">点击展开：常用模拟语言介绍</button>
+                <div class="content">
+                    <h3>GPSS (General Purpose Simulation System)</h3>
+                    <p>GPSS是 G. Gordon 在60年代初期为 IBM 公司设计的模拟语言，它要求编译人员用模块指令建立系统的逻辑模型。模块指令将实现这种语言特有的功能。GPSS 比较适合研究存贮和排队问题。</p>
+                    
+                    <h3>SIMSCRIPT</h3>
+                    <p>SIMSCRIPT 是60年代初期由兰德公司的 H. M. Markowitz 提出，仅适用于特定的计算机系统。SIMSCRIPT 所描述的系统仅在一定的事件时间上才发生状态变化，这个系统用状态变化事件描述，并由实体组成。SIMSCRIPT 适用于事件间隔模拟模型。</p>
+                    
+                    <h3>GASP II</h3>
+                    <p>GASP II 是60年代中期由 Pritsker 在亚利桑那州立大学开发的。GASP II 把系统描述为包含各种状态变化的实体。这些实体叫做要素。每个要素都具有属性。事件的发生取决于系统状态、属性值或属性的集合。GASP II 具有很强的探测错误系统和灵活的输出格式。</p>
+                    
+                    <h3>SIMULA</h3>
+                    <p>SIMULA 是 O. Dall 和 K. Nyggard 为兰德公司设计的。它的一个特点是能够产生、取消和修正当前过程和由大量 SIMULA 控制语句建立的新过程。SIMULA 提供固定格式的输出和错误检测装置。</p>
+                    
+                    <h3>DYNAMO</h3>
+                    <p>DYNAMO 是60年代初期由麻省理工学院的 R. Fox 和 A. L. Pugh 提出，专门用于研究某些由一组有限差分方程描述的系统。DYNAMO 的实质是由固定时间推进机制和由固有的连续函数关系和运行特性离散化。DYNAMO 至今已有效地用于经济模型、大工业中心的模拟及都市、社会、世界系统模型。</p>
+                    
+                    <h3>GASP IV</h3>
+                    <p>GASP IV 是由 Pritsker 和 N. Hurst 于1973年建立。它可以编制离散的、连续的或两者均有的模拟程序。GASP IV 把 GASP II 的全部概念具体化了，两者的结构形式相同，而主要区别是对状态空间事件的定义。GASP IV 已成为广泛应用和普遍接受的模拟语言。</p>
+                </div>
+                
+                <p class="note">除前面介绍的模拟语言外，还有其他多种语言。它们或有专门用途，或在小范围内使用。</p>
+            </section>
+            
+            <section id="exercises">
+                <h2>习题 15</h2>
+                
+                <button class="collapsible">点击展开：习题 15.1</button>
+                <div class="content">
+                    <h3>15.1</h3>
+                    <p>某厂生产一种新产品，投资为5000元，现需预测未来一年的销售获利情况。有三个不确定因素，即售价、可变成本、年销售量。但已掌握这三个(相互独立的)因素的不同水平的概率分布，如表15.8、15.9、15.10。</p>
+                    
+                    <table>
+                        <caption><strong>表 15.8</strong> 售价分布</caption>
+                        <thead>
+                            <tr>
+                                <th>售价(元)</th>
+                                <th>概率</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>4</td><td>0.3</td></tr>
+                            <tr><td>5</td><td>0.5</td></tr>
+                            <tr><td>6</td><td>0.2</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <table>
+                        <caption><strong>表 15.9</strong> 单位可变成本分布</caption>
+                        <thead>
+                            <tr>
+                                <th>单位可变成本(元)</th>
+                                <th>概率</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>2</td><td>0.1</td></tr>
+                            <tr><td>3</td><td>0.6</td></tr>
+                            <tr><td>4</td><td>0.3</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <table>
+                        <caption><strong>表 15.10</strong> 年销售量分布</caption>
+                        <thead>
+                            <tr>
+                                <th>年销售量(件)</th>
+                                <th>概率</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>3000</td><td>0.2</td></tr>
+                            <tr><td>4000</td><td>0.4</td></tr>
+                            <tr><td>5000</td><td>0.4</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>现用随机模拟的方法做预测，模拟25次试验，由随机数表取三组随机数 $RN_1, RN_2, RN_3$ 依次模拟售价、单位成本和销售量，如表15.11所示。</p>
+                    
+                    <table>
+                        <caption><strong>表 15.11</strong> 模拟数据表</caption>
+                        <thead>
+                            <tr>
+                                <th>试验号码</th>
+                                <th>$RN_1$</th>
+                                <th>售价(元)</th>
+                                <th>$RN_2$</th>
+                                <th>成本(元)</th>
+                                <th>$RN_3$</th>
+                                <th>销售量(件)</th>
+                                <th>纯利润(千元)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>8</td><td></td><td>0</td><td></td><td>6</td><td></td><td></td></tr>
+                            <tr><td>2</td><td>0</td><td></td><td>4</td><td></td><td>3</td><td></td><td></td></tr>
+                            <tr><td>3</td><td>6</td><td></td><td>2</td><td></td><td>2</td><td></td><td></td></tr>
+                            <tr><td>4</td><td>1</td><td></td><td>4</td><td></td><td>0</td><td></td><td></td></tr>
+                            <tr><td>5</td><td>3</td><td></td><td>6</td><td></td><td>0</td><td></td><td></td></tr>
+                            <tr><td>6</td><td>5</td><td></td><td>6</td><td></td><td>9</td><td></td><td></td></tr>
+                            <tr><td>7</td><td>1</td><td></td><td>6</td><td></td><td>7</td><td></td><td></td></tr>
+                            <tr><td>8</td><td>3</td><td></td><td>8</td><td></td><td>6</td><td></td><td></td></tr>
+                            <tr><td>9</td><td>2</td><td></td><td>8</td><td></td><td>8</td><td></td><td></td></tr>
+                            <tr><td>10</td><td>1</td><td></td><td>6</td><td></td><td>1</td><td></td><td></td></tr>
+                            <tr><td>11</td><td>5</td><td></td><td>7</td><td></td><td>3</td><td></td><td></td></tr>
+                            <tr><td>12</td><td>9</td><td></td><td>9</td><td></td><td>6</td><td></td><td></td></tr>
+                            <tr><td>13</td><td>4</td><td></td><td>9</td><td></td><td>7</td><td></td><td></td></tr>
+                            <tr><td>14</td><td>7</td><td></td><td>2</td><td></td><td>6</td><td></td><td></td></tr>
+                            <tr><td>15</td><td>9</td><td></td><td>5</td><td></td><td>3</td><td></td><td></td></tr>
+                            <tr><td>16</td><td>0</td><td></td><td>5</td><td></td><td>0</td><td></td><td></td></tr>
+                            <tr><td>17</td><td>1</td><td></td><td>0</td><td></td><td>8</td><td></td><td></td></tr>
+                            <tr><td>18</td><td>0</td><td></td><td>6</td><td></td><td>4</td><td></td><td></td></tr>
+                            <tr><td>19</td><td>8</td><td></td><td>8</td><td></td><td>6</td><td></td><td></td></tr>
+                            <tr><td>20</td><td>9</td><td></td><td>2</td><td></td><td>4</td><td></td><td></td></tr>
+                            <tr><td>21</td><td>0</td><td></td><td>7</td><td></td><td>7</td><td></td><td></td></tr>
+                            <tr><td>22</td><td>0</td><td></td><td>0</td><td></td><td>8</td><td></td><td></td></tr>
+                            <tr><td>23</td><td>4</td><td></td><td>0</td><td></td><td>1</td><td></td><td></td></tr>
+                            <tr><td>24</td><td>6</td><td></td><td>5</td><td></td><td>8</td><td></td><td></td></tr>
+                            <tr><td>25</td><td>4</td><td></td><td>0</td><td></td><td>1</td><td></td><td></td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>(1) 试依照公式</p>
+                    <div class="formula">
+                        纯利润 = (售价 - 单位可变成本) × 销售量 - 5000
+                    </div>
+                    <p>计算各次试验模拟的纯利润和平均纯利润。</p>
+                    
+                    <p>(2) 分别计算下列三种情况发生的可能性(步骤、百分数)：①遭受损失；②不受损失但纯利润不到5000元；③纯利润在5000元以上。</p>
+                </div>
+                
+                <button class="collapsible">点击展开：习题 15.2</button>
+                <div class="content">
+                    <h3>15.2</h3>
+                    <p>假设一次车辆调度厂考虑改选用涂分厂，新厂对火车和头和车厢外部涂漆采用自动化作业线，按工序分为除锈和喷漆两部分。无论车头还是车厢均先在第Ⅰ区(除锈)前排队等待其空闲，而在除锈后在第工区内等待第Ⅱ区(喷漆)空闲再进行喷漆。车头和车厢所占百分比以及在不同区内所需时间如表15.12。</p>
+                    
+                    <table>
+                        <caption><strong>表 15.12</strong> 车辆类型和作业时间</caption>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">类型</th>
+                                <th rowspan="2">比例(%)</th>
+                                <th colspan="2">需要时间(h)</th>
+                            </tr>
+                            <tr>
+                                <th>Ⅰ区</th>
+                                <th>Ⅱ区</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>车头</td><td>20</td><td>2</td><td>3</td></tr>
+                            <tr><td>车厢</td><td>80</td><td>1</td><td>2</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>车头和车厢到达油漆分厂的数量服从泊松分布，平均每4小时有一辆到达，其中20%是车头，其余为车厢，两类是随机混合的。</p>
+                    
+                    <p>由于在Ⅱ区需要工时较多，提出两种不同方案：</p>
+                    <p>$A_1$ 在每区内设置1辆车的加工位置。</p>
+                    <p>$A_2$ 在Ⅰ区设置1辆车的加工位置，在Ⅱ区设置2辆车的加工位置。</p>
+                    
+                    <p>(1) 利用表15.13和表15.14给出的表格模拟油漆分厂30个工时内到达车头和车厢的工作情况(在两种方案下)。(注：①保证在30 h内到达的车辆完成油漆工作，即30 h后不允许再进车辆。②工时是用分小数表示的。)</p>
+                    
+                    <table>
+                        <caption><strong>表 15.13</strong> 方案1($A_1$)</caption>
+                        <thead>
+                            <tr>
+                                <th colspan="2">到达</th>
+                                <th rowspan="2">类型</th>
+                                <th colspan="2">进入时间</th>
+                                <th rowspan="2">离去时间</th>
+                                <th rowspan="2">系统内停留时间</th>
+                            </tr>
+                            <tr>
+                                <th>随机数</th>
+                                <th>时间(h)</th>
+                                <th>Ⅰ区</th>
+                                <th>Ⅱ区</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>43</td><td>2.25</td><td>75</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>29</td><td>3.62</td><td>72</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>11</td><td>4.09</td><td>04</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>50</td><td>6.86</td><td>75</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>98</td><td>22.51</td><td>41</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>14</td><td>23.11</td><td>08</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>24</td><td>24.21</td><td>25</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>61</td><td>27.98</td><td>24</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>54</td><td>31.08</td><td>36</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>02</td><td>31.16</td><td>27</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>35</td><td>32.88</td><td>92</td><td></td><td></td><td></td><td></td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <table>
+                        <caption><strong>表 15.14</strong> 方案2($A_2$)</caption>
+                        <thead>
+                            <tr>
+                                <th colspan="2">到达</th>
+                                <th rowspan="2">类型</th>
+                                <th colspan="2">进入时间</th>
+                                <th rowspan="2">离去时间</th>
+                                <th rowspan="2">系统内停留时间</th>
+                            </tr>
+                            <tr>
+                                <th>随机数</th>
+                                <th>时间(h)</th>
+                                <th>Ⅰ区</th>
+                                <th>Ⅱ区</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>43</td><td>2.25</td><td>75</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>29</td><td>3.62</td><td>72</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>11</td><td>4.09</td><td>04</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>50</td><td>6.86</td><td>75</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>98</td><td>22.51</td><td>41</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>14</td><td>23.11</td><td>08</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>24</td><td>24.21</td><td>25</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>61</td><td>27.98</td><td>24</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>54</td><td>31.08</td><td>36</td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>02</td><td>31.16</td><td>27</td><td></td><td></td><td></td><td></td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>(2) 计算在两种方案下，两类车在油漆分厂内的平均时间。</p>
+                    
+                    <p>(3) 假设方案2比方案1固定投资多500000元，而车头和车厢空闲1 h费用分别为1000元和400元，油漆分厂每年有8760个工时，如果方案2在一年内可收回固定资产产多投资部分，则管理人员认为可以采纳。计算每年各类车辆来油漆分厂喷漆的数量。请问应建议用何种方案，说明理由。</p>
+                </div>
+                
+                <button class="collapsible">点击展开：习题 15.3(填空)</button>
+                <div class="content">
+                    <h3>15.3 填空</h3>
+                    <p>系统模拟的主要步骤是 (1) 确定需模拟变量的 __________；(2) 产生均匀分布的 __________；(3) 产生需模拟变量的 __________。</p>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 管理科学基础 - 第15章 随机模拟技术</p>
+            <p>本教程基于教材内容制作，仅供学习参考使用</p>
+            <p class="note" style="margin-top: 15px; color: #f7d117;">
+                <strong>使用说明：</strong><br>
+                1. 将此文件保存为 .html 文件（如：随机模拟技术.html）<br>
+                2. 需要网络连接以加载 MathJax 和 Google Fonts<br>
+                3. 在任意现代浏览器中打开即可查看<br>
+                4. 点击橙色按钮可展开/折叠内容<br>
+                5. 使用顶部导航菜单快速跳转到各章节
+            </p>
+        </footer>
+    </div>
+    
+    <div class="back-to-top" onclick="scrollToTop()">↑</div>
+    
+    <script>
+        // 折叠/展开功能
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.classList.toggle('show');
+            });
+        });
+        
+        // 回到顶部按钮
+        const backToTop = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 页面加载完成后的提示
+        window.addEventListener('load', () => {
+            console.log('随机模拟技术教程已加载完成！');
+            console.log('提示：确保网络连接正常以加载数学公式渲染引擎 MathJax');
+        });
+    </script>
+</body>
+</html>
+<!--
+==============================================
+使用说明：
+==============================================
+1. 如何保存文件：
+   - 复制以上完整代码
+   - 新建一个文本文件
+   - 粘贴代码并保存为 .html 扩展名
+   - 例如：随机模拟技术教程.html
+
+2. 网络连接要求：
+   - 本文件需要网络连接以加载 MathJax（数学公式渲染）
+   - 需要加载 Google Fonts（中文字体）
+   - 如果离线使用，数学公式和字体可能无法正常显示
+
+3. 如何在浏览器中打开和测试：
+   - 双击 .html 文件即可在默认浏览器中打开
+   - 或右键选择"打开方式"选择浏览器
+   - 推荐使用 Chrome、Firefox、Edge 等现代浏览器
+
+4. 交互功能说明：
+   - 点击橙色按钮可展开/折叠详细内容
+   - 使用顶部导航栏快速跳转到不同章节
+   - 滚动页面时右下角会出现"回到顶部"按钮
+   - 所有链接支持平滑滚动
+
+5. 数学公式说明：
+   - 所有公式使用 LaTeX 语法编写
+   - 行内公式使用 $...$ 包围
+   - 独立公式使用 $$...$$ 包围
+   - 确保网络连接以正确渲染公式
+
+6. 响应式设计：
+   - 本页面支持桌面和移动设备查看
+   - 在不同屏幕尺寸下都能良好显示
+
+==============================================
+-->

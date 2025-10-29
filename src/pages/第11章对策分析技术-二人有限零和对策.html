@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>对策分析技术 - 二人有限零和对策 交互式教程</title>
+    
+    <!-- MathJax配置 - 完整版 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #343434 0%, #4a4a4a 100%);
+            color: #343434;
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(242, 125, 0, 0.3);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: #a6d6c9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        nav h3 {
+            color: #343434;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        nav ul {
+            list-style: none;
+        }
+        
+        nav li {
+            margin: 8px 0;
+        }
+        
+        nav a {
+            color: #343434;
+            text-decoration: none;
+            padding: 8px 15px;
+            display: block;
+            border-radius: 5px;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        nav a:hover {
+            background: #ffffff;
+            border-left-color: #f27d00;
+            transform: translateX(5px);
+        }
+        
+        .content {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        section {
+            margin-bottom: 50px;
+            scroll-margin-top: 100px;
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        h3 {
+            color: #343434;
+            font-size: 1.5em;
+            margin: 30px 0 20px 0;
+            padding-left: 15px;
+            border-left: 5px solid #f7d117;
+        }
+        
+        h4 {
+            color: #f27d00;
+            font-size: 1.2em;
+            margin: 20px 0 15px 0;
+        }
+        
+        p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        
+        .example-box {
+            background: linear-gradient(135deg, #f7d117 0%, #ffd700 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 6px solid #f27d00;
+            box-shadow: 0 5px 15px rgba(247, 209, 23, 0.3);
+        }
+        
+        .example-box h4 {
+            color: #343434;
+            margin-top: 0;
+        }
+        
+        .definition-box {
+            background: #a6d6c9;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border: 3px solid #8cc4b3;
+        }
+        
+        .definition-box strong {
+            color: #f27d00;
+            font-size: 1.1em;
+        }
+        
+        .collapsible {
+            background: #f27d00;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            border-radius: 8px;
+            margin: 15px 0;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .collapsible:hover {
+            background: #ff9933;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.4);
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border-radius: 0 0 8px 8px;
+            padding: 0 20px;
+        }
+        
+        .collapsible-content.active {
+            padding: 20px;
+            border: 2px solid #a6d6c9;
+            border-top: none;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: #f27d00;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .matrix {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 2px solid #a6d6c9;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .formula-display {
+            background: #f9f9f9;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+            border-left: 5px solid #f27d00;
+            overflow-x: auto;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 5px solid #f7d117;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 5px;
+        }
+        
+        .note::before {
+            content: "📝 注意：";
+            font-weight: bold;
+            color: #f27d00;
+        }
+        
+        ul, ol {
+            margin: 20px 0 20px 40px;
+        }
+        
+        li {
+            margin: 10px 0;
+        }
+        
+        code {
+            background: #343434;
+            color: #f7d117;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            font-size: 24px;
+            z-index: 1000;
+        }
+        
+        .back-to-top:hover {
+            background: #ff9933;
+            transform: translateY(-5px);
+        }
+        
+        footer {
+            background: #343434;
+            color: #ffffff;
+            text-align: center;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            nav {
+                position: relative;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 对策分析技术</h1>
+            <p>第11章：二人有限零和对策</p>
+        </header>
+        
+        <nav id="navbar">
+            <h3>📑 目录导航</h3>
+            <ul>
+                <li><a href="#section1">11.1 基本概念</a></li>
+                <li><a href="#section2">11.2 纯策略对策模型</a></li>
+                <li><a href="#section3">11.3 混合策略对策模型</a></li>
+                <li><a href="#exercises">练习题</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <section id="section1">
+                <h2>11.1 基本概念</h2>
+                
+                <h3>11.1.1 对策现象与对策论</h3>
+                
+                <button class="collapsible">对策和对策论</button>
+                <div class="collapsible-content">
+                    <p>在日常生活中及各种领域内，经常可以看到一些充满着竞争、对抗、冲突的现象。<span class="highlight">对策论</span>是研究上述现象的数学理论与方法。它是一种理论模型，其中包括参加者所掌握的全部信息及可能采取的行动等。</p>
+                    
+                    <p>对策论把各式各样的冲突现象抽象成一种数学模型，然后给出分析这些问题的方法和解。应该说明的是，所谓解是指对策中的所有参加者都按最佳策略行动而得到的结果。对策论的研究中一般都假设：在对策中所有参加者都是"完全理智"的，在采取的策略上没有任何失误。</p>
+                </div>
+                
+                <button class="collapsible">对策理论的历史</button>
+                <div class="collapsible-content">
+                    <p>在人类生活中到处都存在着"冲突"，所以人类在处理对策问题方面已有一个很长的历史。在我国春秋战国时期形成的"孙子兵法"就是运用对策知识于战争中的经验总结。围棋也是一种对策形式，它发明于我国殷代。自19世纪，西方人开始把对策知识应用于经济领域。</p>
+                    
+                    <p>对策作为一种数学理论开始于1944年。<span class="highlight">纽曼（Neumann）和摩根斯坦（Morgenstern）</span>发表了题为《对策论及在经济领域中的应用》的著作之后，很快引起了数学家、社会学家和经济学家的极大兴趣。对策论之所以能在40年代得到迅速发展，主要原因是第二次世界大战中在军事问题上，人们总想找到一种对策模型，从而能得到正确的解。第二次世界大战结束后，人们又想到把对策理论应用到非军事的各个领域。特别是20世纪90年代以来对策理论在金融、管理和经济领域中得到了广泛应用。</p>
+                </div>
+                
+                <h3>对策问题举例</h3>
+                
+                <div class="example-box">
+                    <h4>例1：中国的游戏——"剪刀、石头、布"</h4>
+                    <p>这在中国的孩子中广泛流行。当二个孩子在玩游戏之前决定先后顺序时，他们先作"猜手"方法是：每个人有布（五指平伸），石头（拳头）和剪子（食指和中指平伸，其余三指弯曲收紧）三种手势，玩时二个孩子独立地选择三种手势中的任何一种，然后同时展示给对方。决定胜负的规则是：布胜石头，石头胜剪子，剪子胜布。如果二个孩子同时伸出了相同的手势，就算成一次平局，这需要继续猜，直至决出胜负为止。</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例2：囚徒困境</h4>
+                    <p>假设有二个人被怀疑有抢劫犯罪行为而被捕，并被分别关在二个牢房里，互相不许接触。这二个人确实犯了抢劫罪，可这二个人都清楚，如果他们都不坦白，那么就没有足够的证据指控他们犯罪，而只能因藏有枪支而被判1年徒刑；如果两个人都坦白了，则每个人都判9年徒刑；如果一个坦白，而另一个不坦白，则坦白的被无罪释放，而不坦白的则要判10年徒刑。这二个人应该怎样做呢？</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例3：齐王赛马</h4>
+                    <p>战国时期，齐国国王有一天提出要与大将军田忌赛马。田忌答应后，双方约定：</p>
+                    <ol>
+                        <li>每人从上中下三个等级中各出一匹马，共出三匹；</li>
+                        <li>一共比赛三次，每一次比赛各出一匹马；</li>
+                        <li>每匹被选中的马都得参加比赛，而且只能参加一次；</li>
+                        <li>每次比赛后输者要付给胜者一千金。</li>
+                    </ol>
+                    
+                    <p>当时在三个不同等级中，齐王的马要比田忌的强些，看来田忌要输给齐王三千金了。但由于田忌采用了谋士孙膑的意见，最终反败为胜。谋士的主意是：</p>
+                    <ol>
+                        <li>每次比赛前先让齐王说出他要出哪匹马；</li>
+                        <li>让田忌用下马对齐王上马；</li>
+                        <li>用中马对齐王下马；</li>
+                        <li>用上马对齐王中马。</li>
+                    </ol>
+                </div>
+                
+                <h3>对策的分类</h3>
+                <p>对策可分为<span class="highlight">静态对策</span>与<span class="highlight">动态对策</span>两大类。而静态对策又可分为二人对策和多人对策二种，多人对策又可分为结盟对策和不结盟对策。此外，根据策略集的有限或无限，得失函数是否为零，又可分为种类型的对策模型，如图11.1所示。</p>
+                
+                <div class="formula-display" style="text-align: center; padding: 30px;">
+                    <strong>对策分类结构图</strong><br><br>
+                    对策<br>
+                    ├── 动态对策<br>
+                    └── 静态对策<br>
+                        ├── 微分对策<br>
+                        └── 多人对策<br>
+                            ├── 结盟对策<br>
+                            │   ├── 零和对策<br>
+                            │   └── 非零和对策<br>
+                            └── 不结盟对策<br>
+                                └── 二人对策<br>
+                                    ├── 零和对策<br>
+                                    ├── 非零和对策<br>
+                                    ├── 零和对策<br>
+                                    └── 非零和对策<br>
+                </div>
+                
+                <h3>11.1.2 对策问题的组成</h3>
+                
+                <p>一般对策问题中有如下几个基本要素，即<span class="highlight">局中人、策略、局势、得失值</span>。</p>
+                
+                <div class="definition-box">
+                    <strong>1. 局中人（参加者）</strong>
+                    <p>对策中有决策权的参加者称为局中人。在齐王赛马的例子中，田忌是局中人，而孙膑不是。局中人除理解为个人外，还可理解为集体。有时大自然也可理解为局中人。为了便于研究问题，在对策中一些利益完全一致的参加者们可以结合成为一个联盟。他们并心合力、相互配合、统一行动，称为结盟的一种形式。如桥牌游戏中，虽然有四个人参加，但只组成两个局中人。</p>
+                </div>
+                
+                <div class="definition-box">
+                    <strong>2. 策略与策略集合</strong>
+                    <p>一局对策中，把局中人的一个可行的行动方案称为他的一个策略。策略可以只含有一步行动方案。在比较复杂的对策中，可以是由自始至终指导行动的一系列步骤组成，如在齐王赛马的例子中，参加者双方的每个策略中都含有三个行动方案。通常一个局中人有好几个策略可供选择，把局中人的策略全体叫<span class="highlight">策略集合</span>。用</p>
+                    <div class="formula-display">
+                        $$S = \{s_1, s_2, \cdots, s_m\}$$
+                    </div>
+                    <p>表示局中人甲的策略集合，$s_i$ 为局中人甲可选择的策略。同样用</p>
+                    <div class="formula-display">
+                        $$D = \{d_1, d_2, \cdots, d_n\}$$
+                    </div>
+                    <p>表示局中人乙的策略集合，$d_j$ 为局中人乙可选择的策略。</p>
+                </div>
+                
+                <div class="definition-box">
+                    <strong>3. 局势</strong>
+                    <p>当每个局中人从各自策略集合中选择一策略而组成的策略组称为一个局势，用$(s_i, d_j)$表示。</p>
+                </div>
+                
+                <div class="definition-box">
+                    <strong>4. 得失值</strong>
+                    <p>得失值是指局中人选定某局势后相应的收益值，又称支付。例如，当局中人甲选择 $s_i$ 策略和局中人乙选$d_j$ 策略时，局中人甲的得失值可用 $R_{\text{甲}}(s_i, d_j)$ 表示。局中人乙的得失值可用 $R_{\text{乙}}(s_i, d_j)$ 表示。显然"得失值"是局势的函数。这个得失值既可以是一般意义下的收益或损失，也可以是局中人对局势的效用值。</p>
+                </div>
+            </section>
+            
+            <section id="section2">
+                <h2>11.2 二人有限零和对策的纯策略对策模型</h2>
+                
+                <p>二人有限零和对策的特点是：</p>
+                <ol>
+                    <li>对策中只有两个局中人，双方的策略集
+                        <div class="formula-display">
+                            $$S = \{s_1, s_2, \cdots, s_m\} \text{ 和 } D = \{d_1, d_2, \cdots, d_n\}$$
+                        </div>
+                        均是有限集；
+                    </li>
+                    <li>在零和对策中，双方收益之和为零，甲的收益就是乙的损失，即 $R_{\text{甲}}(s_i, d_j) = -R_{\text{乙}}(s_i, d_j)$。</li>
+                </ol>
+                
+                <p>所以，在两人零和对策中，只需分析局中人甲的得失即可。通常可以用支付矩阵 $\mathbf{A} = [a_{ij}]_{m \times n}$ 表示，其中 $a_{ij} = R_{\text{甲}}(s_i, d_j)$。因此，二人有限零和对策又称矩阵对策。</p>
+                
+                <h3>11.2.1 纯策略对策模型</h3>
+                
+                <p>人们称 $G = \{S, D, \mathbf{A}\}$ 为一个纯策略对策模型，其中 $S = \{s_1, s_2, \cdots, s_m\}$，$D = \{d_1, d_2, \cdots, d_n\}$ 分别为局中人甲和乙的策略集合，$\mathbf{A} = [a_{ij}]_{m \times n}$ 为局中人甲的支付矩阵。</p>
+                
+                <h3>11.2.2 纯策略对策的解</h3>
+                
+                <h4>1. 纯策略分析</h4>
+                
+                <p>对策中，双方局中人都将确定自己的最佳策略。其实质也是一个决策过程。因此每个局中人同样首先得对自己的各个策略（行动方案）按某准则制作一评价，只是在对策中要充分考虑对方的策略选择所造成的影响，实际是一种竞争性决策。</p>
+                
+                <div class="definition-box">
+                    <p>局中人甲认为当自己选择 $s_i$ 策略时，对方必然选择对自己最不利的策略，即使自己<span class="highlight">得失值最小的策略</span>。因此局中人甲对每个策略 $s_i$ 的评价值为 $f(s_i)$。</p>
+                    <div class="formula-display">
+                        $$s_i \xrightarrow{\text{评价}} f(s_i) = \min_j a_{ij}$$
+                    </div>
+                    <p>因此局中人甲选择的策略模型为</p>
+                    <div class="formula-display">
+                        $$s_i^* \leftarrow \max_i f(s_i) = \max_i \min_j a_{ij} = V_{\max}$$
+                    </div>
+                </div>
+                
+                <p>同样，局中人乙认为自己选择策略 $d_j$ 时，局中人甲会选择对乙最不利的策略，即使局中人甲收益最大的策略。因此，他对策略 $d_j$ 的评价值$g(d_j)$为</p>
+                <div class="formula-display">
+                    $$d_j \xrightarrow{\text{评价}} g(d_j) = \max_i a_{ij}$$
+                </div>
+                
+                <p>因此局中人乙确定策略的决策模型为</p>
+                <div class="formula-display">
+                    $$d_j^* \leftarrow \min_j g(d_j) = \min_j \max_i a_{ij} = V_{\min}$$
+                </div>
+                
+                <h4>2. 纯策略对策模型的解</h4>
+                
+                <div class="definition-box">
+                    <strong>(1) 鞍点与解</strong>
+                    <p>对于一个对策 $G = \{S, D, \mathbf{A}\}$。如果有</p>
+                    <div class="formula-display">
+                        $$\max_i \min_j a_{ij} = \min_j \max_i a_{ij} = a_i^* j^*$$
+                    </div>
+                    <p>则称局势$(s_i^*, d_j^*)$为对策 $G$ 的一个<span class="highlight">鞍点</span>，$s_i^*$ 为甲的最优纯策略，$d_j^*$ 为乙的最优纯策略。$V = a_i^* j^*$ 为对策 $G$ 之值，$(s_i^*, d_j^*)$ 为对策的一个解。此时称对策 $G$ 有解。</p>
+                </div>
+                
+                <p>对于一个对策 $G$，很容易证明下述定理。</p>
+                
+                <div class="definition-box">
+                    <strong>定理11.1</strong> 对于纯策略对策 $G = \{S, D, \mathbf{A}\}$，总有
+                    <div class="formula-display">
+                        $$\min_j \max_i a_{ij} \geq \max_i \min_j a_{ij}$$
+                    </div>
+                    <p>显然，对局中人甲而言，不管乙采用什么策略，他至少能得到的得失值为 $V_L = \max_i \min_j a_{ij}$；而对局中人乙而言，他能保证在任何情况下，甲的得失值不会超过 $V_U = \min_j \max_i a_{ij}$。一般称 $V_L$ 与 $V_U$ 为对策的下、上限值，而在对策中 $V_L = V_U$ 时，此对策有一个鞍点，或称对策有解。</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例11.1</h4>
+                    <p>设一对策 $G = \{S, D, \mathbf{A}\}$，其中 $S = \{s_1, s_2, s_3\}$，$D = \{d_1, d_2, d_3\}$，其支付矩阵为</p>
+                    <div class="formula-display">
+                        $$\mathbf{A} = \begin{bmatrix}
+                        3 & 1 & 2 \\
+                        6 & 0 & -3 \\
+                        -5 & -1 & 4
+                        \end{bmatrix}$$
+                    </div>
+                    <p>问：双方局中人采用何策略最佳。</p>
+                    
+                    <p><strong>解</strong> 可用下述表格表示上述寻找最优纯策略的过程：</p>
+                    
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th>$d_1$</th>
+                            <th>$d_2$</th>
+                            <th>$d_3$</th>
+                            <th>$f(s_i) = \min_j a_{ij}$</th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td>$s_1$</td>
+                            <td>3</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>1</td>
+                            <td>$V_L = \max_i \min_j a_{ij} = 1$</td>
+                        </tr>
+                        <tr>
+                            <td>$s_2$</td>
+                            <td>6</td>
+                            <td>0</td>
+                            <td>-3</td>
+                            <td>-3</td>
+                            <td>$V_U = \min_j \max_i a_{ij} = 1$</td>
+                        </tr>
+                        <tr>
+                            <td>$s_3$</td>
+                            <td>-5</td>
+                            <td>-1</td>
+                            <td>4</td>
+                            <td>-5</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>$g(d_j) = \max_i a_{ij}$</td>
+                            <td>6</td>
+                            <td>1</td>
+                            <td>4</td>
+                            <td>$V_L = V_U = a_{12} = 1$</td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    
+                    <p>因为 $V_L = V_U = 1$，显然此对策有解，局势$(s_1, d_2)$构成一个鞍点，局中人甲的最优策略为 $s_1$，局中人乙的最优策略为 $d_2$，对策值 $V = 1$。</p>
+                </div>
+                
+                <div class="definition-box">
+                    <strong>(2) 多鞍点与无鞍点对策</strong>
+                    <p>对于一个纯策略 $G$，并非一定只存在唯一鞍点。从下面二例可发现，对于一个对策有可能有多个鞍点（多个解），或者根本不存在鞍点，即无纯策略解的情况。</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例11.2</h4>
+                    <p>设有一矩阵对策为</p>
+                    <div class="formula-display">
+                        $$\mathbf{A} = \begin{bmatrix}
+                        6 & 5 & 6 & 5 \\
+                        1 & 4 & 2 & -1 \\
+                        8 & 5 & 7 & 5 \\
+                        0 & 2 & 6 & 2
+                        \end{bmatrix}$$
+                    </div>
+                    <p>求它的解。</p>
+                    
+                    <p><strong>解</strong></p>
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th>$d_1$</th>
+                            <th>$d_2$</th>
+                            <th>$d_3$</th>
+                            <th>$d_4$</th>
+                            <th>$f(s_i)$</th>
+                        </tr>
+                        <tr>
+                            <td>$s_1$</td>
+                            <td>6</td>
+                            <td>5</td>
+                            <td>6</td>
+                            <td>5</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>$s_2$</td>
+                            <td>1</td>
+                            <td>4</td>
+                            <td>2</td>
+                            <td>-1</td>
+                            <td>-1</td>
+                        </tr>
+                        <tr>
+                            <td>$s_3$</td>
+                            <td>8</td>
+                            <td>5</td>
+                            <td>7</td>
+                            <td>5</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>$s_4$</td>
+                            <td>0</td>
+                            <td>2</td>
+                            <td>6</td>
+                            <td>2</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>$g(d_j)$</td>
+                            <td>8</td>
+                            <td>5</td>
+                            <td>7</td>
+                            <td>5</td>
+                            <td>5</td>
+                        </tr>
+                    </table>
+                    
+                    <p>$V = \min_j \max_i a_{ij} = \max_j \min_i a_{ij} = 5$</p>
+                    
+                    <p>对策有解，解值 $V = 5$，但局势$(s_1, d_2)$，$(s_1, d_4)$，$(s_3, d_2)$，$(s_3, d_4)$均构成鞍点。此对策有多个解。</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例11.3</h4>
+                    <p>矩阵对策支付矩阵</p>
+                    <div class="formula-display">
+                        $$\mathbf{A} = \begin{bmatrix}
+                        1 & 0 \\
+                        -4 & 3
+                        \end{bmatrix}$$
+                    </div>
+                    <p>求它的解。</p>
+                    
+                    <p><strong>解</strong></p>
+                    <div class="formula-display">
+                        $$V_L = \max_i \min_j a_{ij} = \max\{0, -4\} = 0$$
+                        $$V_U = \min_j \max_i a_{ij} = \min\{1, 3\} = 1$$
+                        $$V_L < V_U, \text{则对策无鞍点，即无解。}$$
+                    </div>
+                </div>
+                
+                <p>从例11.1可看出，纯策略 $G$ 的鞍点$(s_1, d_2)$对应的元素 $a_{12}$既所在行的最小元素，又是其所在列的最大元素，即有</p>
+                <div class="formula-display">
+                    $$a_{i2} \leq a_{12} \leq a_{1j} \quad (i = 1, 2, \cdots, m; j = 1, 2, \cdots, n)$$
+                </div>
+                
+                <p>例11.2也存在上述情况。将这一事实推广到一般纯策略，可得如下定理。</p>
+                
+                <div class="definition-box">
+                    <strong>定理11.2</strong> 纯策略对策 $G = \{S, D, \mathbf{A}\}$ 有解的充要条件是：存在局势$(s_i^*, d_j^*)$，使得对任意 $i = 1, 2, \cdots, m$ 和 $j = 1, 2, \cdots, n$，均有
+                    <div class="formula-display">
+                        $$a_{ij^*} \leq a_{i^*j^*} \leq a_{i^*j}$$
+                    </div>
+                    
+                    <p class="note">参考文献1已经给出了上述定理的证明，有兴趣的读者可以查看并试证。</p>
+                </div>
+                
+                <h4>(3) 优超原理</h4>
+                
+                <div class="definition-box">
+                    <p>对于一个对策 $G = \{S, D, \mathbf{A}\}$，对 $s_k \in S$ 至少存在一个策略 $s_i \in S$，满足</p>
+                    <div class="formula-display">
+                        $$a_{ij} \geq a_{kj} \quad (j = 1, \cdots, n)$$
+                    </div>
+                    <p>称 $s_i$ 为局中人甲的一个<span class="highlight">劣策略</span>。因为在任何情况下，策略 $s_i$ 都优于策略 $s_k$，则在对策分析中可不考虑 $s_k$，且可从策略集 $S$ 中取消它。同时，可在支付矩阵 $\mathbf{A}$ 中删去第$k$ 行支付值。同样对局中人乙也如此。若策略 $d_j$ 与$d_k$ 满足</p>
+                    <div class="formula-display">
+                        $$a_{ik} \geq a_{ij} \quad (i = 1, \cdots, m)$$
+                    </div>
+                    <p>认为策略 $d_j$ 优于$d_k$，可从 $D$ 中删去$d_k$，并从 $\mathbf{A}$ 矩阵中删去第$k$ 列支付值。用此方法来降低支付矩阵的阶数，从而简化问题，称此为<span class="highlight">优超原理</span>。</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例11.4</h4>
+                    <p>利用优超原理求解下列对策。</p>
+                    <div class="formula-display">
+                        <table style="border: none; box-shadow: none;">
+                            <tr>
+                                <td style="border: none;"></td>
+                                <td style="border: none;">$d_1$</td>
+                                <td style="border: none;">$d_2$</td>
+                                <td style="border: none;">$d_3$</td>
+                            </tr>
+                            <tr>
+                                <td style="border: none;">$s_1$</td>
+                                <td style="border: none;">0</td>
+                                <td style="border: none;">2</td>
+                                <td style="border: none;">1</td>
+                            </tr>
+                            <tr>
+                                <td style="border: none;">$s_2$</td>
+                                <td style="border: none;">2</td>
+                                <td style="border: none;">2</td>
+                                <td style="border: none;">3</td>
+                            </tr>
+                            <tr>
+                                <td style="border: none;">$s_3$</td>
+                                <td style="border: none;">1</td>
+                                <td style="border: none;">3</td>
+                                <td style="border: none;">3</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p><strong>解</strong> 首先利用优超原理将上述矩阵对策降维</p>
+                    
+                    <p>（详细的降维过程略）</p>
+                    
+                    <p>其中的符号$\leftarrow$表示优于。对于 $\mathbf{A}$，$\max_i \min_j a_{ij} = \min_j \max_i a_{ij} = 2$，即对策解或鞍点为$(s_2, d_2)$，对策的值为2。</p>
+                    
+                    <p>简化矩阵时还有一个有用的性质：将矩阵中的元素都加上或乘以一个非零数，所得矩阵相应的对策与原矩阵相应的对策同解，只是值要相应加上或乘以该数。</p>
+                </div>
+            </section>
+            
+            <section id="section3">
+                <h2>11.3 二人有限零和对策的混合策略对策模型</h2>
+                
+                <h3>11.3.1 混合策略对策的基本概念</h3>
+                
+                <p>在一局纯策略矩阵对策中没有鞍点，或者对策要进行多次时，任一方坚持采用一种固定的策略是不明智的，如同在上节所述的中国儿童的对策游戏"猜手"。如果进行多次，哪一个孩子也不会只出一种手势，而是有时出"剪子"，有时出"布"，有时出"石头"。所以对无鞍点对策$(V_L \neq V_U)$的求解方法是采用混合策略。<span class="highlight">混合策略</span>就是局中人考虑以某种概率分布来选择他的各个策略。</p>
+                
+                <h4>1. 混合策略</h4>
+                
+                <div class="definition-box">
+                    <p>$m$ 维概率向量 $\mathbf{x} = [x_1 \quad x_2 \quad \cdots \quad x_m]^{\text{T}}$，$\sum_{i=1}^m x_i = 1$，$x_i \geq 0$ $(i = 1, 2, \cdots, m)$ 称为局中人甲的一个混合策略，即局中人甲选择策略 $s_i$ 的概率为$x_i$。$n$ 维概率向量 $\mathbf{y} = [y_1 \quad y_2 \quad \cdots \quad y_n]^{\text{T}}$，$\sum_{j=1}^n y_j = 1$，$y_j \geq 0$ $(j = 1, \cdots, n)$ 称为乙的一个混合策略。局中人乙选择策略 $d_j$ 的概率为$y_j$ $(j = 1, 2, \cdots, n)$。</p>
+                </div>
+                
+                <h4>2. 混合策略集合</h4>
+                
+                <p>人们称集合</p>
+                <div class="formula-display">
+                    $$S^* = \left\{\mathbf{x} = [x_1 \quad x_2 \quad \cdots \quad x_m]^{\text{T}} \left| \sum_{i=1}^m x_i = 1, x_i \geq 0 \right. \right\}$$
+                </div>
+                <p>为甲的混合策略集合；</p>
+                <div class="formula-display">
+                    $$D^* = \left\{\mathbf{y} = [y_1 \quad y_2 \quad \cdots \quad y_n]^{\text{T}} \left| \sum_{j=1}^n y_j = 1, y_j \geq 0 \right. \right\}$$
+                </div>
+                <p>为乙的混合策略集合。</p>
+                
+                <h4>3. 混合局势</h4>
+                <p>当局中人甲选择混合策略 $\mathbf{x}$，乙选择混合策略 $\mathbf{y}$ 时，称$(\mathbf{x}, \mathbf{y})$为一个混合局势。</p>
+                
+                <h4>4. 收益期望值</h4>
+                <p>对于一个混合局势$(\mathbf{x}, \mathbf{y})$，用</p>
+                <div class="formula-display">
+                    $$E(\mathbf{x}, \mathbf{y}) = \sum_{i=1}^m x_i \left(\sum_{j=1}^n a_{ij}y_j\right) = \mathbf{x}^{\text{T}} \mathbf{A} \mathbf{y}$$
+                </div>
+                <p>表示局中人甲在混合局势$(\mathbf{x}, \mathbf{y})$时的收益期望值。</p>
+                
+                <h4>5. 混合策略对策模型</h4>
+                <p>对于一个纯策略对策 $G = (S, D, \mathbf{A})$，用 $G^* = (S^*, D^*, E)$ 表示一个与之相应的混合策略矩阵对策，也称 $G$ 的一个混合扩充。</p>
+                
+                <h3>11.3.2 混合策略对策的解</h3>
+                
+                <h4>1. 混合策略分析</h4>
+                
+                <p>混合策略对策 $G^* = (S^*, D^*, E)$ 仍然是一个竞争性决策问题。局中人在选择混合策略时，也首先得对其各混合策略进行评价，在评价时应考虑对方可能采用的混合策略。</p>
+                
+                <p>局中人甲选择混合策略 $\mathbf{x}$ 时，认为乙必采用使甲期望收益最小的混合策略 $\mathbf{y}_*$，所以局中人甲对其混合策略的评价函数为</p>
+                <div class="formula-display">
+                    $$f(\mathbf{x}) = \min_{\mathbf{y} \in D^*} E(\mathbf{x}, \mathbf{y}) = \min_{\mathbf{y} \in D^*} \mathbf{x}^{\text{T}} \mathbf{A} \mathbf{y}$$
+                    $$f(\mathbf{x}) = \min_{\mathbf{y} \in D^*} E(\mathbf{x}, \mathbf{y}) = E(\mathbf{x}, \mathbf{y}_*)$$
+                </div>
+                
+                <p>局中人甲的策略决策模型为</p>
+                <div class="formula-display">
+                    $$\max_{\mathbf{x} \in S^*} f(\mathbf{x}) = \max_{\mathbf{x} \in S^*} \min_{\mathbf{y} \in D^*} E(\mathbf{x}, \mathbf{y}) = E(\mathbf{x}^*, \mathbf{y}_*) \rightarrow \mathbf{x}^*$$
+                </div>
+                
+                <p>同样，局中人乙若采用混合策略 $\mathbf{y}$，认为甲必采用使甲期望收益最大的混合策略，所以局中人乙对其混合策略的评价函数为</p>
+                <div class="formula-display">
+                    $$g(\mathbf{y}) = \max_{\mathbf{x} \in S^*} E(\mathbf{x}, \mathbf{y}) = \max_{\mathbf{x} \in S^*} \mathbf{x}^{\text{T}} \mathbf{A} \mathbf{y}$$
+                    $$g(\mathbf{y}) = \max_{\mathbf{x} \in S^*} E(\mathbf{x}, \mathbf{y}) = E(\mathbf{x}_*, \mathbf{y})$$
+                </div>
+                
+                <p>局中人乙的策略决策模型为</p>
+                <div class="formula-display">
+                    $$\min_{\mathbf{y} \in D^*} g(\mathbf{y}) = \min_{\mathbf{y} \in D^*} \max_{\mathbf{x} \in S^*} E(\mathbf{x}, \mathbf{y}) = E(\mathbf{x}_*, \mathbf{y}^*) \rightarrow \mathbf{y}^*$$
+                </div>
+                
+                <p>容易证明下列定理。</p>
+                
+                <div class="definition-box">
+                    <strong>定理11.3</strong> 设 $G^* = (S^*, D^*, E)$ 是混合策略对策，那么必有
+                    <div class="formula-display">
+                        $$E(\mathbf{x}_*, \mathbf{y}^*) = \min_{\mathbf{y} \in D^*} \max_{\mathbf{x} \in S^*} E(\mathbf{x}, \mathbf{y}) \geq \max_{\mathbf{x} \in S^*} \min_{\mathbf{y} \in D^*} E(\mathbf{x}, \mathbf{y}) = E(\mathbf{x}^*, \mathbf{y}_*)$$
+                    </div>
+                    
+                    <p><strong>证明</strong> 因为</p>
+                    <div class="formula-display">
+                        $$f(\mathbf{x}) \leq E(\mathbf{x}, \mathbf{y}) \leq g(\mathbf{y})$$
+                        $$\min_{\mathbf{y}} E(\mathbf{x}, \mathbf{y}) \leq E(\mathbf{x}, \mathbf{y}) \leq \max_{\mathbf{x}} E(\mathbf{x}, \mathbf{y})$$
+                    </div>
+                    <p>所以</p>
+                    <div class="formula-display">
+                        $$E(\mathbf{x}^*, \mathbf{y}_*) = \max_{\mathbf{x} \in S^*} f(\mathbf{x}) \leq \min_{\mathbf{y} \in D^*} g(\mathbf{y}) = E(\mathbf{x}_*, \mathbf{y}^*)$$
+                    </div>
+                </div>
+                
+                <h4>2. 混合策略对策的解</h4>
+                
+                <p>如果混合策略对策 $G^* = (S^*, D^*, E)$ 满足</p>
+                <div class="formula-display">
+                    $$E(\mathbf{x}^*, \mathbf{y}_*) = \max_{\mathbf{x} \in S^*} \min_{\mathbf{y} \in D^*} E(\mathbf{x}, \mathbf{y}) = \min_{\mathbf{y} \in D^*} \max_{\mathbf{x} \in S^*} E(\mathbf{x}, \mathbf{y}) = E(\mathbf{x}_*, \mathbf{y}^*)$$
+                </div>
+                
+                <p>根据定理11.2，必有</p>
+                <div class="formula-display">
+                    $$E(\mathbf{x}^*, \mathbf{y}_*) = E(\mathbf{x}^*, \mathbf{y}^*) = E(\mathbf{x}_*, \mathbf{y}^*)$$
+                </div>
+                
+                <p>则称混合局势$(\mathbf{x}^*, \mathbf{y}^*)$为 $G^*$ 的一个鞍点。$\mathbf{x}^*$ 为甲的最优混合策略，$\mathbf{y}^*$ 为乙的最优混合策略，$V = E(\mathbf{x}^*, \mathbf{y}^*)$ 为混合策略对策 $G^*$ 的值，$(\mathbf{x}^*, \mathbf{y}^*)$ 为 $G^*$ 的一个解。</p>
+                
+                <div class="definition-box">
+                    <strong>定理11.4</strong> 混合策略对策 $G^* = \{S^*, D^*, E\}$ 有解的充要条件是：存在 $\mathbf{x}^* \in S^*$，$\mathbf{y}^* \in D^*$，使得对任意 $\mathbf{x} \in S^*$，$\mathbf{y} \in D^*$，均有
+                    <div class="formula-display">
+                        $$E(\mathbf{x}, \mathbf{y}^*) \leq E(\mathbf{x}^*, \mathbf{y}^*) \leq E(\mathbf{x}^*, \mathbf{y})$$
+                    </div>
+                    
+                    <p>证明过程同定理11.2，只需将 $a_{ij}$ 或成$E(\mathbf{x}, \mathbf{y})$，读者可自证之。</p>
+                    
+                    <p>假设得失矩阵 $\mathbf{A} = [a_{ij}]_{m \times n}$ 中$a_{ij} > 0$，否则可取一充分大的正数 $M > 0$，使得</p>
+                    <div class="formula-display">
+                        $$a'_{ij} = a_{ij} + M > 0 \quad (i = 1, 2, \cdots, m; j = 1, 2, \cdots, n)$$
+                    </div>
+                    <p>并构成新的得失矩阵</p>
+                    <div class="formula-display">
+                        $$\mathbf{A}' = [a'_{ij}]_{m \times n}$$
+                    </div>
+                    <p>和纯策略矩阵对策</p>
+                    <div class="formula-display">
+                        $$G_1 = (S, D, \mathbf{A}')$$
+                    </div>
+                    
+                    <p>对于 $G = (S, D, \mathbf{A})$ 和 $G_1 = (S, D, \mathbf{A}')$ 及对应的混合策略对策 $G^* = (S^*, D^*, E)$ 和 $G_1^* = (S^*, D^*, E')$，考虑它们的期望收益函数 $E(\mathbf{x}, \mathbf{y})$ 和 $E_1(\mathbf{x}, \mathbf{y})$，有</p>
+                    <div class="formula-display">
+                        $$E_1(\mathbf{x}, \mathbf{y}) = \sum_{i=1}^m \sum_{j=1}^n a'_{ij} x_i y_j = \sum_{i=1}^m \sum_{j=1}^n (a_{ij} + M) x_i y_j$$
+                        $$= \sum_{i=1}^m \sum_{j=1}^n a_{ij} x_i y_j + M \cdot \sum_{i=1}^m \sum_{j=1}^n x_i y_j$$
+                        $$= E(\mathbf{x}, \mathbf{y}) + M$$
+                    </div>
+                    
+                    <p>由此可得如下定理。</p>
+                </div>
+                
+                <div class="definition-box">
+                    <strong>定理11.5</strong> 若 $G^*$ 有解$(\mathbf{x}^*, \mathbf{y}^*)$，则 $G_1^*$ 也有解$(\mathbf{x}^*, \mathbf{y}^*)$，且对策值相差 $M$，即 $V_1 = V + M$。
+                </div>
+                
+                <h4>3. 混合策略对策的线性规划法</h4>
+                
+                <p>对于混合策略对策 $G^* = (S^*, D^*, E)$，局中人甲是通过模型</p>
+                <div class="formula-display">
+                    $$E(\mathbf{x}^*, \mathbf{y}_*) = \max_{\mathbf{x} \in S^*} \min_{\mathbf{y} \in D^*} E(\mathbf{x}, \mathbf{y})$$
+                </div>
+                
+                <p>确定 $\mathbf{x}^* = [x_1^* \quad x_2^* \quad \cdots \quad x_m^*]^{\text{T}}$。而其中 $\min_{\mathbf{y} \in D^*} E(\mathbf{x}, \mathbf{y}) = \min_{\mathbf{y} \in D^*} \sum_{j=1}^n (\sum_{i=1}^m a_{ij}x_i)y_j$，令</p>
+                <div class="formula-display">
+                    $$\sum_{i=1}^m a_{ij}x_i = b_j$$
+                </div>
+                
+                <p>则上式化为</p>
+                <div class="formula-display">
+                    $$\min_{\mathbf{y} \in D^*} E(\mathbf{x}, \mathbf{y}) = \min_{\mathbf{y} \in D^*} \sum_{j=1}^n b_j y_j = u$$
+                </div>
+                <p>显然 $b_j \geq u$ $(j = 1, 2, \cdots, n)$。</p>
+                
+                <p>上述求解 $\mathbf{x}^*$ 问题相当于下列线性规划问题：</p>
+                <div class="formula-display">
+                    $$\max \quad u$$
+                    $$\begin{cases}
+                    \sum_{i=1}^m a_{ij}x_i \geq u & (j = 1, 2, \cdots, n; i = 1, \cdots, m) \\
+                    \text{s.t.} \sum_{i=1}^m x_i = 1 \\
+                    x_i \geq 0,
+                    \end{cases}$$
+                </div>
+                
+                <p>$\bar{\mathbf{x}} = [1 \quad 0 \quad \cdots \quad 0]^{\text{T}}$，$\bar{u} = \min_j a_{1j}$ 显然是此线性规划问题的一个可行解。同样对局中人乙确定 $\mathbf{y}^*$ 的模型</p>
+                <div class="formula-display">
+                    $$E(\mathbf{x}_*, \mathbf{y}^*) = \min_{\mathbf{y} \in D^*} \max_{\mathbf{x} \in S^*} E(\mathbf{x}, \mathbf{y}) \rightarrow \mathbf{y}^* = [y_1^* \quad y_2^* \quad \cdots \quad y_n^*]^{\text{T}}$$
+                </div>
+                
+                <p>可转换为求解下列线性规划问题：</p>
+                <div class="formula-display">
+                    $$\min \quad v$$
+                    $$\begin{cases}
+                    \sum_{j=1}^n a_{ij}y_j \leq v & (i = 1, 2, \cdots, m; j = 1, 2, \cdots, n) \\
+                    \text{s.t.} \sum_{j=1}^n y_j = 1 \\
+                    y_j \geq 0
+                    \end{cases}$$
+                </div>
+                
+                <p>同样 $\bar{\mathbf{y}} = [1 \quad 0 \quad \cdots \quad 0]^{\text{T}}$，$\bar{v} = \max_i a_{i1}$ 为此问题的可行解。</p>
+                
+                <p>由定理11.5，可假定 $a_{ij} > 0$，对于线性规划（11.1）有一可行解</p>
+                <div class="formula-display">
+                    $$\bar{\mathbf{x}} = [1 \quad 0 \quad \cdots \quad 0]^{\text{T}}, \bar{u} = \min_j a_{1j} > 0$$
+                </div>
+                
+                <p>所以，必有 $u > 0$。同样，对线性规划式（11.2）的可行解中，必满足</p>
+                <div class="formula-display">
+                    $$\bar{v} = \max_i a_{i1} > 0$$
+                </div>
+                
+                <p>对这样两个线性规划问题，令</p>
+                <div class="formula-display">
+                    $$x'_i = \frac{x_i}{u} \quad (i = 1, 2, \cdots, m); y'_j = \frac{y_j}{v} \quad (j = 1, 2, \cdots, n)$$
+                </div>
+                
+                <p>有</p>
+                <div class="formula-display">
+                    $$\sum_{i=1}^m x'_i = \frac{1}{u}, \sum_{j=1}^n y'_j = \frac{1}{v}$$
+                    $$\mathbf{x}' = \frac{\mathbf{x}}{u}, \mathbf{y}' = \frac{\mathbf{y}}{v}$$
+                </div>
+                
+                <p>可将上述两规则转化为下述形式：</p>
+                <div class="formula-display">
+                    $$\min \quad w = x'_1 + x'_2 + \cdots + x'_m$$
+                    $$\begin{cases}
+                    \sum_{i=1}^m a_{ij}x'_i \geq 1 & (j = 1, 2, \cdots, n) \\
+                    \text{s.t.} \\
+                    x'_i \geq 0 & (i = 1, 2, \cdots, m)
+                    \end{cases}$$
+                    
+                    $$\max \quad z = y'_1 + y'_2 + \cdots + y'_n$$
+                    $$\begin{cases}
+                    \sum_{j=1}^n a_{ij}y'_j \leq 1 & (i = 1, 2, \cdots, m) \\
+                    \text{s.t.} \\
+                    y'_j \geq 0 & (j = 1, 2, \cdots, n)
+                    \end{cases}$$
+                    
+                    $$\mathbf{x}^* = \frac{1}{w^*}\mathbf{x}', \mathbf{y}^* = \frac{1}{z^*}\mathbf{y}'$$
+                </div>
+                
+                <p>显然有</p>
+                <div class="formula-display">
+                    $$w^* = \frac{1}{u^*} = \frac{1}{\max_{\mathbf{x}} \min_{\mathbf{y}} E(\mathbf{x}, \mathbf{y})} = \frac{1}{E(\mathbf{x}^*, \mathbf{y}_*)}$$
+                    $$z^* = \frac{1}{v^*} = \frac{1}{\min_{\mathbf{y}} \max_{\mathbf{x}} E(\mathbf{x}, \mathbf{y})} = \frac{1}{E(\mathbf{x}_*, \mathbf{y}^*)}$$
+                </div>
+                
+                <p>而此两线性规划问题是互为对偶的，$w^* = z^*$，则有</p>
+                <div class="formula-display">
+                    $$\max_{\mathbf{x}} \min_{\mathbf{y}} E(\mathbf{x}, \mathbf{y}) = \min_{\mathbf{y}} \max_{\mathbf{x}} E(\mathbf{x}, \mathbf{y}) = E(\mathbf{x}^*, \mathbf{y}^*)$$
+                </div>
+                
+                <p>$(\mathbf{x}^*, \mathbf{y}^*)$ 为 $G^*$ 的一个解。</p>
+                
+                <h4>4. 混合策略矩阵对策解的存在性</h4>
+                
+                <p>使用线性规划方法求解 $G^* = (S^*, D^*, E)$ 时，由上述分析得出下面的结论。</p>
+                
+                <div class="definition-box">
+                    <strong>定理11.6</strong> 对于 $G^* = (S^*, D^*, E)$，必存在最优解$(\mathbf{x}^*, \mathbf{y}^*)$，满足
+                    <div class="formula-display">
+                        $$E(\mathbf{x}^*, \mathbf{y}^*) = \max_{\mathbf{x}} \min_{\mathbf{y}} E(\mathbf{x}, \mathbf{y}) = \min_{\mathbf{y}} \max_{\mathbf{x}} E(\mathbf{x}, \mathbf{y})$$
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例11.5</h4>
+                    <p>求解下列混合策略矩阵对策 $G^* = (S^*, D^*, E)$，其中</p>
+                    <p>$S = \{s_1, s_2, s_3\}$；$D = \{d_1, d_2\}$</p>
+                    <div class="formula-display">
+                        $$\mathbf{A} = \begin{bmatrix}
+                        1 & -1 \\
+                        -1 & 2 \\
+                        0 & 1
+                        \end{bmatrix}$$
+                    </div>
+                    
+                    <p><strong>解</strong> 令</p>
+                    <div class="formula-display">
+                        $$\mathbf{A}' = [a_{ij} + 2] = \begin{bmatrix}
+                        3 & 1 \\
+                        1 & 4 \\
+                        2 & 3
+                        \end{bmatrix}$$
+                    </div>
+                    
+                    <p>确定甲的最优混合策略，求解下述线性规划</p>
+                    <div class="formula-display">
+                        $$\min \quad w = x_1 + x_2 + x_3$$
+                        $$\begin{cases}
+                        3x_1 + x_2 + 2x_3 \geq 1 \\
+                        \text{s.t.} x_1 + 4x_2 + 3x_3 \geq 1 \\
+                        x_j \geq 0, j = 1, 2, 3
+                        \end{cases}$$
+                    </div>
+                    
+                    <p>使用单纯形法，得 $\mathbf{x}' = \left[\frac{1}{7} \quad 0 \quad \frac{2}{7}\right]^{\text{T}}$，$w^* = \frac{3}{7}$，同时也可得其对偶问题解：$\mathbf{y}' = \left[\frac{2}{7} \quad \frac{1}{7}\right]^{\text{T}}$，</p>
+                </div>
+                
+                <div class="formula-display">
+                    $$z^* = \frac{3}{7}$$
+                </div>
+                
+                <p>由于 $\mathbf{x}' = \frac{1}{u^*}\mathbf{x}^*$，$\mathbf{y}' = \frac{1}{v^*}\mathbf{y}^*$，可得最优策略</p>
+                <div class="formula-display">
+                    $$\mathbf{x}^* = \frac{1}{w^*}\mathbf{x}' = \frac{7}{3}\left[\frac{1}{7} \quad 0 \quad \frac{2}{7}\right]^{\text{T}} = \left[\frac{1}{3} \quad 0 \quad \frac{2}{3}\right]^{\text{T}}$$
+                    $$\mathbf{y}^* = \frac{1}{z^*}\mathbf{y}' = \frac{7}{3}\left[\frac{2}{7} \quad \frac{1}{7}\right]^{\text{T}} = \left[\frac{2}{3} \quad \frac{1}{3}\right]^{\text{T}}$$
+                </div>
+                
+                <p>$G^*$ 的值 $u = \frac{12}{7} - 1 = \frac{5}{7}$。</p>
+                
+                <div class="example-box">
+                    <h4>例11.6</h4>
+                    <p>设</p>
+                    <div class="formula-display">
+                        $$\mathbf{A} = \begin{bmatrix}
+                        -3 & 1 & -2 \\
+                        2 & -1 & 2 \\
+                        -1 & 3 & -1
+                        \end{bmatrix}$$
+                    </div>
+                    
+                    <p>试求解 $G^* = (S^*, D^*, \mathbf{A})$。</p>
+                    
+                    <p><strong>解</strong> 先对矩阵进行简化：</p>
+                    <p>（通过优超原理简化矩阵的过程）</p>
+                    
+                    <p>化为 $G'^* = (S'^*, D'^*, \mathbf{A}')$，其中 $S'' = \{s_2, s_3\}$，$D' = \{d_2, d_3\}$。现求解 $G'^* = (S'^*, D'^*, E')$。求乙方最优策略 $\mathbf{y}^*$，即求解线性规划问题</p>
+                    <div class="formula-display">
+                        $$\max \quad z = y_1 + y_2$$
+                        $$\begin{cases}
+                        3y_2 \leq 1 \\
+                        4y_1 \leq 1 \\
+                        y_1, y_2 \geq 0
+                        \end{cases}$$
+                    </div>
+                    
+                    <p>最优解 $\mathbf{y}' = \left[\frac{1}{4} \quad \frac{1}{3}\right]^{\text{T}}$，$z^* = \frac{1}{4} + \frac{1}{3} = \frac{7}{12}$，其对偶解为</p>
+                    <div class="formula-display">
+                        $$\mathbf{x}' = \left[\frac{1}{3} \quad \frac{1}{4}\right]^{\text{T}}, w^* = \frac{7}{12}$$
+                    </div>
+                    
+                    <p>最优策略 $\mathbf{x}^* = \frac{12}{7}\left[0 \quad \frac{1}{3} \quad \frac{1}{4}\right]^{\text{T}} = \left[0 \quad \frac{4}{7} \quad \frac{3}{7}\right]^{\text{T}}$</p>
+                    <div class="formula-display">
+                        $$\mathbf{y}^* = \frac{12}{7}\left[0 \quad \frac{1}{4} \quad \frac{1}{3}\right]^{\text{T}} = \left[0 \quad \frac{3}{7} \quad \frac{4}{7}\right]^{\text{T}}$$
+                    </div>
+                    
+                    <p>$G^*$ 的值 $u = \frac{12}{7} - 1 = \frac{5}{7}$。</p>
+                </div>
+                
+                <h4>5. 当矩阵为 $2 \times 2$ 阶时解的公式</h4>
+                
+                <p>当局中人甲的支付矩阵 $\mathbf{A}$ 为 $2 \times 2$ 的简单情形时，若鞍点不存在，则容易得出下面的解的公式。</p>
+                
+                <div class="definition-box">
+                    <p>记 $\mathbf{A} = \begin{bmatrix} a & b \\ c & d \end{bmatrix}$，则$(\mathbf{x}^*, \mathbf{y}^*, v^*) = \left(\left[\frac{d - c}{a - b - c + d} \quad \frac{a - b}{a - b - c + d}\right]^{\text{T}},\right.$</p>
+                </div>
+                
+                <div class="formula-display">
+                    $$\left[\frac{d - b}{a - b - c + d} \quad \frac{a - c}{a - b - c + d}\right]^{\text{T}}, \frac{ad - bc}{a - b - c + d}\right)$$
+                </div>
+                
+                <div class="example-box">
+                    <h4>例11.7</h4>
+                    <p>求解矩阵对策 $G = (S, D, \mathbf{A})$，其中 $\mathbf{A} = \begin{bmatrix} 1 & 3 \\ 4 & 2 \end{bmatrix}$。</p>
+                    
+                    <p><strong>解</strong> 由（11.3）式，$\mathbf{x}^* = \left[\frac{2 - 4}{1 - 3 - 4 + 2} \quad \frac{1 - 3}{1 - 3 - 4 + 2}\right]^{\text{T}} = \left[\frac{1}{2} \quad \frac{1}{2}\right]^{\text{T}}$，$\mathbf{y}^* = $</p>
+                    <div class="formula-display">
+                        $$\left[\frac{2 - 3}{1 - 3 - 4 + 2} \quad \frac{1 - 4}{1 - 3 - 4 + 2}\right]^{\text{T}} = \left[\frac{1}{4} \quad \frac{3}{4}\right]^{\text{T}}, v^* = \frac{1 \times 2 - 3 \times 4}{1 - 3 - 4 + 2} = \frac{10}{4} = \frac{5}{2}$$
+                    </div>
+                </div>
+            </section>
+            
+            <section id="exercises">
+                <h2>习题 11</h2>
+                
+                <div class="example-box">
+                    <h4>11.1</h4>
+                    <p>甲、乙两个企业生产同一种电子产品，两个企业都想通过改革管理获取更多的市场销售份额。甲企业的策略措施有：①降低产品价格；②提高产品质量，延长保修年限；③推出新产品。乙企业考虑的措施有：①增加广告费用；②增设维修网点，扩大维修服务；③改进产品性能。假设市场容量一定，由于各自采取的策略措施不同，通过预测，今后两个企业的市场占有份额变动情况如表11.1所示（正值为甲企业增加的市场占有份额，负值为甲企业减少的市场占有份额）。试通过对策分析，确定两个企业各自的最优策略。</p>
+                    
+                    <p><strong>表11.1</strong></p>
+                    <table>
+                        <tr>
+                            <th rowspan="2"></th>
+                            <th colspan="3">乙企业策略</th>
+                        </tr>
+                        <tr>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                        </tr>
+                        <tr>
+                            <td>甲<br>企<br>业<br>策<br>略</td>
+                            <td>1</td>
+                            <td>10</td>
+                            <td>-1</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>2</td>
+                            <td>12</td>
+                            <td>10</td>
+                            <td>-5</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>3</td>
+                            <td>6</td>
+                            <td>8</td>
+                            <td>5</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="example-box">
+                    <h4>11.2</h4>
+                    <p>有A、B两家生产小型电子计算器的工厂，其中A厂研制出一种新型袖珍计算器。为推出这种新产品，A厂强与B厂竞争；考虑了三个竞争对策：①增强产品质量；②继续研发，新产品只生产样品征求意见。B厂解到A厂有新产品情况下也考虑了三个对策：①加速研制新产品；②对现有计算器革新；③改进产品外观和包装。由于受市场预测能力限制，表11.2只表明双方对策结果的大致的定性分析资料（对A厂而言）：</p>
+                    
+                    <p>若用打分办法，一般记0分，较好记1分，好记2分，很好记3分，较差记-1分，差记-2分，很差记-3分，试通过对策分析，确定A、B两厂各应采取哪一种策略。</p>
+                    
+                    <p><strong>表11.2</strong></p>
+                    <table>
+                        <tr>
+                            <th rowspan="2"></th>
+                            <th colspan="3">B厂策略</th>
+                        </tr>
+                        <tr>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                        </tr>
+                        <tr>
+                            <td>A<br>厂<br>策<br>略</td>
+                            <td>1</td>
+                            <td>较好</td>
+                            <td>好</td>
+                            <td>很好</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>2</td>
+                            <td>一般</td>
+                            <td>较差</td>
+                            <td>较好</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>3</td>
+                            <td>很差</td>
+                            <td>差</td>
+                            <td>一般</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="example-box">
+                    <h4>11.3</h4>
+                    <p>已知矩阵对策</p>
+                    <div class="formula-display">
+                        $$\mathbf{A} = \begin{bmatrix}
+                        4 & 0 & 0 \\
+                        0 & 0 & 8 \\
+                        0 & 6 & 0
+                        \end{bmatrix}$$
+                    </div>
+                    <p>的解为 $\mathbf{x}^* = [6/13 \quad 3/13 \quad 4/13]^{\text{T}}$，$\mathbf{y}^* = [6/13 \quad 4/13 \quad 3/13]^{\text{T}}$，对策值为 $24/13$。求下列矩阵对策的解，其支付矩阵 $\mathbf{A}$ 分别为</p>
+                    
+                    <div class="formula-display">
+                        $$(1) \begin{bmatrix} 6 & 2 & 2 \\ 2 & 2 & 10 \\ 2 & 8 & 2 \end{bmatrix} \quad (2) \begin{bmatrix} -2 & -2 & 2 \\ 6 & -2 & -2 \\ -2 & 4 & -2 \end{bmatrix}$$
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>11.4</h4>
+                    <p>用线性规划方法求解下面的矩阵对策，其中 $\mathbf{A}$ 为</p>
+                    <div class="formula-display">
+                        $$(1) \begin{bmatrix} 8 & 2 & 4 \\ 2 & 6 & 5 \\ 6 & 4 & 4 \end{bmatrix} \quad (2) \begin{bmatrix} 2 & 0 & 2 \\ 0 & 3 & 1 \\ 1 & 2 & 1 \end{bmatrix}$$
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>11.5 填空</h4>
+                    <p>(1) 矩阵对策的研究对象是_____________。对策问题，它在纯策略意义下有解的充要条件是：该解是_____________点；如果它在纯策略意义下无解，则它在_____________意义下必有解。</p>
+                    <p>(2) 在矩阵对策 $G^* = (S^*, D^*, E)$ 中，$(\mathbf{X}^*, \mathbf{Y}^*)$ 是 $G^*$ 解的条件是_____________。</p>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>© 2025 对策分析技术交互式教程</p>
+            <p>基于管理科学基础教材制作</p>
+        </footer>
+    </div>
+    
+    <div class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        ↑
+    </div>
+    
+    <script>
+        // 折叠功能
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    content.classList.remove('active');
+                } else {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                    content.classList.add('active');
+                }
+            });
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 显示/隐藏回到顶部按钮
+        const backToTop = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.style.display = 'flex';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+
+<!-- 
+使用说明：
+1. 保存此文件为 .html 格式（例如：game_theory_tutorial.html）
+2. 确保有网络连接以加载 MathJax 和 Google Fonts
+3. 在任何现代浏览器中打开即可查看交互式教程
+4. 所有数学公式都使用标准 LaTeX 格式，由 MathJax 渲染
+5. 点击橙色按钮可展开/折叠内容
+6. 使用导航菜单快速跳转到不同章节
+7. 适配移动设备和桌面设备
+-->

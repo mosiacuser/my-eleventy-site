@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第14章 马尔可夫分析 - 交互式教程</title>
+    
+    <!-- MathJax配置 - 完整版本 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            },
+            SVG: {
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 100%);
+            color: #343434;
+            line-height: 1.8;
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+            min-height: 100vh;
+        }
+        
+        /* 侧边栏导航 */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #343434 0%, #5a5a5a 100%);
+            color: #ffffff;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar h2 {
+            color: #f27d00;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f27d00;
+            padding-bottom: 10px;
+        }
+        
+        .nav-item {
+            margin: 10px 0;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .nav-item:hover {
+            background: #f27d00;
+            transform: translateX(5px);
+        }
+        
+        .nav-subitem {
+            margin-left: 15px;
+            font-size: 0.9em;
+            padding: 5px;
+            color: #a6d6c9;
+        }
+        
+        .nav-subitem:hover {
+            color: #ffffff;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        /* 章节样式 */
+        .section {
+            background: #ffffff;
+            border-left: 5px solid #f27d00;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #f27d00;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #a6d6c9;
+            padding-bottom: 10px;
+        }
+        
+        .section h3 {
+            color: #343434;
+            font-size: 1.4em;
+            margin: 20px 0 15px 0;
+            padding-left: 10px;
+            border-left: 3px solid #f7d117;
+        }
+        
+        .section h4 {
+            color: #5a5a5a;
+            font-size: 1.2em;
+            margin: 15px 0 10px 0;
+        }
+        
+        /* 折叠功能 */
+        .collapsible {
+            background: linear-gradient(135deg, #a6d6c9 0%, #b8e4d7 100%);
+            color: #343434;
+            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 5px;
+            margin: 15px 0;
+            transition: all 0.3s;
+        }
+        
+        .collapsible:hover {
+            background: linear-gradient(135deg, #f7d117 0%, #f9de59 100%);
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            float: right;
+            margin-left: 5px;
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.active:after {
+            transform: rotate(-180deg);
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .content-inner {
+            padding: 20px;
+        }
+        
+        /* 例题样式 */
+        .example {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            border-left: 5px solid #f7d117;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .example-title {
+            color: #f27d00;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        /* 定义和性质样式 */
+        .definition, .property {
+            background: linear-gradient(135deg, #e6f7f7 0%, #f0fbfb 100%);
+            border-left: 5px solid #a6d6c9;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .definition-title, .property-title {
+            color: #f27d00;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9a3c 100%);
+            color: #ffffff;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        tr:hover {
+            background: #fff9e6;
+        }
+        
+        /* 矩阵样式 */
+        .matrix-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        /* 提示框 */
+        .note {
+            background: linear-gradient(135deg, #fff4e6 0%, #fff9f0 100%);
+            border-left: 5px solid #f27d00;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .note-title {
+            color: #f27d00;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        /* 数学公式样式调整 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #f27d00;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d66d00;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section {
+            animation: fadeIn 0.5s ease-in;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏导航 -->
+        <nav class="sidebar">
+            <h2>📚 章节导航</h2>
+            <div class="nav-item" onclick="scrollToSection('intro')">14.1 马尔可夫分析与预测问题</div>
+            <div class="nav-item" onclick="scrollToSection('matrix-knowledge')">14.2 关于正规随机矩阵的一些知识</div>
+            <div class="nav-subitem" onclick="scrollToSection('prob-vector')">• 概率向量</div>
+            <div class="nav-subitem" onclick="scrollToSection('prob-matrix')">• 概率矩阵</div>
+            <div class="nav-subitem" onclick="scrollToSection('regular-matrix')">• 正规概率矩阵</div>
+            <div class="nav-item" onclick="scrollToSection('markov-chain')">14.3 马尔可夫链</div>
+            <div class="nav-subitem" onclick="scrollToSection('general-process')">• 一般随机过程</div>
+            <div class="nav-subitem" onclick="scrollToSection('markov-chain-def')">• 马尔可夫链定义</div>
+            <div class="nav-subitem" onclick="scrollToSection('k-step')">• k步转移概率</div>
+            <div class="nav-subitem" onclick="scrollToSection('steady-state')">• 稳态概率</div>
+            <div class="nav-subitem" onclick="scrollToSection('applications')">• 应用实例</div>
+            <div class="nav-item" onclick="scrollToSection('absorbing')">14.4 吸收马尔可夫链</div>
+        </nav>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <div class="header">
+                <h1>第 14 章</h1>
+                <h1>马尔可夫分析</h1>
+                <p>Markov Analysis</p>
+            </div>
+
+            <!-- 14.1 马尔可夫分析与预测问题 -->
+            <section class="section" id="intro">
+                <h2>14.1 马尔可夫分析与预测问题</h2>
+                
+                <p><strong>马尔可夫分析法</strong>是俄国数学家马尔可夫（A. Markov）在1907年提出，并由蒙特-卡罗（Mote-Carlo）加以发展而建立的一种分析方法。它主要用于分析随机事件未来发展变化的趋势，即利用某一变量的现在状态和动向去预测该变量未来的状态及其动向，以预测未来某特定时期可能产生的变化，以便采取相应的对策。</p>
+                
+                <div class="note">
+                    <div class="note-title">💡 应用领域</div>
+                    <p>马尔可夫分析的应用领域十分广泛，这些领域有：</p>
+                    <ul style="margin-left: 20px;">
+                        <li>生产-存储系统、设备更新/维护</li>
+                        <li>制造系统的调度控制</li>
+                        <li>通信网络系统控制</li>
+                        <li>动态资产定价、广告优化</li>
+                        <li>商品与服务的定价、质量控制</li>
+                        <li>序贯搜索、水资源管理</li>
+                        <li>森林管理、航空订票</li>
+                        <li>高速公路管理等</li>
+                    </ul>
+                </div>
+
+                <p>为了了解马尔可夫分析用于"预测一对策一决策"的情况，首先介绍一个实例，即所谓的<strong>商标转换问题</strong>。</p>
+
+                <div class="example">
+                    <div class="example-title">例14.1（商标转换问题）</div>
+                    <p>设某地居民的牛奶供应由A、B、C三厂负责，每月订一次，为简化问题的讨论，假定牛奶固定销售给1000户顾客，要订哪厂牛奶由顾客自己选择。因广告宣传、服务质量等原因，用户会改换厂家。假设有6月份三个厂销售情况的市场调查记录，具体统计资料如表14.1所示。</p>
+                    
+                    <table>
+                        <caption><strong>表 14.1</strong></caption>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">牛奶厂</th>
+                                <th colspan="3">六月份顾客的变化</th>
+                                <th rowspan="2">7月1日顾客数</th>
+                            </tr>
+                            <tr>
+                                <th>6月1日顾客数</th>
+                                <th>得</th>
+                                <th>失</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>A</td>
+                                <td>200</td>
+                                <td>60</td>
+                                <td>40</td>
+                                <td>220</td>
+                            </tr>
+                            <tr>
+                                <td>B</td>
+                                <td>500</td>
+                                <td>40</td>
+                                <td>50</td>
+                                <td>490</td>
+                            </tr>
+                            <tr>
+                                <td>C</td>
+                                <td>300</td>
+                                <td>35</td>
+                                <td>45</td>
+                                <td>290</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>由表中数据可知，A厂6月份从B、C厂得到了60户顾客，然而失掉了40户（净增20户）；B从A、C得到40户，然而失去50户（净失10户），C从A、B得到35户，然而失去了45户（净失10户）。因此，A厂6月份所增加的20户顾客实际上是这三厂原来顾客动态变化的结果，市场上称这种行为为<strong>商标转换</strong>。</p>
+                </div>
+
+                <p>牛奶厂为做好销售工作，就应当对此进行更细微的分析。下面进一步分析三厂顾客得失的详细情况，并算出它们得失的概率如表14.2所示。</p>
+
+                <p>表中 $p_{ij}$ 表示 $i$ 失于 $j$ 的概率。如B厂6月份失于A厂35户，而B有500户，因此，B厂6月份失于A的概率为</p>
+                
+                <div class="matrix-container">
+                    $$p_{BA} = 35/500 = 0.070$$
+                </div>
+
+                <p>同理，可得</p>
+                <div class="matrix-container">
+                    $$p_{CA} = 25/300 = 0.083, \quad p_{AA} = 160/200 = 0.80$$
+                    $$p_{AB} = 20/200 = 0.10, \quad p_{BB} = 450/500 = 0.90$$
+                    $$p_{CB} = 20/300 = 0.067, \quad p_{AC} = 20/200 = 0.10$$
+                    $$p_{BC} = 15/500 = 0.030, \quad p_{CC} = 255/300 = 0.85$$
+                </div>
+
+                <table>
+                    <caption><strong>表 14.2</strong></caption>
+                    <thead>
+                        <tr>
+                            <th colspan="2">牛奶厂</th>
+                            <th>A</th>
+                            <th>B</th>
+                            <th>C</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2">6月1日顾客数</td>
+                            <td>200</td>
+                            <td>500</td>
+                            <td>300</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">7月1日顾客数</td>
+                            <td>220</td>
+                            <td>490</td>
+                            <td>290</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">A</td>
+                            <td></td>
+                            <td>160</td>
+                            <td>35</td>
+                            <td>25</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>$P_{AA}=0.80$</td>
+                            <td>$P_{BA}=0.070$</td>
+                            <td>$P_{CA}=0.083$</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">得失<br>值及<br>其概<br>率</td>
+                            <td>B</td>
+                            <td>20</td>
+                            <td>450</td>
+                            <td>20</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>$P_{AB}=0.10$</td>
+                            <td>$P_{BB}=0.90$</td>
+                            <td>$P_{CB}=0.067$</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>C</td>
+                            <td>20</td>
+                            <td>15</td>
+                            <td>255</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>$P_{AC}=0.10$</td>
+                            <td>$P_{BC}=0.03$</td>
+                            <td>$P_{CC}=0.85$</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button class="collapsible">查看转移概率矩阵推导</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>将上表的得失情况用概率矩阵的形式进行描述，则有</p>
+                        
+                        <div class="matrix-container">
+                            <p style="text-align: center; margin: 10px 0;">
+                                A &nbsp;&nbsp;&nbsp; B &nbsp;&nbsp;&nbsp; C
+                            </p>
+                            $$\begin{array}{c} 
+                            \text{A} \\
+                            \text{B} \\
+                            \text{C}
+                            \end{array}
+                            \begin{bmatrix}
+                            0.80 & 0.10 & 0.10 \\
+                            0.07 & 0.90 & 0.03 \\
+                            0.083 & 0.067 & 0.85
+                            \end{bmatrix}
+                            \begin{array}{c}
+                            \text{(维持)} \\
+                            \text{和} \\
+                            \text{(获得)}
+                            \end{array}$$
+                            <p style="text-align: center; margin: 10px 0;">→(维持和损失)</p>
+                        </div>
+
+                        <p>如矩阵第一行表示A厂以0.8的概率保持原订户，以0.1的概率丧失原订户于B厂，以0.1的概率丧失原订户于C厂。第一列表示A厂以0.8的概率保持原订户，以0.07的概率从B厂获得新订户，以0.083的概率从C厂获得新订户。显然，有了这样的信息，就比较容易考察用户的转换情况。</p>
+                    </div>
+                </div>
+
+                <div class="note">
+                    <div class="note-title">📊 马尔可夫分析的工作内容</div>
+                    <p>根据以上数据可做以下工作：</p>
+                    <ol style="margin-left: 20px;">
+                        <li>预测未来某个时刻各销售者在市场上占有的份额（市场占有率）；</li>
+                        <li>预测将来销售者在市场份额的得失比率；</li>
+                        <li>预测市场是否会出现市场平衡状态（稳定市场份额）；</li>
+                        <li>按对市场份额得失分析销售者的推销活动，指导生产厂家促销。</li>
+                    </ol>
+                </div>
+
+                <div class="example">
+                    <div class="example-title">市场占有率预测示例</div>
+                    <p>如可根据上述数据预测8月1日A、B、C三厂的市场占有率，则8月1日的状态为</p>
+                    
+                    <div class="matrix-container">
+                        $$\begin{bmatrix}0.22 & 0.49 & 0.29\end{bmatrix}
+                        \begin{bmatrix}
+                        0.8 & 0.1 & 0.1 \\
+                        0.07 & 0.9 & 0.03 \\
+                        0.083 & 0.067 & 0.85
+                        \end{bmatrix}
+                        = \begin{bmatrix}0.234 & 0.483 & 0.283\end{bmatrix}$$
+                    </div>
+
+                    <p>如A厂占有份额 = $0.22 \times 0.8 + 0.07 \times 0.49 + 0.083 \times 0.29 = 0.234$</p>
+                    <p style="text-align: center;">（A厂保持率） （B厂转入率） （C厂转入率）</p>
+
+                    <p>其中，向量$[0.22 \quad 0.49 \quad 0.29]$为各厂7月份的市场占有份额(订户数与总订户数之比)，则8月份A厂拥有全部顾客的23.4%，B厂为48.3%，C厂为28.3%。</p>
+                </div>
+
+                <p>如果要预测9月份、10月份甚至更远时期的市场占有率，可以像上面那样，逐月计算得到。可见，<strong>马尔可夫分析方法能为决策者提供许多有价值的参考信息</strong>。其应用范围是广阔的。</p>
+
+                <button class="collapsible">深入理解：什么是马尔可夫过程？</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>那么，马尔可夫分析主要的研究内容是什么呢？从引例可知，某些事物在发展变化，现在的状态（试验结果）只与过去前一次试验有关，而与在此以前的经过无关，则称这样的过程为<strong>马尔可夫过程</strong>。</p>
+                        
+                        <p>一连串（若干个）离散的马尔可夫过程的整体，称为<strong>马尔可夫链</strong>。因而，如同引例中列举的那样，对于马尔可夫链或马尔可夫过程可能产生的演变加以分析，以观察或预测其未来发展变化的趋势便是马尔可夫分析的研究内容。</p>
+                        
+                        <div class="note">
+                            <div class="note-title">⚠️ 重要概念</div>
+                            <p>由于马尔可夫过程为概率过程，所以在研究马尔可夫过程之前，首先要阐明<strong>概率向量</strong>、<strong>概率矩阵</strong>与<strong>正规概率矩阵</strong>等基本概念。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 14.2 关于正规随机矩阵的一些知识 -->
+            <section class="section" id="matrix-knowledge">
+                <h2>14.2 关于正规随机矩阵的一些知识</h2>
+
+                <!-- 14.2.1 概率向量 -->
+                <div id="prob-vector">
+                    <h3>1. 概率向量</h3>
+                    
+                    <div class="definition">
+                        <div class="definition-title">定义：概率向量</div>
+                        <p>任意一个向量 $\boldsymbol{u} = [u_1 \quad u_2 \quad \cdots \quad u_n]^{\mathrm{T}}$，若 $u_i \geq 0$，且 $\displaystyle\sum_{i=1}^{n}u_i = 1$，则称 $\boldsymbol{u}$ 为<strong>概率向量</strong>。</p>
+                        
+                        <p>例14.1中矩阵的每一行均为一个概率向量。</p>
+                    </div>
+                </div>
+
+                <!-- 14.2.2 概率矩阵 -->
+                <div id="prob-matrix">
+                    <h3>2. 概率矩阵</h3>
+                    
+                    <div class="definition">
+                        <div class="definition-title">定义：概率矩阵</div>
+                        <p>在方阵 $\boldsymbol{P} = [p_{ij}]_{n \times n}$ 中，若各个行向量都为概率向量，则称此方阵为<strong>概率矩阵</strong>或<strong>随机矩阵</strong>。例14.1中的矩阵就是一个随机矩阵。</p>
+                    </div>
+
+                    <p>概率矩阵具有如下性质。</p>
+
+                    <div class="property">
+                        <div class="property-title">性质 14.1</div>
+                        <p>设 $\boldsymbol{u} \in \mathbb{R}^n$ 为一个概率向量，$\boldsymbol{A} = [a_{ij}]_{n \times n}$ 是一个概率矩阵，则 $\boldsymbol{A}^{\mathrm{T}}\boldsymbol{u} = \boldsymbol{y}$ 也是一个概率向量。</p>
+                    </div>
+
+                    <button class="collapsible">查看性质14.1的证明</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>证</strong> &nbsp; $\boldsymbol{y}^{\mathrm{T}} = \boldsymbol{u}^{\mathrm{T}}\boldsymbol{A} = [u_1 \quad u_2 \quad \cdots \quad u_n]$</p>
+                            
+                            <div class="matrix-container">
+                                $$\begin{bmatrix}
+                                a_{11} & \cdots & a_{1n} \\
+                                \vdots & \ddots & \vdots \\
+                                a_{n1} & \cdots & a_{nn}
+                                \end{bmatrix}$$
+                                
+                                $$= \left[\sum_{i=1}^{n}u_i a_{i1} \quad \sum_{i=1}^{n}u_i a_{i2} \quad \cdots \quad \sum_{i=1}^{n}u_i a_{in}\right]$$
+                            </div>
+
+                            <p>则 $\boldsymbol{y}^{\mathrm{T}}$ 各分量之和为</p>
+                            
+                            <div class="matrix-container">
+                                $$\sum_{j=1}^{n}y_j = \sum_{j=1}^{n}\sum_{i=1}^{n}u_i a_{ij} = \sum_{i=1}^{n}u_i\left(\sum_{j=1}^{n}a_{ij}\right) = \sum_{i=1}^{n}u_i = 1$$
+                            </div>
+
+                            <p>所以，$\boldsymbol{A}^{\mathrm{T}}\boldsymbol{u}$ 为一个概率向量。</p>
+                        </div>
+                    </div>
+
+                    <div class="property">
+                        <div class="property-title">性质 14.2</div>
+                        <p>若 $\boldsymbol{A}$ 和 $\boldsymbol{B}$ 都为概率矩阵，则 $\boldsymbol{AB}$ 亦为概率矩阵，$\boldsymbol{A}^m$ 亦为概率矩阵。</p>
+                    </div>
+
+                    <button class="collapsible">查看性质14.2的证明</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>证</strong> &nbsp; 用 $\boldsymbol{A}_i$ 表示由矩阵 $\boldsymbol{A}$ 的第 $i$ 行组成的向量，由性质14.1知，$\boldsymbol{B}^{\mathrm{T}}\boldsymbol{A}_i$ 都是概率向量，而</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{AB} = \begin{bmatrix}
+                                \boldsymbol{A}_1^{\mathrm{T}}\boldsymbol{B} \\
+                                \vdots \\
+                                \vdots \\
+                                \boldsymbol{A}_n^{\mathrm{T}}\boldsymbol{B}
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>故 $\boldsymbol{AB}$ 的每一行组成的向量均为概率向量，即 $\boldsymbol{AB}$ 为随机矩阵，从而易证 $\boldsymbol{A}^m$ 为随机矩阵。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 14.2.3 正规概率矩阵 -->
+                <div id="regular-matrix">
+                    <h3>3. 正规概率矩阵</h3>
+                    
+                    <div class="definition">
+                        <div class="definition-title">定义：正规概率矩阵</div>
+                        <p>对于任一概率矩阵 $\boldsymbol{P}$，若存在 $m$，使 $\boldsymbol{P}^m$（$m$ 为大于1的正整数）的所有元素都是正数，则称 $\boldsymbol{P}$ 为<strong>正规概率矩阵</strong>（由性质14.2知，$\boldsymbol{P}^m$ 必是一个随机矩阵）。</p>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">示例：正规概率矩阵</div>
+                        <p>如概率矩阵</p>
+                        <div class="matrix-container">
+                            $$\boldsymbol{P} = \begin{bmatrix}
+                            0 & 1 \\
+                            \frac{1}{2} & \frac{1}{2}
+                            \end{bmatrix}, \quad
+                            \boldsymbol{P}^2 = \begin{bmatrix}
+                            \frac{1}{2} & \frac{1}{2} \\
+                            1 & 3
+                            \end{bmatrix}$$
+                        </div>
+                        <p>则 $\boldsymbol{P}$ 是一个正规概率矩阵。</p>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">反例：非正规概率矩阵</div>
+                        <p>再如概率矩阵</p>
+                        <div class="matrix-container">
+                            $$\boldsymbol{Q} = \begin{bmatrix}
+                            1 & 0 \\
+                            \frac{1}{2} & \frac{1}{2}
+                            \end{bmatrix}, \quad
+                            \boldsymbol{Q}^2 = \begin{bmatrix}
+                            1 & 0 \\
+                            \frac{3}{4} & \frac{1}{4}
+                            \end{bmatrix}, \quad
+                            \boldsymbol{Q}^3 = \begin{bmatrix}
+                            1 & 0 \\
+                            \frac{7}{8} & \frac{1}{8}
+                            \end{bmatrix}, \quad \cdots, \quad
+                            \boldsymbol{Q}^m = \begin{bmatrix}
+                            1 & 0 \\
+                            \frac{2^m-1}{2^m} & \frac{1}{2^m}
+                            \end{bmatrix}$$
+                        </div>
+                        <p>则 $\boldsymbol{Q}$ <strong>不是</strong>正规概率矩阵。</p>
+                    </div>
+
+                    <div class="note">
+                        <div class="note-title">📌 正规随机矩阵的重要性质</div>
+                        <p>以下给出正规随机矩阵的几个重要性质。</p>
+                        
+                        <p><strong>若 $\boldsymbol{A}$ 是一个正规随机矩阵</strong>，则有：</p>
+                        
+                        <ol style="margin-left: 20px;">
+                            <li>一定存在一个概率向量 $\boldsymbol{X}$，使得 $\boldsymbol{A}^{\mathrm{T}}\boldsymbol{X} = \boldsymbol{X}$ 成立，且 $\boldsymbol{X}$ 的各分量皆为正数；</li>
+                            
+                            <li>$\boldsymbol{A}$ 的各次方幂 $\boldsymbol{A}^1, \boldsymbol{A}^2, \boldsymbol{A}^3, \cdots, \boldsymbol{A}^k, \cdots$ 组成的序列会趋近于一个固定方阵 $\boldsymbol{B}$，即 $\boldsymbol{A}^k \to \boldsymbol{B}$（当 $k \to \infty$），且 $\boldsymbol{B}$ 的每一行均为 $\boldsymbol{X}^{\mathrm{T}}$；</li>
+                            
+                            <li>设 $\boldsymbol{u}$ 为任一 $n$ 维概率向量，则向量序列 $\boldsymbol{A}^{\mathrm{T}}\boldsymbol{u}, (\boldsymbol{A}^2)^{\mathrm{T}}\boldsymbol{u}, (\boldsymbol{A}^3)^{\mathrm{T}}\boldsymbol{u}, \cdots, (\boldsymbol{A}^k)^{\mathrm{T}}\boldsymbol{u}, \cdots$ 趋近于概率向量 $\boldsymbol{X}$，即有 $(\boldsymbol{A}^k)^{\mathrm{T}}\boldsymbol{u} \to \boldsymbol{X}$（$k \to \infty$）。</li>
+                        </ol>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">例14.2</div>
+                        <p>试用正规随机矩阵 $\displaystyle\boldsymbol{A} = \begin{bmatrix}0 & 1 \\ \frac{1}{2} & \frac{1}{2}\end{bmatrix}$ 验证上述定理。</p>
+                    </div>
+
+                    <button class="collapsible">查看例14.2的详细解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>解</strong> &nbsp; 设概率向量 $\boldsymbol{X} = [x_1 \quad x_2]^{\mathrm{T}}$ 满足方程组 $\boldsymbol{A}^{\mathrm{T}}\boldsymbol{X} = \boldsymbol{X}$，于是便得到方程组</p>
+                            
+                            <div class="matrix-container">
+                                $$\begin{cases}
+                                \frac{1}{2}x_2 = x_1 \\
+                                x_1 + \frac{1}{2}x_2 = x_2
+                                \end{cases}$$
+                            </div>
+
+                            <p>不难看出，这个方程组的两个方程不是相互独立的，事实上，将这两个方程相加，可得恒等式：</p>
+                            <div class="matrix-container">
+                                $$x_1 + x_2 \equiv x_1 + x_2$$
+                            </div>
+
+                            <p>于是，用方程 $x_1 + x_2 = 1$ 来取代上述方程组中的第2个方程，得新的方程组</p>
+                            
+                            <div class="matrix-container">
+                                $$\begin{cases}
+                                \frac{1}{2}x_2 = x_1 \\
+                                x_1 + x_2 = 1
+                                \end{cases}$$
+                            </div>
+
+                            <p>解之得</p>
+                            <div class="matrix-container">
+                                $$\boldsymbol{X} = [x_1 \quad x_2]^{\mathrm{T}} = \left[\frac{1}{3} \quad \frac{2}{3}\right]^{\mathrm{T}}$$
+                            </div>
+
+                            <p>进一步，矩阵序列 $\boldsymbol{A}^1, \boldsymbol{A}^2, \boldsymbol{A}^3, \cdots$ 趋近于各行都以向量 $\boldsymbol{X}^{\mathrm{T}}$ 所构成的方阵 $\boldsymbol{B}$。</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{B} = \begin{bmatrix}
+                                \frac{1}{3} & \frac{2}{3} \\
+                                \frac{1}{3} & \frac{2}{3}
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>事实上，有</p>
+                            <div class="matrix-container">
+                                $$\boldsymbol{A}^2 = \begin{bmatrix}
+                                \frac{1}{2} & \frac{1}{2} \\
+                                \frac{1}{4} & \frac{3}{4}
+                                \end{bmatrix}, \quad
+                                \boldsymbol{A}^3 = \begin{bmatrix}
+                                \frac{1}{4} & \frac{3}{4} \\
+                                \frac{3}{8} & \frac{5}{8}
+                                \end{bmatrix}, \quad
+                                \boldsymbol{A}^4 = \begin{bmatrix}
+                                \frac{3}{8} & \frac{5}{8} \\
+                                \frac{5}{16} & \frac{11}{16}
+                                \end{bmatrix}, \quad
+                                \boldsymbol{A}^5 = \begin{bmatrix}
+                                \frac{5}{16} & \frac{11}{16} \\
+                                \frac{11}{32} & \frac{21}{32}
+                                \end{bmatrix},$$
+                                
+                                $$\boldsymbol{A}^6 = \begin{bmatrix}
+                                \frac{11}{32} & \frac{21}{32} \\
+                                \frac{21}{64} & \frac{43}{64}
+                                \end{bmatrix} \cdots \to \boldsymbol{B}$$
+                            </div>
+
+                            <p>另设 $\boldsymbol{u} = [u_1 \quad u_2]^{\mathrm{T}}$ 为任一概率向量，由 $\boldsymbol{A}^k \to \boldsymbol{B}$（$k \to \infty$）可得</p>
+                            
+                            <div class="matrix-container">
+                                $$(\boldsymbol{A}^k)^{\mathrm{T}}\boldsymbol{u} \to \boldsymbol{B}^{\mathrm{T}}\boldsymbol{u}$$
+                                
+                                $$\boldsymbol{B}^{\mathrm{T}}\boldsymbol{u} = \begin{bmatrix}
+                                \frac{1}{3} & \frac{1}{3} \\
+                                \frac{2}{3} & \frac{2}{3}
+                                \end{bmatrix}
+                                \begin{bmatrix}
+                                u_1 \\
+                                u_2
+                                \end{bmatrix} = \begin{bmatrix}
+                                \frac{1}{3}(u_1 + u_2) \\
+                                \frac{2}{3}(u_1 + u_2)
+                                \end{bmatrix} = \begin{bmatrix}
+                                \frac{1}{3} \\
+                                \frac{2}{3}
+                                \end{bmatrix} = \boldsymbol{X}$$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 14.3 马尔可夫链 -->
+            <section class="section" id="markov-chain">
+                <h2>14.3 马尔可夫链</h2>
+
+                <!-- 14.3.1 一般随机过程 -->
+                <div id="general-process">
+                    <h3>14.3.1 一般随机过程</h3>
+                    
+                    <p>在某些现实系统中，表征系统特征的变量具有随机性，而且系统状态随时间而变化，即系统状态变量在每个时点上的取值是随机的，那么，对于这类系统就需用以时间为参数的随机变量来描述。系统状态的这种变化过程常称为<strong>随机过程</strong>。</p>
+                    
+                    <p>例如，从时间 $t=0$ 开始记录某电话总机的呼叫次数，设 $t=0$ 时没有呼叫，至时刻 $t$ 的呼叫次数记作 $N_t$，则随机变量族 $\{N_t, t \geq 0\}$ 是随机过程。</p>
+
+                    <div class="note">
+                        <div class="note-title">📖 随机过程的定义</div>
+                        <p><strong>随机过程</strong>（stochastic process）是指依赖于一个变动参数 $t$ 的一族随机变量 $\{X(t), t \in T\}$。变动参数 $t$ 所有可以取值的集合 $T$ 称为参数空间。$X(t)$ 的值所构成的集合 $S$ 称为<strong>随机过程的状态空间</strong>。</p>
+                        
+                        <p>按 $S$ 和 $T$ 是离散集合或非离散集合可将随机过程分为四类（略）。马尔可夫分析只涉及随机过程的一个子类，即所谓的马尔可夫过程。这类随机过程的特点是：若已知在时间 $t$ 系统处于状态 $X$ 的条件下，在时刻 $\tau(\tau > t)$ 系统所处的状态与时刻 $t$ 以前系统所处的状态无关，此过程便为马尔可夫过程。</p>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">物理学中的例子</div>
+                        <p>例如，在液面上放一微粒，它由于受到大量分子的碰撞，在液面上作不规则运动，这就是布朗运动。由物理学知，已知在时刻 $t$ 的运动状态条件下，微粒在 $t$ 以后的运动情况和微粒在 $t$ 以前的情况无关。若以 $X(t)$ 表示微粒在时刻 $t$ 时的位置，则 $X(t)$ 是马尔可夫过程。</p>
+                    </div>
+
+                    <p><strong>马氏过程一般分为三类</strong>：</p>
+                    <ol style="margin-left: 20px;">
+                        <li>$T$ 连续，$S$ 离散的马氏过程；</li>
+                        <li>$T$ 连续，$S$ 连续的马氏过程；</li>
+                        <li>$T$ 离散，$S$ 离散的马氏过程，即<strong>马尔可夫链</strong>。</li>
+                    </ol>
+                    
+                    <p>本书主要涉及马尔可夫链，所以，以下介绍马尔可夫链的概念。</p>
+                </div>
+
+                <!-- 14.3.2 马尔可夫链 -->
+                <div id="markov-chain-def">
+                    <h3>14.3.2 马尔可夫链</h3>
+                    
+                    <div class="definition">
+                        <div class="definition-title">定义：马尔可夫链</div>
+                        <p>设 $\{X_n, n=0,1,2,\cdots\}$ 是一个随机变量序列，用"$X_n = i$"表示时刻 $n$ 系统处于状态 $i$ 这一事件，称 $p_{ij}(n) = p(X_{n+1}=j | X_n=i)$ 为在事件"$X_n=i$"出现的条件下，事件"$X_{n+1}=j$"出现的<strong>条件概率</strong>，又称它为系统的<strong>一步转移概率</strong>。</p>
+                        
+                        <p>若对任意的非负整数 $i_1, i_2, \cdots, i_{n-1}, i, j$ 及一切 $n \geq 0$，有</p>
+                        <div class="matrix-container">
+                            $$p(X_{n+1}=j | X_n=i, X_k=i_k, k=1,2,\cdots,n-1) = p(X_{n+1}=j | X_1=i)$$
+                        </div>
+                        <p>则称 $\{X_n\}$ 是一个<strong>马尔可夫链</strong>。</p>
+                    </div>
+
+                    <p>马尔可夫链的定义说明，过程在每一时刻上的状态仅仅取决于过程在前一时刻上的状态，而与这之前的状态无关。这一性质便是马尔可夫链的<strong>无后效性或无记忆性</strong>。</p>
+
+                    <div class="example">
+                        <div class="example-title">例14.3（顾客购买香烟的例子）</div>
+                        <p>例如，有一位顾客每天向一家商店买一包香烟。他购买香烟并不固定于一种牌号，商店中A、B、C、D、E五种牌号的香烟他都有可能购买。设 $X_m$ 表示他在第 $m$ 天购买的香烟牌号。若这个人只记得昨天抽烟的味道，以前都不记得了，那么 $X_m$ 取什么值，只与 $X_{m-1}$ 取什么值有关，则 $\{X_m\}$ 构成一个马尔可夫链。</p>
+                    </div>
+
+                    <p>进一步，若系统无论何时从状态 $i$ 出发，经 $k$ 步转移到状态 $j$ 的概率都相同，即有下式成立：</p>
+                    <div class="matrix-container">
+                        $$p(X_{t+k}=j | X_t=i) = p(X_{k+1}=j | X_1=i)$$
+                    </div>
+                    
+                    <p>其中，$i, j, k$ 皆为正整数，$s$ 为任一正整数，则称此马尔可夫链为<strong>齐次马尔可夫链</strong>。以后主要研究齐次马尔可夫链，并略去"齐次"二字。</p>
+
+                    <p>若系统的一步转移概率 $p_{ij}(n) = p(X_{n+1}=j | X_n=i)$ 与初始时刻 $n$ 无关，则可简记为 $p_{ij}$。用图14.1的状态转移图把它表示出来。</p>
+
+                    <div class="note">
+                        <div class="note-title">📊 一步转移概率的性质</div>
+                        <p>显然，一步转移概率具有如下性质：</p>
+                        <ul style="margin-left: 20px;">
+                            <li>$p_{ij} \geq 0 \quad (i,j=1,2,\cdots,n)$</li>
+                            <li>$\displaystyle\sum_{j=1}^{n}p_{ij} = 1 \quad (i=1,2,\cdots,n)$</li>
+                        </ul>
+                    </div>
+
+                    <p>把各状态之间的一步转移概率排成矩阵</p>
+                    
+                    <div class="matrix-container">
+                        $$\boldsymbol{P} = \begin{bmatrix}
+                        p_{11} & p_{12} & \cdots & p_{1n} \\
+                        p_{21} & p_{22} & \cdots & p_{2n} \\
+                        \vdots & \vdots & & \vdots \\
+                        p_{n1} & p_{n2} & \cdots & p_{nn}
+                        \end{bmatrix}$$
+                    </div>
+
+                    <p>称 $\boldsymbol{P}$ 为<strong>转移矩阵</strong>。</p>
+
+                    <p>每个状态 $i$ 对应转移矩阵 $\boldsymbol{P}$ 的第 $i$ 行。若系统处于状态 $i$，则该行向量表示下一次试验的所有可能结果的概率。因此，它是一个概率向量，所以转移矩阵 $\boldsymbol{P}$ 是一个概率矩阵。</p>
+
+                    <p><strong>转移概率矩阵 $\boldsymbol{P}$ 决定了各状态间的转移规律</strong>。</p>
+
+                    <div class="example">
+                        <div class="example-title">例14.3（天气预报问题）</div>
+                        <p>如果明日是否有雨仅与今日天气（是否有雨）有关，而与过去的天气无关，并设今日下雨，则明日有雨的概率为 $\alpha$，今日无雨则明日有雨的概率为 $\beta$；又假定把有雨称为0状态天气，无雨称为1状态天气，则本例是一个两状态的马尔可夫链。它的一步转移概率矩阵为</p>
+                        
+                        <div class="matrix-container">
+                            $$\boldsymbol{P} = \begin{array}{cc}
+                            & \begin{array}{cc} 0 & 1 \end{array} \\
+                            \begin{array}{c} 0 \\ 1 \end{array} &
+                            \begin{bmatrix}
+                            \alpha & 1-\alpha \\
+                            \beta & 1-\beta
+                            \end{bmatrix}
+                            \end{array}$$
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 14.3.3 k步转移概率与k步转移矩阵 -->
+                <div id="k-step">
+                    <h3>14.3.3 $k$ 步转移概率与 $k$ 步转移矩阵</h3>
+                    
+                    <p>$p_{ij}$ 是系统从状态 $i$ 一步转移到状态 $j$ 的概率，那么，该系统从状态 $i$ 恰好经 $k$ 步转移到状态 $j$ ($i \to 1 \to 2 \to \cdots \to k-1 \to j$) 的概率是多少呢？</p>
+
+                    <p>这里，对于齐次马尔可夫链，称条件概率 $p_{ij}^{(k)} = p(X_{k+1}=j | X_1=i)$ 为从状态 $i$ 到状态 $j$ 的 $k$ 步转移概率（在我们讨论的问题里，假设状态集为有限集），并称矩阵 $\boldsymbol{P}^{(k)} = (p_{ij}^{(k)})_{n \times n}$ 为 $k$ 步转移矩阵。显然，$\boldsymbol{P}^{(k)}$ 为概率矩阵，即有</p>
+                    
+                    <div class="matrix-container">
+                        $$p_{ij}^{(k)} \geq 0 \quad (i,j=1,2,\cdots,n); \sum_{j=1}^{n}p_{ij}^{(k)} = 1 \quad (i=1,2,\cdots,n)$$
+                    </div>
+
+                    <p>以下通过实例给出某些重要结论。</p>
+
+                    <div class="example">
+                        <div class="example-title">例14.4（香烟购买案例）</div>
+                        <p>某商店对前一天来店分别购买A、B、C牌号香烟的顾客各100名的购买情况进行统计（每天都购一包），统计结果如表14.3所示。</p>
+                        
+                        <table>
+                            <caption><strong>表 14.3</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">顾客数目<br>今天购牌号<br>前次购买品牌</th>
+                                    <th colspan="3">今天购牌号</th>
+                                </tr>
+                                <tr>
+                                    <th>A</th>
+                                    <th>B</th>
+                                    <th>C</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>A</td>
+                                    <td>20</td>
+                                    <td>50</td>
+                                    <td>30</td>
+                                </tr>
+                                <tr>
+                                    <td>B</td>
+                                    <td>20</td>
+                                    <td>70</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>C</td>
+                                    <td>30</td>
+                                    <td>30</td>
+                                    <td>40</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p>不妨认为顾客在每次购买香烟时，只对他前次所吸牌号有印象，因此，商店可采用一个齐次马尔可夫链 $\{X_m | m=1,2,\cdots\}$ 描述顾客对香烟的需求状况。随机变量 $X_m$ 表示顾客在第 $m$ 天购买的香烟牌号。为方便起见，不妨设1、2、3分别代表顾客购买A、B、C三牌号香烟的不同状态，故由表中数据不难算出，此马氏链的一步转移矩阵</p>
+                        
+                        <div class="matrix-container">
+                            $$\boldsymbol{P} = \begin{bmatrix}
+                            0.2 & 0.5 & 0.3 \\
+                            0.2 & 0.7 & 0.1 \\
+                            0.3 & 0.3 & 0.4
+                            \end{bmatrix}$$
+                        </div>
+
+                        <p>假定一位顾客在第一天购买牌号A的香烟，试问他在第三天购买牌号B的概率是多少呢？这实际上要求的是二步转移概率 $p_{12}^{(2)}$。</p>
+                    </div>
+
+                    <button class="collapsible">查看二步转移概率的计算</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p>如设第一天购买A牌号，第二天购买A、B、C的概率分别为 $p_{11}=0.2, p_{12}=0.5, p_{13}=0.3$；而第二天买A、B、C，第三天买B的概率为 $p_{12}=0.5, p_{22}=0.7, p_{32}=0.3$，则第三天购买B的概率为二步转移概率 $p_{12}^{(2)} = p(X_3=2 | X_1=1)$。结合图14.2图示，根据概率乘法公式与互斥性得</p>
+                            
+                            <div class="matrix-container">
+                                $$p_{12}^{(2)} = p_{11}p_{12} + p_{12}p_{22} + p_{13}p_{32} = [p_{11} \quad p_{12} \quad p_{13}]\begin{bmatrix}p_{12} \\ p_{22} \\ p_{32}\end{bmatrix}$$
+                                
+                                $$= [0.2 \quad 0.5 \quad 0.3]\begin{bmatrix}0.5 \\ 0.7 \\ 0.3\end{bmatrix} = 0.54$$
+                            </div>
+                        </div>
+                    </div>
+
+                    <p>更一般地，结合图14.3图示，可得齐次马尔可夫链的二步转移概率及二步转移矩阵为</p>
+                    
+                    <div class="matrix-container">
+                        $$p_{ij}^{(2)} = \sum_{k}p_{ik}^{(1)}p_{kj}^{(1)}$$
+                        
+                        $$\boldsymbol{P}^{(2)} = [p_{ij}^{(2)}]_{n \times n} = \boldsymbol{P} \cdot \boldsymbol{P} = \boldsymbol{P}^2$$
+                    </div>
+
+                    <p>故知，上例中二步转移矩阵</p>
+                    <div class="matrix-container">
+                        $$\boldsymbol{P}^{(2)} = \boldsymbol{P}^2 = \begin{bmatrix}
+                        0.23 & 0.54 & 0.23 \\
+                        0.21 & 0.62 & 0.17 \\
+                        0.24 & 0.48 & 0.28
+                        \end{bmatrix}$$
+                    </div>
+
+                    <p>进一步，还有下式成立：</p>
+                    <div class="matrix-container">
+                        $$p_{ij}^{(n)} = \sum_{k}p_{ik}^{(m)} \cdot p_{kj}^{(n-m)}, \text{ 即 } \boldsymbol{P}^{(n)} = \boldsymbol{P}^{(m)} \cdot \boldsymbol{P}^{(n-m)}$$
+                    </div>
+
+                    <p>这个表示 $n$ 步转移概率基本关系的方程称为<strong>切普曼-柯尔莫哥洛夫方程</strong>（Champman-Kolmogorov equation），但这里必须在马尔可夫假设条件下方能成立。上述公式的证明有关文献已经给出，读者不妨参考。</p>
+
+                    <div class="note">
+                        <div class="note-title">💡 重要结论</div>
+                        <p>应用切普曼-柯尔莫哥洛夫方程易知，$\boldsymbol{P}^{(n)} = \boldsymbol{P}^{(n-1)} \cdot \boldsymbol{P} = \boldsymbol{P}^n$，即是说 $n$ 步状态转移矩阵就等于一步状态转移矩阵的 $n$ 次乘方。</p>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">例14.5</div>
+                        <p>如设例14.3中，$\alpha=0.7, \beta=0.4$，则</p>
+                        
+                        <div class="matrix-container">
+                            $$\boldsymbol{P} = \begin{bmatrix}
+                            0.7 & 0.3 \\
+                            0.4 & 0.6
+                            \end{bmatrix}$$
+                        </div>
+
+                        <p>于是，两步转移概率矩阵为</p>
+                        <div class="matrix-container">
+                            $$\boldsymbol{P}^{(2)} = \boldsymbol{P} \cdot \boldsymbol{P} = \begin{bmatrix}
+                            0.7 & 0.3 \\
+                            0.4 & 0.6
+                            \end{bmatrix}\begin{bmatrix}
+                            0.7 & 0.3 \\
+                            0.4 & 0.6
+                            \end{bmatrix} = \begin{bmatrix}
+                            0.61 & 0.39 \\
+                            0.52 & 0.48
+                            \end{bmatrix}$$
+                        </div>
+
+                        <p>四步转移概率矩阵为</p>
+                        <div class="matrix-container">
+                            $$\boldsymbol{P}^{(4)} = \boldsymbol{P}^{(2)}\boldsymbol{P}^{(2)} = \begin{bmatrix}
+                            0.61 & 0.39 \\
+                            0.52 & 0.48
+                            \end{bmatrix}\begin{bmatrix}
+                            0.61 & 0.39 \\
+                            0.52 & 0.48
+                            \end{bmatrix}$$
+                            
+                            $$= \begin{bmatrix}
+                            0.5749 & 0.4251 \\
+                            0.5668 & 0.4332
+                            \end{bmatrix}$$
+                        </div>
+
+                        <p>由此可知，今日有雨第五日仍有雨的概率为 $P_{00}^{(4)} = 0.5749$。</p>
+                    </div>
+                </div>
+
+                <!-- 14.3.4 稳态概率 -->
+                <div id="steady-state">
+                    <h3>14.3.4 稳态概率</h3>
+                    
+                    <p>根据马尔可夫假设，对于一个马氏链，若已经知道初始状态概率 $\boldsymbol{\lambda}_0^{(0)} = p | X_0=i | \geq 0$ 和一步转移矩阵 $\boldsymbol{P}$，就可以求出任意时刻时过程处于某种状态的概率 $\lambda_j^{(n)} = p | X_n=j |$。这时，$\boldsymbol{\lambda}_j^{(n)} = p | X_n=j |$ 为系统瞬态概率。在实际应用当中，最感兴趣的是当 $n \to \infty$ 时，在统计平衡条件下系统所处状态的概率分布。下面讨论当 $n \to +\infty$ 时马尔可夫链的变化。</p>
+
+                    <div class="definition">
+                        <div class="definition-title">定义 14.2 稳态概率分布</div>
+                        <p>若极限 $\displaystyle\lim_{n \to +\infty}\lambda_j^{(n)} = \lambda_j^*$ 存在，且 $\displaystyle\sum_{j}\lambda_j^* = 1$，则称 $\{\lambda_j^*\}$ 为系统的<strong>平稳分布</strong>，$\boldsymbol{\lambda}^* = [\lambda_1^* \quad \lambda_2^* \quad \cdots \quad \lambda_n^*]$ 为系统的<strong>稳态概率向量</strong>。</p>
+                    </div>
+
+                    <p><strong>稳态概率分布具有下述性质</strong>。</p>
+
+                    <div class="property">
+                        <div class="property-title">性质 14.3</div>
+                        <p><strong>稳态概率分布与初始概率分布无关</strong>。</p>
+                    </div>
+
+                    <div class="property">
+                        <div class="property-title">性质 14.4</div>
+                        <p>若马尔可夫链是标准的，即它的转移概率矩阵 $\boldsymbol{P}$ 是一个正规随机矩阵，则存在一个概率向量 $\boldsymbol{\lambda}^* = [\lambda_1^* \quad \lambda_2^* \quad \cdots \quad \lambda_n^*]^{\mathrm{T}}$ 满足</p>
+                        
+                        <div class="matrix-container">
+                            $$\boldsymbol{P}^{\mathrm{T}}\boldsymbol{\lambda}^* = \boldsymbol{\lambda}^*$$
+                        </div>
+                        
+                        <p>$\lambda_j^*$ 即为状态 $j$ 的稳态概率，$\boldsymbol{\lambda}^*$ 为稳态概率向量。</p>
+                    </div>
+
+                    <p>显然，若转移矩阵为正规随机矩阵，则系统必然存在平衡状态，即最终达到完全与初始状态无关的一种平衡状态。由正规随机矩阵的性质不难得出，$\boldsymbol{P}^{\mathrm{T}}\boldsymbol{\lambda}^* = \boldsymbol{\lambda}^*$ 成立。</p>
+
+                    <button class="collapsible">查看性质14.4的理解</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>事实上，性质14.4也可以如此理解：</strong></p>
+                            
+                            <p>由于</p>
+                            <div class="matrix-container">
+                                $$\boldsymbol{\lambda}_k = [\boldsymbol{P}^k]^{\mathrm{T}}\boldsymbol{\lambda}_0 = \boldsymbol{P}^{\mathrm{T}} \cdot [\boldsymbol{P}^{k-1}]^{\mathrm{T}}\boldsymbol{\lambda}_0 = \boldsymbol{P}^{\mathrm{T}}\boldsymbol{\lambda}_{k-1}$$
+                            </div>
+
+                            <p>而随着步数的增大，有</p>
+                            <div class="matrix-container">
+                                $$\lim_{k \to +\infty}\boldsymbol{\lambda}_k = \lim_{k \to +\infty}\boldsymbol{\lambda}_{k-1} = \boldsymbol{\lambda}^*$$
+                            </div>
+
+                            <p>则由上式知，$\boldsymbol{\lambda}^* = \boldsymbol{P}^{\mathrm{T}}\boldsymbol{\lambda}^*$。</p>
+
+                            <p>性质14.4同时也给出了一个求解稳态概率向量的方法，结合 $\displaystyle\sum_{i=1}^{n}x_i = 1$，有</p>
+                            
+                            <div class="matrix-container">
+                                $$\begin{cases}
+                                \boldsymbol{P}^{\mathrm{T}}\boldsymbol{X} = \boldsymbol{X} & (1) \\
+                                \displaystyle\sum_{i=1}^{n}x_i = 1 & (2)
+                                \end{cases}$$
+                            </div>
+
+                            <p>其中，$\boldsymbol{X} = [x_1 \quad x_2 \quad \cdots \quad x_n]^{\mathrm{T}}$，式(1)称为<strong>平衡方程</strong>。尽管在平衡方程中变量数与方程数相等，但在转移矩阵中必须满足每行元素之和为1，所以应联合式(2)，（用式(2)替换式(1)中某一个方程即可），式(2)也称<strong>规范化方程</strong>。</p>
+                            
+                            <p>求解上述方程组，即得稳态概率向量 $\boldsymbol{X}$。</p>
+                        </div>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">例14.6</div>
+                        <p>例14.4中的一步转移矩阵 $\displaystyle\boldsymbol{P} = \begin{bmatrix}0.2 & 0.5 & 0.3 \\ 0.2 & 0.7 & 0.1 \\ 0.3 & 0.3 & 0.4\end{bmatrix}$，$\boldsymbol{P}$ 为正规随机矩阵，则系统必存在唯一稳态概率向量 $\boldsymbol{X} = [x_1 \quad x_2 \quad x_3]^{\mathrm{T}}$，由上述公式可得</p>
+                        
+                        <div class="matrix-container">
+                            $$\begin{cases}
+                            0.2x_1 + 0.2x_2 + 0.3x_3 = x_1 \\
+                            0.5x_1 + 0.7x_2 + 0.3x_3 = x_2 \\
+                            x_1 + x_2 + x_3 = 1
+                            \end{cases}$$
+                        </div>
+
+                        <p>解得 $\boldsymbol{X} = [0.22 \quad 0.57 \quad 0.21]^{\mathrm{T}}$，$\boldsymbol{X}$ 即为平稳状态下A、B、C三种牌号香烟的购买率。</p>
+                    </div>
+
+                    <div class="note">
+                        <div class="note-title">📌 一般齐次马尔可夫链的性质总结</div>
+                        <p>综上所述，一般的齐次马尔可夫链具有如下一些性质。</p>
+                        
+                        <ol style="margin-left: 20px;">
+                            <li><strong>转移概率矩阵 $\boldsymbol{P}$ 是一个随机矩阵</strong>。</li>
+                            
+                            <li>$n$ <strong>步状态转移矩阵等于一步状态转移矩阵的 $n$ 次乘方</strong>，即 $\boldsymbol{P}^{(n)} = \boldsymbol{P}^n$，且 $n$ 步转移概率为 $p_{ij}^{(n)} = \sum_{k}p_{ik}^{(m)} \cdot p_{kj}^{(n-m)}$。</li>
+                            
+                            <li><strong>第 $k$ 步的状态概率向量 $\boldsymbol{\lambda}_k$ 与初始概率向量 $\boldsymbol{\lambda}_0$ 有如下关系</strong>：
+                            $$\boldsymbol{\lambda}_k = (\boldsymbol{P}^k)^{\mathrm{T}}\boldsymbol{\lambda}_0$$
+                            </li>
+                            
+                            <li>若转移概率矩阵 $\boldsymbol{P}$ 是一个正规随机矩阵，则系统存在一个唯一的稳态概率向量 $\boldsymbol{\lambda}^* = [\lambda_1^* \quad \lambda_2^* \quad \cdots \quad \lambda_n^*]^{\mathrm{T}}$，使得 $\boldsymbol{P}^{\mathrm{T}}\boldsymbol{\lambda}^* = \boldsymbol{\lambda}^*$，且知：
+                            <ul style="margin-left: 20px;">
+                                <li>(a) $\boldsymbol{P}^{(k)} \to \boldsymbol{B}$（$k \to +\infty$）时，$\boldsymbol{B}$ 的每一行向量相同，全为 $(\boldsymbol{\lambda}^*)^{\mathrm{T}}$；</li>
+                                <li>(b) $\boldsymbol{\lambda}_k = (\boldsymbol{P}^k)^{\mathrm{T}}\boldsymbol{\lambda}_0 \to \boldsymbol{\lambda}^*$（$k \to +\infty$），亦即 $\displaystyle\lim_{k \to \infty}p(X_k=j) = \lambda_j^*$。</li>
+                            </ul>
+                            </li>
+                        </ol>
+                        
+                        <p>换言之，此时齐次马尔可夫链在经历一定时间的状态转移后，会趋于一种与初始状态无关的稳定状态。</p>
+                    </div>
+
+                    <p>下面是齐次马尔可夫链具体的应用实例。</p>
+                </div>
+
+                <!-- 14.3.5 马尔可夫分析应用实例 -->
+                <div id="applications">
+                    <h3>14.3.5 马尔可夫分析应用实例</h3>
+                    
+                    <div class="example">
+                        <div class="example-title">例14.7（市场占有率分析）</div>
+                        <p>A、B、C三家公司生产同一种产品。根据调查得知，各家公司产品上月占据市场的份额分别为50%、30%和20%。设第 $m$ 个月顾客对这种产品的各种牌号的需求状况可用一个齐次马尔可夫链 $\{X_m | m=1,2,\cdots\}$ 表示。令状态 $N_1=$ 买A公司产品，状态 $N_2=$ 买B公司产品，状态 $N_3=$ 买C公司产品，相应的概率转移矩阵为</p>
+                        
+                        <div class="matrix-container">
+                            $$\boldsymbol{P} = \begin{bmatrix}
+                            0.70 & 0.10 & 0.20 \\
+                            0.10 & 0.80 & 0.10 \\
+                            0.05 & 0.05 & 0.90
+                            \end{bmatrix}$$
+                        </div>
+
+                        <p><strong>试问：本月和下月三家公司产品占据市场的份额各为多少？一年后三家公司产品占据市场的份额各为多少？</strong></p>
+                    </div>
+
+                    <button class="collapsible">查看例14.7的详细解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>解</strong></p>
+                            
+                            <p>上月购买A公司产品的顾客中，本月将有70%仍买A公司产品，上月购买B公司产品的顾客中，本月将有10%转买A公司产品；上月买C公司产品的顾客中，本月将有5%转买A公司产品。因而A公司产品本月占据市场的份额为</p>
+                            
+                            <div class="matrix-container">
+                                $$0.5 \times 0.70 + 0.30 \times 0.10 + 0.2 \times 0.05$$
+                                
+                                $$= [0.5 \quad 0.3 \quad 0.2]\begin{bmatrix}0.70 \\ 0.10 \\ 0.05\end{bmatrix} = 0.39$$
+                            </div>
+
+                            <p>其中，初始概率向量 $[0.5 \quad 0.3 \quad 0.2]^{\mathrm{T}}$ 表示上月三家公司产品占据市场的份额，于是描述本月各公司占据市场份额的概率向量为</p>
+                            
+                            <div class="matrix-container">
+                                $$[0.5 \quad 0.3 \quad 0.2]\boldsymbol{P} = [0.39 \quad 0.30 \quad 0.31]$$
+                            </div>
+
+                            <p>描述下月各公司产品占据市场份额的概率向量为</p>
+                            
+                            <div class="matrix-container">
+                                $$[0.39 \quad 0.30 \quad 0.31]\boldsymbol{P} = (0.5 \quad 0.3 \quad 0.2)\boldsymbol{P}^2 = (0.32 \quad 0.29 \quad 0.39)$$
+                            </div>
+
+                            <p>而描述一年后各公司产品占据市场份额的概率向量为</p>
+                            
+                            <div class="matrix-container">
+                                $$[0.5 \quad 0.3 \quad 0.2]\boldsymbol{P}^{12}$$
+                            </div>
+
+                            <p>因为 $\boldsymbol{P}$ 是一个正规随机矩阵，故知此概率向量近似于稳态概率向量 $\boldsymbol{\lambda}^*$，求解方程</p>
+                            
+                            <div class="matrix-container">
+                                $$\begin{cases}
+                                0.7\lambda_1 + 0.1\lambda_2 + 0.05\lambda_3 = \lambda_1 \\
+                                0.1\lambda_1 + 0.8\lambda_2 + 0.05\lambda_3 = \lambda_2 \\
+                                \lambda_1 + \lambda_2 + \lambda_3 = 1
+                                \end{cases}$$
+                            </div>
+
+                            <p>可得 $\boldsymbol{\lambda}^* = [0.18 \quad 0.23 \quad 0.59]^{\mathrm{T}}$。故A公司产品占据市场的份额一年后将由年初的50%下降到18%，情况堪忧。A公司必须考虑改进措施。</p>
+                        </div>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">例14.8（订货决策）</div>
+                        <p>某商店经营一种易腐食品，出售后一个单位可获利 $a=5$ 元。若当天售不出去，则每单位损失 $b=3$ 元。该店经理统计了连续40天的需求情况（不是实际销售量）。现将所得数据列出如下：</p>
+                        
+                        <p style="text-align: center;">3, 3, 4, 2, 2, 4, 2, 3, 4, 4, 4, 3, 2, 4, 2, 3, 3, 4, 2, 2, 4, 3, 4, 3, 2, 3, 4, 2, 3, 2, 2, 3, 4, 2, 4, 4, 3, 2, 3, 3</p>
+
+                        <p>经理想应用马尔可夫链来预测需求量，确定明天进货量。①已知当天需求量为3个单位，明日应进货多少个单位？②若不知当天需求量，明日应进货多少个单位？</p>
+                    </div>
+
+                    <button class="collapsible">查看例14.8的详细解答</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p><strong>解</strong> &nbsp; 令状态 $N_1=$ 需求量为2个单位，状态 $N_2=$ 需求量为3个单位，状态 $N_3=$ 需求量为4个单位。状态转移的情况是：</p>
+                            
+                            <p style="text-align: center;">
+                                $N_1 \to N_1$, 3次；$N_1 \to N_2$, 6次；$N_1 \to N_3$, 4次<br>
+                                $N_2 \to N_1$, 4次；$N_2 \to N_2$, 3次；$N_2 \to N_3$, 6次<br>
+                                $N_3 \to N_1$, 6次；$N_3 \to N_2$, 4次；$N_3 \to N_3$, 3次
+                            </p>
+
+                            <p>于是，此马尔可夫链的转移概率矩阵</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{P} = \begin{bmatrix}
+                                \frac{3}{13} & \frac{6}{13} & \frac{4}{13} \\
+                                \frac{4}{13} & \frac{3}{13} & \frac{6}{13} \\
+                                \frac{6}{13} & \frac{4}{13} & \frac{3}{13}
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>求解方程组</p>
+                            
+                            <div class="matrix-container">
+                                $$\begin{cases}
+                                \frac{3}{13}x_1 + \frac{4}{13}x_2 + \frac{6}{13}x_3 = x_1 \\
+                                \frac{6}{13}x_1 + \frac{3}{13}x_2 + \frac{4}{13}x_3 = x_2 \\
+                                x_1 + x_2 + x_3 = 1
+                                \end{cases}$$
+                            </div>
+
+                            <p>得稳态概率向量</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{X} = \left[\frac{1}{3} \quad \frac{1}{3} \quad \frac{1}{3}\right]^{\mathrm{T}}$$
+                            </div>
+
+                            <p>这样，应用边际分析的思想就可回答经理的问题。由于</p>
+                            
+                            <div class="matrix-container">
+                                $$\frac{b}{a+b} = \frac{3}{5+3} = \frac{3}{8} = 0.375$$
+                            </div>
+
+                            <p>而 $p$(明日需求量=4 | 当天需求量=3) = $p_{23} = \frac{6}{13} \approx 0.462 > \frac{b}{a+b}$，故对①的回答为：明日应进货4个单位。又因为</p>
+                            
+                            <div class="matrix-container">
+                                $$p(\text{明日需求量}=3) = x_2 = \frac{1}{3} < \frac{b}{a+b}$$
+                                
+                                $$p(\text{明日需求量} \geq 3) = x_2 + x_3 = \frac{2}{3} > \frac{b}{a+b}$$
+                            </div>
+
+                            <p>所以明日应进货3个单位。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 14.4 吸收马尔可夫链 -->
+            <section class="section" id="absorbing">
+                <h2>14.4 吸收马尔可夫链</h2>
+
+                <!-- 14.4.1 吸收马尔可夫链 -->
+                <div id="absorbing-chain">
+                    <h3>14.4.1 吸收马尔可夫链</h3>
+                    
+                    <p>以下研讨齐次马尔可夫链中的一种特殊类型——齐次吸收马尔可夫链及它在经济管理问题中的具体应用。为此，首先介绍有关的基本概念。</p>
+
+                    <div class="definition">
+                        <div class="definition-title">定义 14.3 吸收状态</div>
+                        <p>对于马尔可夫链的状态 $i$，如果 $p_{ii}=1$，即到达状态 $i$ 后，永久停留在 $i$，不可能再转移到其他任何状态，那么，就称状态 $i$ 为<strong>吸收状态</strong>或称为<strong>吸收态</strong>，否则为非吸收状态。</p>
+                    </div>
+
+                    <div class="definition">
+                        <div class="definition-title">定义 14.4 吸收马尔可夫链</div>
+                        <p>若一个马氏链至少有一个吸收态，且任何一个非吸收态到吸收态是可能的（不必是一步），则称此马氏链为<strong>吸收马尔可夫链</strong>。</p>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">例14.9（赌博问题）</div>
+                        <p>甲、乙两人进行比赛，每局比赛中甲胜的概率是 $p$，乙胜的概率是 $q$，和局概率是 $r$（$p+q+r=1$）。每局赛后，胜者记"$+1$"分，负者记"$-1$"分，和局不记分，当有一人获得2分时结束比赛。以 $X_n$ 表示比赛到第 $n$ 局时甲所得的分数，则 $\{X_n, n=1,2,\cdots\}$ 就是一个吸收马氏链。</p>
+                    </div>
+
+                    <button class="collapsible">查看例14.9的详细分析</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p>事实上，它共有五个状态，状态空间 $I=\{-2, -1, 0, 1, 2\}$，一步转移概率矩阵</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{P} = \begin{bmatrix}
+                                1 & 0 & 0 & 0 & 0 \\
+                                q & r & p & 0 & 0 \\
+                                0 & q & r & p & 0 \\
+                                0 & 0 & q & r & p \\
+                                0 & 0 & 0 & 0 & 1
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>其中，$p_{11}=1, p_{55}=1$，这表明状态1、5都是吸收态。这里状态1意味着甲得$-2$分，甲输，比赛结束。因此，可认为 $X_n$ 一直停留在状态1，状态5也有类似的解释。由题意知，其余三个非吸收态都可能经若干步转移后到达吸收态。</p>
+
+                            <p>当一过程到达吸收态，称它"被吸收"。可以证明：<strong>吸收马氏链将被吸收的概率为1</strong>，或说吸收马氏链 $n$ 步后，到达非吸收态的概率趋向于零，具体证法从略。</p>
+                        </div>
+                    </div>
+
+                    <p>对于吸收马氏链，感兴趣的是如下三个问题：</p>
+                    <ol style="margin-left: 20px;">
+                        <li>过程被吸收前，在非吸收态之间转移的平均次数是多少？</li>
+                        <li>过程从非吸收态出发到达吸收态的平均步数是多少？</li>
+                        <li>过程从非吸收态出发最终进入吸收态的概率是多少？</li>
+                    </ol>
+
+                    <p>为此，首先考察吸收马氏链的 $n$ 步转移概率矩阵。</p>
+
+                    <p>事实上，对于一个有 $r$ 个吸收态和 $s$ 个非吸收态的吸收马氏链，经过适当排列（将吸收态集中在一起排列在前面）的一步转移概率矩阵 $\boldsymbol{P}$ 总可以表示为如下的标准形式：</p>
+
+                    <div class="matrix-container">
+                        $$\begin{array}{cc}
+                        & \begin{array}{cc} r\text{个吸收态} & s\text{个非吸收态} \end{array} \\
+                        \begin{array}{c} r\text{个吸收态} \\ s\text{个非吸收态} \end{array} &
+                        \begin{bmatrix}
+                        \boldsymbol{I} & \boldsymbol{0} \\
+                        \boldsymbol{R} & \boldsymbol{Q}
+                        \end{bmatrix}
+                        \end{array}$$
+                    </div>
+
+                    <p>这是一个分块矩阵。其中，子阵 $\boldsymbol{I}$ 是一个 $r \times r$ 阶单位矩阵，它的元素是吸收态之间的转移概率；子阵 $\boldsymbol{0}$ 是一个 $r \times s$ 阶零矩阵，它的元素是吸收态到非吸收态的转移概率；子阵 $\boldsymbol{R}$ 是一个 $s \times r$ 阶子阵，它的元素是非吸收态到吸收态的转移概率；子阵 $\boldsymbol{Q}$ 是一个 $s \times s$ 阶子阵，它的元素是非吸收态之间的转移概率。</p>
+
+                    <p>如此，可以容易地得到 $n$ 步转移概率矩阵 $\boldsymbol{P}^{(n)}$ 的分块形式如下：</p>
+
+                    <div class="matrix-container">
+                        $$\boldsymbol{P}^{(2)} = \begin{bmatrix}
+                        \boldsymbol{I} & \boldsymbol{0} \\
+                        \boldsymbol{R} & \boldsymbol{Q}
+                        \end{bmatrix}\begin{bmatrix}
+                        \boldsymbol{I} & \boldsymbol{0} \\
+                        \boldsymbol{R} & \boldsymbol{Q}
+                        \end{bmatrix} = \begin{bmatrix}
+                        \boldsymbol{I} & \boldsymbol{0} \\
+                        \boldsymbol{QR}+\boldsymbol{R} & \boldsymbol{Q}^2
+                        \end{bmatrix}$$
+                        
+                        $$\boldsymbol{P}^{(3)} = \boldsymbol{P}^2 = \begin{bmatrix}
+                        \boldsymbol{I} & \boldsymbol{0} \\
+                        \boldsymbol{Q}^2\boldsymbol{R}+\boldsymbol{QR}+\boldsymbol{R} & \boldsymbol{Q}^3
+                        \end{bmatrix}$$
+                        
+                        $$\vdots$$
+                        
+                        $$\boldsymbol{P}^{(n)} = \boldsymbol{P}^n = \begin{bmatrix}
+                        \boldsymbol{I} & \boldsymbol{0} \\
+                        [\boldsymbol{Q}^{n-1}+\boldsymbol{Q}^{n-2}+\cdots+\boldsymbol{I}]\boldsymbol{R} & \boldsymbol{Q}^n
+                        \end{bmatrix}$$
+                        
+                        $$= \begin{bmatrix}
+                        \boldsymbol{I} & \boldsymbol{0} \\
+                        [\boldsymbol{I}-\boldsymbol{Q}]^{-1} \cdot [\boldsymbol{I}^n-\boldsymbol{Q}^n]\boldsymbol{R} & \boldsymbol{Q}^n
+                        \end{bmatrix}$$
+                    </div>
+
+                    <p>式中，$\boldsymbol{Q}^n$ 表示非吸收态之间 $n$ 步转移概率矩阵，$[\boldsymbol{I}-\boldsymbol{Q}]^{-1} \cdot [\boldsymbol{I}^n-\boldsymbol{Q}^n]\boldsymbol{R}$ 表示由非吸收态经 $n$ 步到吸收态的转移概率矩阵。另外，由于 $n$ 步后过程到达非吸收态的概率趋向于零，于是当 $n$ 趋向于无穷时，$\boldsymbol{Q}^n$ 的每一个元素必趋向于零，即</p>
+                    
+                    <div class="matrix-container">
+                        $$\lim_{n \to \infty}\boldsymbol{P}^n = \begin{bmatrix}
+                        \boldsymbol{I} & \boldsymbol{0} \\
+                        [\boldsymbol{I}-\boldsymbol{Q}]^{-1}\boldsymbol{R} & \boldsymbol{0}
+                        \end{bmatrix}$$
+                    </div>
+
+                    <p>上式表示过程全被吸收，而 $[\boldsymbol{I}-\boldsymbol{Q}]^{-1}$ 的元素表示过程目前处于非吸收态，最终进入吸收态的转移概率。本书将在后面详细讨论。</p>
+
+                    <div class="note">
+                        <div class="note-title">💡 重要结论</div>
+                        <p>记矩阵 $\boldsymbol{N} = [\boldsymbol{I}-\boldsymbol{Q}]^{-1}$，并称它为吸收马氏链的<strong>基本矩阵</strong>，又称<strong>特征量</strong>。显然，<strong>基本矩阵 $\boldsymbol{N}$ 的元素给出了过程被吸收前从一个非吸收态出发，转移到每一个非吸收态的平均(步)数</strong>。</p>
+                    </div>
+                </div>
+
+                <!-- 14.4.2 吸收马尔可夫链应用举例 -->
+                <div id="absorbing-applications">
+                    <h3>14.4.2 吸收马尔可夫链应用举例</h3>
+                    
+                    <div class="example">
+                        <div class="example-title">例14.10（物体运动问题）</div>
+                        <p>一物体作线性运动，每次它以概率 $\frac{1}{2}$ 向右移动一单位，或以概率 $\frac{1}{2}$ 向左移动。设置障碍后，若物体任何时候到达这些障碍之一它将停留在那儿。令状态为0, 1, 2, 3, 4。状态0, 4是吸收态，其余为非吸收态，且从中任一个到达吸收态是可能的。因此这是吸收马氏链，它的转移概率矩阵</p>
+                        
+                        <div class="matrix-container">
+                            $$\boldsymbol{P} = \begin{bmatrix}
+                            1 & 0 & 0 & 0 & 0 \\
+                            \frac{1}{2} & 0 & \frac{1}{2} & 0 & 0 \\
+                            0 & \frac{1}{2} & 0 & \frac{1}{2} & 0 \\
+                            0 & 0 & \frac{1}{2} & 0 & \frac{1}{2} \\
+                            0 & 0 & 0 & 0 & 1
+                            \end{bmatrix}$$
+                        </div>
+
+                        <p>$\boldsymbol{P}$ 的标准形式为</p>
+                        
+                        <div class="matrix-container">
+                            $$\begin{bmatrix}
+                            1 & 0 & 0 & 0 & 0 \\
+                            0 & 1 & 0 & 0 & 0 \\
+                            \frac{1}{2} & 0 & 0 & \frac{1}{2} & 0 \\
+                            0 & 0 & \frac{1}{2} & 0 & \frac{1}{2} \\
+                            0 & \frac{1}{2} & 0 & \frac{1}{2} & 0
+                            \end{bmatrix}$$
+                        </div>
+
+                        <p>其中，$\displaystyle\boldsymbol{Q} = \begin{bmatrix}0 & \frac{1}{2} & 0 \\ \frac{1}{2} & 0 & \frac{1}{2} \\ 0 & \frac{1}{2} & 0\end{bmatrix}$，于是，$\displaystyle\boldsymbol{I}-\boldsymbol{Q} = \begin{bmatrix}1 & -\frac{1}{2} & 0 \\ -\frac{1}{2} & 1 & -\frac{1}{2} \\ 0 & -\frac{1}{2} & 1\end{bmatrix}$</p>
+                    </div>
+
+                    <button class="collapsible">查看例14.10的完整计算</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <div class="matrix-container">
+                                $$\boldsymbol{N} = [\boldsymbol{I}-\boldsymbol{Q}]^{-1} = \begin{bmatrix}
+                                \frac{3}{2} & 1 & \frac{1}{2} \\
+                                1 & 2 & 1 \\
+                                \frac{1}{2} & 1 & \frac{3}{2}
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>由 $\boldsymbol{N}$ 知，从状态2出发，在吸收之前到达状态1的平均步数为1，到达状态2的平均步数是2，到达状态3的平均步数也是1。</p>
+
+                            <p>若将 $\boldsymbol{N}$ 中某一行所有元素相加，就可得从某一非吸收态出发，在被吸收前到达各个非吸收态的平均次(步)数之和。这个值就是从该非吸收态出发到吸收态时步数的平均数。这一结论可以具体描述如下：对于一个具有非吸收态个数为 $c$ 是有 $c$（非吸收态个数）个分量为1的列向量，则向量 $\boldsymbol{t} = \boldsymbol{Nc}$ 具有的各个分量分别是从各个相应的非吸收态出发被吸收收时的平均步数。</p>
+
+                            <p><strong>例14.11</strong> &nbsp; 续例14.10，求 $\boldsymbol{t}$。</p>
+
+                            <p><strong>解</strong></p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{t} = \boldsymbol{Nc} = \begin{bmatrix}
+                                \frac{3}{2} & 1 & \frac{1}{2} \\
+                                1 & 2 & 1 \\
+                                \frac{1}{2} & 1 & \frac{3}{2}
+                                \end{bmatrix}\begin{bmatrix}1 \\ 1 \\ 1\end{bmatrix} = \begin{bmatrix}3 \\ 4 \\ 3\end{bmatrix}$$
+                            </div>
+
+                            <p>于是，从状态1开始到吸收的平均步数是3，从状态2开始到吸收的平均步数是4，从状态3开始到吸收的平均步数也是3。由于此过程需从状态2转移至状态1或3，才可到达吸收态0或4，因而，从状态2开始比从状态1或3开始需要多一步是显然的。</p>
+
+                            <p>最后讨论什么是一个吸收链从某一个非吸收态开始最终进入吸收态的概率。由前面推得的 $n$ 步转移概率矩阵 $\boldsymbol{P}^n$ 不难得出：若令 $b_{ij}$ 是一个吸收马氏链开始在非吸收态 $i$，被吸收在状态 $j$ 的概率。令 $\boldsymbol{B}$ 是具有元素 $b_{ij}$ 的矩阵，则 $\boldsymbol{B} = \boldsymbol{NR}$。</p>
+
+                            <p>这可由前述 $n$ 步转移概率矩阵 $\boldsymbol{P}^n$ 的极限形式得到。</p>
+
+                            <p>事实上，从非吸收态 $i$ 转移到吸收态 $j$，可以是一步转移，转移概率是 $p_{ij}$；也可以通过中间状态，先从 $i$ 到 $k$（非吸收态），再到 $j$，故可得方程</p>
+                            
+                            <div class="matrix-container">
+                                $$b_{ij} = p_{ij} + \sum_{k}p_{ik}b_{kj}$$
+                            </div>
+
+                            <p>写成矩阵形式为</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{B} = \boldsymbol{R} + \boldsymbol{QB}$$
+                                $$[\boldsymbol{I}-\boldsymbol{Q}]\boldsymbol{B} = \boldsymbol{R}$$
+                                $$\boldsymbol{B} = [\boldsymbol{I}-\boldsymbol{Q}]^{-1}\boldsymbol{R} = \boldsymbol{NR}$$
+                            </div>
+
+                            <p><strong>例14.12</strong> &nbsp; 续例14.10，例14.11，由 $\boldsymbol{N}$ 及 $\boldsymbol{R}$，立即得</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{B} = \boldsymbol{NR} = \begin{bmatrix}
+                                \frac{3}{2} & 1 & \frac{1}{2} \\
+                                1 & 2 & 1 \\
+                                \frac{1}{2} & 1 & \frac{3}{2}
+                                \end{bmatrix}\begin{bmatrix}
+                                \frac{1}{2} & 0 \\
+                                0 & 0 \\
+                                0 & \frac{1}{2}
+                                \end{bmatrix} = \begin{bmatrix}
+                                \frac{3}{4} & \frac{1}{4} \\
+                                \frac{1}{2} & \frac{1}{2} \\
+                                \frac{1}{4} & \frac{3}{4}
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>于是，如从状态1出发，可知在状态0吸收的概率为 $\frac{3}{4}$，在状态4吸收的概率为 $\frac{1}{4}$。</p>
+
+                            <p>综上所述，矩阵 $\boldsymbol{N}$ 本身回答了问题①，它给出了依赖于开始状态的过程被吸收前到达每个非吸收态的平均次数；列向量 $\boldsymbol{t} = \boldsymbol{Nc}$ 回答了问题②，它给出了依赖于开始状态的吸收前的平均步数；矩阵 $\boldsymbol{B} = \boldsymbol{NR}$ 回答了问题③，它给出了依赖于开始状态的在每个吸收态被吸收的概率。</p>
+                        </div>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">例14.13（企业经营状况分析）</div>
+                        <p>某地企业管理部门为掌握企业经营状况的变化规律，对有关企业作了一次跟踪调查统计，得如下统计表14.4：</p>
+                        
+                        <table>
+                            <caption><strong>表 14.4</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th rowspan="2"></th>
+                                    <th colspan="5">去年经营状况</th>
+                                    <th rowspan="2">∑<br>(求和)</th>
+                                </tr>
+                                <tr>
+                                    <th>好</th>
+                                    <th>中</th>
+                                    <th>差</th>
+                                    <th>兼并</th>
+                                    <th>破产倒闭</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td rowspan="3">前年<br>经营<br>状况</td>
+                                    <td>好</td>
+                                    <td>60</td>
+                                    <td>30</td>
+                                    <td>10</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>100</td>
+                                </tr>
+                                <tr>
+                                    <td>中</td>
+                                    <td>20</td>
+                                    <td>60</td>
+                                    <td>18</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>100</td>
+                                </tr>
+                                <tr>
+                                    <td>差</td>
+                                    <td>10</td>
+                                    <td>30</td>
+                                    <td>50</td>
+                                    <td>7</td>
+                                    <td>3</td>
+                                    <td>100</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">∑(求和)</td>
+                                    <td>90</td>
+                                    <td>120</td>
+                                    <td>78</td>
+                                    <td>9</td>
+                                    <td>3</td>
+                                    <td>300</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p>表中数字说明：100家前年经营状况好的企业，到去年仍有60家保持好的状况；有30家变为中等；有10家转为差的，余类推。且马氏链（经营条件稳定，不妨假定为齐次马氏链）有五个状态，其中，"兼并"与"破产倒闭"为两个吸收态，其余为非吸收态。</p>
+
+                        <p>由上表可得经营状况的转移矩阵如下：</p>
+                        
+                        <div class="matrix-container">
+                            $$\begin{array}{cccccc}
+                            & \text{兼并} & \text{破产} & \text{好} & \text{中} & \text{差} \\
+                            \text{兼并} & 1 & 0 & 0 & 0 & 0 \\
+                            \text{破产} & 0 & 1 & 0 & 0 & 0 \\
+                            \text{好} & 0 & 0 & 0.6 & 0.3 & 0.1 \\
+                            \text{中} & 0.02 & 0 & 0.2 & 0.6 & 0.18 \\
+                            \text{差} & 0.07 & 0.03 & 0.1 & 0.3 & 0.5
+                            \end{array}
+                            = \begin{bmatrix}
+                            \boldsymbol{I} & \boldsymbol{0} \\
+                            \boldsymbol{R} & \boldsymbol{Q}
+                            \end{bmatrix}$$
+                        </div>
+                    </div>
+
+                    <button class="collapsible">查看例14.13的完整分析</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <p>由</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{P}^{(n)} = \boldsymbol{P}^n = \begin{bmatrix}
+                                \boldsymbol{I} & \boldsymbol{0} \\
+                                [\boldsymbol{Q}^{n-1}+\boldsymbol{Q}^{n-2}+\cdots+\boldsymbol{I}]\boldsymbol{R} & \boldsymbol{Q}^n
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>易求 $n$ 步转移概率矩阵 $\boldsymbol{P}^{(n)}$。如可求得</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{P}^{(3)} = \begin{bmatrix}
+                                1 & 0 & 0 & 0 & 0 \\
+                                0 & 1 & 0 & 0 & 0 \\
+                                0.03228 & 0.00792 & 0.3524 & 0.4122 & 0.1952 \\
+                                0.06934 & 0.01194 & 0.2714 & 0.4272 & 0.22012 \\
+                                0.14018 & 0.05442 & 0.2054 & 0.3612 & 0.2388
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>由 $\boldsymbol{P}^{(3)}$ 可见，现在经营状况"好"的企业，经过三年运营后仍保持"好"的概率为35.24%；变为"中等"的概率为41.22%，……而转为"破产倒闭"的概率大约只有0.792%，其余类推。</p>
+
+                            <p>要想知道企业最终进入"兼并"或"倒闭"的概率，需计算矩阵 $\boldsymbol{B} = [\boldsymbol{I}-\boldsymbol{Q}]^{-1}\boldsymbol{R}$。故先求 $[\boldsymbol{I}-\boldsymbol{Q}]^{-1}$，得</p>
+                            
+                            <div class="matrix-container">
+                                $$[\boldsymbol{I}-\boldsymbol{Q}]^{-1} = \begin{bmatrix}
+                                11.23 & 13.85 & 7.23 \\
+                                9.08 & 14.62 & 7.08 \\
+                                7.69 & 11.54 & 7.69
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>则</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{B} = [\boldsymbol{I}-\boldsymbol{Q}]^{-1}\boldsymbol{R} = \begin{bmatrix}
+                                0.7831 & 0.2169 \\
+                                0.788 & 0.2124 \\
+                                0.7691 & 0.2307
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>由矩阵 $\boldsymbol{B}$ 知，若企业现在处于"好"的状况，则最终进入"兼并"的可能性为78.31%；最终进入"倒闭"的可能性为21.69%，其余类推。</p>
+
+                            <p>另外，由基本矩阵 $\boldsymbol{N} = [\boldsymbol{I}-\boldsymbol{Q}]^{-1}$ 还可以知道以下事实。若企业现在处在"好"的状态，那么在最终进入"吸收"状态之前，将可能在"好"状态保持11.23年(步)；在"中"状态度过13.85年；而在"差"的状态维持7.23年。（当然，这些数字都是平均值，并且不一定是连续地"保持"或"维持"）其余类推。</p>
+
+                            <p>最后，由 $\boldsymbol{t} = \boldsymbol{NC}$ 得（$s=3$）：</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{t} = \begin{bmatrix}
+                                11.23 & 13.85 & 7.23 \\
+                                9.08 & 14.62 & 7.08 \\
+                                7.69 & 11.54 & 7.69
+                                \end{bmatrix}\begin{bmatrix}1 \\ 1 \\ 1\end{bmatrix} = \begin{bmatrix}32.31 \\ 30.78 \\ 26.92\end{bmatrix}$$
+                            </div>
+
+                            <p>由 $\boldsymbol{t}$ 知，企业由"好"状态出发到"兼并"或"倒闭"为止，平均将经过32.31年(步)；由"中"出发只需30.78年；由"差"出发只需26.92年。</p>
+                        </div>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-title">例14.14（商业银行不良贷款分析）</div>
+                        <p>我国中央银行对商业银行的贷款按照风险程度划分为5个等级，分别是正常、关注、次级、可疑和损失，称为5级分类法。分类的标准可以简述为：</p>
+                        
+                        <ul style="margin-left: 20px;">
+                            <li>$N_1$ ——关注贷款，拖延支付本金利息达0～180天；</li>
+                            <li>$N_2$ ——次级贷款，拖延支付本金利息达181～270天；</li>
+                            <li>$N_3$ ——可疑贷款，拖延支付本金利息达271～720天；</li>
+                            <li>$N_4$ ——损失贷款，拖延支付本金利息达720天以上，本息无法收回；</li>
+                            <li>$N_5$ ——正常贷款，贷款人能及时履行还款合同，付清本金利息。</li>
+                        </ul>
+
+                        <p>根据上述状态划分，前面定义的关注贷款、次级贷款、可疑贷款显然属于非吸收状态，正常贷款与损失贷款是两种吸收状态，则对于状态集合 $S=\{N_1, N_2, N_3, N_4, N_5\}$ 可划分为两大类：</p>
+                        
+                        <ul style="margin-left: 20px;">
+                            <li>$T = \{N_1, N_2, N_3\}$（非吸收状态）</li>
+                            <li>$A = \{N_4, N_5\}$（吸收状态）</li>
+                        </ul>
+
+                        <p>假设某银行当前贷款余额为470万元，其中属于关注类贷款200万元，属于次级类贷款150万元，属于可疑类贷款120万元。根据隔月账面变化情况分析，得到该银行各类贷款的状态转移矩阵：</p>
+                    </div>
+
+                    <button class="collapsible">查看例14.14的详细计算</button>
+                    <div class="content">
+                        <div class="content-inner">
+                            <div class="matrix-container">
+                                $$\begin{array}{cccccc}
+                                & N_1 & N_2 & N_3 & N_4 & N_5 \\
+                                N_1 & 0.3 & 0.3 & 0 & 0 & 0.4 \\
+                                N_2 & 0.15 & 0.25 & 0.3 & 0 & 0.3 \\
+                                N_3 & 0.1 & 0.1 & 0.3 & 0.35 & 0.15 \\
+                                N_4 & 0 & 0 & 0 & 1 & 0 \\
+                                N_5 & 0 & 0 & 0 & 0 & 1
+                                \end{array}$$
+                            </div>
+
+                            <p>令 $\displaystyle\boldsymbol{Q} = \begin{bmatrix}0.3 & 0.3 & 0 \\ 0.15 & 0.25 & 0.3 \\ 0.1 & 0.1 & 0.3\end{bmatrix}$, 
+                            $\displaystyle\boldsymbol{R} = \begin{bmatrix}0 & 0.4 \\ 0 & 0.3 \\ 0.35 & 0.15\end{bmatrix}$, 
+                            $\displaystyle\boldsymbol{I} = \begin{bmatrix}1 & 0 \\ 0 & 1\end{bmatrix}$，则状态转移矩阵可简写为</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{P} = \begin{array}{cc}
+                                T & A \\
+                                T \\
+                                A
+                                \end{array}\begin{bmatrix}
+                                \boldsymbol{Q} & \boldsymbol{R} \\
+                                \boldsymbol{O} & \boldsymbol{I}
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>下面根据所给信息，预测贷款状态转化和变化趋势。</p>
+
+                            <p><strong>(1)计算特征向量</strong></p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{N} = \begin{bmatrix}
+                                m_{11} & m_{12} & m_{13} \\
+                                m_{21} & m_{22} & m_{23} \\
+                                m_{31} & m_{32} & m_{33}
+                                \end{bmatrix} = [\boldsymbol{I}-\boldsymbol{Q}]^{-1} = \begin{bmatrix}
+                                0.7 & -0.3 & 0 \\
+                                -0.15 & 0.75 & -0.3 \\
+                                -0.1 & -0.1 & 0.7
+                                \end{bmatrix}^{-1}$$
+                                
+                                $$= \begin{bmatrix}
+                                1.618 & 0.686 & 0.294 \\
+                                0.441 & 1.601 & 0.686 \\
+                                0.294 & 0.327 & 1.569
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>各种状态贷款转化为损失或正常贷款的平均时间为</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{T} = \begin{bmatrix}T(N_1) \\ T(N_2) \\ T(N_3)\end{bmatrix} = \boldsymbol{NC} = \begin{bmatrix}
+                                1.618 & 0.686 & 0.294 \\
+                                0.441 & 1.601 & 0.686 \\
+                                0.294 & 0.327 & 1.569
+                                \end{bmatrix}\begin{bmatrix}1 \\ 1 \\ 1\end{bmatrix} = \begin{bmatrix}2.598 \\ 2.728 \\ 2.19\end{bmatrix}$$
+                            </div>
+
+                            <p>根据计算可知关注贷款转化为损失或正常贷款的平均时间为2.598期，次级贷款转化为损失或正常贷款的平均时间为2.728期，可疑贷款转化为损失或正常贷款的平均时间为2.19期。</p>
+
+                            <p><strong>(2)计算矩阵 $\boldsymbol{B}$</strong></p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{B} = \boldsymbol{N} \cdot \boldsymbol{R} = \begin{bmatrix}
+                                b_{11} & b_{12} \\
+                                b_{21} & b_{22} \\
+                                b_{31} & b_{32}
+                                \end{bmatrix} = \begin{bmatrix}
+                                1.618 & 0.686 & 0.294 \\
+                                0.441 & 1.601 & 0.686 \\
+                                0.294 & 0.327 & 1.569
+                                \end{bmatrix}\begin{bmatrix}
+                                0 & 0.4 \\
+                                0 & 0.3 \\
+                                0.35 & 0.15
+                                \end{bmatrix}$$
+                                
+                                $$= \begin{bmatrix}
+                                0.1029 & 0.8971 \\
+                                0.24 & 0.76 \\
+                                0.549 & 0.451
+                                \end{bmatrix}$$
+                            </div>
+
+                            <p>在本例中 $b_{i1}$ 表示 $N_i$ 类贷款转化为损失类贷款的概率，$b_{i2}$ 表示 $N_i$ 类贷款转化为正常类贷款的概率（$i=1,2,3$）。例如关注类贷款中有10.29%的可能转化为损失类，有89.71%的可能转化正常类，其余以此类推。</p>
+
+                            <p><strong>(3)计算最终损失贷款和正常贷款的数量</strong></p>
+                            
+                            <p>$k$ 期各种状态贷款数量，可根据 $k$ 步转移矩阵得到，即</p>
+                            
+                            <div class="matrix-container">
+                                $$\boldsymbol{\lambda}_k = \boldsymbol{\lambda}_0 \cdot \boldsymbol{P}^k$$
+                            </div>
+
+                            <p>$\boldsymbol{\lambda}_k = [\lambda_1^k \quad \lambda_2^k \quad \lambda_3^k \quad \lambda_4^k \quad \lambda_5^k]$ 为 $k$ 期各种状态贷款数量（$k=1,2,\cdots$），其中 $\boldsymbol{\lambda}_0 = [\lambda_1^0 \quad \lambda_2^0 \quad \lambda_3^0 \quad 0 \quad 0]$ 为期初各种状态贷款数量。</p>
+
+                            <p>当 $k \to \infty$ 的极限情况时有</p>
+                            
+                            <div class="matrix-container">
+                                $$\lim_{k \to \infty}\boldsymbol{\lambda}_k = \lim_{k \to \infty}\boldsymbol{\lambda}_0 \cdot \boldsymbol{P}^k = \boldsymbol{\lambda}_0\begin{bmatrix}
+                                \boldsymbol{O} & (\boldsymbol{I}-\boldsymbol{Q})^{-1}\boldsymbol{R} \\
+                                \boldsymbol{O} & \boldsymbol{I}
+                                \end{bmatrix}$$
+                                
+                                $$= [\lambda_1^0 \quad \lambda_2^0 \quad \lambda_3^0 \quad 0 \quad 0]\begin{bmatrix}
+                                0 & 0 & 0 & b_{11} & b_{12} \\
+                                0 & 0 & 0 & b_{21} & b_{22} \\
+                                0 & 0 & 0 & b_{31} & b_{32} \\
+                                0 & 0 & 0 & 1 & 0 \\
+                                0 & 0 & 0 & 0 & 1
+                                \end{bmatrix}$$
+                                
+                                $$= [0 \quad 0 \quad 0 \quad \lambda_4^* \quad \lambda_5^*]$$
+                            </div>
+
+                            <p>显然有</p>
+                            
+                            <div class="matrix-container">
+                                $$[\lambda_4^* \quad \lambda_5^*] = [D \quad G] = [\lambda_1^0 \quad \lambda_2^0 \quad \lambda_3^0]\boldsymbol{NR}$$
+                            </div>
+
+                            <p>其中 $D$ 为基期贷款中最终转化为损失类贷款的数量，$G$ 为基期贷款中最终转化为正常类贷款的数量。</p>
+
+                            <p>在本例中</p>
+                            
+                            <div class="matrix-container">
+                                $$[D \quad G] = [\lambda_1^0 \quad \lambda_2^0 \quad \lambda_3^0]\boldsymbol{NR} = [200 \quad 150 \quad 120]\begin{bmatrix}
+                                0.1029 & 0.8971 \\
+                                0.24 & 0.76 \\
+                                0.549 & 0.451
+                                \end{bmatrix}$$
+                                
+                                $$= [122.46 \quad 347.54]$$
+                            </div>
+
+                            <p>根据计算结果可知，依据目前的历史数据以及状态转移矩阵，可以预测现有的470万贷款中最终有122.46万会形成损失类贷款，不能收回，只有347.54万元贷款可以收回。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 习题 -->
+            <section class="section">
+                <h2>习题 14</h2>
+                
+                <div class="example">
+                    <p><strong>14.1</strong> 一所大学的升级情况预测可应用一种马尔可夫模型进行。其中有85%的一年级学生升到二年级，90%二年级学生升到三年级，92%三年级学生升到四年级，95%四年级学生毕业。还知道每个年级中退学（又转入其他大学）的百分比为一年级10%，二年级5%，三年级3%，四年级1%，其余学生在下学年仍留在原本年级中进学。请你用"一年级学生在四年内进学的全过程"的描述来说明：</p>
+                    
+                    <p>(1) 用初始转移概率矩阵确定在稳定（平衡）时，该两试验地区市场占有率是否接近全国水平？<br>
+                    (2) 假定两个广告宣传方案 D₁ 和 D₂，公司决策者在两个条件相同（指初始市场占有率和初始转移概率矩阵均相同）的地区试验两个广告方案，试验结果得到不同的转移概率矩阵。今已知市场占有率的全国水平是：老K公司产品为28%，A公司产品为39%，B公司产品为33%。</p>
+                    
+                    <p>现在要问：(1)用初始转移概率矩阵确定在稳定（平衡）时，该两试验地区市场占有率是否接近全国水平？<br>
+                    (2)假定两个广告宣传方案D₁和D₂或本相同，在稳定（平衡）时哪种广告宣传能有最高的市场占有率？</p>
+                    
+                    <p>已知初始转移概率矩阵为</p>
+                    
+                    <div class="matrix-container">
+                        $$\begin{array}{ccc}
+                        & \text{K} & \text{A} & \text{B} \\
+                        \text{K} & 0.6 & 0.3 & 0.1 \\
+                        \text{A} & 0.2 & 0.7 & 0.1 \\
+                        \text{B} & 0.1 & 0.1 & 0.8
+                        \end{array}$$
+                    </div>
+
+                    <p>广告D₁推出后的转移概率矩阵为</p>
+                    
+                    <div class="matrix-container">
+                        $$\begin{array}{ccc}
+                        & \text{K} & \text{A} & \text{B} \\
+                        \text{K} & 0.7 & 0.2 & 0.1 \\
+                        \text{A} & 0.2 & 0.7 & 0.1 \\
+                        \text{B} & 0.1 & 0.1 & 0.8
+                        \end{array}$$
+                    </div>
+
+                    <p>广告D₂推出后的转移概率矩阵</p>
+                    
+                    <div class="matrix-container">
+                        $$\begin{array}{ccc}
+                        & \text{K} & \text{A} & \text{B} \\
+                        \text{K} & 0.8 & 0.1 & 0.1 \\
+                        \text{A} & 0.1 & 0.7 & 0.2 \\
+                        \text{B} & 0.2 & 0.1 & 0.7
+                        \end{array}$$
+                    </div>
+                </div>
+
+                <div class="example">
+                    <p><strong>14.3</strong> 某供应特销售商品的商店，每周在周末营业一天。该店某种产品的商品库存方案描述如下："如结存0件或1件时，则一次订购3件，如结存超过1件时就不订购。"凡在周末停止营业时购的商品是在下周来出售的。这一订货策略保证商品的初始库存量不是2件、3件就是4件。</p>
+                    
+                    <p>又根据统计，该商品每周的需求量为0, 1, 2和3件的概率分别为0.4, 0.3, 0.2和0.1，试建立一个转移概率矩阵，用以说明由本周初始库存状态转为下周初始库存状态的概率。在达到稳定（平衡）条件下，确定库存量为2, 3和4的概率。</p>
+                </div>
+
+                <div class="example">
+                    <p><strong>14.4</strong> 填空</p>
+                    <p>马尔可夫链的无后效性是指每一时刻的状态仅仅取决于______________，而与这之前的状态无关。对于马尔可夫链的状态 $i$，如果______________，则称状态 $i$ 为吸收态。</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // 折叠/展开功能
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+
+        // 平滑滚动到指定章节
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // 自动调整折叠内容的高度（当窗口大小改变时）
+        window.addEventListener('resize', function() {
+            var contents = document.getElementsByClassName("content");
+            for (var i = 0; i < contents.length; i++) {
+                if (contents[i].style.maxHeight) {
+                    contents[i].style.maxHeight = contents[i].scrollHeight + "px";
+                }
+            }
+        });
+    </script>
+
+    <!-- 
+    使用说明：
+    1. 保存此文件为 .html 格式（例如：markov_analysis.html）
+    2. 使用任何现代浏览器打开（Chrome、Firefox、Edge等）
+    3. 需要网络连接以加载MathJax库来渲染数学公式
+    4. 如果数学公式未正确显示，请检查网络连接并刷新页面
+    5. 点击侧边栏可快速导航到不同章节
+    6. 点击"查看..."按钮可展开/折叠详细内容
+    
+    注意事项：
+    - 所有数学公式使用LaTeX格式，由MathJax自动渲染
+    - 页面完全自包含，除了MathJax CDN外无其他外部依赖
+    - 响应式设计，支持桌面和移动设备
+    - 建议使用Chrome或Firefox浏览器以获得最佳体验
+    -->
+</body>
+</html>

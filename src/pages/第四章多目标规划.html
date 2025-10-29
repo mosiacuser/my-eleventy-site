@@ -1,0 +1,1981 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多目标规划 - 交互式教程</title>
+    
+    <!-- MathJax配置 - 完整版本 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            CommonHTML: {
+                scale: 110
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #f27d00;
+            --secondary-color: #a6d6c9;
+            --accent-color: #f7d117;
+            --bg-color: #ffffff;
+            --text-color: #343434;
+            --light-gray: #f5f5f5;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-color);
+            line-height: 1.8;
+            background: linear-gradient(135deg, #fff9f0 0%, #ffe8d6 100%);
+            overflow-x: hidden;
+        }
+        
+        /* 顶部导航栏 */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #d96d00 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1rem;
+            opacity: 0.95;
+            margin-top: 0.5rem;
+        }
+        
+        /* 主容器 */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 2rem auto;
+            gap: 2rem;
+            padding: 0 2rem;
+        }
+        
+        /* 侧边导航 */
+        .sidebar {
+            flex: 0 0 280px;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+        
+        .sidebar h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin: 0.8rem 0;
+        }
+        
+        .sidebar a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar a:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .sidebar .sub-item {
+            font-size: 0.9rem;
+            padding-left: 1.5rem;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        /* 章节标题 */
+        .section {
+            margin-bottom: 3rem;
+            scroll-margin-top: 120px;
+        }
+        
+        .section h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .section h3 {
+            color: #d96d00;
+            font-size: 1.4rem;
+            margin: 2rem 0 1rem;
+        }
+        
+        .section h4 {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        /* 定义框 */
+        .definition {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #8ec5b6 100%);
+            border-left: 5px solid #6ba896;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .definition h4 {
+            color: white;
+            margin: 0 0 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .definition p, .definition .formula {
+            color: #fff;
+        }
+        
+        /* 定理框 */
+        .theorem {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #f5c200 100%);
+            border-left: 5px solid #d4a800;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .theorem h4 {
+            color: var(--text-color);
+            margin: 0 0 1rem;
+            font-weight: 700;
+        }
+        
+        /* 例题框 */
+        .example {
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        
+        .example-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+        
+        .example-header:hover {
+            background: #d96d00;
+        }
+        
+        .example-header::after {
+            content: '▼';
+            transition: transform 0.3s ease;
+        }
+        
+        .example-header.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .example-content {
+            padding: 1.5rem;
+            background: #fffbf7;
+            display: none;
+        }
+        
+        .example-content.active {
+            display: block;
+        }
+        
+        /* 公式显示 */
+        .formula {
+            background: #f9f9f9;
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        .formula-center {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #fafafa;
+            border-radius: 8px;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 0.8rem 1rem;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        /* 列表样式 */
+        .content-list {
+            margin: 1rem 0 1rem 2rem;
+        }
+        
+        .content-list li {
+            margin: 0.5rem 0;
+            padding-left: 0.5rem;
+        }
+        
+        /* 提示框 */
+        .note {
+            background: #fff9e6;
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+        
+        .note strong {
+            color: #d4a800;
+        }
+        
+        /* 回到顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(242, 125, 0, 0.4);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .back-to-top:hover {
+            background: #d96d00;
+            transform: translateY(-5px);
+        }
+        
+        .back-to-top.show {
+            display: flex;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 968px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                position: static;
+                max-height: none;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+        }
+        
+        /* MathJax公式大小调整 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        /* 代码块样式 */
+        code {
+            background: #f4f4f4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+        }
+        
+        /* 图片占位符 */
+        .figure {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 2px dashed #ccc;
+        }
+        
+        .figure-caption {
+            margin-top: 1rem;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <h1>第4章 多目标规划</h1>
+        <p>管理科学基础 - 交互式教程</p>
+    </header>
+    
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 侧边导航 -->
+        <aside class="sidebar">
+            <h3>目录导航</h3>
+            <ul>
+                <li><a href="#intro">引言</a></li>
+                <li><a href="#section-4-1">4.1 模型及解的概念</a></li>
+                <li>
+                    <a href="#section-4-2">4.2 多目标规划的解法</a>
+                    <ul>
+                        <li class="sub-item"><a href="#section-4-2-1">4.2.1 评价函数法</a></li>
+                        <li class="sub-item"><a href="#section-4-2-2">4.2.2 目标排序法</a></li>
+                        <li class="sub-item"><a href="#section-4-2-3">4.2.3 交互规划法</a></li>
+                    </ul>
+                </li>
+                <li><a href="#exercises">习题4</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 引言部分 -->
+            <section id="intro" class="section">
+                <h2>引言</h2>
+                <p>
+                    多目标规划又称多目标最优化，其思想萌芽于1776年经济学中的效用理论。1896年，法国经济学家V. Pareto（帕累托）首先在经济理论的研究中提出了多目标最优化问题。1951年，美国数理经济学家T. C. Koopmans从生产和分配的活动分析中考虑了多目标决策问题，并首次提出了多目标最优化问题解的概念，将其命名为"Pareto解"（即有效解）。同年，H. W. Kuhn和A. W. Tucker从数学规划论角度首次提出向量极值问题及有关概念。
+                </p>
+                <p>
+                    进入20世纪70年代，随着第一次国际多目标决策研讨会的召开及这方面专著的问世，多目标决策问题的研究工作迅速、蓬勃地开展起来，到目前为止，已取得若干有价值的研究成果。
+                </p>
+                
+                <div class="note">
+                    <strong>关键理解：</strong>多目标决策问题不同于单目标问题。在单目标决策中，评价一个方案优劣的目标只有一个，而在多目标决策中，对方案$d_j$的评价需从$p$个目标上考虑，即由在这$p$个目标上的评价值构成的向量去评价原有方案，即有：
+                    <div class="formula-center">
+                        $$\text{单目标问题：方案 } d_j \rightarrow \text{评价值 } f(d_j)$$
+                        $$\text{多目标问题：方案 } d_j \rightarrow \text{评价值向量 } [f_1(d_j), f_2(d_j), \cdots, f_p(d_j)]$$
+                    </div>
+                </div>
+                
+                <p>
+                    显而易见，对于单目标问题，只要根据方案间的目标评价值，总能分出孰优孰劣，因此是完全有序的。而多目标决策问题则不同，多目标决策问题的决策目标有多个，对方案的评价是基于一个向量，而向量一般是无法直接比较大小的，是半有序的。有鉴于此，将单目标问题最优解的概念平移到多目标问题中是不适宜的，这就有必要首先阐明多目标规划问题各种解的概念及其相互关系。
+                </p>
+            </section>
+            
+            <!-- 4.1 多目标规划模型及其解的概念 -->
+            <section id="section-4-1" class="section">
+                <h2>4.1 多目标规划模型及其解的概念</h2>
+                
+                <p>可以从一个简单例子引入多目标规划问题的一般形式。</p>
+                
+                <!-- 例4.1 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        例4.1（营销问题）
+                    </div>
+                    <div class="example-content">
+                        <p><strong>问题描述：</strong></p>
+                        <p>设市场上有甲级糖及乙级糖，单价分别为10元/斤及5元/斤。今要筹办一桩婚事。"筹备小组"计划总花费不超过80元，糖的总斤数不少于10斤，甲级糖不少于5斤。问如何确定最佳的采购方案？</p>
+                        
+                        <p><strong>问题分析：</strong></p>
+                        <p>先确定此问题应满足的条件。不难看出，当设甲级糖数量为$x_1$，乙级糖数量为$x_2$时，有：</p>
+                        <div class="formula">
+                            $$\begin{cases}
+                            10x_1 + 5x_2 \leq 80 \\
+                            x_1 + x_2 \geq 10 \\
+                            x_1 \geq 5 \\
+                            x_1, x_2 \geq 0
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>在研究以什么为"最佳"的衡量指标时，"筹备小组"的成员们意见可能会发生分歧，原因是因为他们可能会提出各种各样的目标来。</p>
+                        
+                        <p><strong>不同的目标：</strong></p>
+                        <ul class="content-list">
+                            <li>如果要求总花费最少，即要求：$f_1(x_1, x_2) = 10x_1 + 5x_2 \rightarrow \min$</li>
+                            <li>如果要求糖的总斤数最大，即要求：$f_2(x_1, x_2) = x_1 + x_2 \rightarrow \max$</li>
+                            <li>如果要求甲级糖数量最大，即要求：$f_3(x_1, x_2) = x_1 \rightarrow \max$</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <p>
+                    多目标最优化模型与单目标最优化模型的区别主要是目标多于1个。在这些目标中，有的追求极大化，有的追求极小化，而极大化问题经过适当变换可化为极小化问题。因此，可以给出多目标最优化模型的一般形式如下：
+                </p>
+                
+                <div class="formula-center">
+                    <p><strong>决策变量：</strong>$x_1, x_2, \cdots, x_n$</p>
+                    <p><strong>目标函数：</strong></p>
+                    $$\begin{aligned}
+                    &\min f_1(x_1, x_2, \cdots, x_n) \\
+                    &\cdots \\
+                    &\min f_p(x_1, x_2, \cdots, x_n)
+                    \end{aligned}$$
+                    <p><strong>约束条件：</strong></p>
+                    $$\begin{cases}
+                    g_1(x_1, \cdots, x_n) \geq 0 \\
+                    \cdots \\
+                    g_m(x_1, \cdots, x_n) \geq 0
+                    \end{cases}$$
+                </div>
+                
+                <p>若记$\boldsymbol{X} = [x_1, x_2, \cdots, x_n]^{\mathsf{T}}$，$\boldsymbol{F}(\boldsymbol{X}) = [f_1(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})]^{\mathsf{T}}$，$R = \{\boldsymbol{X} | g_i(\boldsymbol{X}) \geq 0, i=1,2,\cdots,m\}$表示约束集，$V = \min\boldsymbol{F}(\boldsymbol{X})$表示对向量$\boldsymbol{F}(\boldsymbol{X})$中的各目标函数$f_1(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})$同等地进行极小化，则模型的一般形式为：</p>
+                
+                <div class="formula-center">
+                    $$(VMP)\begin{cases}
+                    V = \min (f_1(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})) \\
+                    g_i(\boldsymbol{X}) \geq 0 \quad (i=1,2,\cdots,m)
+                    \end{cases}$$
+                </div>
+                
+                <p>简记为：</p>
+                <div class="formula-center">
+                    $$(VMP)\begin{cases}
+                    V = \min\boldsymbol{F}(\boldsymbol{X}) \\
+                    \boldsymbol{X} \in R, R = \{\boldsymbol{X} | g_i(\boldsymbol{X}) \geq 0, i=1,2,\cdots,m\}
+                    \end{cases}$$
+                </div>
+                
+                <p>
+                    求解如上的多目标最优化问题，即是在可行域$R$中寻找一个"最优解"$\boldsymbol{X}^*$。如前所述，多目标问题中最优解的含义和单目标问题中最优解的含义是不相同的。对于(VMP)问题中任意两个可行解$\boldsymbol{X}_1, \boldsymbol{X}_2 \in R$，根据其评价向量难以区分出优劣。因此，这里的"最优解"$\boldsymbol{X}^*$，很多情况下只是基于某种准则下的满意解。
+                </p>
+                
+                <p>以下就给出多目标问题各种解的概念。为比较向量函数值的"大""小"，首先需要引进向量空间中向量间的比较关系，即序的关系。</p>
+                
+                <p>若记$\boldsymbol{F}^1 = [f_1^1, \cdots, f_p^1]$，$\boldsymbol{F}^2 = [f_1^2, \cdots, f_p^2]$，则：</p>
+                
+                <div class="definition">
+                    <h4>向量比较关系定义</h4>
+                    <p>①$\boldsymbol{F}^1 < \boldsymbol{F}^2$ 意味着向量$\boldsymbol{F}^1$的每个分量都要严格地小于向量$\boldsymbol{F}^2$对应的分量，即对于$i=1,\cdots,p$，均有$f_i^1 < f_i^2$；</p>
+                    
+                    <p>②$\boldsymbol{F}^1 = \boldsymbol{F}^2$ 意味着向量$\boldsymbol{F}^1$的每个分量都要等于相应$\boldsymbol{F}^2$的每个分量，即对于$i=1,\cdots,p$，均有$f_i^1 = f_i^2$；</p>
+                    
+                    <p>③$\boldsymbol{F}^1 \leq \boldsymbol{F}^2$ 意味着向量$\boldsymbol{F}^1$的每个分量都要小于或等于$\boldsymbol{F}^2$对应的分量，即对于$i=1,\cdots,p$，均有$f_i^1 \leq f_i^2$；</p>
+                    
+                    <p>④$\boldsymbol{F}^1 \leqslant \boldsymbol{F}^2$ 意味着向量$\boldsymbol{F}^1$的每个分量都要小于或等于向量$\boldsymbol{F}^2$对应的分量，并且至少存在$\boldsymbol{F}^1$的某一个分量要严格地小于向量$\boldsymbol{F}^2$对应的分量，即对于$i=1,\cdots,p$均有$f_i^1 \leq f_i^2$，并且至少存在某个$i_0$ ($1 \leq i_0 \leq p$)，有$f_{i_0}^1 < f_{i_0}^2$。</p>
+                </div>
+                
+                <p>可见，$\boldsymbol{F}^1 \leqslant \boldsymbol{F}^2$ 等价于$\boldsymbol{F}^1 \leq \boldsymbol{F}^2$且$\boldsymbol{F}^1 \neq \boldsymbol{F}^2$。</p>
+                
+                <p>由上述定义所确定的向量之间的序，称做向量的自然序。</p>
+                
+                <p>下面给出一般多目标极小化模型(VMP)各种解的概念。</p>
+                
+                <!-- 定义4.1 -->
+                <div class="definition">
+                    <h4>定义4.1 绝对最优解</h4>
+                    <p>设$\boldsymbol{X}^* \in R$，若对任意$\boldsymbol{X} \in R$，均有$\boldsymbol{F}(\boldsymbol{X}^*) \leq \boldsymbol{F}(\boldsymbol{X})$，则称$\boldsymbol{X}^*$为问题(VMP)的<strong>绝对最优解</strong>。其全体记为$R_{ab}^*$。</p>
+                    
+                    <div class="figure">
+                        <div style="color: #666; font-size: 0.9em;">
+                            [图示：图中的$x^*$既是$f_1(x)$的极小点，又是$f_2(x)$的极小点，因而是该问题的绝对最优解]
+                        </div>
+                        <div class="figure-caption">图4.1 两个目标、一维变量绝对最优解的例子</div>
+                    </div>
+                    
+                    <div class="note">
+                        <strong>注意：</strong>但在大多数多目标最优化问题中，这样的绝对最优解往往是不存在的。
+                    </div>
+                </div>
+                
+                <!-- 定义4.2 -->
+                <div class="definition">
+                    <h4>定义4.2 劣解</h4>
+                    <p>为引出如下定义，先考察一下什么是<strong>劣解</strong>。设$\boldsymbol{X}^0 \in R$，若存在另一个可行解$\boldsymbol{X}^1 \in R$，有$\boldsymbol{F}(\boldsymbol{X}^1) \leqslant \boldsymbol{F}(\boldsymbol{X}^0)$，说明对于$i=1,\cdots,p$，均有$f_i(\boldsymbol{X}^1) \leq f_i(\boldsymbol{X}^0)$，且至少存在某个$i_0$ ($1 \leq i_0 \leq p$)有$f_{i_0}(\boldsymbol{X}^1) < f_{i_0}(\boldsymbol{X}^0)$，显然可行解$\boldsymbol{X}^0$相对于$\boldsymbol{X}^1$来说是劣的。这是因为$\boldsymbol{X}^1$的$p$个目标值都不比$\boldsymbol{X}^0$对应的$p$个目标值坏，并且至少比其中一个要好，称$\boldsymbol{X}^0$为劣解。</p>
+                    
+                    <p>显然，在决策过程中，任何劣解应该首先被去掉。为此，可给出非劣解的定义如下。</p>
+                </div>
+                
+                <!-- 定义4.2（正式） -->
+                <div class="definition">
+                    <h4>定义4.2 非劣解（Pareto解）</h4>
+                    <p>设$\overline{\boldsymbol{X}} \in R$，若不存在$\boldsymbol{X} \in R$，使$\boldsymbol{F}(\boldsymbol{X}) \leqslant \boldsymbol{F}(\overline{\boldsymbol{X}})$，则称$\overline{\boldsymbol{X}}$为问题(VMP)的<strong>非劣解</strong>，又称<strong>有效解</strong>或<strong>Pareto解</strong>。其全体记为$R_{pa}^*$。</p>
+                    
+                    <p>显然，对任意的$\boldsymbol{X} \in R$，若它不是劣解就是有效解，并且有效解仅仅是(VMP)问题的一个"不坏"的解，或说可接受解。故若$\overline{\boldsymbol{X}}$是(VMP)的有效解，意味着在约束集$R$中已找不到一个$\boldsymbol{X}$，使得对应的$\boldsymbol{F}(\boldsymbol{X}) = [f_1(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})]^{\mathsf{T}}$中的每一个分目标值都不比$\boldsymbol{F}(\overline{\boldsymbol{X}}) = [f_1(\overline{\boldsymbol{X}}), \cdots, f_p(\overline{\boldsymbol{X}})]^{\mathsf{T}}$中的相应值大，并且$\boldsymbol{F}(\boldsymbol{X})$中至少有一个目标值要比$\boldsymbol{F}(\overline{\boldsymbol{X}})$中的相应值为小。</p>
+                    
+                    <div class="figure">
+                        <div style="color: #666; font-size: 0.9em;">
+                            [图示：图中$x_1^*$与$x_2^*$之间的点$x$均为有效解（$x_1^*$与$x_2^*$之间的点不可比较），因为找不到另一个可行解$x$，使$F(x) \leqslant F(\overline{x})$成立]
+                        </div>
+                        <div class="figure-caption">图4.2 两个目标、一维变量时有效解集合的例子</div>
+                    </div>
+                </div>
+                
+                <!-- 定义4.3 -->
+                <div class="definition">
+                    <h4>定义4.3 弱有效解</h4>
+                    <p>设$\overline{\boldsymbol{X}} \in R$，若不存在$\boldsymbol{X} \in R$，使$\boldsymbol{F}(\boldsymbol{X}) < \boldsymbol{F}(\overline{\boldsymbol{X}})$，则称$\overline{\boldsymbol{X}}$为问题(VMP)的<strong>弱有效解</strong>。弱有效解的全体记为$R_{wp}^*$。</p>
+                    
+                    <p>上述定义表明，若$\overline{\boldsymbol{X}}$是(VMP)的弱有效解，则在约束集$R$中已找不到一个$\boldsymbol{X}$，使得$f_1(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})$中每一目标值都比$f_1(\overline{\boldsymbol{X}}), \cdots, f_p(\overline{\boldsymbol{X}})$中相应的值更小。</p>
+                    
+                    <div class="figure">
+                        <div style="color: #666; font-size: 0.9em;">
+                            [图示：显示弱有效解集合的示意图]
+                        </div>
+                        <div class="figure-caption">图4.3 弱有效解集合的例子</div>
+                    </div>
+                </div>
+                
+                <p>显然，$R_{wp}^*$中的任一点$x$都为弱有效解，因为找不到另一个$x \in R$，使$F(x) < F(\overline{x})$。</p>
+                
+                <p>在引进了"非劣"概念之后，就可以对多目标规划作更确切的描述。准确地说，多目标规划应该是从可行解中选出有效解或弱有效解，再根据某种准则，从有效解中选择某种意义下的"最优解"，或说满意解或"好"的有效解。因为，从一般意义上说，现实问题中不存在这样一种方案，其实施结果按所有的判别标准各目标同时达到最佳。当然，能够找到这样的绝对最优解（方案）更好。</p>
+                
+                <p>不妨观察下述两个目标极大化的决策问题。如图4.4所示，对于目标$f_1$，方案E优于方案D，而对于目标$f_2$，方案D又优于方案E，而方案A,B,C按现有准则均劣于方案D,E。因此，在这5个方案中，方案A,B,C为劣解，方案D,E为有效解，则该问题的解只能按某种准则从方案D和E中选择其一。如若目标$f_1$比目标$f_2$重要得多，则可选方案E。</p>
+                
+                <div class="figure">
+                    <div style="color: #666; font-size: 0.9em;">
+                        [图示：左图显示可行域$R_{wp}^*$，右图显示方案A、B、C、D、E在目标空间中的位置]
+                    </div>
+                    <div class="figure-caption">图4.4 决策方案在目标空间的分布</div>
+                </div>
+                
+                <p>最后，不加证明地给出各种解之间的一些关系。</p>
+                
+                <!-- 定理 -->
+                <div class="theorem">
+                    <h4>定理4.1</h4>
+                    <p>$R_{ab}^* = \bigcap_{i=1}^{p} R_i^*$，其中$R_i^*$为单目标$f_i(\boldsymbol{X})$上最优点集合。</p>
+                </div>
+                
+                <div class="theorem">
+                    <h4>定理4.2</h4>
+                    <p>$R_{pa}^* \subseteq R_{wp}^* \subset R$</p>
+                </div>
+                
+                <div class="theorem">
+                    <h4>定理4.3</h4>
+                    <p>$R_i^* \subseteq R_{wp}^*$ ($i=1,\cdots,p$)</p>
+                </div>
+                
+                <div class="theorem">
+                    <h4>定理4.4</h4>
+                    <p>$R_{ab}^* \subseteq R_{pa}^*$</p>
+                </div>
+                
+                <!-- 例4.2和4.3 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        例4.2 和 例4.3 - 解集关系示例
+                    </div>
+                    <div class="example-content">
+                        <p><strong>例4.2：</strong>见图4.5，$R_1^* = \{x_1\}$，$R_2^* = \{x_2\}$，则$R_{ab}^* = R_{wp}^* = [x_1, x_2]$</p>
+                        
+                        <p><strong>例4.3：</strong>见图4.6，$R_1^*$、$R_2^*$、$R_{wp}^*$、$R_{pa}^*$的关系如图所示。</p>
+                        
+                        <div class="figure">
+                            <div style="color: #666; font-size: 0.9em;">
+                                [图示：左图显示图4.5的情形，右图显示图4.6的情形]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="theorem">
+                    <h4>定理4.5</h4>
+                    <p>设$R_{ab}^* \neq \emptyset$，则①$R_{pa}^* = \bigcap_{i=1}^{p} R_i^* = R_{ab}^*$；②$R_{wp}^* = \bigcup_{i=1}^{p} R_i^*$。</p>
+                </div>
+                
+                <p>文献12已经给出上述5个定理的证明，有兴趣的读者可以查看并试证。</p>
+                
+                <p>本节讨论的解集之间的关系可用图4.7与图4.8表示。</p>
+                
+                <div class="figure">
+                    <div style="color: #666; font-size: 0.9em;">
+                        [图示：左图（图4.7）显示$p=3$，$R_{ab}^* = \emptyset$的情形；右图（图4.8）显示$p=3$，$R_{ab}^* \neq \emptyset$的情形]
+                    </div>
+                    <div class="figure-caption">图4.7 和 图4.8 - 解集之间的关系</div>
+                </div>
+            </section>
+            
+            <!-- 4.2 多目标规划的解法 -->
+            <section id="section-4-2" class="section">
+                <h2>4.2 多目标规划的解法</h2>
+                
+                <p>求解多目标规划模型，就是要根据问题的特点和决策者的意图，选择适当算法，求得模型的有效解或弱有效解。本书介绍几类常用的多目标最优化问题的解法。</p>
+                
+                <p>在实际问题中，$p$个目标的量纲往往是不同的，所以事先需把每个目标规范化，然后再进行数学上的处理。例如，可以把带量纲的目标$f_i(\boldsymbol{X})$ ($i=1,2,\cdots,p$)进行如下处理，令</p>
+                
+                <div class="formula-center">
+                    $$f_i(\boldsymbol{X}) = \frac{\overline{f}_i(\boldsymbol{X})}{\overline{f}_i}$$
+                    
+                    <p>其中$\overline{f}_i = \max_{\boldsymbol{X} \in R} |\overline{f}_i(\boldsymbol{X})|$</p>
+                </div>
+                
+                <p>因此，以后总假定所讨论的多目标最优化模型已经过了无量纲化处理。</p>
+                
+                <!-- 4.2.1 评价函数法 -->
+                <h3 id="section-4-2-1">4.2.1 评价函数法</h3>
+                
+                <p>评价函数法的基本思想是利用一个复合函数将多目标问题转化为单目标问题求解。即对一个目标向量$\boldsymbol{F}(\boldsymbol{X}) = [f_1(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})]$，构造一个把$p$个目标转化为一个数值目标的复合函数$U[\boldsymbol{F}(\boldsymbol{X})]$，作为问题的评价函数。即有：</p>
+                
+                <div class="formula-center">
+                    $$\text{方案 } \boldsymbol{X} \leftarrow \text{评价向量 } \boldsymbol{F}(\boldsymbol{X}) \leftarrow \text{评价函数 } U[\boldsymbol{F}(\boldsymbol{X})]$$
+                </div>
+                
+                <p>这时，(VMP)问题转化为如下的单目标问题：</p>
+                
+                <div class="formula-center">
+                    $$\min_{\boldsymbol{X} \in R} U[\boldsymbol{F}(\boldsymbol{X})]$$
+                </div>
+                
+                <p>求解该问题得最优的$\boldsymbol{X}^*$，则$\boldsymbol{X}^*$是该评价函数下的最优。进一步还可证明，利用评价函数法求出的单目标问题最优解$\boldsymbol{X}^*$，当该评价函数满足单调性时，一定是原多目标问题的有效解或弱有效解（证法略）。下面介绍7种常用的评价函数法。</p>
+                
+                <h4>1. 线性加权和法</h4>
+                
+                <p>线性加权和法就是取评价函数为各目标函数的线性加权和，即$U(\boldsymbol{F}) = \lambda_1 f_1 + \cdots + \lambda_p f_p$，其中$\lambda_1, \cdots, \lambda_p$为相应目标的权系数，其大小代表相应目标$f_i$在模型(VMP)中的重要程度。</p>
+                
+                <p>线性加权和法的具体步骤如下：</p>
+                
+                <div class="note">
+                    <strong>步骤①：</strong>给出权系数，按各目标的重要性给出一组权系数$\lambda_1, \cdots, \lambda_p$，其中$\lambda_i \geq 0$，$\sum_{i=1}^{p} \lambda_i = 1$；
+                    
+                    <p><strong>步骤②：</strong>极小化线性加权和函数，通过前述的线性加权和评价函数，将多目标问题转化为单目标问题：</p>
+                    
+                    <div class="formula-center">
+                        $$(P_{\lambda}) \min_{\boldsymbol{X} \in R} \sum_{i=1}^{p} \lambda_i f_i(\boldsymbol{X})$$
+                    </div>
+                    
+                    <p>求解$(P_{\lambda})$得最优解$\overline{\boldsymbol{X}}$；</p>
+                    
+                    <p><strong>步骤③：</strong>可以证明，$\overline{\boldsymbol{X}}$是(VMP)的弱有效解，即$\overline{\boldsymbol{X}} \in R_{wp}^*$，进一步，若所有$\lambda_i > 0$，则$\overline{\boldsymbol{X}} \in R_{pa}^*$。</p>
+                </div>
+                
+                <p>显然，线性加权和法的关键在于确定权系数。实际中，确定权系数的方法很多，如老手法、层次分析法、a法等。老手法及层次分析法将在本书后续内容中介绍。</p>
+                
+                <p><strong>a方法</strong>是确定各目标重要程度的权系数的一种方法。它主要是根据$p$个目标的极小点信息，借助于引进一个辅助参数$\alpha$的思想，通过求解一个$p+1$阶线性方程组确定各目标的权系数。</p>
+                
+                <p>先以两个目标为例。设两目标$f_1(\boldsymbol{X})$及$f_2(\boldsymbol{X})$皆为线性函数，都要求达到极小为最优，且约束集$R$为线性约束，根据评价函数法的基本思想，建立评价函数：</p>
+                
+                <div class="formula-center">
+                    $$U[\boldsymbol{F}(\boldsymbol{X})] = \alpha_1 f_1(\boldsymbol{X}) + \alpha_2 f_2(\boldsymbol{X})$$
+                </div>
+                
+                <p>问题归结为如何确定$\alpha_1$及$\alpha_2$的值。</p>
+                
+                <p>这种方法的具体步骤如下：</p>
+                
+                <div class="note">
+                    <strong>步骤①：</strong>求解单目标优化问题
+                    
+                    <div class="formula">
+                        $$(\text{问题一}) \min_{\boldsymbol{X} \in R} f_1(\boldsymbol{X}) = f_1(\boldsymbol{X}^1) \quad \text{记 } f_1^1 = f_1(\boldsymbol{X}^1), f_2^1 = f_2(\boldsymbol{X}^1)$$
+                        
+                        $$(\text{问题二}) \min_{\boldsymbol{X} \in R} f_2(\boldsymbol{X}) = f_2(\boldsymbol{X}^2) \quad \text{记 } f_2^2 = f_2(\boldsymbol{X}^2), f_1^2 = f_1(\boldsymbol{X}^2)$$
+                    </div>
+                    
+                    <p><strong>步骤②：</strong>由$U[\boldsymbol{F}(\boldsymbol{X}^1)] = U[\boldsymbol{F}(\boldsymbol{X}^2)]$及$\alpha_1 + \alpha_2 = 1$得下述方程组：</p>
+                    
+                    <div class="formula">
+                        $$\begin{cases}
+                        \alpha_1 f_1^1 + \alpha_2 f_2^1 = \alpha_1 f_1^2 + \alpha_2 f_2^2 \\
+                        \alpha_1 + \alpha_2 = 1
+                        \end{cases}$$
+                    </div>
+                    
+                    <p>解上述方程组得：</p>
+                    
+                    <div class="formula">
+                        $$\alpha_1 = \frac{f_2^2 - f_2^1}{f_2^2 - f_2^1 + f_1^1 - f_1^2}$$
+                        
+                        $$\alpha_2 = \frac{f_1^1 - f_1^2}{f_2^2 - f_2^1 + f_1^1 - f_1^2}$$
+                    </div>
+                    
+                    <p>且：</p>
+                    
+                    <div class="formula">
+                        $$\frac{\alpha_1}{\alpha_2} = \frac{f_2^2 - f_2^1}{f_1^1 - f_1^2}$$
+                    </div>
+                    
+                    <p><strong>步骤③：</strong>求解$\min_{\boldsymbol{X} \in R} U[\boldsymbol{F}(\boldsymbol{X})] = \min_{\boldsymbol{X} \in R} [\alpha_1 f_1(\boldsymbol{X}) + \alpha_2 f_2(\boldsymbol{X})]$得$\boldsymbol{X}^*$。</p>
+                </div>
+                
+                <p>以下对$\alpha$方法进行几何解释。</p>
+                
+                <p>如图4.9及4.10所示，可行域$R$中的点$\boldsymbol{X}^1$及$\boldsymbol{X}^2$经过映射在目标值空间$(f_1, f_2)$中分别对应$A$点及$B$点，即有：</p>
+                
+                <div class="formula">
+                    $$\boldsymbol{X}^1 \rightarrow (f_1^1, f_2^1) A \text{点}$$
+                    $$\boldsymbol{X}^2 \rightarrow (f_1^2, f_2^2) B \text{点}$$
+                </div>
+                
+                <div class="figure">
+                    <div style="color: #666; font-size: 0.9em;">
+                        [图示：左图（图4.9）显示原像集，右图（图4.10）显示像集（目标值空间）]
+                    </div>
+                    <div class="figure-caption">图4.9 和 图4.10 - α方法的几何解释</div>
+                </div>
+                
+                <p>而且，在目标值空间中，$U[\boldsymbol{F}(\boldsymbol{X})] = \alpha_1 f_1(\boldsymbol{X}) + \alpha_2 f_2(\boldsymbol{X})$取不同数值时，相当于一簇平行线，其斜率$k = -\alpha_1/\alpha_2$，不妨记直线簇为$\alpha_1 f_1 + \alpha_2 f_2 = c$ ($c$为常数)，而连接$A, B$的直线斜率也为$k = -\alpha_1/\alpha_2$，则直线$AB$是该直线簇中的一条直线。显然，在同一条直线上$\boldsymbol{X}^1$与$\boldsymbol{X}^2$有相同的评价值，即有$U[\boldsymbol{F}(\boldsymbol{X}^1)] = U[\boldsymbol{F}(\boldsymbol{X}^2)]$。进一步，要寻找评价值最小的$\boldsymbol{X}$，可在目标值空间中平行移动直线。当直线与$C$点相切时，对应于$C$点的$\boldsymbol{X}^*$之评价值为最优。</p>
+                
+                <p>事实上，该方法可推至$p$个目标的情况。首先建立评价函数：</p>
+                
+                <div class="formula-center">
+                    $$U[\boldsymbol{F}(\boldsymbol{X})] = \sum_{i=1}^{p} \alpha_i f_i(\boldsymbol{X})$$
+                </div>
+                
+                <p>然后求解一系列单目标问题：</p>
+                
+                <div class="formula">
+                    $$\min_{\boldsymbol{X} \in R} f_i(\boldsymbol{X}) = f_i(\boldsymbol{X}^i) \text{ 得 } f_1^i, f_2^i, \cdots, f_p^i$$
+                </div>
+                
+                <!-- 例4.4 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        例4.4 α方法求解示例
+                    </div>
+                    <div class="example-content">
+                        <p><strong>问题：</strong>设有$f_1(\boldsymbol{X}) = 4x_1 + x_2 \rightarrow \min$，$f_2(\boldsymbol{X}) = -3x_1 - 2x_2 \rightarrow \min$，</p>
+                        <p>$R = \{\boldsymbol{X} | 2x_1 + x_2 \leq 4, x_1 + x_2 \leq 3, x_1, x_2 \geq 0, \boldsymbol{X} \in \mathbb{R}^2\}$，试用$\alpha$法求解。</p>
+                        
+                        <p><strong>解：</strong>先分别对$f_1(\boldsymbol{X})$、$f_2(\boldsymbol{X})$求得最优解，它们是：</p>
+                        
+                        <div class="formula">
+                            $$f_1(\boldsymbol{X}^1) = f_1(0, 0) = \min_{\boldsymbol{X} \in R^*} f_1(\boldsymbol{X}) = f_1^1 = 0$$
+                            
+                            $$f_2(\boldsymbol{X}^2) = f_2(1, 2) = \min_{\boldsymbol{X} \in R^*} f_2(\boldsymbol{X}) = f_2^2 = -7$$
+                        </div>
+                        
+                        <p>则：</p>
+                        
+                        <div class="formula">
+                            $$f_2^1 = f_2(\boldsymbol{X}^1) = f_2(0, 0) = 0$$
+                            $$f_1^2 = f_1(\boldsymbol{X}^2) = f_1(1, 2) = 6$$
+                        </div>
+                        
+                        <p>由此可得：</p>
+                        
+                        <div class="formula">
+                            $$\alpha_1 = \frac{f_2^2 - f_2^1}{f_2^2 - f_2^1 + f_1^1 - f_1^2} = \frac{-7}{-7 - 6} = \frac{7}{13}$$
+                            
+                            $$\alpha_2 = \frac{6}{13}$$
+                            
+                            $$U(\boldsymbol{X}) = \alpha_1 f_1(\boldsymbol{X}) + \alpha_2 f_2(\boldsymbol{X}) = \frac{7}{13} f_1(\boldsymbol{X}) + \frac{6}{13} f_2(\boldsymbol{X}) = \frac{10}{13} x_1 - \frac{5}{13} x_2$$
+                        </div>
+                        
+                        <p>易求得：$\min_{\boldsymbol{X} \in R} U(\boldsymbol{X}) = U(0, 3) = -\frac{15}{13}$</p>
+                    </div>
+                </div>
+                
+                <h4>2. 极大极小法</h4>
+                
+                <p>这种方法的基本出发点是考虑在对各个目标来说是最不利的情况下找出最有利的解。具体地说，对于多目标最优化模型(VMP)，可以用各个目标$f_i$ ($i=1,\cdots,p$)中的最大值作为评价函数的函数值，即取：</p>
+                
+                <div class="formula-center">
+                    $$U[\boldsymbol{F}(\boldsymbol{X})] = \max_{1 \leq i \leq p} \{f_i(\boldsymbol{X})\}$$
+                </div>
+                
+                <p>为评价函数，通过上式把求解(VMP)归结为求解下述极小化问题：</p>
+                
+                <div class="formula-center">
+                    $$\min_{\boldsymbol{X} \in R} U[\boldsymbol{F}(\boldsymbol{X})] = \min_{\boldsymbol{X} \in R} \max_{1 \leq i \leq p} \{f_i(\boldsymbol{X})\}$$
+                </div>
+                
+                <p>并把它的最优解作为模型(VMP)的解。显然，这种方法是先对各目标函数极大值选择之后，再在可行域上进行极小化，故称之为极大极小法。</p>
+                
+                <div class="figure">
+                    <div style="color: #666; font-size: 0.9em;">
+                        [图示：显示两个函数$f_1(x)$和$f_2(x)$中的最大值]
+                    </div>
+                    <div class="figure-caption">图4.11 极大极小法所得解$\overline{x}$的图示</div>
+                </div>
+                
+                <p>图4.11给出两个目标、一维变量时由极大极小法所得解$\overline{x}$的图示。其中的实线为两个函数$f_1(x)$和$f_2(x)$中的最大值。</p>
+                
+                <p>为了在评价函数中反映各目标的重要程度，一般考虑比上述极大极小化模型更一般的带权系数的情况。设对应于目标$f_i$的权系数为$\lambda_i$ ($i=1,2,\cdots,p$)，则求解(VMP)相应地也归结为求解下述问题：</p>
+                
+                <div class="formula-center">
+                    $$(P_{\lambda}) \min_{\boldsymbol{X} \in R} \max_{1 \leq i \leq p} \{\lambda_i f_i(\boldsymbol{X})\}$$
+                </div>
+                
+                <p>可以证明，当$\lambda_i > 0$ ($i=1,2,\cdots,p$)时，求解$(P_{\lambda})$所得的最优解为模型(VMP)的弱有效解。很明显，问题$(P_{\lambda})$在实际求解时是不方便的。为此，引进一个变量，令：</p>
+                
+                <div class="formula-center">
+                    $$\lambda = \max_{1 \leq i \leq p} \{\lambda_i f_i(\boldsymbol{X})\}$$
+                </div>
+                
+                <p>这样，问题$(P_{\lambda})$成为$\min_{\boldsymbol{X} \in R} \lambda$，且有：</p>
+                
+                <div class="formula">
+                    $$\lambda_i f_i(\boldsymbol{X}) \leq \lambda \quad (i=1,2,\cdots,p)$$
+                </div>
+                
+                <p>由此，问题$(P_{\lambda})$便转化为如下的增加一个变量$\lambda$和$p$个约束条件的优化问题：</p>
+                
+                <div class="formula-center">
+                    $$\min \lambda$$
+                    $$\text{s.t.} \begin{cases}
+                    \boldsymbol{X} \in R \\
+                    \lambda_i f_i(\boldsymbol{X}) \leq \lambda \quad (i=1,2,\cdots,p)
+                    \end{cases}$$
+                </div>
+                
+                <p>根据以上讨论，可得出极大极小法的具体步骤如下：</p>
+                
+                <div class="note">
+                    <strong>步骤①：</strong>给出权系数，按各目标在(VMP)中的重要程度，确定相应的权系数$\lambda_i$ ($i=1,2,\cdots,p$)，且$\lambda_i > 0$；
+                    
+                    <p><strong>步骤②：</strong>极小化辅助问题，即求解：</p>
+                    
+                    <div class="formula">
+                        $$\min \lambda$$
+                        $$\text{s.t.} \begin{cases}
+                        \boldsymbol{X} \in R \\
+                        \lambda_i f_i(\boldsymbol{X}) \leq \lambda \quad (i=1,2,\cdots,p)
+                        \end{cases}$$
+                    </div>
+                    
+                    <p>设所得最优解为$[\overline{\boldsymbol{X}}^{\mathsf{T}}, \overline{\lambda}]^{\mathsf{T}}$，则$\overline{\boldsymbol{X}}$即为模型(VMP)的弱有效解。</p>
+                </div>
+                
+                <h4>3. 平方和加权法</h4>
+                
+                <p>对于多目标问题(VMP)，设有$p$个规定值$f_1^*, \cdots, f_p^*$，要求$p$个目标$f_1(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})$分别与规定的值相差尽量小，若对其中不同值的要求相差程度又可不完全一样，即有的要求重一些，有的轻一些，这时可采用下述评价函数：</p>
+                
+                <div class="formula-center">
+                    $$U[\boldsymbol{F}(\boldsymbol{X})] = \sum_{i=1}^{p} \lambda_i [f_i(\boldsymbol{X}) - f_i^*]^2, \quad \sum_{i=1}^{p} \lambda_i = 1 \text{ 且 } \lambda_i \geq 0$$
+                </div>
+                
+                <p>要求$\min_{\boldsymbol{X} \in R} U[\boldsymbol{F}(\boldsymbol{X})]$，其中$\lambda_i$可按要求相差程度分别给出。其实，平方和加权法是下面即将介绍的理想点法的变种。</p>
+                
+                <h4>4. 理想点法</h4>
+                
+                <p>理想点法的基本思想是认为$\boldsymbol{X}$的评价向量$\boldsymbol{F}(\boldsymbol{X}) = [f_1(\boldsymbol{X}), f_2(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})]$越接近理想点越好。当然，这种接近是指在某个模式"$\|\cdot\|$"的意义下评价向量与理想点之间的"距离"大小。所谓理想点一般指由各单目标最优值$f_1^*, \cdots, f_p^*$组成的$p$维点$\boldsymbol{F}^* = [f_1^*, \cdots, f_p^*]$。具体地说，理想点法就是在所定义的模的意义下，以目标函数向量$\boldsymbol{F}(\boldsymbol{X})$与理想点之间的"距离"$U[\boldsymbol{F}(\boldsymbol{X})] = \|\boldsymbol{F}(\boldsymbol{X}) - \boldsymbol{F}^*\|$为评价函数，把求解(VMP)的问题归结为求解下述极值极小化问题：</p>
+                
+                <div class="formula-center">
+                    $$\min_{\boldsymbol{X} \in R} \|\boldsymbol{F}(\boldsymbol{X}) - \boldsymbol{F}^*\|$$
+                </div>
+                
+                <p>下面以距离模评价函数为例说明这种方法的具体步骤。</p>
+                
+                <div class="note">
+                    <strong>步骤①：</strong>求理想点。求解$p$个单目标最优化问题：
+                    
+                    <div class="formula">
+                        $$\min_{\boldsymbol{X} \in R^*} f_i(\boldsymbol{X}) = f_i(\boldsymbol{X}^i) = f_i^* \quad (i=1,2,\cdots,p)$$
+                    </div>
+                    
+                    <p>得理想点$\boldsymbol{F}^* = [f_1^*, \cdots, f_p^*]$。</p>
+                    
+                    <p><strong>步骤②：</strong>检验理想点。若①中求出的各单目标最优解$\boldsymbol{X}^i$皆相同，说明理想点解恰好是绝对最优点，则输出绝对最优解$\boldsymbol{X}^* = \boldsymbol{X}^i$，求解完毕，否则转③。</p>
+                    
+                    <p><strong>步骤③：</strong>作评价函数。取$q$-模$U[\boldsymbol{F}(\boldsymbol{X})] = \|\boldsymbol{F}(\boldsymbol{X}) - \boldsymbol{F}^*\| = [\sum_{i=1}^{p} (f_i^* - f_i(\boldsymbol{X}))^q]^{\frac{1}{q}}$为评价函数，$q$的一般取值在$[1, \infty)$，通常取$q=2$，这时的评价函数即为欧氏空间中向量$\boldsymbol{F}(\boldsymbol{X})$与向量$\boldsymbol{F}^*$的距离，其含义如图4.12所示。</p>
+                    
+                    <div class="figure">
+                        <div style="color: #666; font-size: 0.9em;">
+                            [图示：显示$F(\boldsymbol{X})$与$F(\overline{\boldsymbol{X}})$及理想点$\boldsymbol{F}^*$的关系]
+                        </div>
+                        <div class="figure-caption">图4.12 理想点法的几何意义</div>
+                    </div>
+                    
+                    <p><strong>步骤④：</strong>求解$\min_{\boldsymbol{X} \in R} U[\boldsymbol{F}(\boldsymbol{X})]$得$\overline{\boldsymbol{X}}$。</p>
+                </div>
+                
+                <p>可以验证，上述的距离模评价函数关于$\boldsymbol{F}$是严格增函数，故由此所得的$\overline{\boldsymbol{X}}$是模型(VMP)的有效解。</p>
+                
+                <p>常用的评价函数还有：</p>
+                
+                <div class="formula">
+                    <p>①当$q=1$时，$U[\boldsymbol{F}(\boldsymbol{X})] = \sum_{i=1}^{p} |f_i^* - f_i(\boldsymbol{X})|$；</p>
+                    
+                    <p>②当$q=\infty$时，$U[\boldsymbol{F}(\boldsymbol{X})] = \max_{1 \leq i \leq p} |f_i^* - f_i(\boldsymbol{X})|$。</p>
+                </div>
+                
+                <p>理想点法其实是目标规划法的一类，即事先规定一些指标值，然后努力设目标，看其接近这些规定值的程度，新设的目标有时也称超目标。可证，理想点法求出的解一定是非劣解，它在目标值空间中自然也就是有效点。</p>
+                
+                <!-- 例4.5 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        例4.5 理想点法求解示例
+                    </div>
+                    <div class="example-content">
+                        <p><strong>问题：</strong>设$f_1(\boldsymbol{X}) = -3x_1 + 2x_2$，$f_2(\boldsymbol{X}) = 4x_1 + 3x_2$都要求实现最大，约束集为$R = \{\boldsymbol{X} | 2x_1 + 3x_2 \leq 18, 2x_1 + x_2 \leq 10, x_1, x_2 \geq 0, \boldsymbol{X} \in R^2\}$，试用理想点法求解。</p>
+                        
+                        <p><strong>解：</strong>先分别求解两个单目标问题：</p>
+                        
+                        <div class="formula">
+                            $$\max_{\boldsymbol{X} \in R^*} f_1(\boldsymbol{X}) \quad \text{及} \quad \max_{\boldsymbol{X} \in R^*} f_2(\boldsymbol{X})$$
+                        </div>
+                        
+                        <p>得最优解：</p>
+                        
+                        <div class="formula">
+                            $$\boldsymbol{X}^{(1)} = (0, 6), \boldsymbol{X}^{(2)} = (3, 4)$$
+                        </div>
+                        
+                        <p>对应的目标值：</p>
+                        
+                        <div class="formula">
+                            $$f_1(\boldsymbol{X}^{(1)}) = f_1(0, 6) = f_1^* = 12$$
+                            $$f_2(\boldsymbol{X}^{(2)}) = f_2(3, 4) = f_2^* = 24$$
+                        </div>
+                        
+                        <p>故理想点：</p>
+                        
+                        <div class="formula">
+                            $$\boldsymbol{F}^* = (f_1^*, f_2^*) = (12, 24)$$
+                        </div>
+                        
+                        <p>取欧氏距离为评价函数，有：</p>
+                        
+                        <div class="formula">
+                            $$[(f_1(\boldsymbol{X}) - f_1^*)^2 + (f_2(\boldsymbol{X}) - f_2^*)^2]^{\frac{1}{2}}$$
+                        </div>
+                        
+                        <p>可求得最优解$\boldsymbol{X}^* = [0.53 \quad 5.65]^{\mathsf{T}}$，对应的目标值$f_1^* = 9.72, f_2^* = 19.06$。</p>
+                    </div>
+                </div>
+                
+                <h4>5. 目标规划法</h4>
+                
+                <p><strong>(1) 目标规划的数学模型</strong></p>
+                
+                <p>目标规划法由A. Charnes和W. Cooper首先提出。它是一种有着广泛应用的特殊多目标最优化模型。这类模型并不是去考虑对各个目标进行极小化或极大化，而是希望在约束条件的限制下，每一目标尽可能地接近于事先给定的目的值。它是求解多目标规划的一种常用方法，是理想点法的推广。</p>
+                
+                <p>这种方法首先在每个目标$f_i(\boldsymbol{X})$上预先确定一个希望达到的目的值$f_i^0$，得一目的值向量：</p>
+                
+                <div class="formula-center">
+                    $$\boldsymbol{F} = [f_1^0, f_2^0, \cdots, f_p^0]$$
+                </div>
+                
+                <p>由此构造一个评价函数：</p>
+                
+                <div class="formula-center">
+                    $$\sum_{i=1}^{p} |f_i(\boldsymbol{X}) - f_i^0|$$
+                </div>
+                
+                <p>然后把多目标决策问题转化为如下的单目标函数极值问题：</p>
+                
+                <div class="formula-center">
+                    $$\min_{\boldsymbol{X} \in R} \sum_{i=1}^{p} |f_i(\boldsymbol{X}) - f_i^0|$$
+                </div>
+                
+                <p>它的含义是在确定的约束条件下，要求所有目标值尽可能接近希望达到的目的值，即要求偏差绝对值之和尽量小。为此，引入两类偏差变量$d_i^+, d_i^-$ ($i=1,2,\cdots,p$)，有：</p>
+                
+                <div class="formula">
+                    <p><strong>正偏差</strong> $d_i^+ = \begin{cases} f_i(\boldsymbol{X}) - f_i^0, & f_i(\boldsymbol{X}) > f_i^0 \\ 0, & f_i(\boldsymbol{X}) \leq f_i^0 \end{cases}$ ($i=1,2,\cdots,p$)</p>
+                    
+                    <p><strong>负偏差</strong> $d_i^- = \begin{cases} 0, & f_i(\boldsymbol{X}) \geq f_i^0 \\ f_i^0 - f_i(\boldsymbol{X}), & f_i(\boldsymbol{X}) < f_i^0 \end{cases}$ ($i=1,2,\cdots,p$)</p>
+                </div>
+                
+                <p>$d_i^+$表示第$i$个目标所达到值超过预期目的值的部分；$d_i^-$表示第$i$个目标值不足预期目的值的部分。则：</p>
+                
+                <div class="formula">
+                    $$d_i^+ + d_i^- = |f_i(\boldsymbol{X}) - f_i^0|$$
+                    $$d_i^+ - d_i^- = f_i(\boldsymbol{X}) - f_i^0$$
+                    $$d_i^+ \cdot d_i^- = 0 \quad (i=1,2,\cdots,p) \text{（目标达到值不可能既超过目的值又未到目的值）}$$
+                </div>
+                
+                <p>于是可以证明求解单目标决策问题：</p>
+                
+                <div class="formula-center">
+                    $$\min_{\boldsymbol{X} \in R} \sum_{i=1}^{p} |f_i(\boldsymbol{X}) - f_i^0|$$
+                </div>
+                
+                <p>等价于求解：</p>
+                
+                <div class="formula-center">
+                    $$\min \sum_{i=1}^{p} (d_i^+ + d_i^-)$$
+                    $$\begin{cases}
+                    f_i(\boldsymbol{X}) - d_i^+ + d_i^- = f_i^0 \\
+                    d_i^+ \cdot d_i^- = 0 \\
+                    \boldsymbol{X} \in R, d_i^+, d_i^- \geq 0 \quad (i=1,2,\cdots,p)
+                    \end{cases} \qquad (4.1)$$
+                </div>
+                
+                <p>上述模型中含有偏差变量相乘的约束条件，这使得求解很不方便，考察去掉偏差变量相乘的约束条件，得到模型：</p>
+                
+                <div class="formula-center">
+                    $$\min \sum_{i=1}^{p} (d_i^+ + d_i^-)$$
+                    $$\begin{cases}
+                    f_i(\boldsymbol{X}) - d_i^+ + d_i^- = f_i^0 \\
+                    \boldsymbol{X} \in R \\
+                    d_i^+ \geq 0, d_i^- \geq 0 \quad i=1,2,\cdots,p
+                    \end{cases} \qquad (4.2)$$
+                </div>
+                
+                <p>可以证明，模型式(4.2)的最优解也是模型式(4.1)的最优解，因而可将模型式(4.2)作为目标规划模型的一般形式。在上述模型中，约束集$R$称为绝对约束或说硬约束。其他可加入偏差变量的约束条件为目标约束或软约束。它是目标规划所特有的约束。</p>
+                
+                <p>实际问题中，一个规划问题常常有若干个目标，但决策者在要求达到这些目标时，是有主次或轻重缓急的不同。凡要求首先达到的目标赋予优先因子$P_1$，其次的目标赋予优先因子$P_2$，…，规定$P_i \gg P_{i+1}$表示$P_i$比$P_{i+1}$有更大的优先权。即首先保证$P_1$级目标的实现，这时可不考虑次级目标；而$P_2$级目标是在实现$P_1$级目标的基础上考虑的，以此类推。若要区别具有相同优先因子的两个目标的差别，可分别赋与它们不同的权系数$\omega_i$。这样，在上述目标规划模型一般形式的基础上，可建立如下的加权或分层目标规划模型：</p>
+                
+                <div class="formula-center">
+                    $$\min \sum_{i=1}^{l} P_i (\sum_{j=1}^{p} \omega_{ji}^+ d_j^+ + \sum_{j=1}^{p} \omega_{ji}^- d_j^-)$$
+                    $$\begin{cases}
+                    f_i(\boldsymbol{X}) - d_i^+ + d_i^- = f_i^0 \\
+                    \boldsymbol{X} \in R \\
+                    d_i^+ \geq 0, d_i^- \geq 0 \quad (i=1,2,\cdots,p)
+                    \end{cases} \qquad (4.3)$$
+                </div>
+                
+                <p>最后考察目标规划的目标函数。由于在实际问题中，对各目标上预先设定的目标值的要求不一样，这样目标函数（评价函数）的形式也不一样，归纳起来，基本形式有三种：</p>
+                
+                <div class="note">
+                    <p>①希望各目标值与预期目的值之间超过或不足的偏差尽量小，即要求恰好达到目的值，这时的评价函数形式为$\sum_{i=1}^{p} (d_i^+ + d_i^-)$；</p>
+                    
+                    <p>②希望各目标值与预期目的值之间不足的偏差都尽量小，而超过的偏差不限，这时的评价函数形式为$\sum_{i=1}^{p} d_i^-$；</p>
+                    
+                    <p>③希望各目标值与预期目的值之间超过的偏差尽量小，即允许达不到目的值，这时的评价函数形式为$\sum_{i=1}^{p} d_i^+$。</p>
+                </div>
+                
+                <p>当然，也可以对某些目标要求极小化正偏差，而对另一些目标要求极小化负偏差。以下用例子说明目标规划问题具体的建模过程。</p>
+                
+                <!-- 例4.6 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        例4.6 目标规划建模示例
+                    </div>
+                    <div class="example-content">
+                        <p><strong>问题描述：</strong></p>
+                        <p>有一纺织厂生产尼龙布和棉布，平均生产能力都是1 km/h，工厂生产能力为每周80 h。根据市场预测，下周最大销售量为：尼龙布为70 km，棉布45 km。尼龙布利润为2.5元/m，棉布利润为1.5元/m。工厂领导的管理目标如下。$P_1$：保证职工正常上班，避免开工不足；$P_2$：尽量达到最大销售量；$P_3$：尽量减少加班时间，限制加班时间不得超过10 h。</p>
+                        
+                        <p><strong>解：</strong>首先设决策变量$x_1, x_2$分别表示尼龙布和棉布的下周计划产量。</p>
+                        
+                        <p><strong>目标函数：</strong></p>
+                        
+                        <div class="formula">
+                            <p>工时$f_1(\boldsymbol{X}) = x_1 + x_2 \rightarrow f_1^0 = 80$</p>
+                            <p>尼龙布产量$f_2(\boldsymbol{X}) = x_1 \rightarrow f_2^0 = 70$</p>
+                            <p>棉布产量$f_3(\boldsymbol{X}) = x_2 \rightarrow f_3^0 = 45$</p>
+                        </div>
+                        
+                        <p>然后设相应于上述目标函数的正负偏差变量$d_i^+$和$d_i^-$ ($i=1,2,3$)。由于决策者要求尼龙布和棉布的产量不同，即二者的重要性不一样，则可根据二者的单位利润比2.5:1.5 = 5:3确定权系数。</p>
+                        
+                        <p>于是根据目标函数优先级别的不同，可建立目标规划模型如下：</p>
+                        
+                        <div class="formula">
+                            $$\min[P_1(d_1^-) + P_2(5d_2^- + 3d_3^-) + P_3(d_1^+)]$$
+                            
+                            $$\text{s.t.} \begin{cases}
+                            x_1 + x_2 + d_1^- - d_1^+ = 80 \\
+                            x_1 + d_2^- - d_2^+ = 70 \\
+                            x_2 + d_3^- - d_3^+ = 45 \\
+                            d_1^+ \leq 10 \\
+                            x_1, x_2, d_i^+, d_i^- \geq 0 \quad (i=1,2,3)
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>式中，$d_1^+, d_1^-$分别为对预定利润目标的超过量和不足量；$d_2^+, d_2^-$分别为A产品产量比1.5倍B产品产量的超过量和不足量；$d_3^-$剩余的设备工时；$x_3$松驰变量。</p>
+                    </div>
+                </div>
+                
+                <p><strong>(2) 线性目标规划问题的求解方法</strong></p>
+                
+                <p>前面提出的目标规划模型式(4.2)已经化为单目标问题，特别当目标函数$f_i(\boldsymbol{X})$ ($i=1,\cdots,p$)和约束$R$均为线性时，它就是一个线性规划问题。</p>
+                
+                <p>以下通过举例说明在实际中常用的分层加权线性目标规划（约束及目标函数均为线性）问题的求解方法——单纯形法。</p>
+                
+                <p>线性目标规划的数学模型结构与线性规划的数学模型结构没有本质区别，所以只要预先确定各目标重要程度的优先顺序，即可用单纯形法求解。但考虑到目标规划的数学模型的一些特点，作以下规定：</p>
+                
+                <div class="note">
+                    <p>①因目标规划问题的目标函数都是追求极小化，所以以检验数$c_j - C_B B^{-1} P_j \geq 0$ ($j=1,2,\cdots,n$)为最优准则；</p>
+                    
+                    <p>②从每个检验数的整体来看检验数的正负首先决定于第一优先因子$P_1$的系数$\sigma_1$的正负，若$\sigma_{1j} = 0$，这时此检验数的正负决定于第二优先因子$P_2$的系数$\sigma_{2j}$的正负；下面可依此类推。</p>
+                </div>
+                
+                <p>下面以实例说明解分层线性目标规划问题单纯形法的计算步骤。</p>
+                
+                <!-- 例4.7 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        例4.7 线性目标规划的单纯形法
+                    </div>
+                    <div class="example-content">
+                        <p><strong>问题描述：</strong></p>
+                        <p>某工厂欲生产A和B两种产品，因市场需要量大，销路不成问题。生产A和B产品所需设备工时、材料以及单位产品的利润如表4.1所示。</p>
+                        
+                        <table>
+                            <caption><strong>表4.1</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th>资源 \ 产品</th>
+                                    <th>A</th>
+                                    <th>B</th>
+                                    <th>限量</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>设备工时（月/单位）</td>
+                                    <td>2</td>
+                                    <td>4</td>
+                                    <td>12</td>
+                                </tr>
+                                <tr>
+                                    <td>材料（百吨/单位）</td>
+                                    <td>3</td>
+                                    <td>3</td>
+                                    <td>12</td>
+                                </tr>
+                                <tr>
+                                    <td>利润（万元/单位）</td>
+                                    <td>4</td>
+                                    <td>3.2</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p>工厂在制定生产计划时，必须按重要程度考虑如下三个目标：</p>
+                        
+                        <ul class="content-list">
+                            <li>目标$P_1$：要求生产这两种产品的利润最少要达到12万元</li>
+                            <li>目标$P_2$：要求A产品的产量尽可能是B产品产量的1.5倍</li>
+                            <li>目标$P_3$：为充分利用设备工时，必须使设备的空闲时间尽可能少</li>
+                        </ul>
+                        
+                        <p>问工厂应如何决定产品A和B的产量？</p>
+                        
+                        <p><strong>解：</strong>首先根据题意建立目标规划模型。设$x_1$和$x_2$分别为A、B两产品的产量。根据预先提出的目标及资源限制，考虑问题的约束条件如下：</p>
+                        
+                        <div class="formula">
+                            <p>利润约束：$4x_1 + 3.2x_2 - d_1^+ + d_1^- = 12$</p>
+                            <p>产品产量约束：$x_1 - 1.5x_2 - d_2^+ + d_2^- = 0$</p>
+                            <p>设备工时约束：$2x_1 + 4x_2 + d_3^- = 12$</p>
+                            <p>原材料约束：$3x_1 + 3x_2 \leq 12$</p>
+                        </div>
+                        
+                        <p>根据提出的目标要求，三个目标函数为$P_1 d_1^-, P_2(d_2^+ + d_2^+), P_3 d_3^-$，使其和为最小，则可建立一个有目标优先级的线性目标规划模型：</p>
+                        
+                        <div class="formula">
+                            $$\min[P_1 d_1^- + P_2(d_2^+ + d_2^+) + P_3 d_3^-]$$
+                            
+                            $$\text{s.t.} \begin{cases}
+                            4x_1 + 3.2x_2 - d_1^+ + d_1^- = 12 \\
+                            x_1 - 1.5x_2 - d_2^+ + d_2^- = 0 \\
+                            2x_1 + 4x_2 - d_3^+ + d_3^- = 12 \\
+                            3x_1 + 3x_2 + x_3 = 12 \\
+                            x_i \geq 0, d_j^+ \geq 0, d_j^+ \geq 0 \quad (i=1,2,3)
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>对该目标规模问题可使用线性规划中的单纯形法求解。由于预先确定了三个目标的优先次序$P_1, P_2, P_3$，因此首先求解最高级$P_1$目标函数下的线性规划，使$P_1$目标函数达到最优，然后转向下一级目标，继续求解$P_2$目标函数下的线性规划，使$P_2$目标达到最大可能的满足，再继续向下一级更低的目标$P_3$，使其尽可能的满足。但在这个过程中，低级目标上的满足不能影响所有高级目标上已获目标值数。因此，在用单纯形法迭代的过程中，确定进基变量的必要条件是这个变量在所有更高级目标函数下的检验数均为零。具体解法见表4.2的单纯形表。</p>
+                        
+                        <div class="figure">
+                            <div style="color: #666; font-size: 0.9em;">
+                                [此处应有表4.2的完整单纯形表，包含多个迭代步骤]
+                            </div>
+                            <div class="figure-caption">表4.2 单纯形表迭代过程</div>
+                        </div>
+                        
+                        <p>本题的求解步骤可概括如下：</p>
+                        
+                        <div class="note">
+                            <p>①根据模型建立初始单纯形表（表4.2(一)），由于上述问题中有三个目标函数$P_1, P_2, P_3$，因此首先求解最高级$P_1$目标函数下的线性规划，使$P_1$目标函数达到最优，然后转向下一级目标，继续求解$P_2$目标函数下的线性规划，使$P_2$目标达到最大可能的满足，再继续向下一级更低的目标$P_3$，使其尽可能的满足。</p>
+                            
+                            <p>②以最高级目标$P_1$为目标函数，在单纯形表上进行迭代计算，直至$P_1$下检验数均为非负，则表示最高级目标函数$P_1$已达最优值，见表4.2(一)、(二)、(三)；</p>
+                            
+                            <p>③转入第二级目标$P_2$，由表4.2(三)中知，$P_2$下的检验数也均为非负，表示当前之基本可行解对于$P_2$目标函数也是最优，顺次转入对第三级目标函数的迭代；</p>
+                            
+                            <p>④在表4.2(三)中，$P_3$下检验数行绝对值最大的负检验数为$-1$，但其相应于$P_2$检验数行中的检验数为$1$，因此变量$d_2^-$不能选为进基变量，而变量$d_1^+$在$P_1, P_2$下检验数均为零，因此选择$d_1^+$进基能改善$P_3$目标值，而不影响第一级和第二级目标函数值；</p>
+                            
+                            <p>⑤按此规则继续进行迭代直至不能进行为止（表4.3），最优解为$x_1 = 2.4, x_2 = 1.6, d_1^+ = 2.72, d_3^- = 0.8, d_2^+ = d_2^- = 0, x_3 = 0$。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <p>事实上，线性规划问题可视为线性目标规划问题的一种特殊情况，因为对于下述线性规划问题：</p>
+                
+                <div class="formula-center">
+                    $$\min \sum_{j=1}^{n} c_j x_j$$
+                    $$(LP) \begin{cases}
+                    \sum_{j=1}^{n} a_{ij} x_j = b_i \quad (i=1,\cdots,m) \\
+                    x_j \geq 0 \quad (j=1,\cdots,n)
+                    \end{cases}$$
+                </div>
+                
+                <p>若将目标函数的下界取为$b_{m+1}$，则上述(LP)问题可转化为如下述线性目标规划问题(GLP)：</p>
+                
+                <div class="formula-center">
+                    $$\min [P_1(\boldsymbol{D}^-, \boldsymbol{D}^+), P_2(\boldsymbol{D}^-, \boldsymbol{D}^+)]$$
+                    
+                    $$(GLP) \begin{cases}
+                    \sum_{j=1}^{n} a_{ij} x_j + d_i^- - d_i^+ = b_i \quad (i=1,\cdots,m) \\
+                    \sum_{j=1}^{n} c_j x_j + d_{m+1}^- - d_{m+1}^+ = b_{m+1} \quad x_j \geq 0 (j=1,\cdots,n)
+                    \end{cases}$$
+                </div>
+                
+                <p>式中$\boldsymbol{D}^+ = [d_1^+, d_2^+, \cdots, d_{m+1}^+]$，$\boldsymbol{D}^- = [d_1^-, d_2^-, \cdots, d_{m+1}^-]$。</p>
+                
+                <p>线性规划只解决单目标问题，而目标规划部分地消除了这种局限。目标规划能处理带有多个目标的多目标决策问题，而且目标函数可以由具有不同度量单位的偏差变量构成。与线性规划相比，目标规划的真正价值在于按照决策者的目标优先结构，去求解有矛盾目标的多目标决策问题。</p>
+                
+                <h4>6. 分目标乘除法</h4>
+                
+                <p>在$p$个目标$f_1(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})$中，其中$k$个目标$f_1(\boldsymbol{X}), \cdots, f_k(\boldsymbol{X})$要求实现最小，其余的目标$f_{k+1}(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})$要求实现最大，这时的多目标最优化模型成为混合最优化模型，记为(VHP)。分目标乘除法以及后面即将介绍的功效系数法都是求解多目标混合最优化模型的方法。下面首先介绍分目标乘除法的原理与步骤。</p>
+                
+                <p>分目标乘除法的主要特点是将模型中的各分目标函数进行相乘和相除处理后，在可行域上求解。已经知道，为使$f_1(\boldsymbol{X}), \cdots, f_k(\boldsymbol{X})$极小化，可以考虑它们的乘积极小化，而要使$f_{k+1}(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})$极大化，又可以考虑让这些目标函数乘积的倒数极小化。因此，求解(VHP)问题便可以归为求解：</p>
+                
+                <div class="formula-center">
+                    $$\min_{\boldsymbol{X} \in R} \frac{f_1(\boldsymbol{X}) \cdots f_k(\boldsymbol{X})}{f_{k+1}(\boldsymbol{X}) \cdots f_p(\boldsymbol{X})}$$
+                </div>
+                
+                <p>由上述极值极小化问题所得的最优解，显然是使位于分子的各目标取尽可能小的值，且使位于分母的各目标取尽可能大的值，以使得目标函数整体的值最小。</p>
+                
+                <p>以上所述方法实际上是对模型构造了下述评价函数：</p>
+                
+                <div class="formula-center">
+                    $$U[\boldsymbol{F}(\boldsymbol{X})] = \frac{f_1(\boldsymbol{X}) f_2(\boldsymbol{X}) \cdots f_k(\boldsymbol{X})}{f_{k+1}(\boldsymbol{X}) \cdots f_p(\boldsymbol{X})}$$
+                </div>
+                
+                <p>应指明的是，为使$U[\boldsymbol{F}(\boldsymbol{X})]$有意义，在使用分目标乘除法求解时，一般要求各目标函数在可行域$R$上均取正值。</p>
+                
+                <p>分目标乘除法的具体步骤如下：</p>
+                
+                <div class="note">
+                    <p><strong>第1步：</strong>分目标正值化。检查$f_1(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})$在$R$上是否均取大于零的值。若是，则进行下一步，否则，选取某实数$M > 0$，使</p>
+                    
+                    <div class="formula">
+                        $$f_i(\boldsymbol{X}) + M > 0 \quad \boldsymbol{X} \in R \quad (i=1,\cdots,p)$$
+                    </div>
+                    
+                    <p>并令$f_i(\boldsymbol{X}):=f_i(\boldsymbol{X}) + M$ ($i=1,2,\cdots,p$)，进行第二步。</p>
+                    
+                    <p><strong>第2步：</strong>极小化分目标乘除问题。求解：</p>
+                    
+                    <div class="formula">
+                        $$\min_{\boldsymbol{X} \in R} \frac{f_1(\boldsymbol{X}) \cdots f_k(\boldsymbol{X})}{f_{k+1}(\boldsymbol{X}) \cdots f_p(\boldsymbol{X})}$$
+                    </div>
+                    
+                    <p>设得最优解为$\overline{\boldsymbol{X}}$，则可以证明$\overline{\boldsymbol{X}}$为(VHP)的有效解。</p>
+                </div>
+                
+                <p>分目标乘除法有简单的经济学含义。以两目标的最优化模型(VHP)为例，设$f_1(\boldsymbol{X})$表示投资，$f_2(\boldsymbol{X})$表示收益，则乘除分目标函数$f_1(\boldsymbol{X})/f_2(\boldsymbol{X})$表示单位收益的投资，其倒数表示单位投资的收益即投资和利润率。就此，分目标乘除法的意义是：极小化单位收益的投资。</p>
+                
+                <!-- 例4.8 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        例4.8 分目标乘除法求解示例
+                    </div>
+                    <div class="example-content">
+                        <p><strong>问题描述：</strong></p>
+                        <p>某投资开发公司拟有总资金100万元，今有4个项目可供选择投资。投资第$i$个项目所用资金$a_i$及预计可得收益$b_i$为：$a_1 = 40$(万元)，$a_2 = 50$(万元)，$a_3 = 35$(万元)，$a_4 = 40$(万元)；$b_1 = 30$(万元)，$b_2 = 40$(万元)，$b_3 = 25$(万元)，$b_4 = 35$(万元)。试用分目标乘除法决策投资方案。</p>
+                        
+                        <p><strong>解：</strong>设$x_i = \begin{cases} 1, & \text{决定投资第} i \text{个项目} \\ 0, & \text{决定不投资第} i \text{个项目} \end{cases}$ ($i=1,2,3,4$)</p>
+                        
+                        <p>首先，由于$x_i$不全为零，故分目标函数$f_1(\boldsymbol{X}) = 40x_1 + 50x_2 + 35x_3 + 40x_4$和$f_2(\boldsymbol{X}) = 30x_1 + 40x_2 + 25x_3 + 35x_4$在优化过程中在$R$上取值大于零。</p>
+                        
+                        <p>由此，可构造下述极小化分目标乘除问题：</p>
+                        
+                        <div class="formula">
+                            $$\min_{\boldsymbol{X} \in R} \frac{40x_1 + 50x_2 + 35x_3 + 40x_4}{30x_1 + 40x_2 + 25x_3 + 35x_4}$$
+                        </div>
+                        
+                        <p>求解上述分式规划问题，得最优解$\overline{\boldsymbol{X}} = [0 \quad 1 \quad 0 \quad 1]^{\mathsf{T}}$。即该公司应该投资第2和第4个项目。且总投资额$f_1(\overline{\boldsymbol{X}}) = 50 + 40 = 90$万元，总收益$f_2(\overline{\boldsymbol{X}}) = 40 + 35 = 75$万元。</p>
+                    </div>
+                </div>
+                
+                <h4>7. 功效系数法——几何平均法</h4>
+                
+                <p>设$p$个目标$f_1(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})$，其中$k_1$个目标要求实现最大，$k_2$个目标要求实现最小，其余的目标是过大不行，过小也不行。功效系数法是一种无量纲化方法，基本做法就是分别给这些目标$f_i(\boldsymbol{X})$以一定的功效系数（评分）$d_i$。$d_i$是在$[0, 1]$之间的某一数。当目标最满意达到时，取$d_i = 1$；当最差时，取$d_i = 0$。通常把描述$d_i$与$f_i(\boldsymbol{X})$的关系式称为功效函数，表示为$d_i = d_i[f_i(\boldsymbol{X})]$。显然，对于不同类型目标应选用不同类型的功效函数。</p>
+                
+                <p>功效函数的构造方法很多，有线性插值法、指数法、折线法等。本书只简要介绍前两种方法。</p>
+                
+                <p><strong>(1) 线性插值法</strong></p>
+                
+                <p>图4.13给出不同类型目标线性插值法的功效函数图示。</p>
+                
+                <div class="figure">
+                    <div style="color: #666; font-size: 0.9em;">
+                        [图示：三种类型的功效函数图
+                        - I型：$f_i$与$d_i$成正比
+                        - II型：$f_i$与$d_i$成反比  
+                        - III型：当$f_i$取适当值时，$d_i$最大；而$f_i$取偏值时（即过大或过小）$d_i$变小]
+                    </div>
+                    <div class="figure-caption">图4.13 不同类型目标的功效函数</div>
+                </div>
+                
+                <p>利用线性插值法得：</p>
+                
+                <div class="formula">
+                    <p><strong>I型功效函数</strong>：$d_i = \frac{f_i - f_{Jh}}{f_k - f_{Jh}}$（目标最优值为$f_k$）</p>
+                    
+                    <p><strong>II型功效函数</strong>：$d_i = \frac{f_k - f_i}{f_k - f_{Jh}}$（目标最优值为$f_{Jh}$）</p>
+                    
+                    <p><strong>III型功效函数</strong>：$d_i = \begin{cases}
+                    1 - (f_0 - f_i)/\triangle f^1, & \text{若 } f_i < f_0 \\
+                    1, & \text{若 } f_0 \leq f_i \leq f^* \\
+                    1 - (f_i - f^*)/\triangle f^2, & \text{若 } f_i > f^*
+                    \end{cases}$</p>
+                </div>
+                
+                <p>其中$\triangle f^1 = \triangle f^2 = \max\{(f_k - f^*), (f_0 - f_{Jh})\}$，目标最优值为区间$[f_0, f^*]$。</p>
+                
+                <p>在III型功效函数中，当$f_0 = f^*$时，功效函数为：</p>
+                
+                <div class="formula">
+                    $$d_i = 1 - \frac{|f_i - f_0|}{\max |f_j - f_0|}$$
+                    
+                    <p>（目标最优值为固定值$f_0$）</p>
+                </div>
+                
+                <p><strong>(2) 指数法</strong></p>
+                
+                <p>图4.14给出不同类型目标指数法的功效函数图示。图中I型、II型、III型功效函数的含义同线性插值法。</p>
+                
+                <div class="figure">
+                    <div style="color: #666; font-size: 0.9em;">
+                        [图示：三种类型的指数型功效函数图]
+                    </div>
+                    <div class="figure-caption">图4.14 指数法的功效函数</div>
+                </div>
+                
+                <p>首先用指数法构造I型功效函数，可设其表达式为：</p>
+                
+                <div class="formula">
+                    $$d = e^{-(e^{-(b_0 + b_1 f)})}$$
+                </div>
+                
+                <p>其中$b_0, b_1$可这样确定：</p>
+                
+                <p>当$f$达到某一刚合格值$f^1$时，取$d^1 = e^{-1} \approx 0.367\ 9$；</p>
+                <p>当$f$达到某一不合格值$f^0$时，取$d^0 = e^{-e} \approx 0.065\ 98$。</p>
+                
+                <p>将上述要求代入上式即有：</p>
+                
+                <div class="formula">
+                    $$d^1 = e^{-1} = e^{-(e^{-(b_0 + b_1 f^1)})}$$
+                    $$d^0 = e^{-e} = e^{-(e^{-(b_0 + b_1 f^0)})}$$
+                </div>
+                
+                <p>由此可得：</p>
+                
+                <div class="formula">
+                    $$\begin{cases}
+                    b_0 + b_1 f^1 = 0 \\
+                    b_0 + b_1 f^0 = -1
+                    \end{cases}$$
+                </div>
+                
+                <p>解之得：</p>
+                
+                <div class="formula">
+                    $$b_0 = \frac{f^1}{f^1 - f^0}, \quad b_1 = \frac{-1}{f^0 - f^1}$$
+                </div>
+                
+                <p>即得I型功效函数：</p>
+                
+                <div class="formula">
+                    $$d = e^{-e^{(\frac{f^1}{f^0 - f^1})}}$$
+                </div>
+                
+                <p>同样对II型功效函数，可取为：</p>
+                
+                <div class="formula">
+                    $$d = 1 - e^{-e^{(\frac{f^0}{f^0 - f^1})}}$$
+                </div>
+                
+                <p>对于III型功效函数，取：</p>
+                
+                <div class="formula">
+                    $$d = e^{-(|Y|)^n}$$
+                    
+                    <p>式中$Y = \frac{2f - (f' + f'')}{f' - f''}$</p>
+                </div>
+                
+                <p>这样，当$f = f'$或$f = f''$时，$Y = \pm 1$，$d = e^{-1}$，为刚好可接受的值；当$f = \frac{f' + f''}{2}$时，$Y = 0$，$d = 1$，即$f$还到比较适当的$d$值相对应，这时可给出：</p>
+                
+                <div class="formula">
+                    $$n = \frac{\ln\ln\frac{1}{d}}{\ln|Y|}$$
+                </div>
+                
+                <p>如取$f = f'' = \frac{2f' + f''}{3}$，此时$Y = \frac{1}{3}$，使其与$d = e^{-\frac{1}{3}}$相对应，则：</p>
+                
+                <div class="formula">
+                    $$n = \frac{\ln\frac{1}{3}}{\ln\frac{1}{3}} \approx 0.630\ 9$$
+                </div>
+                
+                <p>即：</p>
+                
+                <div class="formula">
+                    $$d = e^{-|Y|^{0.630\ 9}}, \quad Y = \frac{2f - (f' + f'')}{f' - f''}$$
+                </div>
+                
+                <p>有了功效函数后，对每个目标都对应为相应的功效函数，目标值可转换为功效系数。这样，可用各目标功效系数的几何平均值作为评价函数，即有：</p>
+                
+                <div class="formula-center">
+                    $$U[\boldsymbol{F}(\boldsymbol{X})] = [\prod_{i=1}^{p} d_i(f_i(\boldsymbol{X}))]^{\frac{1}{p}}$$
+                </div>
+                
+                <p>然后，极大化几何平均功效问题，即求解：</p>
+                
+                <div class="formula-center">
+                    $$\max_{\boldsymbol{X} \in R} U[\boldsymbol{F}(\boldsymbol{X})]$$
+                </div>
+                
+                <p>得最优解$\overline{\boldsymbol{X}}$。</p>
+                
+                <p>显然，$U[\boldsymbol{F}(\boldsymbol{X})]$的值等于1是最满意的，等于零是最差的。这样定义评价函数有一个好处，一个方案中只要有一个目标值太差，整个评价值便会下降，该方案就难被选中。但这样有时也会造成决策判断上的偏差。如被评方案中有一个相对不太重要的目标的功效系数为零，而其他目标对应的功效系数很高，则这时该方案的评价值为零，该方案不会被选中。鉴于这种情况，应构造新的评价函数，或寻求新的无量纲化方法（如使功效系数的最小值不为零）。对此，已有若干研究成果，限于篇幅，本书不做详细介绍。</p>
+                
+                <!-- 4.2.2 目标排序法 -->
+                <h3 id="section-4-2-2">4.2.2 目标排序法</h3>
+                
+                <p>目标排序法的思想是把目标按重要性排序。设给出的重要性序列为$f_1(\boldsymbol{X})$、$f_2(\boldsymbol{X})$、……、$f_p(\boldsymbol{X})$，然后按这种排序逐步进行一系列单目标优化，最后求出满意解。</p>
+                
+                <h4>1. 序列最优化法</h4>
+                
+                <p>首先对第一个目标求最优，并找出所有最优解的集合，记为$R_1$。然后在$R_1$内求第二个目标的最优解，记这时的最优解集合为$R_2$。如此等等，一直到求出第$p$个目标的"最优解"$\boldsymbol{X}_p$。</p>
+                
+                <p>基本步骤如下：</p>
+                
+                <div class="note">
+                    $$\min_{\boldsymbol{X} \in R} f_1(\boldsymbol{X}) = f_1^*(\boldsymbol{X}_1) \qquad \text{得最优解集 } R_1$$
+                    
+                    $$\min_{\boldsymbol{X} \in R_1 \subseteq R} f_2(\boldsymbol{X}) = f_2^*(\boldsymbol{X}_2) \qquad \text{得最优解集 } R_2$$
+                    
+                    $$\vdots$$
+                    
+                    $$\min_{\boldsymbol{X} \in R_{p-2} \subseteq R_{p-3}} f_{p-1}(\boldsymbol{X}) = f_{p-1}^*(\boldsymbol{X}_{p-1}) \qquad \text{得最优解集 } R_{p-1}$$
+                    
+                    $$\min_{\boldsymbol{X} \in R_{p-1} \subseteq R_p} f_p(\boldsymbol{X}) = f_p^*(\boldsymbol{X}_p) \qquad \text{得 } \boldsymbol{X}_p \text{ 为"最优解"}$$
+                </div>
+                
+                <p>使用序列最优化法求得的解$\boldsymbol{X}_p$一定是原多目标规划的非劣解，是分层序列意义下的最优解，然而这种方法可能由于某一步上最优解是唯一时，以后的目标优化就不能进行下去了。</p>
+                
+                <h4>2. 宽容意义下的序列优化方法</h4>
+                
+                <p>为了避免$R_i$为空集或某一步上最优解是唯一时不可继续进行的困难，可采用宽容条件下进行分层序列优化，即预先给定$\varepsilon_1 > 0, \varepsilon_2 > 0, \cdots, \varepsilon_{p-1} > 0$作为宽容值。这些$\varepsilon_i$是根据各目标不同要求预先给出，它是相对于该目标最优值之允许偏差。每一分层单目标优化是在相对最优解有宽容量$\varepsilon_i$的约束集合中进行的。基本步骤如下：</p>
+                
+                <div class="note">
+                    $$\min_{\boldsymbol{X} \in R} f_1(\boldsymbol{X}) = f_1^*$$
+                    
+                    $$\min_{\boldsymbol{X} \in R_1} f_2(\boldsymbol{X}) = f_2^*, R_1 = \{\boldsymbol{X} | f_1(\boldsymbol{X}) < f_1^* + \varepsilon_1, \boldsymbol{X} \in R\}$$
+                    
+                    $$\min_{\boldsymbol{X} \in R_2} f_3(\boldsymbol{X}) = f_3^*, R_2 = \{\boldsymbol{X} | f_2(\boldsymbol{X}) < f_2^* + \varepsilon_2, \boldsymbol{X} \in R_1\}$$
+                    
+                    $$\vdots$$
+                    
+                    $$\min_{\boldsymbol{X} \in R_{p-1}} f_p(\boldsymbol{X}) = f_p^*(\boldsymbol{X}_p), R_{p-1} = \{\boldsymbol{X} | f_{p-1}(\boldsymbol{X}) < f_{p-1}^* + \varepsilon_{p-1}, \boldsymbol{X} \in R_{p-2}\}$$
+                </div>
+                
+                <p>则$\boldsymbol{X}_p$为多目标问题最优解。</p>
+                
+                <!-- 4.2.3 交互规划法 -->
+                <h3 id="section-4-2-3">4.2.3 交互规划法</h3>
+                
+                <p>评价函数法是有局限性的。其一，这种方法给出的评价函数一般较粗糙，难以精确地描述它要预先给出的表达式；其二，在一些复杂问题中，客观存在的评价函数并不能单写出；其三，评价函数法需要一开始就给出全部评价信息，而实际上这是十分困难的。很多情况下，评价信息只能在实际计算过程中逐步给出。鉴于此，就有必要改进这种求解方法，改进方向一是预先不给出评价函数的表达式；二是用迭代算法求解；三是求解过程中加入决策者的意见。</p>
+                
+                <p>基于以上考虑，国际上从20世纪70年代开始提出了求解多目标问题的交互规划法。交互规划法是一种采用分析阶段和决策阶段反复交替进行的求解多目标最优化问题的方法，即是一种以分析者的求解和决策者的抉择相结合的人机对话式求解过程。其求解过程如图4.15所示。</p>
+                
+                <div class="figure">
+                    <div style="color: #666; font-size: 0.9em;">
+                        [图示：计算机 ↔ 求解指令/方案 ↔ 分析人 ↔ 编好信息/方案 ↔ 决策人]
+                    </div>
+                    <div class="figure-caption">图4.15 交互规划法流程图</div>
+                </div>
+                
+                <p>交互式方法的优点是，不需事先知道全部模型信息，而是可以在求解过程中逐步完善，决策者参与求解过程，根据自己的偏好向分析者提供信息，分析者根据信息不断向决策者提供方案，所得的解是使决策者满意的解。</p>
+                
+                <h4>1. 线性加权和型交互法</h4>
+                
+                <p>以两目标为例给出该方法的步骤：</p>
+                
+                <div class="note">
+                    <p>①取权系数$\lambda'_1 > 0, \lambda'_2 > 0, \lambda'_1 + \lambda'_2 = 1$，求解：</p>
+                    
+                    <div class="formula">
+                        $$(P_1) \quad \min_{\boldsymbol{X} \in R} [\lambda'_1 f_1(\boldsymbol{X}) + \lambda'_2 f_2(\boldsymbol{X})]$$
+                    </div>
+                    
+                    <p>设其最优解为$\boldsymbol{X}^1$，相应目标值$f_1^1 = f_1(\boldsymbol{X}^1), f_2^1 = f_2(\boldsymbol{X}^1)$；</p>
+                    
+                    <p>②若决策者认为$f_2$太大（对第二目标值不满意），则增大$f_2$的权系数，不妨令$\lambda_1 = \lambda'_1 - \triangle, \lambda_2 = \lambda'_2 + \triangle$，其中$0 < \triangle < \lambda'_1$，同理，若决策者认为$f_1$不满意，则可类似地增大$f_1$的权系数；</p>
+                    
+                    <p>③求解（计算机）</p>
+                    
+                    <div class="formula">
+                        $$(P_2) \quad \min_{\boldsymbol{X} \in R} [(\lambda'_1 - \triangle) f_1(\boldsymbol{X}) + (\lambda'_2 + \triangle) f_2(\boldsymbol{X})]$$
+                    </div>
+                    
+                    <p>得最优解$\boldsymbol{X}^2$，相应目标值$f_1^2 = f_1(\boldsymbol{X}^2), f_2^2 = f_2(\boldsymbol{X}^2)$，可以证明，此时必有$f_1^2 \geq f_1^1, f_2^2 \leq f_2^1$，若决策者满意，则停止，否则转②。</p>
+                </div>
+                
+                <h4>2. 理想点型交互法（STEM逐步法）</h4>
+                
+                <p>STEM逐步法是一种迭代法。在求解过程中，每进行一步，分析者把计算结果告诉决策者，决策者对计算结果做出评价。若认为已满意了，则迭代停止，否则分析者再根据决策者的意见进行修改和再计算，如此，直到求得决策者认为满意的解为止，故称此法为逐步进行法或对话式方法。</p>
+                
+                <p>逐步法要求多目标规划问题的目标函数$f_i(\boldsymbol{X})$ ($i=1,2,\cdots,p$)为线性函数，不妨设$f_i(\boldsymbol{X}) = \sum_{j=1}^{n} c_{ij} x_j$，则逐步法的求解步骤如下：</p>
+                
+                <div class="note">
+                    <p>①（初始步）取初始约束集$R^0 = R, k = 0$。</p>
+                    
+                    <p>②（分析步）首先通过求单目标规划问题，确定$R^k$上之理想点</p>
+                    
+                    <div class="formula">
+                        $$\boldsymbol{F}^* = [f_1^*, f_2^*, \cdots, f_p^*]$$
+                    </div>
+                    
+                    <p>式中$f_i^* = \min_{\boldsymbol{X} \in R} f_i(\boldsymbol{X})$ ($i=1,2,\cdots,p$)</p>
+                    
+                    <p>然后使用加权理想点法确定权系数$\lambda_i$。并求解：</p>
+                    
+                    <div class="formula">
+                        $$(P) \quad \min_{\boldsymbol{X} \in R} \max_{1 \leq i \leq p} \lambda_i |f_i(\boldsymbol{X}) - f_i^*|$$
+                    </div>
+                    
+                    <p>或与之等价的辅助问题：</p>
+                    
+                    <div class="formula">
+                        $$(P') \begin{cases}
+                        \min w \\
+                        \boldsymbol{X} \in R^k \\
+                        \lambda_i [f_i(\boldsymbol{X}) - f_i^*] \leq w \\
+                        w \geq 0
+                        \end{cases}$$
+                    </div>
+                    
+                    <p>如令$f_i^0 = \max_{1 \leq j \leq p} f_i(\boldsymbol{X}^j), \boldsymbol{X}^j$ ($j=1,2,\cdots,p$)为单目标最优点（即把各单目标最优点——代入$f_i(\boldsymbol{X})$得一最差值$f_i^0$），则利用线性目标函数的信息，权系数$\lambda_i$由下式给出：</p>
+                    
+                    <div class="formula">
+                        $$\alpha_i = \begin{cases}
+                        \frac{f_i^0 - f_i^*}{f_i^0} \cdot \frac{1}{\sqrt{\sum_{j=1}^{n} c_{ij}^2}}, & \text{当 } f_i^0 > 0 \\
+                        \frac{f_i^* - f_i^0}{-f_i^0} \cdot \frac{1}{\sqrt{\sum_{j=1}^{n} c_{ij}^2}}, & \text{当 } f_i^0 \leq 0
+                        \end{cases} \quad (i=1,2,\cdots,p)$$
+                    </div>
+                    
+                    <p>经归一化后，得权系数$\lambda_i = \alpha_i / \sum_{j=1}^{p} \alpha_i$。其中，上式的前一部分是目标$f_i$的最差（大）值和最优值的相对差，它反映了对在约束集中变化敏感的目标赋以较大的权，变化不敏感的目标赋以较小的权；该式的后一部分是利用目标的"平均"系数使之标准化。</p>
+                    
+                    <p>求解(P)得$k$步最优解$[\boldsymbol{X}^{k*}, w^k]$，则由理想点法知，当$\lambda_i > 0$时，$\boldsymbol{X}^k$为多目标极小化问题的弱有效解。</p>
+                    
+                    <p>③（决策步）若记$\boldsymbol{F}^k = [f_1(\boldsymbol{X}^k), \cdots, f_p(\boldsymbol{X}^k)]$，问决策者对$\boldsymbol{F}^k$满意否？若全部满意，则$\boldsymbol{X}^* = \boldsymbol{X}^k$，迭代停止。否则，若有不满意的目标，则对满意目标放宽（对极小型，增大目标值），放宽容量由决策者给出。不妨设决策者对$f_{j_k}(\boldsymbol{X}^k)$已满意，其余不满意，决策者给出的宽容度为$\triangle_{j_k}$，即认为$f_{j_k}(\boldsymbol{X}^*) + \triangle_{j_k}$仍属满意，则构成新的约束集合：</p>
+                    
+                    <div class="formula">
+                        $$R^{k+1} = \{\boldsymbol{X} \in R^k | f_{j_k}(\boldsymbol{X}) \leq f_{j_k}(\boldsymbol{X}^k) + \triangle_{j_k} \quad \text{s}_k \text{ 为满意目标下标} \\
+                        f_j(\boldsymbol{X}) \leq f_j(\boldsymbol{X}^k) \quad j \text{ 为不满意目标下标} \}$$
+                    </div>
+                    
+                    <p>置$k+1 = k$转②。</p>
+                </div>
+                
+                <p>逐步法每次迭代调整的是约束集合$R^k$，决策者只需回答满意或不满意，最终的迭代次数不超过$p$次，因为方法中要求每一轮迭代至少使一个不满意的目标改善成满意。对于极大化问题的求解步骤，读者完全可以仿照给出。</p>
+                
+                <!-- 例4.9 -->
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        例4.9 STEM逐步法求解示例
+                    </div>
+                    <div class="example-content">
+                        <p><strong>问题：</strong>用STEM逐步法求解下述多目标极小化问题：</p>
+                        
+                        <div class="formula">
+                            $$\min f_1(\boldsymbol{X}) = -x_1$$
+                            $$\min f_2(\boldsymbol{X}) = -0.4x_1 - 0.3x_2$$
+                            $$\text{s.t.} \begin{cases}
+                            x_1 + x_2 \leq 400 \\
+                            2x_1 + x_2 \leq 500 \\
+                            x_1 \geq 0, x_2 \geq 0
+                            \end{cases}$$
+                        </div>
+                        
+                        <p><strong>解：</strong>记$\boldsymbol{X} = [x_1 \quad x_2]^{\mathsf{T}}$，按STEM逐步法的求解步骤先进行分析阶段。</p>
+                        
+                        <p><strong>第1步</strong>，分别对两个单目标进行极小化，有：</p>
+                        
+                        <div class="formula">
+                            $$\begin{cases}
+                            \min_{\boldsymbol{X} \in R} f_1(\boldsymbol{X}) = -x_1 \\
+                            \boldsymbol{X} \in R
+                            \end{cases} \quad \text{得极小解} \quad \boldsymbol{X}^{(1)} = [250 \quad 0]^{\mathsf{T}}$$
+                            
+                            $$\begin{cases}
+                            \min_{\boldsymbol{X} \in R} f_2(\boldsymbol{X}) = -0.4x_1 - 0.3x_2 \\
+                            \boldsymbol{X} \in R
+                            \end{cases} \quad \text{得极小解} \quad \boldsymbol{X}^{(2)} = [100 \quad 300]^{\mathsf{T}}$$
+                        </div>
+                        
+                        <p>因为$\boldsymbol{X}^{(1)} \neq \boldsymbol{X}^{(2)}$，进行第2步，计算各目标值得：</p>
+                        
+                        <div class="formula">
+                            $$f_1^* = f_1(\boldsymbol{X}^{(1)}) = 250 \quad f_{12} = f_1(\boldsymbol{X}^{(2)}) = -100 \quad f_{21} = f_2(\boldsymbol{X}^{(1)}) = -100$$
+                            $$f_2^* = f_2(\boldsymbol{X}^{(2)}) = -130 \quad \text{则 } f_1^0 = \max\{f_1^*, f_{12}\} = -100 \quad f_2^0 = \max\{f_{21}, f_2^*\} = -100$$
+                        </div>
+                        
+                        <p>由权系数求解公式，有：</p>
+                        
+                        <div class="formula">
+                            $$\alpha_1 = \frac{-250 - (-100)}{-250}(\frac{1}{\sqrt{1^2 + 0^2}}) = 0.6$$
+                            
+                            $$\alpha_2 = \frac{-130 - (-100)}{-130}(\frac{1}{\sqrt{0.4^2 + 0.3^2}}) = 0.461\ 5$$
+                        </div>
+                        
+                        <p>因而得权系数：</p>
+                        
+                        <div class="formula">
+                            $$\lambda_1 = \frac{\alpha_1}{\alpha_1 + \alpha_2} = 0.565\ 2, \lambda_2 = \frac{\alpha_2}{\alpha_1 + \alpha_2} = 0.434\ 8$$
+                        </div>
+                        
+                        <p>求解辅助问题：</p>
+                        
+                        <div class="formula">
+                            $$\begin{cases}
+                            \min w \\
+                            \boldsymbol{X} \in R \\
+                            0.565\ 2(-x_1 + 250) \leq w \\
+                            0.434\ 8(-0.4x_1 - 0.3x_2 + 130) \leq w \\
+                            w \geq 0
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>可得最优解：</p>
+                        
+                        <div class="formula">
+                            $$\overline{\boldsymbol{X}}^{(1)} = [230 \quad 40]^{\mathsf{T}}$$
+                        </div>
+                        
+                        <p>相应的目标函数值：</p>
+                        
+                        <div class="formula">
+                            $$f_1(\overline{\boldsymbol{X}}^{(1)}) = -230 \quad f_2(\overline{\boldsymbol{X}}^{(1)}) = -104$$
+                        </div>
+                        
+                        <p>现在进行第3步，转入决策阶段。请决策者比较上述参考目标值和理想目标值$f_1^* = -250$，$f_2^* = -130$。今设决策者认为对目标$f_1$已满意，对目标$f_2$不满意。决策者为改善目标$f_2$，考虑给出满意目标$f_1$的最大宽容量$\triangle_1 = 30$。由此，构造新约束集：</p>
+                        
+                        <div class="formula">
+                            $$R^1 = \{\boldsymbol{X} \in R | -x_1 \leq -230 + 30, -0.4x_1 - 0.3x_2 \leq -104\}$$
+                        </div>
+                        
+                        <p>令$\alpha_1 = 0$，则$\alpha_2 = 0.461\ 5$，故得新的权系数：</p>
+                        
+                        <div class="formula">
+                            $$\lambda_1 = 0 \quad \lambda_2 = 1$$
+                        </div>
+                        
+                        <p>再求解下述辅助问题：</p>
+                        
+                        <div class="formula">
+                            $$\begin{cases}
+                            \min w \\
+                            \boldsymbol{X} \in R^1 \\
+                            -0.4x_1 - 0.3x_2 + 130 \leq w \\
+                            w \geq 0
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>得最优解：</p>
+                        
+                        <div class="formula">
+                            $$\overline{\boldsymbol{X}}^{(2)} = [200 \quad 100]^{\mathsf{T}}$$
+                        </div>
+                        
+                        <p>相应的目标值：</p>
+                        
+                        <div class="formula">
+                            $$f_1(\overline{\boldsymbol{X}}^{(2)}) = -200 \quad f_2(\overline{\boldsymbol{X}}^{(2)}) = -110$$
+                        </div>
+                        
+                        <p>否则，问题无满意解。</p>
+                        
+                        <p>转入决策阶段，再请决策者比较上述参考目标值和理想目标值，设决策者认为对两个目标均已满意，则求解结束，得满意解：</p>
+                        
+                        <div class="formula">
+                            $$\overline{\boldsymbol{X}} = [200 \quad 100]^{\mathsf{T}}$$
+                        </div>
+                        
+                        <p>和相应的目标值：</p>
+                        
+                        <div class="formula">
+                            $$\boldsymbol{F} = [-200 \quad -110]^{\mathsf{T}}$$
+                        </div>
+                        
+                        <p>利用交互规划法求解多目标规划问题只需决策者提供有关问题的局部偏爱信息，而不需预先知道偏爱的全部信息。同其他方法相比，交互规划有更少的限制性假设，决策者参与问题的解决过程，因而所得解是决策者满意的。不足之处在于，所得解过分依赖于决策者提供的局部偏爱信息的准确性，而且在不多的交互次数中，一般难以得到令人满意的解。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 习题部分 -->
+            <section id="exercises" class="section">
+                <h2>习题4</h2>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        4.1 某厂生产A,B,C三种产品...
+                    </div>
+                    <div class="example-content">
+                        <p>某厂生产A,B,C三种产品，有关数据如表4.4。</p>
+                        
+                        <table>
+                            <caption><strong>表4.4</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th>产品</th>
+                                    <th>工厂生产能力（t/h）</th>
+                                    <th>单位利润（万元/t）</th>
+                                    <th>下月市场需求（t）</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>A</td>
+                                    <td>3</td>
+                                    <td>5</td>
+                                    <td>240</td>
+                                </tr>
+                                <tr>
+                                    <td>B</td>
+                                    <td>1</td>
+                                    <td>7</td>
+                                    <td>250</td>
+                                </tr>
+                                <tr>
+                                    <td>C</td>
+                                    <td>4</td>
+                                    <td>3</td>
+                                    <td>420</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p>又知工厂每月正常开工能力为208 h。市场需要尽可能多的A产品，问应如何安排下月的生产计划，可在避免开工不足的条件下，使工人加班时间尽量避少；且在满足对A产品的尽可能多的需求？试列出本问题的数学模型。</p>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        4.2 某社会群众体育建设技术学院...
+                    </div>
+                    <div class="example-content">
+                        <p>某社会群众体育建设技术学院为企事业单位培训干部，招收专修班和研修班两类学员，学院聘有专业课教师3人，基础理论教师100名学员需要10元，研收专修班人数不超过1000人，越接近越好；③研修班人数设定400人，越接近越好。试列出该问题的目标规划模型。</p>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        4.3 在图4.16中标出...
+                    </div>
+                    <div class="example-content">
+                        <p>在图4.16中标出有效解集合$R_{pa}^*$，弱有效解集合$R_{wp}^*$以及单目标的最优解集合$R_1^*, R_2^*, R_3^*$。</p>
+                        
+                        <div class="figure">
+                            <div style="color: #666; font-size: 0.9em;">
+                                [图示：显示$f_1(x), f_2(x), f_3(x)$三个目标函数的图形]
+                            </div>
+                            <div class="figure-caption">图4.16</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        4.4 用线性加权和法求解...
+                    </div>
+                    <div class="example-content">
+                        <p>用线性加权和法求解：</p>
+                        
+                        <div class="formula">
+                            $$(VMP)V = \min(f_1(\boldsymbol{X}), f_2(\boldsymbol{X}))$$
+                            
+                            <p>式中</p>
+                            
+                            $$\boldsymbol{X} = [x_1 \quad x_2]^{\mathsf{T}}$$
+                            $$f_1(\boldsymbol{X}) = -x_1 - 8x_2$$
+                            $$f_2(\boldsymbol{X}) = -6x_1 - x_2$$
+                            
+                            $$\text{s.t.} \begin{cases}
+                            3x_1 + 8x_2 \leq 12 \\
+                            x_1 + x_2 \leq 2 \\
+                            2x_1 \leq 3 \\
+                            x_1 \geq 0, x_2 \geq 0
+                            \end{cases}$$
+                            
+                            <p>取$\lambda_1 = \lambda_2 = \frac{1}{2}$</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        4.5 在4.1题中...
+                    </div>
+                    <div class="example-content">
+                        <p>在4.1题中，若要求总利润尽量接近$f_1^0 = 3000$万元为第一优先，总工时尽量接近$f_2^0 = 208$ h和A产品产量尽量接近$f_3^0 = 250$ t为第二优先；同时决策者还建议总利润超过与不足$f_1^0$的权系数分别为0.2和0.8；总工时必须尽可能达到或超过其目标值$f_2^0$的权系数分别为0.4和0.6。试制订该厂下月的生产计划。</p>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-header" onclick="toggleExample(this)">
+                        4.6 填空
+                    </div>
+                    <div class="example-content">
+                        <p>(1) 多目标规划问题v-min($f_1(\boldsymbol{X}), \cdots, f_p(\boldsymbol{X})$)有效解的定义是__________</p>
+                        
+                        <p>(2) 目标规划模型的目标是__________变量的极小化，约束中增加了用这种变量表示的__________约束。</p>
+                        
+                        <p>(3) 多目标规划的一类主要解法是通过构建__________函数将向量极值问题转化为标量极值问题。</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- 回到顶部按钮 -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+    
+    <script>
+        // 展开/折叠例题
+        function toggleExample(element) {
+            element.classList.toggle('active');
+            const content = element.nextElementSibling;
+            content.classList.toggle('active');
+        }
+        
+        // 回到顶部功能
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        });
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 高亮当前章节（侧边栏）
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.sidebar a');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.pageYOffset >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.style.background = '';
+                link.style.color = '';
+                if (link.getAttribute('href') === '#' + current) {
+                    link.style.background = 'var(--secondary-color)';
+                    link.style.color = 'white';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+<!--
+使用说明：
+1. 将此代码保存为 .html 文件（例如：multi-objective-programming.html）
+2. 确保有网络连接以加载 MathJax 和 Google Fonts
+3. 在现代浏览器中打开文件（推荐使用 Chrome、Firefox 或 Edge）
+4. 所有数学公式将自动渲染
+5. 可以点击例题标题展开/折叠内容
+6. 侧边导航栏可快速跳转到各个章节
+7. 页面具有响应式设计，在移动设备上也能良好显示
+
+技术特性：
+- 完整的 MathJax 配置，支持所有 LaTeX 数学符号
+- 使用 UTF-8 编码确保中文正确显示
+- 响应式设计适配各种屏幕尺寸
+- 交互式元素（可折叠例题、平滑滚动、回到顶部按钮）
+- 色彩丰富的视觉设计（使用指定的颜色方案）
+- 清晰的内容组织和视觉层次
+-->

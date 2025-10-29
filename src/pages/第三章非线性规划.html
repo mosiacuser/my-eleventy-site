@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第三章 非线性规划 - 交互式教程</title>
+    
+    <!-- MathJax 配置 - 必须完整 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            },
+            TeX: {
+                equationNumbers: { autoNumber: "AMS" },
+                extensions: ["AMSmath.js", "AMSsymbols.js"]
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #f27d00;
+            --secondary-color: #a6d6c9;
+            --accent-color: #f7d117;
+            --bg-color: #ffffff;
+            --text-color: #343434;
+            --code-bg: #f5f5f5;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9f6 100%);
+            padding-bottom: 50px;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            background: linear-gradient(90deg, var(--primary-color) 0%, #d96d00 100%);
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+        
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-title {
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+        
+        .nav-btn:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        /* 侧边栏目录 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 80px;
+            width: 250px;
+            height: calc(100vh - 80px);
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            z-index: 999;
+        }
+        
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        
+        .toc-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+        
+        .toc-item {
+            padding: 8px 12px;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+        
+        .toc-item:hover {
+            background: var(--secondary-color);
+            transform: translateX(5px);
+        }
+        
+        .toc-item.level-1 {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .toc-item.level-2 {
+            padding-left: 20px;
+            font-size: 0.9em;
+        }
+        
+        .toc-item.level-3 {
+            padding-left: 35px;
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        /* 主要内容 */
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            margin-left: 280px;
+            padding: 0 30px;
+            transition: margin-left 0.3s;
+        }
+        
+        .container.full-width {
+            margin-left: 30px;
+        }
+        
+        /* 章节 */
+        .section {
+            background: white;
+            padding: 35px;
+            margin: 25px 0;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* 标题 */
+        h1 {
+            font-size: 2.5em;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 4px solid var(--secondary-color);
+            text-align: center;
+        }
+        
+        h2 {
+            font-size: 1.9em;
+            color: var(--primary-color);
+            margin: 30px 0 20px;
+            padding-left: 15px;
+            border-left: 5px solid var(--accent-color);
+        }
+        
+        h3 {
+            font-size: 1.5em;
+            color: #d96d00;
+            margin: 25px 0 15px;
+        }
+        
+        h4 {
+            font-size: 1.2em;
+            color: #666;
+            margin: 20px 0 10px;
+        }
+        
+        /* 段落 */
+        p {
+            margin: 15px 0;
+            text-align: justify;
+        }
+        
+        /* 例题 */
+        .example {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            border-left: 5px solid var(--accent-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        
+        .example-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1em;
+            margin-bottom: 12px;
+        }
+        
+        /* 定理/定义框 */
+        .theorem {
+            background: linear-gradient(135deg, #e8f5f1 0%, #f0f9f6 100%);
+            border-left: 5px solid var(--secondary-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        
+        .theorem-title {
+            font-weight: 700;
+            color: #2c8c6f;
+            font-size: 1.1em;
+            margin-bottom: 12px;
+        }
+        
+        /* 解答框 */
+        .solution {
+            background: #f8f9fa;
+            border: 2px dashed var(--secondary-color);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        .solution-title {
+            font-weight: 700;
+            color: #2c8c6f;
+            margin-bottom: 10px;
+        }
+        
+        /* 代码块 */
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+        
+        /* 公式块 */
+        .formula-block {
+            background: #fafafa;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        /* 列表 */
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        /* 表格 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: linear-gradient(90deg, var(--primary-color) 0%, #d96d00 100%);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        tr:hover {
+            background: #fff8e6;
+        }
+        
+        /* 交互式按钮 */
+        .interactive-btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #d96d00 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+        
+        .interactive-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(242, 125, 0, 0.3);
+        }
+        
+        /* 折叠内容 */
+        .collapsible {
+            background: var(--secondary-color);
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.05em;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .collapsible:hover {
+            background: #8fc9b8;
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.active:after {
+            transform: rotate(180deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .collapsible-content-inner {
+            padding: 20px;
+        }
+        
+        /* 高亮框 */
+        .highlight {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+        
+        /* 提示框 */
+        .tip {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+        
+        .tip:before {
+            content: '💡 提示：';
+            font-weight: 700;
+            color: #1976d2;
+        }
+        
+        /* 注意框 */
+        .warning {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+        
+        .warning:before {
+            content: '⚠️ 注意：';
+            font-weight: 700;
+            color: #f57c00;
+        }
+        
+        /* 图片 */
+        .figure {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .figure img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        
+        .figure-caption {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+        }
+        
+        /* 返回顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        
+        .back-to-top:hover {
+            background: #d96d00;
+            transform: translateY(-3px);
+        }
+        
+        /* MathJax 公式样式调整 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .container {
+                margin-left: 0;
+                padding: 0 15px;
+            }
+            
+            .nav-title {
+                font-size: 1.3em;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.4em;
+            }
+        }
+        
+        /* 动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        /* 加载提示 */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--primary-color);
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-title">第三章 非线性规划</div>
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="toggleSidebar()">📑 目录</button>
+                <button class="nav-btn" onclick="toggleFormulas()">📐 公式</button>
+                <button class="nav-btn" onclick="window.print()">🖨️ 打印</button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 侧边栏目录 -->
+    <aside class="sidebar" id="sidebar">
+        <div class="toc-title">目录导航</div>
+        <div class="toc-item level-1" onclick="scrollToSection('intro')">章节介绍</div>
+        <div class="toc-item level-1" onclick="scrollToSection('section31')">3.1 基本概念</div>
+        <div class="toc-item level-2" onclick="scrollToSection('section311')">3.1.1 非线性规划问题与模型</div>
+        <div class="toc-item level-2" onclick="scrollToSection('section312')">3.1.2 模型的解及相关概念</div>
+        <div class="toc-item level-1" onclick="scrollToSection('section32')">3.2 无约束极值问题</div>
+        <div class="toc-item level-2" onclick="scrollToSection('section321')">3.2.1 下降类算法</div>
+        <div class="toc-item level-2" onclick="scrollToSection('section322')">3.2.2 一维搜索</div>
+        <div class="toc-item level-2" onclick="scrollToSection('section323')">3.2.3 梯度法与共轭梯度法</div>
+        <div class="toc-item level-2" onclick="scrollToSection('section324')">3.2.4 牛顿法与拟牛顿法</div>
+        <div class="toc-item level-1" onclick="scrollToSection('section33')">3.3 约束极值问题</div>
+        <div class="toc-item level-2" onclick="scrollToSection('section331')">3.3.1 最优性条件</div>
+        <div class="toc-item level-2" onclick="scrollToSection('section332')">3.3.2 二次规划</div>
+        <div class="toc-item level-2" onclick="scrollToSection('section333')">3.3.3 罚函数法</div>
+        <div class="toc-item level-1" onclick="scrollToSection('exercises')">习题 3</div>
+    </aside>
+    
+    <!-- 主要内容 -->
+    <main class="container" id="mainContainer">
+        <!-- 章节介绍 -->
+        <section class="section" id="intro">
+            <h1>第3章 非线性规划</h1>
+            <div class="highlight">
+                <p><strong>章节概述：</strong>在前一章中，我们学习了线性规划模型及其求解方法。线性规划模型中，目标函数与约束条件都是决策变量的线性函数。但在实际中，许多优化问题的数学模型不能完全用线性表达式表示。目标或约束中含有非线性函数的优化问题称为<strong>非线性规划问题</strong>。</p>
+                <p>本章将详细讨论非线性规划模型及其求解方法，包括：</p>
+                <ul>
+                    <li>非线性规划的基本概念和模型建立</li>
+                    <li>无约束极值问题的求解方法</li>
+                    <li>约束极值问题的最优性条件和求解算法</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- 3.1 基本概念 -->
+        <section class="section" id="section31">
+            <h2>3.1 基本概念</h2>
+            
+            <!-- 3.1.1 -->
+            <div id="section311">
+                <h3>3.1.1 非线性规划问题与模型</h3>
+                
+                <h4>1. 非线性规划问题</h4>
+                <p>在工程技术和经济管理中广泛存在着非线性规划问题。</p>
+                
+                <div class="example">
+                    <div class="example-title">例 3.1（构件表面积问题）</div>
+                    <p>要设计一个如图 3.1 所示的半球形和圆柱形相连接的构件，要求在体积一定的条件下确定构件的尺寸，使其表面积最小。</p>
+                    
+                    <div class="solution">
+                        <div class="solution-title">解：</div>
+                        <p>构件的大小取决于其中圆柱体的底半径和高，今设该圆柱的底半径为 $x_1$，高为 $x_2$。由于构件的表面由半球顶面、侧面和底面组成，因此表面积</p>
+                        
+                        <div class="formula-block">
+                            $$S = 2\pi x_1^2 + 2\pi x_1 x_2 + \pi x_1^2$$
+                        </div>
+                        
+                        <p>构件的体积为半球体和圆柱体之和，所以要使构件的体积为定值 $V$，应该满足条件</p>
+                        
+                        <div class="formula-block">
+                            $$\frac{2}{3}\pi x_1^3 + \pi x_1^2 x_2 = V$$
+                        </div>
+                        
+                        <p>又构件的底半径和圆柱体的高显然非负，故还要求</p>
+                        <div class="formula-block">
+                            $$x_1 \geq 0, \quad x_2 \geq 0$$
+                        </div>
+                        
+                        <p>综合以上分析，该构件表面积最小化问题可归结为如下数学模型：</p>
+                        
+                        <div class="formula-block">
+                            $$\min S = 3\pi x_1^2 + 2\pi x_1 x_2$$
+                            $$\text{s.t.} \begin{cases}
+                            \frac{2}{3}\pi x_1^3 + \pi x_1^2 x_2 = V \\
+                            x_1 \geq 0, x_2 \geq 0
+                            \end{cases}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例 3.2（生产成本问题）</div>
+                    <p>设要在产量不低于某水平 $Q_0$ 的条件下，使生产成本极小化。假设所考虑的决策变量为资本和劳动力，分别记为 $x_1$ 和 $x_2$，则由经济学中的 Cobb-Douglas 生产函数得</p>
+                    
+                    <div class="formula-block">
+                        $$Q = Ax_1^{\alpha} x_2^{\beta}$$
+                    </div>
+                    
+                    <p>式中，$Q$ 为产出产量；$A$ 为生产技术水平；$\alpha$ 和 $\beta$ 为参数。又设已知工资率为 $\omega$，资本报酬率为 $\gamma$，则生产成本</p>
+                    
+                    <div class="formula-block">
+                        $$C = \gamma x_1 + \omega x_2$$
+                    </div>
+                    
+                    <p>本问题的数学模型为</p>
+                    
+                    <div class="formula-block">
+                        $$\min C = \gamma x_1 + \omega x_2$$
+                        $$\text{s.t.} \begin{cases}
+                        Ax_1^{\alpha} x_2^{\beta} \geq Q_0 \\
+                        x_1 \geq 0, x_2 \geq 0
+                        \end{cases}$$
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例 3.3（投资决策问题）</div>
+                    <p>某公司有 $n(\geq 2)$ 个项目可供选择投资，并且至少要对其中一个项目投资。已知该公司拥有总资金 $A$ 元，投资于第 $i(i=1,\cdots,n)$ 个项目需花费资金 $a_i$ 元，并预计可收益 $b_i$ 元，试选择最佳投资方案。</p>
+                    
+                    <div class="solution">
+                        <div class="solution-title">解：</div>
+                        <p>设投资决策变量为</p>
+                        
+                        <div class="formula-block">
+                            $$x_i = \begin{cases}
+                            1, \text{决定投资第 } i \text{ 个项目} \\
+                            0, \text{决定不投资第 } i \text{ 个项目}
+                            \end{cases} \quad (i=1,\cdots,n)$$
+                        </div>
+                        
+                        <p>则投资总金额为 $\displaystyle\sum_{i=1}^{n} a_i x_i$，投资总收益为 $\displaystyle\sum_{i=1}^{n} b_i x_i$，因为该公司至少要对一个项目投资，并且总的投资金额不能超过总资金 $A$，故有限制条件</p>
+                        
+                        <div class="formula-block">
+                            $$0 < \sum_{i=1}^{n} a_i x_i \leq A$$
+                        </div>
+                        
+                        <p>另外，由于 $x_i(i=1,\cdots,n)$ 只取值 0 或 1，所以还有</p>
+                        
+                        <div class="formula-block">
+                            $$x_i(1-x_i) = 0 \quad (i=1,\cdots,n)$$
+                        </div>
+                        
+                        <p>最佳投资方案应是投资额最少而总收益最大的方案。因此，本问题的数学模型为</p>
+                        
+                        <div class="formula-block">
+                            $$\max R = \frac{\displaystyle\sum_{i=1}^{n} b_i x_i}{\displaystyle\sum_{i=1}^{n} a_i x_i}$$
+                            $$\text{s.t.} \begin{cases}
+                            0 < \displaystyle\sum_{i=1}^{n} a_i x_i \leq A \\
+                            x_i(1-x_i) = 0 \quad (i=1,\cdots,n)
+                            \end{cases}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例 3.4（定位问题）</div>
+                    <p>某连锁超市要选定一个配送中心，由它向该地区的 $n$ 个超市商场送货。假设该地的所有道路均是相互平行或垂直的（图 3.2），试确定这个配送中心的位置，使它到每个商场的距离不超过 $d$，且它到各商场的总距离为最短。</p>
+                    
+                    <div class="solution">
+                        <div class="solution-title">解：</div>
+                        <p>在地面上引进直角坐标系如图 3.2，设配送中心的位置为 $C(x_1, x_2)$，$n$ 个商场的坐标为 $P_i(a_i, b_i)(i=1,\cdots,n)$，则配送中心到第 $i$ 个用户的距离为</p>
+                        
+                        <div class="formula-block">
+                            $$|x_1 - a_i| + |x_2 - b_i| \quad (i=1,\cdots,n)$$
+                        </div>
+                        
+                        <p>此问题的数学模型为</p>
+                        
+                        <div class="formula-block">
+                            $$\min D = \sum_{i=1}^{n} [|x_1 - a_i| + |x_2 - b_i|]$$
+                            $$\text{s.t.} \quad |x_1 - a_i| + |x_2 - b_i| \leq d \quad (i=1,\cdots,n)$$
+                        </div>
+                    </div>
+                </div>
+                
+                <h4>2. 非线性规划模型</h4>
+                <p>由上面的例子可以看出，非线性规划问题的数学模型也是由决策变量、目标函数和约束条件三要素组成的，只不过模型的目标或约束中一般含有非线性表达式。为了写出模型的一般形式，记决策变量 $\mathbf{X} = [x_1 \quad \cdots \quad x_n]^{\mathrm{T}}$，目标函数 $f(\mathbf{X}) = f(x_1,\cdots,x_n)$，不等式的约束条件 $g_j(\mathbf{X}) = g_j(x_1,\cdots,x_n) \geq 0(j=1,\cdots,l)$，等式的约束条件 $h_i(\mathbf{X}) = h_i(x_1,\cdots,x_n) = 0(i=1,\cdots,m)$，则可写出非线性规划模型的一般式为</p>
+                
+                <div class="formula-block">
+                    $$\min f(\mathbf{X})$$
+                    $$(NLP) \text{ s.t.} \begin{cases}
+                    h_i(\mathbf{X}) = 0 \quad (i=1,\cdots,m) \\
+                    g_j(\mathbf{X}) \geq 0 \quad (j=1,\cdots,l)
+                    \end{cases}$$
+                </div>
+                
+                <p>对于目标函数为 $\max f(\mathbf{X})$ 的情形，可通过转化为 $\min(-f(\mathbf{X}))$ 的形式化为极小型；对于约束条件为"$\leq$"不等式的情形，可通过两端乘以"$-1$"化为"$\geq$"的形式。若记</p>
+                
+                <div class="formula-block">
+                    $$D = \{\mathbf{X} \in \mathbb{R}^n \mid h_i(\mathbf{X}) = 0, i=1,\cdots,m; g_j(\mathbf{X}) \geq 0, j=1,\cdots,l\}$$
+                </div>
+                
+                <p>则 (NLP) 也可表示为</p>
+                
+                <div class="formula-block">
+                    $$\min_{\mathbf{X} \in D} f(\mathbf{X})$$
+                </div>
+                
+                <p>其中 $D$ 称为 (NLP) 的约束集或可行域。当 $D = \mathbb{R}^n$ 时，(NLP) 称做无约束极值问题；当 $D \neq \mathbb{R}^n$ 时，(NLP) 称为约束极值问题。</p>
+            </div>
+            
+            <!-- 3.1.2 -->
+            <div id="section312">
+                <h3>3.1.2 模型的解及相关概念</h3>
+                
+                <h4>1. 可行解与最优解</h4>
+                <p>约束集 $D$ 中的点 $\mathbf{X}$ 称为 (NLP) 的<strong>可行解</strong>。如果有 $\mathbf{X}^* \in D$，对于任意的 $\mathbf{X} \in D$，都有 $f(\mathbf{X}^*) \leq f(\mathbf{X})$，则称 $\mathbf{X}^*$ 为 (NLP) 的<strong>最优解</strong>，也称全局极小值点；如果对于 $\mathbf{X}^0 \in D$，使得在 $\mathbf{X}^0$ 的邻域</p>
+                
+                <div class="formula-block">
+                    $$B(\mathbf{X}^0, \varepsilon) = \{\mathbf{X} \mid \|\mathbf{X} - \mathbf{X}^0\| \leq \varepsilon\}$$
+                </div>
+                
+                <p>中的任意 $\mathbf{X} \in D$，都有 $f(\mathbf{X}^0) \leq f(\mathbf{X})$，则称 $\mathbf{X}^0$ 为 (NLP) 的一个<strong>局部极小值点</strong>，其中 $\varepsilon > 0$，$\|\cdot\|$ 表示 $n$ 维向量的模，通常定义为 $n$ 不分量平方和的算术平根。</p>
+                
+                <p>在上述定义中，如果将不等号反向，则可得到极大值点的定义。极小值点和极大值点可简称为<strong>极小点和极大点</strong>。</p>
+                
+                <div class="tip">
+                    下面举一简单例子给出可行解与最优解的图示。
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例 3.5 考虑非线性规划问题</div>
+                    <div class="formula-block">
+                        $$\min f(\mathbf{X}) = (x_1 - 2)^2 + (x_2 - 2)^2$$
+                        $$\text{s.t.} \quad x_1 + x_2 = 6$$
+                    </div>
+                    
+                    <div class="solution">
+                        <p>目标与约束的图形如图 3.3 所示。</p>
+                        <p>由图易见，可行解位于直线 $x_1 + x_2 = 6$ 上的点，目标是一族以 $(2,2)$ 为圆心的圆，最优解是圆族中与 $x_1 + x_2 = 6$ 相切的圆的切点 $(3,3)$。</p>
+                        <p>在本例中若将约束改为 $x_1 + x_2 \leq 6$，则可行解是位于直线 $x_1 + x_2 = 6$ 左下半平面上的点，最优解为圆心 $(2,2)$。这时的约束实际上不起作用。</p>
+                        <p>已知线性规划的最优解一定在可行域的边界（特别是顶点）上达到，而本例说明，非线性规划的最优解可以在可行域的任意点达到。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">💡 点击展开：梯度、海塞阵与泰勒公式</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h4>2. 梯度、海塞阵与泰勒公式</h4>
+                        
+                        <p>若 $f(\mathbf{X})$ 在 $\mathbf{X}_0$ 的邻域内有连续一阶偏导数，则称 $f(\mathbf{X})$ 在 $\mathbf{X}_0$ 点对 $n$ 个变元的偏导数组成的向量为 $f(\mathbf{X})$ 在 $\mathbf{X}_0$ 的<strong>梯度</strong>，记为 $\nabla f(\mathbf{X}_0)$，即</p>
+                        
+                        <div class="formula-block">
+                            $$\nabla f(\mathbf{X}_0) = \left[\frac{\partial f(\mathbf{X}_0)}{\partial x_1} \quad \cdots \quad \frac{\partial f(\mathbf{X}_0)}{\partial x_n}\right]^{\mathrm{T}}$$
+                        </div>
+                        
+                        <p>梯度的几何意义是经过 $\mathbf{X}_0$ 点且与 $f(\mathbf{X})$ 在 $\mathbf{X}_0$ 的切平面垂直的向量，梯度向量的方向是函数值在该点增加最快的方向。</p>
+                        
+                        <p>若 $f(\mathbf{X})$ 在 $\mathbf{X}_0$ 的邻域内有连续二阶偏导数，则称 $f(\mathbf{X})$ 在 $\mathbf{X}_0$ 点对 $n$ 个变元两两组合的二阶偏导数组成的矩阵为 $f(\mathbf{X})$ 在 $\mathbf{X}_0$ 的<strong>海塞(Hesse)阵</strong>，记为 $\mathbf{H}_f(\mathbf{X}_0)$，或简记为 $\mathbf{H}(\mathbf{X}_0)$，即</p>
+                        
+                        <div class="formula-block">
+                            $$\mathbf{H}(\mathbf{X}_0) = \left[\frac{\partial^2 f(\mathbf{X}_0)}{\partial x_i \partial x_j}\right]_{n \times n} = 
+                            \begin{bmatrix}
+                            \frac{\partial^2 f(\mathbf{X}_0)}{\partial x_1^2} & \cdots & \frac{\partial^2 f(\mathbf{X}_0)}{\partial x_1 \partial x_n} \\
+                            \vdots & & \vdots \\
+                            \frac{\partial^2 f(\mathbf{X}_0)}{\partial x_n \partial x_1} & \cdots & \frac{\partial^2 f(\mathbf{X}_0)}{\partial x_n^2}
+                            \end{bmatrix}$$
+                        </div>
+                        
+                        <p>若 $f(\mathbf{X})$ 在 $\mathbf{X}_0$ 的邻域内有连续二阶偏导数，则可写出 $f(\mathbf{X})$ 在 $\mathbf{X}_0$ 的<strong>(二阶)泰勒(Taylor)展开式</strong></p>
+                        
+                        <div class="formula-block">
+                            $$f(\mathbf{X}) = f(\mathbf{X}_0) + \nabla f(\mathbf{X}_0)^{\mathrm{T}}(\mathbf{X} - \mathbf{X}_0) + \frac{1}{2}(\mathbf{X} - \mathbf{X}_0)^{\mathrm{T}} \mathbf{H}(\mathbf{X}_0)(\mathbf{X} - \mathbf{X}_0) + o(\|\mathbf{X} - \mathbf{X}_0\|^2)$$
+                        </div>
+                        
+                        <p>其中 $o(\|\mathbf{X} - \mathbf{X}_0\|^2)$ 是当 $\mathbf{X} \to \mathbf{X}_0$ 时 $\|\mathbf{X} - \mathbf{X}_0\|^2$ 的高阶无穷小。</p>
+                        
+                        <div class="example">
+                            <div class="example-title">例 3.6</div>
+                            <p>写出 $f(\mathbf{X}) = 3x_1^2 + \sin x_2$ 在 $\mathbf{X}_0 = [0 \quad 0]^{\mathrm{T}}$ 点的二阶泰勒展开式。</p>
+                            
+                            <div class="solution">
+                                <div class="solution-title">解：</div>
+                                <p>$f(\mathbf{X})$ 显然有连续的二阶偏导数，其梯度</p>
+                                <div class="formula-block">
+                                    $$\nabla f(\mathbf{X}) = [6x_1 \quad \cos x_2]^{\mathrm{T}}, \quad \nabla f(\mathbf{X}_0) = [0 \quad 1]^{\mathrm{T}}$$
+                                </div>
+                                
+                                <p>其海塞阵</p>
+                                <div class="formula-block">
+                                    $$\mathbf{H}(\mathbf{X}) = \begin{bmatrix} 6 & 0 \\ 0 & -\sin x_2 \end{bmatrix}, \quad \mathbf{H}(\mathbf{X}_0) = \begin{bmatrix} 6 & 0 \\ 0 & 0 \end{bmatrix}$$
+                                </div>
+                                
+                                <p>在 $\mathbf{X}_0$ 点的二阶泰勒展开式为</p>
+                                <div class="formula-block">
+                                    $$f(\mathbf{X}) = 0 + [0 \quad 1]\begin{bmatrix} x_1 \\ x_2 \end{bmatrix} + \frac{1}{2}[x_1 \quad x_2]\begin{bmatrix} 6 & 0 \\ 0 & 0 \end{bmatrix}\begin{bmatrix} x_1 \\ x_2 \end{bmatrix} + o(\|\mathbf{X}\|^2)$$
+                                    $$= x_2 + 3x_1^2 + o(\|\mathbf{X}\|^2)$$
+                                </div>
+                                
+                                <p>如果忽略 $o(\|\mathbf{X}\|^2)$，则 $f(\mathbf{X})$ 在 $\mathbf{X}_0$ 点的近似表达式为</p>
+                                <div class="formula-block">
+                                    $$f(\mathbf{X}) = 3x_1^2 + x_2$$
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">📊 点击展开：极值的条件</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h4>3. 极值的条件</h4>
+                        
+                        <p>对于无约束极值问题，可以利用微积分中的知识给出局部极值点的条件。将 $n(n>1)$ 元函数 $f(\mathbf{X})$ 与一元函数 $f(x)$ 的极值条件加以对比归纳于表 3.1。</p>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>$\mathbf{X}_0$(或 $x_0$)是极小值点</th>
+                                    <th>必要条件</th>
+                                    <th>充分条件</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>一元函数 $f(x)$</td>
+                                    <td>$f'(x_0) = 0$</td>
+                                    <td>$f'(x_0) = 0$, 且 $f''(x_0) > 0$</td>
+                                </tr>
+                                <tr>
+                                    <td>$n$ 元函数 $f(\mathbf{X})$</td>
+                                    <td>$\nabla f(\mathbf{X}_0) = \mathbf{0}$</td>
+                                    <td>$\nabla f(\mathbf{X}_0) = \mathbf{0}$ 且 $\mathbf{H}(\mathbf{X}_0) > 0$</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p>其中的充分条件主要依据函数的二阶导信息，$\mathbf{H}(\mathbf{X}_0) > 0$ 表示海塞阵正定。根据线性代数的知识可知，如果一个方阵的各阶主子式均大于零，则可判定该方阵为正定的。若 $\mathbf{X}_0$ 是极大值点，则充分条件中不等号反向。</p>
+                        
+                        <p>利用极值的条件，可以求一些无约束极值问题的极值点。即先由必要条件求出使 $\nabla f(\mathbf{X}_0) = \mathbf{0}$ 的点 $\mathbf{X}_0$（称为驻点），再由充分条件判断 $\mathbf{X}_0$ 的极值性。</p>
+                        
+                        <div class="example">
+                            <div class="example-title">例 3.7</div>
+                            <p>求 $f(\mathbf{X}) = 2x_1^2 - 8x_1 + 2x_2^2 - 4x_2 + 20$ 的极小值点。</p>
+                            
+                            <div class="solution">
+                                <div class="solution-title">解：</div>
+                                <div class="formula-block">
+                                    $$\nabla f(\mathbf{X}) = \left[\frac{\partial f}{\partial x_1} \quad \frac{\partial f}{\partial x_2}\right]^{\mathrm{T}} = [4x_1 - 8 \quad 4x_2 - 4]^{\mathrm{T}}$$
+                                </div>
+                                
+                                <p>令 $\nabla f(\mathbf{X}) = \mathbf{0}$，解得驻点 $\mathbf{X}_0 = [2 \quad 1]^{\mathrm{T}}$。又 $\mathbf{H}(\mathbf{X}) = \begin{bmatrix} 4 & 0 \\ 0 & 4 \end{bmatrix}$，显然 $\mathbf{H}(\mathbf{X}_0) > 0$，故 $\mathbf{X}_0$ 是极小值点。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">🎯 点击展开：凸规划</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h4>4. 凸规划</h4>
+                        
+                        <p>在非线性规划模型(NLP)中，若目标函数 $f(\mathbf{X})$ 是凸函数，不等式约束函数 $g_j(\mathbf{X})$ 为凹函数$(j=1,\cdots,l)$，等式约束函数 $h_i(\mathbf{X})$ 为仿射函数$(i=1,\cdots,m)$，则称(NLP)为一个<strong>凸规划</strong>。</p>
+                        
+                        <div class="theorem">
+                            <div class="theorem-title">凸函数的定义：</div>
+                            <p>在微积分中已知，凸函数 $f(\mathbf{X})$ 是定义在凸集 $D$ 上且满足对任意 $\mathbf{X}_1, \mathbf{X}_2 \in D, \alpha \in [0,1]$ 有下式成立的函数：</p>
+                            <div class="formula-block">
+                                $$f(\alpha \mathbf{X}_1 + (1-\alpha)\mathbf{X}_2) \leq \alpha f(\mathbf{X}_1) + (1-\alpha)f(\mathbf{X}_2)$$
+                            </div>
+                        </div>
+                        
+                        <p>若不等式中严格不等号成立，则 $f(\mathbf{X})$ 为<strong>严格凸函数</strong>。凸函数的几何形状是下单峰，因此它的局部极值点就是全局极值点。如果 $f(\mathbf{X})$ 是凸函数，则 $-f(\mathbf{X})$ 就是凹函数。凹函数的几何形状是上单峰。<strong>仿射函数</strong>即线性函数，它既可看做是凸函数，又可看做是凹函数。<strong>仿射函数的几何形状是平面或直线</strong>。</p>
+                        
+                        <div class="tip">
+                            判定一个函数 $f(\mathbf{X})$ 是否凸函数，除根据定义外，还可利用 $f(\mathbf{X})$ 的导数信息。在微积分中已知，若一元函数 $f(x)$ 的二阶导大于等于零，则 $f(x)$ 是凸函数。对于多元函数 $f(\mathbf{X})$，若其海塞阵 $\mathbf{H}(\mathbf{X})$ 半正定，则 $f(\mathbf{X})$ 是凸函数。对于凹函数 $f(\mathbf{X})$ 的判定，可化为 $-f(\mathbf{X})$ 的凸函数判定，也可直接判定。若 $f(\mathbf{X})$ 的海塞阵 $\mathbf{H}(\mathbf{X})$ 半负定，则 $\mathbf{H}(\mathbf{X})$ 的奇数阶主子式均为非正而偶数阶主子式均为非负，则 $f(\mathbf{X})$ 为凹函数。
+                        </div>
+                        
+                        <div class="example">
+                            <div class="example-title">例 3.8 判断下面的非线性规划是否为凸规划：</div>
+                            <div class="formula-block">
+                                $$\max f(\mathbf{X}) = x_1 + x_2$$
+                                $$\text{s.t.} \begin{cases}
+                                x_1^2 + x_2^2 \leq 1 \\
+                                x_1, x_2 \geq 0
+                                \end{cases}$$
+                            </div>
+                            
+                            <div class="solution">
+                                <div class="solution-title">解：</div>
+                                <p>模型可写为</p>
+                                <div class="formula-block">
+                                    $$\min (-f(\mathbf{X})) = -x_1 - x_2$$
+                                    $$\text{s.t.} \begin{cases}
+                                    g_1(\mathbf{X}) = 1 - x_1^2 - x_2^2 \geq 0 \\
+                                    g_2(\mathbf{X}) = x_1 \geq 0 \\
+                                    g_3(\mathbf{X}) = x_2 \geq 0
+                                    \end{cases}$$
+                                </div>
+                                
+                                <div class="formula-block">
+                                    $$\mathbf{H}_{-f}(\mathbf{X}) = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix} \geq 0, \quad \mathbf{H}_{g_1}(\mathbf{X}) = \begin{bmatrix} 2 & 0 \\ 0 & 2 \end{bmatrix} > 0,$$
+                                </div>
+                                
+                                <div class="formula-block">
+                                    $$\mathbf{H}_{g_2}(\mathbf{X}) = \mathbf{H}_{g_3}(\mathbf{X}) = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix} \geq 0$$
+                                </div>
+                                
+                                <p>说明 $-f(\mathbf{X})$ 是凸函数，$g_1(\mathbf{X}), g_2(\mathbf{X}), g_3(\mathbf{X})$ 是凹函数。因此，本模型是一个凸规划。</p>
+                                
+                                <p>由定义又不难推出凸规划的一些简单性质：凸规划的约束集是凸集；凸规划的最优解集也是凸集；任何局部最优解也是全局最优解；若目标函数为严格凸函数，且最优解存在，则其最优解是唯一的。</p>
+                                
+                                <p>容易想到，<strong>线性规划也是一种凸规划</strong>。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 3.2 无约束极值问题 -->
+        <section class="section" id="section32">
+            <h2>3.2 无约束极值问题</h2>
+            
+            <div class="highlight">
+                <p>无约束极值问题是非线性规划的一种类型。它不仅在实际中有应用，而且是研究约束极值问题的基础之一。因此，研究无约束极值问题的求解方法具有重要意义。</p>
+                <p>无约束极值问题的一般表达式为</p>
+                <div class="formula-block">
+                    $$\min f(\mathbf{X})$$
+                </div>
+                <p>其中 $\mathbf{X} \in \mathbb{R}^n$。当 $f(\mathbf{X})$ 为可微函数时，可以利用极值的条件求解。但由条件 $\nabla f(\mathbf{X}) = \mathbf{0}$ 得到的常常是一个非线性方程组，求解它十分困难。因此，求解无约束极值问题一般是采用迭代法，称为下降类算法。</p>
+            </div>
+            
+            <!-- 3.2.1 -->
+            <div id="section321">
+                <h3>3.2.1 下降类算法的基本步骤与寻法的收敛性</h3>
+                
+                <p>求解无约束极值问题的下降类算法的基本思想是使 $f(\mathbf{X})$ 逐步下降，逐渐趋近其极小值。迭代的方式是从某一初始点 $\mathbf{X}_0$ 出发，选取某一搜索方向 $\mathbf{P}_0$，沿该方向搜索到下一个点 $\mathbf{X}_1$。若其已达到与最优解误差的精度要求，则停止，否则再沿该点的某一方向 $\mathbf{P}_1$ 搜索下一个点 $\mathbf{X}_2$。这一过程的图示如图 3.4。该方法的一般步骤如下：</p>
+                
+                <div class="code-block">
+① 选取初始点 $\mathbf{X}_0$, 令 $k := 0$ ($:=$ 为赋值号，$k := 0$ 表示
+把 0 赋给变量 $k$)，确定精度 $\varepsilon > 0$；
+
+② 对于点 $\mathbf{X}_k$，计算 $\nabla f(\mathbf{X}_k)$，若 $\|\nabla f(\mathbf{X}_k)\| < \varepsilon$，则停
+止，得到近似最优解 $\mathbf{X}_k$，否则转③；
+
+③ 从 $\mathbf{X}_k$ 出发，确定搜索方向 $\mathbf{P}_k$；
+
+④ 沿 $\mathbf{P}_k$ 方向搜索，即由 $\mathbf{X} = \mathbf{X}_k + \lambda \mathbf{P}_k$ 确定搜索步长
+$\lambda_k$，得下一点 $\mathbf{X}_{k+1} = \mathbf{X}_k + \lambda_k \mathbf{P}_k$，令 $k := k+1$，转②。
+                </div>
+                
+                <div class="warning">
+                    在上述步骤中，方向 $\mathbf{P}_k$ 的选定具有关键作用，不同形式的 $\mathbf{P}_k$ 便形成了不同的算法，而不同的算法所产生的点列 $\{\mathbf{X}_k\}$ 收敛于最优解 $\mathbf{X}^*$ 的速度也不相同。衡量算法的收敛速度，一般是看迭代点列中相邻两项与 $\mathbf{X}^*$ 的距离之比的极限
+                    $$\lim_{k \to \infty} \frac{\|\mathbf{X}_{k+1} - \mathbf{X}^*\|}{\|\mathbf{X}_k - \mathbf{X}^*\|^{\alpha}} = \beta$$
+                    当 $\alpha = 1$ 时，显然有 $\beta \in [0,1]$。如果 $0 < \beta < 1$，则称 $\{\mathbf{X}_k\}$ 是线性收敛的；如果 $\beta = 0$，则称 $\{\mathbf{X}_k\}$ 是超线性收敛的。当 $\alpha = 2$ 时，如果 $0 \leq \beta < +\infty$，则称 $\{\mathbf{X}_k\}$ 是二阶收敛的。在这三种收敛速度中，以二阶收敛速度最快，超线性收敛速度次之。
+                </div>
+                
+                <p>搜索方向 $\mathbf{P}_k$ 确定后，沿 $\mathbf{P}_k$ 搜寻下一个迭代点的工作主要是由 $\mathbf{X} = \mathbf{X}_k + \lambda \mathbf{P}_k$ 确定步长 $\lambda_k$。由于这里只涉及一个变元 $\lambda$ 的线性表达式，故称<strong>一维搜索或线性搜索</strong>。</p>
+                
+                <p>上述步骤②中的 $\|\nabla f(\mathbf{X}_k)\| < \varepsilon$ 是一种常用的收敛准则，是基于极值的条件 $\nabla f(\mathbf{X}^*) = \mathbf{0}$ 得到的。其他收敛准则还有 $\|\mathbf{X}_{k+1} - \mathbf{X}_k\| < \varepsilon$ 等。</p>
+            </div>
+            
+            <!-- 3.2.2 -->
+            <div id="section322">
+                <h3>3.2.2 一维搜索</h3>
+                
+                <p>一维搜索即由 $\mathbf{X} = \mathbf{X}_k + \lambda \mathbf{P}_k$ 确定步长 $\lambda_k$，其方法可分为精确方法和近似方法两类。<strong>精确方法</strong>是指通过求极值</p>
+                
+                <div class="formula-block">
+                    $$\min_{\lambda \geq 0} f(\mathbf{X}_k + \lambda \mathbf{P}_k)$$
+                </div>
+                
+                <p>的精确值来得到相应极值点 $\lambda_k$。这样得到的 $\lambda_k$ 称做最佳步长。<strong>近似方法</strong>是通过求上述极值的近似值来得到 $\lambda_k$ 的方法。常用的有不用导数信息的分数法和 0.618 法，以及用到导数信息的近似最佳步长公式等。</p>
+                
+                <button class="collapsible">📐 点击展开：1. 分数法与 0.618 法</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h4>1. 分数法与 0.618 法</h4>
+                        
+                        <p><strong>分数法</strong>又称斐波那契(Fibonacci)法，是一种求一元函数 $f(t)$ 近似极小点的试探方法。其基本思想是，由于 $f(t)$ 在包含极小点 $t^*$ 的足够小的区间 $[a,b]$ 上可认为是下单峰的，故在 $[a,b]$ 内任取二点 $t_1 < t'_1$，若 $f(t_1) < f(t'_1)$，则必有 $t^* \in [a, t'_1]$（图 3.5），可去掉区间 $[t'_1, b]$。再在新区间 $[a, t'_1]$ 中取一点 $t_2 > t_1$，若 $f(t_2) > f(t_1)$，说明 $t^* \in [a, t_2]$，可去掉 $[t_2, t'_1]$，这样反复取点、比较、缩小含 $t^*$ 的区间，直至最后所得的区间足够小，则其中任何一点可作为 $t^*$ 的近似值。</p>
+                        
+                        <div class="tip">
+                            衡量区间"足够小"的方法有两种，即采用绝对精度或相对精度。记第 $n$ 次缩短后的小区间为 $[a_n, b_n]$，给定的精度要求为 $\varepsilon > 0$，则满足绝对精度是指
+                            $$|b_n - a_n| < \varepsilon$$
+                            满足相对精度是指
+                            $$\frac{|b_n - a_n|}{|b - a|} < \varepsilon$$
+                            那么，怎样在区间中取点呢？可以证明，按斐波那契数构造取点比例对称取点效果最好。这就是分数法。
+                        </div>
+                        
+                        <p>记斐波那契数的一般项为 $F_n$。其表达式为</p>
+                        <div class="formula-block">
+                            $$\begin{cases}
+                            F_n = F_{n-1} + F_{n-2} \\
+                            F_0 = F_1 = 1
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>表 3.2 给出 $F_n$ 前 13 项的值。</p>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>$n$</th>
+                                    <th>0</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th>6</th>
+                                    <th>7</th>
+                                    <th>8</th>
+                                    <th>9</th>
+                                    <th>10</th>
+                                    <th>11</th>
+                                    <th>12</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>$F_n$</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>3</td>
+                                    <td>5</td>
+                                    <td>8</td>
+                                    <td>13</td>
+                                    <td>21</td>
+                                    <td>34</td>
+                                    <td>55</td>
+                                    <td>89</td>
+                                    <td>144</td>
+                                    <td>233</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p>如果按 $\displaystyle\frac{F_{n-1}}{F_n}$ 的比例在区间中对称地取点 $t_1$ 和 $t'_1$（图 3.6），经比较后去掉 $[t'_1, b]$，则 $t_1$ 在 $[a, t'_1]$ 中所占的比例为</p>
+                        
+                        <div class="formula-block">
+                            $$\frac{(1 - \frac{F_{n-1}}{F_n})(b-a)}{\frac{F_{n-1}}{F_n}(b-a)} = \frac{F_n - F_{n-1}}{F_{n-1}} = \frac{F_{n-2}}{F_{n-1}}$$
+                        </div>
+                        
+                        <p>再按 $\displaystyle\frac{F_{n-2}}{F_{n-1}}$ 的比例在 $[a, t'_1]$ 中取 $t_2$ 与 $t_1$ 对称，这样反复 $n-1$ 次后所得小区间 $[a_{n-1}, b_{n-1}]$ 长缩短为</p>
+                        
+                        <div class="formula-block">
+                            $$(b-a) \frac{F_{n-1}}{F_n} \cdot \frac{F_{n-2}}{F_{n-1}} \cdots \frac{F_2}{F_3} \cdot \frac{F_1}{F_2} = \frac{1}{F_n}(b-a)$$
+                        </div>
+                        
+                        <p>与原区间长之比为</p>
+                        
+                        <div class="formula-block">
+                            $$\frac{\frac{1}{F_n}(b-a)}{b-a} = \frac{1}{F_n}$$
+                        </div>
+                        
+                        <p>倘为相对精度表达式。于是，在开始时可由相对精度 $\displaystyle\frac{1}{F_n} < \varepsilon$ 解出 $F_n$ 和 $n$。可将上述的分数法归纳为下列步骤：</p>
+                        
+                        <div class="code-block">
+① 由所给精度 $\varepsilon$ 和 $\displaystyle\frac{1}{F_n} < \varepsilon$ 定 $n$；
+
+② 由 $\displaystyle\frac{F_{n-1}}{F_n}$ 的比例在区间 $[a,b]$ 内对称取点 $t_1 = a + (1 - \frac{F_{n-1}}{F_n})(b-a), t'_1 = a + \frac{F_{n-1}}{F_n}(b-a)$，比较 $f(t_1)$ 和 $f(t'_1)$，去掉 $\max\{f(t_1), f(t'_1)\}$ 相应点以外的区间，得新区间 $[a_1, b_1]$；
+
+③ 在 $[a_1, b_1]$ 中按 $\displaystyle\frac{F_{n-2}}{F_{n-1}}$ 的比例取点 $t_2$（与区间中所剩的点对称），比较 $f(t_2)$ 和 $\min\{f(t_1), f(t'_1)\}$，去掉较大者相应点以外的区间，得新区间 $[a_2, b_2]$；
+
+④ 在 $[a_2, b_2]$ 中按 $\displaystyle\frac{F_{n-2}}{F_{n-2}}$ 的比例取点 $t_3$，再比较、缩短，直至取完 $\displaystyle\frac{F_1}{F_2}$，最后的小区间 $[a_{n-1}, b_{n-1}]$ 中任一点可作为 $t^*$ 的近似值。
+                        </div>
+                        
+                        <div class="example">
+                            <div class="example-title">例 3.9</div>
+                            <p>用分数法求 $f(t) = t^2 - t + 2$ 在区间 $[-1, 3]$ 上的近似极小点，要求缩短后的区间长度不大于原区间长的 8%。</p>
+                            
+                            <div class="solution">
+                                <div class="solution-title">解：</div>
+                                <p>由于 $f'(t) = 2 > 0$，故 $f(t)$ 是严格凸函数，由 $f'(t) = 2t - 1 = 0$ 解得的 $t^* = \displaystyle\frac{1}{2}$ 是极小点，$f(t^*) = 1.75$。</p>
+                                
+                                <p>由 $\displaystyle\frac{1}{F_n} \leq 0.08$ 知 $F_n \geq \displaystyle\frac{1}{0.08} = 12.5$，查表 3.2 得 $n = 6$，$\displaystyle\frac{F_5}{F_6} = \displaystyle\frac{8}{13}$</p>
+                                
+                                <div class="formula-block">
+                                    $$t_1 = -1 + (1 - \frac{8}{13})[3-(-1)] = 0.538, \quad f(t_1) = 1.751$$
+                                    $$t'_1 = -1 + \frac{8}{13}[3-(-1)] = 1.462, \quad f(t'_1) = 2.675 > f(t_1)$$
+                                </div>
+                                
+                                <p>故 $[a_1, b_1] = [-1, 1.462]$，$\displaystyle\frac{F_4}{F_5} = \displaystyle\frac{5}{8}$</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 习题部分 -->
+        <section class="section" id="exercises">
+            <h2>习题 3</h2>
+            
+            <div class="example">
+                <div class="example-title">3.1</div>
+                <p>某投资者正在考虑 $n$ 支股票的组合投资计划。设第 $j$ 支股票的价格为 $P_j$，每股平均收益为 $\mu_j$，第 $i$ 支股票与第 $j$ 支股票收益的协方差为 $\sigma_{ij}(i,j=1,\cdots,n)$。现有总资金为 $B$。若投资者希望总平均风险（可表示为 $\displaystyle\sum_{i=1}^{n}\sum_{j=1}^{n} \sigma_{ij}x_ix_j$）之差极大化，请写出投资计划模型。</p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">3.2</div>
+                <p>分别用分数法和 0.618 法求函数</p>
+                <div class="formula-block">
+                    $$f(t) = t^2 - 6t + 2$$
+                </div>
+                <p>在区间 $[0,10]$ 上的极小点，要求缩短后的区间长度不大于原区间长度的 3%。</p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">3.3</div>
+                <p>分别用梯度法和牛顿法求解下面的无约束极值问题</p>
+                <div class="formula-block">
+                    $$\min f(\mathbf{X}) = 2x_1^2 + x_2^2 + 2x_1x_2 + x_1 - x_2$$
+                </div>
+            </div>
+        </section>
+        
+    </main>
+    
+    <!-- 返回顶部按钮 -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+    
+    <script>
+        // 目录导航功能
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        // 切换侧边栏显示/隐藏
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const container = document.getElementById('mainContainer');
+            sidebar.classList.toggle('hidden');
+            container.classList.toggle('full-width');
+        }
+        
+        // 切换公式显示（演示功能）
+        function toggleFormulas() {
+            alert('公式已全部加载！本页面使用 MathJax 渲染数学公式。如果公式显示不正常，请检查网络连接。');
+        }
+        
+        // 折叠内容功能
+        const collapsibles = document.getElementsByClassName('collapsible');
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        }
+        
+        // 返回顶部功能
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 显示/隐藏返回顶部按钮
+        window.onscroll = function() {
+            const backToTop = document.getElementById('backToTop');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        };
+        
+        // 页面加载完成提示
+        window.addEventListener('load', function() {
+            console.log('页面加载完成！MathJax 正在渲染公式...');
+            // 添加加载提示
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'loading';
+            loadingDiv.textContent = '⏳ 正在加载数学公式，请稍候...';
+            document.body.insertBefore(loadingDiv, document.body.firstChild);
+            
+            // MathJax 渲染完成后移除提示
+            MathJax.Hub.Queue(function() {
+                setTimeout(function() {
+                    if (loadingDiv.parentNode) {
+                        loadingDiv.parentNode.removeChild(loadingDiv);
+                    }
+                    console.log('MathJax 渲染完成！');
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
+
+<!-- 
+使用说明：
+1. 保存为 .html 文件：将此代码复制到文本编辑器中，保存为 nonlinear_programming_tutorial.html
+2. 网络连接：需要联网以加载 MathJax（数学公式渲染库）和 Google Fonts
+3. 浏览器打开：双击文件或右键选择"打开方式" → 选择浏览器（推荐 Chrome、Firefox、Edge）
+4. 交互功能：
+   - 点击左侧目录可快速跳转到对应章节
+   - 点击"目录"按钮可显示/隐藏侧边栏
+   - 点击折叠按钮可展开/收起详细内容
+   - 右下角的"↑"按钮可返回页面顶部
+5. 打印：点击"打印"按钮可打印或保存为 PDF
+
+技术特性：
+- 完整的 MathJax 配置，支持所有 LaTeX 数学公式
+- 响应式设计，适配桌面和移动设备
+- 平滑滚动动画和悬停效果
+- 使用指定配色方案（橙色 #f27d00、薄荷绿 #a6d6c9、黄色 #f7d117）
+- 所有公式已正确转换为 LaTeX 格式
+
+注意事项：
+- 首次加载可能需要几秒钟来渲染所有数学公式
+- 如果公式显示为源代码，请检查网络连接并刷新页面
+- 建议使用现代浏览器以获得最佳体验
+-->

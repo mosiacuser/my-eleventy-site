@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图与网络技术 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- MathJax 配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            CommonHTML: {
+                scale: 110
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --primary-cyan: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --primary-white: #ffffff;
+            --primary-dark: #343434;
+            --light-bg: #f9f9f9;
+            --shadow: rgba(52, 52, 52, 0.1);
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f9f9f9 0%, #e8f5f1 100%);
+            color: var(--primary-dark);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--primary-white);
+            padding: 2rem 0;
+            box-shadow: 0 4px 20px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        header h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            opacity: 0.95;
+        }
+        
+        /* Navigation */
+        nav {
+            background: var(--primary-dark);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            list-style: none;
+            gap: 1rem;
+            padding: 0 2rem;
+        }
+        
+        nav a {
+            color: var(--primary-white);
+            text-decoration: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        nav a:hover {
+            background: var(--primary-orange);
+            transform: translateY(-2px);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* Section */
+        section {
+            background: var(--primary-white);
+            margin: 2rem 0;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px var(--shadow);
+        }
+        
+        h2 {
+            color: var(--primary-orange);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-cyan);
+        }
+        
+        h3 {
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem 0;
+            padding-left: 1rem;
+            border-left: 4px solid var(--primary-yellow);
+        }
+        
+        h4 {
+            color: var(--primary-orange);
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+        
+        /* Collapsible */
+        .collapsible {
+            background: linear-gradient(135deg, var(--primary-cyan) 0%, #c4e8dd 100%);
+            color: var(--primary-dark);
+            cursor: pointer;
+            padding: 1.2rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 10px;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px var(--shadow);
+        }
+        
+        .collapsible:hover {
+            background: linear-gradient(135deg, #8fd4c0 0%, var(--primary-cyan) 100%);
+            transform: translateX(5px);
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s ease;
+        }
+        
+        .collapsible.active:after {
+            transform: rotate(-180deg);
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #f5faf8;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .content-inner {
+            padding: 1.5rem;
+        }
+        
+        /* Definition Box */
+        .definition {
+            background: linear-gradient(135deg, #fff4e6 0%, #ffe8cc 100%);
+            border-left: 5px solid var(--primary-orange);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 15px rgba(242, 125, 0, 0.1);
+        }
+        
+        .definition strong {
+            color: var(--primary-orange);
+            font-size: 1.1rem;
+        }
+        
+        /* Example Box */
+        .example {
+            background: linear-gradient(135deg, #e6f7ff 0%, #cceeff 100%);
+            border-left: 5px solid #0099cc;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 15px rgba(0, 153, 204, 0.1);
+        }
+        
+        .example-title {
+            color: #0099cc;
+            font-weight: 700;
+            font-size: 1.15rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Algorithm Box */
+        .algorithm {
+            background: linear-gradient(135deg, #f0e6ff 0%, #e6ccff 100%);
+            border: 2px solid #9966cc;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(153, 102, 204, 0.1);
+        }
+        
+        .algorithm-title {
+            color: #9966cc;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .algorithm ol {
+            padding-left: 2rem;
+        }
+        
+        .algorithm li {
+            margin: 0.8rem 0;
+        }
+        
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: 0 3px 15px var(--shadow);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--primary-white);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        tr:hover {
+            background: var(--primary-cyan);
+            opacity: 0.8;
+        }
+        
+        /* Image Placeholder */
+        .image-placeholder {
+            background: linear-gradient(135deg, var(--primary-cyan) 0%, #d4ebe3 100%);
+            border: 3px dashed var(--primary-orange);
+            padding: 3rem;
+            text-align: center;
+            margin: 2rem 0;
+            border-radius: 15px;
+            color: var(--primary-dark);
+            font-style: italic;
+        }
+        
+        /* List */
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+        }
+        
+        /* Highlight */
+        .highlight {
+            background: var(--primary-yellow);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        /* Math Display */
+        .math-display {
+            background: #f5f5f5;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-orange);
+            overflow-x: auto;
+        }
+        
+        /* Formula Box */
+        .formula {
+            background: linear-gradient(135deg, #fffaeb 0%, #fff4d9 100%);
+            border: 2px solid var(--primary-yellow);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        /* Button */
+        .btn {
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(242, 125, 0, 0.3);
+        }
+        
+        .btn:hover {
+            background: #ff9933;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(242, 125, 0, 0.4);
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            color: var(--primary-white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            section {
+                padding: 1.5rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+        }
+        
+        /* MathJax */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        /* Scroll to top button */
+        #scrollTop {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 99;
+            background: var(--primary-orange);
+            color: white;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 18px;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: all 0.3s ease;
+        }
+        
+        #scrollTop:hover {
+            background: #ff9933;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📊 图与网络技术</h1>
+        <p>管理科学基础 · 第三部分 · 第5章</p>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#intro">引言</a></li>
+            <li><a href="#basic">基本概念</a></li>
+            <li><a href="#spanning">最小支撑树</a></li>
+            <li><a href="#shortest">最短路问题</a></li>
+            <li><a href="#maxflow">最大流问题</a></li>
+            <li><a href="#exercises">习题</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <!-- 引言部分 -->
+        <section id="intro">
+            <h2>📖 引言</h2>
+            <p>在现代管理中，经常碰到各式各样的<span class="highlight">图与网络</span>，诸如交通道路图、生产流程图、煤气管道图等。这些图与网络，不论名称、内容如何，都具有两个基本要素：</p>
+            <ul>
+                <li><strong>被研究的对象</strong>：如车站等，通常用点来表示</li>
+                <li><strong>所研究对象之间的某种特定关系</strong>：如两车站之间的距离，通常用点与点之间的联线表示</li>
+            </ul>
+            <p>图与网络理论就是撇开各种各样的具体内容来讨论这种由点、线组成的抽象形式的图，从中研究其一般规律以及典型问题的定性、定量分析方法和算法。</p>
+        </section>
+        
+        <!-- 基本概念部分 -->
+        <section id="basic">
+            <h2>🎯 5.1 基本概念</h2>
+            
+            <div class="definition">
+                <strong>图的定义：</strong>
+                <p>图论中图是由点及点与点之间的联线构成，它可以反映一些对象之间的关系。</p>
+            </div>
+            
+            <button class="collapsible">5.1.1 图、点与边</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>例如，甲、乙、丙、丁、戊五个足球队，它们之间比赛的情况，可以用图表示出来。已知甲队和其他各队都赛过一次，乙队和甲、丙队赛过，丙队和甲、乙、丁队赛过，丁队和甲、丙、戊队赛过，戊队和甲、丁队赛过。</p>
+                    
+                    <div class="image-placeholder">
+                        <strong>图 5.1：足球队比赛关系图</strong><br>
+                        五个顶点 $v_1, v_2, v_3, v_4, v_5$ 表示五个队<br>
+                        边表示比赛关系
+                    </div>
+                    
+                    <p>为了反映这个情况，可以用点 $v_1, v_2, v_3, v_4, v_5$ 分别代表这五个队，某两个队之间比赛过，就在这两个队所相应的点之间联一条线，这条线不过其他的点，称为<span class="highlight">边</span>，图论中的边通常用 $e_i$ 表示。</p>
+                    
+                    <div class="definition">
+                        <strong>图的数学表示：</strong>
+                        <div class="formula">
+                            $$G = (V, E) \text{ 或 } D = (V, A)$$
+                        </div>
+                        <p>其中：</p>
+                        <ul>
+                            <li>$V = \{v_1, v_2, \cdots, v_n\}$ 表示点的集合</li>
+                            <li>$E = \{e_1, e_2, \cdots, e_m\}$ 表示边的集合</li>
+                            <li>$A = \{a_1, a_2, \cdots, a_m\}$ 表示弧的集合</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">5.1.2 有向图与无向图</button>
+            <div class="content">
+                <div class="content-inner">
+                    <h4>无向图</h4>
+                    <p>把两点之间不带箭头的联线称为<span class="highlight">边</span>，带箭头的联线称为<span class="highlight">弧</span>。若一个图 $G$ 是由点及边构成，则称之为<strong>无向图</strong>，记为 $G = (V, E)$。</p>
+                    
+                    <p>一条联结点 $v_i, v_j \in V$ 的边记为 $e_i = [v_i, v_j]$ (或 $[v_j, v_i]$)，称 $e_i$ 是点 $v_i, v_j$ 的关联边。</p>
+                    
+                    <div class="example">
+                        <div class="example-title">示例：</div>
+                        <p>在图 5.1 中，$e_6 = [v_1, v_5]$，$e_6$ 是 $v_1$ (或 $v_5$) 的关联边。由于 $v_1$ 和 $v_5$ 之间有一条边 $e_6$，也称点 $v_1$ 和 $v_5$ 相邻。</p>
+                    </div>
+                    
+                    <h4>有向图</h4>
+                    <p>若一个图 $D$ 是由点及弧所构成，则称为<strong>有向图</strong>，记为 $D = (V, A)$。一条方向是从 $v_i$ 指向 $v_j$ 的弧记为 $(v_i, v_j)$。</p>
+                    
+                    <div class="image-placeholder">
+                        <strong>图 5.2：有向图示例</strong><br>
+                        展示带箭头的弧
+                    </div>
+                    
+                    <p>对于有向图 $D = (V, A)$，从 $D$ 中去掉所有弧上的箭头，就得到一个无向图，称之为 $D$ 的<strong>基础图</strong>，记之为 $G(D)$。显然，图 5.1 是图 5.2 的基础图。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">5.1.3 链、圈与回路</button>
+            <div class="content">
+                <div class="content-inner">
+                    <h4>无向图中的链</h4>
+                    <div class="definition">
+                        <strong>链的定义：</strong>
+                        <p>在无向图中，一个点边交错序列 $(v_{i_1}, e_{i_1}, v_{i_2}, e_{i_2}, \cdots, v_{i_{k-1}}, e_{i_{k-1}}, v_{i_k})$，满足 $e_{i_k} = [v_{i_k}, v_{i_{k+1}}]$ ($i = 1, 2, \cdots, k-1$)，则称之为<strong>一条联结 $v_{i_1}$ 和 $v_{i_k}$ 的链</strong>，记为 $(v_{i_1}, v_{i_2}, \cdots, v_{i_k})$。</p>
+                        <p>若 $v_{i_1} = v_{i_k}$，则称之为<strong>圈</strong>。</p>
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">示例：</div>
+                        <p>在图 5.1 中，$(v_1, v_2, v_3, v_4)$ 就是一条链，而 $(v_1, v_2, v_3, v_4, v_5, v_1)$ 就是一个圈。</p>
+                    </div>
+                    
+                    <h4>有向图中的路</h4>
+                    <div class="definition">
+                        <strong>路的定义：</strong>
+                        <p>在有向图 $D$ 中，一个点弧交错序列 $(v_{i_1}, a_{i_1}, v_{i_2}, a_{i_2}, \cdots, v_{i_{k-1}}, a_{i_{k-1}}, v_{i_k})$，如果这个序列在基础图 $G(D)$ 中对应的点边序列是一条链，则称这个点弧交错序列是 $D$ 的一条链。</p>
+                    </div>
+                    
+                    <p>若某链上的所有弧的方向都一致，则称之为<strong>路</strong>；同样，若有向图 $D$ 的一个圈中所有弧的方向都一致，则称之为<strong>回路</strong>。</p>
+                    
+                    <div class="example">
+                        <div class="example-title">示例：</div>
+                        <p>在图 5.2 中，$(v_1, (v_1, v_2), v_2, (v_2, v_3), v_3, (v_3, v_4), v_4)$ 是从 $v_1$ 到 $v_4$ 的路，而 $(v_1, (v_1, v_2), v_2, (v_2, v_3), v_3, (v_3, v_1), v_1)$ 则是一个回路。</p>
+                    </div>
+                    
+                    <div class="definition">
+                        <p><strong>初等链（路）：</strong>链与路中的点互不相同，则为初等链（路）。</p>
+                        <p><strong>初等圈（回路）：</strong>类似可定义初等圈（回路）。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">5.1.4 连通图与支撑子图</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="definition">
+                        <strong>连通图：</strong>
+                        <p>图 $G$ 中，若任何两个点之间至少有一条链，则称 $G$ 是<strong>连通图</strong>，否则称为<strong>不连通图</strong>。</p>
+                    </div>
+                    
+                    <div class="image-placeholder">
+                        <strong>图 5.3：支撑子图示例</strong><br>
+                        显示图 5.1 的一个支撑子图
+                    </div>
+                    
+                    <div class="definition">
+                        <strong>支撑子图：</strong>
+                        <p>给定一个图 $G = (V, E)$，若图 $G' = (V', E')$，使 $V = V'$ 及 $E' \subseteq E$，则称 $G'$ 是 $G$ 的一个支撑子图。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">5.1.5 赋权图与网络</button>
+            <div class="content">
+                <div class="content-inner">
+                    <h4>赋权图</h4>
+                    <p>对于一个无向图 $G$ 的每一条边，或对于有向图 $D$ 的每一条弧，相应有一个权数 $\omega_{ij}$ (或 $c_{ij}$)，则称这样的图为<strong>赋权图</strong>。</p>
+                    
+                    <div class="definition">
+                        <strong>网络的定义：</strong>
+                        <p>网络一般是指一个弧上有某种所谓"流转物"流动的有向图。实际生活中，这种具有流转物的有向图——网络是很多的，常见的网络如表 5.1 所示。</p>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>点（节点）</th>
+                                <th>弧（分支）</th>
+                                <th>流转物</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>交叉口</td>
+                                <td>公路</td>
+                                <td>车辆</td>
+                            </tr>
+                            <tr>
+                                <td>机场</td>
+                                <td>空中航线</td>
+                                <td>飞机</td>
+                            </tr>
+                            <tr>
+                                <td>泵站</td>
+                                <td>管道</td>
+                                <td>液体</td>
+                            </tr>
+                            <tr>
+                                <td>电报局</td>
+                                <td>电缆</td>
+                                <td>电报</td>
+                            </tr>
+                            <tr>
+                                <td>中继站</td>
+                                <td>通信线路</td>
+                                <td>信息</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>在实际中，每个弧上对流动的流转物都有流转能力限制。例如，每段公路上都有最大车流量的限制，每根管道上都有通过最大流量的限制，把这种流转能力的限制称为<span class="highlight">弧上的容量</span>。</p>
+                    
+                    <div class="definition">
+                        <strong>网络的数学定义：</strong>
+                        <p>在有向图 $D = (V, A)$ 中，$v_s$ 为起点，$v_t$ 为终点，而对每一弧 $(v_i, v_j) \in A$ 赋以量 $c_{ij} > 0$ 称为弧的容量，则称这样的有向图为一个网络，记为 $D = (V, A, C)$。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 最小支撑树问题 -->
+        <section id="spanning">
+            <h2>🌲 5.2 最小支撑树问题</h2>
+            
+            <p>在各式各样的图中，有一类图是极其简单然而是很有用的，这就是<span class="highlight">树图</span>，简称<span class="highlight">树</span>。所谓树就是一个无圈的连通图。</p>
+            
+            <div class="definition">
+                <strong>树的性质：</strong>
+                <p>树图有很多性质，例如，在树图中，只要任意加上一条边，必然会出现圈，而树图中任何两个节点之间有一条且仅存一条链。也就是说，若去掉任一条边，那么连通图就被破坏，因此树图是边数最少的连通图。</p>
+            </div>
+            
+            <div class="definition">
+                <strong>支撑树：</strong>
+                <p>设图 $T = (V, E')$ 是图 $G = (V, E)$ 的支撑子图。若图 $T = (V, E')$ 是一个树图，则称 $T$ 是 $G$ 的一个支撑树。</p>
+            </div>
+            
+            <p>所谓<strong>最小支撑树问题</strong>就是在一个赋权的连通的无向图 $G$ 中找出一个支撑树，并使得这个支撑树的所有边的权数之和为最小。</p>
+            
+            <button class="collapsible">5.2.1 求解最小支撑树问题的破圈法</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="algorithm">
+                        <div class="algorithm-title">破圈法算法步骤</div>
+                        <ol>
+                            <li>在给定的赋权的连通图上任找一个圈</li>
+                            <li>在所找的圈中去掉一条权数最大的边（若有两条或两条以上的边都是权数最大的边，则任意去掉其中一条）</li>
+                            <li>若所余下的图已不含圈，则计算结束，所余下的图即为最小支撑树，否则，返回①</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">例 5.1</div>
+                        <p><strong>问题：</strong>某大学准备将所属 7 个学院办公室的计算机联网。这个网络的可能联通的途径如图 5.4 所示。图中 $v_1, \cdots, v_7$ 表示 7 个学院办公室，图中的边为可能联网的途径，边上所赋权数为这条路线的长度，单位为百米。试设计一个网络联通 7 个学院办公室，并使总的线路长度为最短。</p>
+                        
+                        <div class="image-placeholder">
+                            <strong>图 5.4：学院网络联通图</strong><br>
+                            展示7个节点及其连接权重
+                        </div>
+                        
+                        <p><strong>解：</strong>这个问题实际上是求图 5.4 的最小支撑树，具体步骤为：</p>
+                        <ol>
+                            <li>在图 $G$ 中找到一个圈 $(v_1, v_6, v_7, v_1)$，去掉其中权最大的边 $(v_1, v_6)$，得图 $G_1$</li>
+                            <li>在图 $G_1$ 中找到一个圈 $(v_3, v_4, v_5, v_7, v_3)$，去掉其中权最大的边 $(v_4, v_5)$，得图 $G_2$</li>
+                            <li>在图 $G_2$ 中找到一个圈 $(v_2, v_3, v_5, v_7, v_2)$，去掉其中权最大的边 $(v_5, v_7)$，得图 $G_3$</li>
+                            <li>在图 $G_3$ 中找到一个圈 $(v_3, v_5, v_6, v_7, v_3)$，去掉其中权最大的边 $(v_5, v_6)$，得图 $G_4$</li>
+                            <li>在图 $G_4$ 中找到一个圈 $(v_2, v_3, v_7, v_2)$，去掉其中权最大的边 $(v_3, v_7)$，得图 $G_5$</li>
+                            <li>在图 $G_5$ 中已找不到任何一个圈了，则 $G_5$ 即为图 $G$ 的最小支撑树，如图 5.5 所示</li>
+                        </ol>
+                        
+                        <div class="image-placeholder">
+                            <strong>图 5.5：最小支撑树结果</strong><br>
+                            展示最终的树形结构
+                        </div>
+                        
+                        <div class="formula">
+                            <p>这个最小支撑树的所有边的总权数为：</p>
+                            $$3 + 3 + 3 + 1 + 2 + 7 = 19$$
+                            <p>即该校若按图 5.5 的设计，可使此网络的总的线路长度最短，共 1900 米。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">5.2.2 求解最小支撑树问题的避圈法</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="algorithm">
+                        <div class="algorithm-title">避圈法算法步骤</div>
+                        <ol>
+                            <li>在赋权图中，任选一点 $v_i$，找出所有与 $v_i$ 相关联的权最小的边 $(v_i, v_j)$，得点 $v_j$</li>
+                            <li>把所有顶点分为互补的二部分 $X, \overline{X}$，其中 $X$ 表示与已选的边相关联的点集，$\overline{X}$ 是不与已选的边相关联的点集</li>
+                            <li>考虑这样的边 $(v_i, v_j)$，其中 $v_i \in X, v_j \in \overline{X}$，挑选其中权最小的边</li>
+                            <li>重复第③步，直至全部顶点皆属于 $X(\overline{X} = \Phi)$</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">例 5.2</div>
+                        <p>用避圈法求下述赋权图（图 5.6）的最小支撑树。</p>
+                        
+                        <div class="image-placeholder">
+                            <strong>图 5.6：赋权图</strong><br>
+                            展示待求解的网络图
+                        </div>
+                        
+                        <p><strong>解：</strong></p>
+                        <ol>
+                            <li>任选一点 $v_1$，挑与之相关联的权最小的边 $(v_1, v_2)$</li>
+                            <li>所有顶点可分为互补的二部分：$X = \{v_1, v_2\}$，$\overline{X} = \{v_3, v_4, v_5, v_6\}$。从边 $(v_2, v_4), (v_2, v_3)$ 中挑选其中权最小的边 $(v_2, v_3)$</li>
+                            <li>顶点集分为互补的二部分：$X = \{v_1, v_2, v_3\}$，$\overline{X} = \{v_4, v_5, v_6\}$。从边 $(v_3, v_5), (v_2, v_5), (v_2, v_4)$ 中，挑选其中权最小的边 $(v_2, v_4)$</li>
+                            <li>顶点集分为互补的二部分：$X = \{v_1, v_2, v_3, v_4\}$，$\overline{X} = \{v_5, v_6\}$。从边 $(v_4, v_6), (v_2, v_5), (v_4, v_5), (v_3, v_5)$ 中，挑选其中权最小的边 $(v_4, v_5)$</li>
+                            <li>顶点集分为互补的二部分：$X = \{v_1, v_2, v_3, v_4, v_5\}$，$\overline{X} = \{v_6\}$。从边 $(v_4, v_6), (v_5, v_6)$ 中，挑选其中权最小的边 $(v_5, v_6)$，由于此时 $\overline{X} = \Phi$，所以，经上述步骤所挑选的边构成的图，即为图 5.6 的最小支撑树，如图 5.7 所示。</li>
+                        </ol>
+                        
+                        <div class="image-placeholder">
+                            <strong>图 5.7：最小支撑树结果</strong><br>
+                            展示避圈法得到的树
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 最短路问题 -->
+        <section id="shortest">
+            <h2>🛣️ 5.3 最短路问题</h2>
+            
+            <p><strong>最短路问题</strong>是在一个网络（赋权有向图）中寻找从起点到某个节点之间一条最短的路线。</p>
+            
+            <div class="image-placeholder">
+                <strong>图 5.8：城市公路系统网络</strong><br>
+                展示从城市 $v_1$ 至城市 $v_6$ 之间的公路系统<br>
+                弧上的数字表示公路长度
+            </div>
+            
+            <p>求解上述最短路问题，一种简单想法是找出 $v_1$ 至 $v_6$ 所有可能的通路，比较路的长度，确定路长最短的一条。但实际问题网络比较复杂，一一枚举所有通路的工作量往往非常大，这样枚举方法是行不通的，只有利用一些特殊的方式求解。</p>
+            
+            <button class="collapsible">5.3.1 最短路问题的 Dijkstra 解法</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p><strong>Dijkstra 方法</strong>是求解最短路问题的有效方法之一，它适用于权重非负（即 $\omega_{ij} \geq 0$）条件下，由一点到另一点的最短路问题。</p>
+                    
+                    <div class="definition">
+                        <strong>基本思想：</strong>
+                        <p>从起点 $v_1$ 开始逐步计算从 $v_1$ 到网络各中间点 $v_i$ 的最短路，逐步外推直至算出 $v_1$ 至终点 $v_t$ 的最短路。</p>
+                    </div>
+                    
+                    <p>算法过程可直接通过在网络图上逐步标号完成，如果已求出 $v_1$ 至 $v_i$ 的最短路，即可给点 $v_i$ 标上号 $[\alpha_i, \beta_i]$。</p>
+                    
+                    <ul>
+                        <li>第一个标号 $\alpha_i$ 表示 $v_1$ 至 $v_i$ 点最短路的路长</li>
+                        <li>第二个标号 $\beta_i$ 表示 $v_1$ 至 $v_i$ 的最短路中 $v_i$ 之前节点为 $v_{\beta_i}$，若给终点标上号后反向追踪而得 $v_1$ 至 $v_i$ 的一条最短路，其路长为 $\alpha_i$</li>
+                    </ul>
+                    
+                    <div class="algorithm">
+                        <div class="algorithm-title">Dijkstra 算法步骤</div>
+                        <ol>
+                            <li>首先对起点 $v_1$ 标号 $[\alpha_1, \beta_1]$，即计算 $v_1$ 至 $v_1$ 的最短路，最短路长为零，标号 $\alpha_1 = 0, \beta_1 = 1$</li>
+                            <li>将网络中所有顶点分成已标号和未标号两类。$v_i \in X$ 表示 $v_i$ 是已标号点，即已求出 $v_1 \to v_i$ 的最短路。$v_j \in \overline{X}$ 表示 $v_j$ 是尚未标号点，即尚未求出 $v_1 \to v_j$ 的最短路。考虑网络中所有这样的弧：
+                                $$(v_i, v_j) \in (X, \overline{X})$$
+                                即由已标号点 $v_i$ 出发流向未标号点 $v_j$ 的弧，若这样的弧不存在，即集合 $(X, \overline{X})$ 是空集时，表示所有点都已标号，即终点 $v_t$ 也标上号，算法完成，$v_1$ 至 $v_t$ 的最短路径可由 $v_t$ 的第二标号起反向追踪而得，即 $v_t$ 前一点是 $v_{\beta_t}$，再由 $v_{\beta_t}$ 的第二个标号确定 $v_{\beta_t}$ 之前一点，一直反推至 $v_1$，就得 $v_1$ 至 $v_t$ 的一条最短路，其路长为 $\alpha_t$</li>
+                            <li>若 $(X, \overline{X})$ 非空，计算
+                                $$\min_{(v_i, v_j) \in (X, \overline{X})} (\alpha_i + \omega_{ij}) = \alpha_{j_k} + \omega_{i_kj_k}$$
+                                其中 $\omega_{ij}$ 为弧 $(v_i, v_j)$ 之长度，得一未标号顶点 $v_{j_k}$</li>
+                            <li>对顶点 $v_{j_k}$ 标号 $[\alpha_{j_k}, \beta_{j_k}]$，其中
+                                $$\alpha_{j_k} = \alpha_{i_k} + \omega_{i_kj_k}, \beta_{j_k} = i_k$$
+                                表示 $v_1$ 至 $v_{j_k}$ 最短路已求出，$v_{j_k}$ 点由未标号点变成已标号点，重复②</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">示例：Dijkstra 算法应用</div>
+                        <p>现以图 5.9 所示最短路问题为例说明上述算法的具体步骤。</p>
+                        
+                        <div class="image-placeholder">
+                            <strong>图 5.9：Dijkstra 算法示例</strong><br>
+                            展示标号过程
+                        </div>
+                        
+                        <ol>
+                            <li>给 $v_1$ 标号 $[0, 1]$</li>
+                            <li>$X = \{v_1\}, \overline{X} = \{v_2, v_3, v_4, v_5, v_6\}$。检查弧 $(v_1, v_2), (v_1, v_3)$，计算
+                                $$\min\{0 + 250, 0 + 400\} = 250$$
+                                则给 $v_2$ 标号 $[250, 1]$</li>
+                            <li>$X = \{v_1, v_2\}, \overline{X} = \{v_3, v_4, v_5, v_6\}$。检查弧 $(v_1, v_3), (v_1, v_3), (v_2, v_3)$，计算
+                                $$\min\{0 + 400, 250 + 100, 250 + 300\} = 350$$
+                                则给 $v_3$ 标号 $[350, 2]$</li>
+                            <li>$X = \{v_1, v_2, v_3\}, \overline{X} = \{v_4, v_5, v_6\}$。检查弧 $(v_2, v_4), (v_3, v_4), (v_3, v_5)$，计算
+                                $$\min\{250 + 300, 350 + 150, 350 + 275\} = 500$$
+                                则给 $v_4$ 标号 $[500, 3]$</li>
+                            <li>$X = \{v_1, v_2, v_3, v_4\}, \overline{X} = \{v_5, v_6\}$。检查弧 $(v_3, v_5), (v_4, v_5), (v_4, v_6)$，计算
+                                $$\min\{350 + 275, 500 + 100, 500 + 200\} = 600$$
+                                则给 $v_5$ 标号 $[600, 4]$</li>
+                            <li>$X = \{v_1, v_2, v_3, v_4, v_5\}, \overline{X} = \{v_6\}$。检查弧 $(v_4, v_6), (v_5, v_6)$，计算
+                                $$\min\{500 + 200, 600 + 150\} = 700$$
+                                则给 $v_6$ 标号 $[700, 4]$，算法完成</li>
+                        </ol>
+                        
+                        <p>由 $v_6$ 之第二个标号起反向追踪得：</p>
+                        <div class="formula">
+                            $$v_6 \leftarrow v_4 \leftarrow v_3 \leftarrow v_2 \leftarrow v_1$$
+                        </div>
+                        <p>即得由 $v_1$ 至 $v_6$ 的最短路为：</p>
+                        <div class="formula">
+                            $$v_1 \to v_2 \to v_3 \to v_4 \to v_6$$
+                            $$\text{最短路长 } \alpha_6 = 700$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">5.3.2 最短路问题模型的应用</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>最短路问题模型不仅能解决寻找最短距离问题，对一些其他类型的应用问题，如设备更新、投资决策、计划安排等也能求解。在这些问题中，网络中的弧长 $\omega_{ij}$ 不再表示距离，而是表示<span class="highlight">费用、时间等经济量</span>。</p>
+                    
+                    <div class="example">
+                        <div class="example-title">例 5.3（设备更新问题）</div>
+                        <p><strong>问题描述：</strong>某厂使用一种设备，每年年初该设备科需要对该设备的更新与否作出决策。若购置新设备，就要支付购置费用；若继续使用旧设备，则需支付维修费，设备使用的年数越长，每年所需的维修费就越多。</p>
+                        
+                        <p>现有第一年年初购置了一台新设备，问在 5 年内如何制定设备更新计划，以使得新设备购置费用和旧设备维修费的总费用最小？已知设备在 5 年内各年初的价格（表 5.2）及设备使用不同年数的维修费（表 5.3）。</p>
+                        
+                        <table>
+                            <caption><strong>表 5.2：设备价格</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th>第 $i$ 年</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>价格 $a_i$</td>
+                                    <td>11</td>
+                                    <td>11</td>
+                                    <td>12</td>
+                                    <td>12</td>
+                                    <td>13</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <table>
+                            <caption><strong>表 5.3：维修费</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th>使用寿命</th>
+                                    <th>0~1</th>
+                                    <th>1~2</th>
+                                    <th>2~3</th>
+                                    <th>3~4</th>
+                                    <th>4~5</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>费用 $b_j$</td>
+                                    <td>$b_1$ = 5</td>
+                                    <td>$b_2$ = 6</td>
+                                    <td>$b_3$ = 8</td>
+                                    <td>$b_4$ = 11</td>
+                                    <td>$b_5$ = 18</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p><strong>解：</strong>首先建立一个网络模型（图 5.10）描述此更新问题。其中：</p>
+                        <div class="formula">
+                            $$V = \{v_1, v_2, v_3, v_4, v_5, v_6\}$$
+                            $$E = \{(v_i, v_j), i = 1,2,\cdots,5; j = 2,\cdots,6, i < j\}$$
+                        </div>
+                        
+                        <p>节点 $v_1, v_2, \cdots, v_5$ 相当于第 1,2,…… ,5 年的年初，$v_6$ 相当于第 5 年年末。</p>
+                        
+                        <p>网络图中的弧 $(v_i, v_j)$ 相当于第 $i$ 年年初购买一台设备一直用到第 $j = i + 1$ 年年末。</p>
+                        
+                        <p>网络图中每一条从 $v_1$ 至 $v_6$ 的路表示一种可能的设备更新方案，例如路 $v_1 \, v_3 \, v_5 \, v_6$ 相当于第 1,3,5 年初购买设备这一方案。</p>
+                        
+                        <div class="image-placeholder">
+                            <strong>图 5.10：设备更新网络模型</strong><br>
+                            展示设备更新的决策网络
+                        </div>
+                        
+                        <p>网络弧上的数可按如下法则给出：</p>
+                        <div class="formula">
+                            $(v_i, v_j)$ 上数 $\omega_{ij}$ = 第 $i$ 年初设备购买费 + $(j - i)$ 年里的维修费
+                            $$= a_i + (b_1 + b_2 + \cdots + b_{j-i})$$
+                        </div>
+                        
+                        <p>例如，弧 $(v_2, v_5)$ 表示第 2 年初购买一台新设备，使用至第 4 年底，相应购买费为 11，维修费为 $5 + 6 + 8 = 19$，弧 $(v_2, v_5)$ 上的数 $\omega_{2,5} = 30$。</p>
+                        
+                        <p>这样，制定一个最优设备更新方案的问题就等价于求图 5.10 中 $v_1$ 至 $v_6$ 的最短路问题，使用 Dijkstra 算法得上述问题的最短路为 $v_1 \, v_4 \, v_6$，即第 1,4 年初购买设备，或 $v_1 \, v_3 \, v_6$，即第 1,3 年初购买设备。五年最佳总费用为 53。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 最大流问题 -->
+        <section id="maxflow">
+            <h2>💧 5.4 最大流问题</h2>
+            
+            <p>在研究网络问题时，经常遇到在网络系统中运送"流转物"的问题。交通系统网络中，每条弧表示一段通路，每一个节点则表示交叉路口，网络中运送的流转物为车辆。</p>
+            
+            <p>通信系统网络中，节点表示中转站，弧表示中继站之间的通信线路，网络中运送的流转物是信息。无论是公路系统还是通信系统，每段弧上允许通过流转物的能力是有限的。这种限制称为<span class="highlight">弧上的容量</span>，弧 $(v_i, v_j)$ 上容量用 $c_{ij}$ 表示。</p>
+            
+            <div class="definition">
+                <strong>最大流问题：</strong>
+                <p>现在讨论只有一个发点和一个收点的网络系统，假设要把起点的一批流转物运送到终点去，在每一弧上通过流转物的总量不能超过这条弧上的容量，问题是应该怎样安排运送，才能使从起点运送至终点的总量达到最大？这样的问题就称为<strong>网络最大流问题</strong>。</p>
+            </div>
+            
+            <div class="image-placeholder">
+                <strong>图 5.12：最大流问题示例</strong><br>
+                展示城市 $v_1$ 和城市 $v_6$ 之间的公路系统<br>
+                $v_2, v_3, v_4, v_5$ 是公路系统内的 4 个城市<br>
+                弧上的数字表示容量
+            </div>
+            
+            <button class="collapsible">5.4.1 网络流的基本概念与基本定理</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>考虑网络最大流问题时，只关心通过网络的流转物的总量及其通过方式，即每段弧上分配通过多少量，至于流通物本身是什么是无关紧要的，这样就产生网络中描象的"流"的概念。</p>
+                    
+                    <h4>1. 流</h4>
+                    <div class="definition">
+                        <p>这是指定义在弧集 $A = \{(v_i, v_j)\}$ 上的一个函数 $f = f(v_i, v_j)$，通常记为 $\{f_{ij}\}$，每个 $f_{ij}$ 称为弧 $(v_i, v_j)$ 上的<strong>流量</strong>。</p>
+                    </div>
+                    
+                    <h4>2. 可行流</h4>
+                    <div class="definition">
+                        <p>$\{f_{ij}\}$ 为网络上一个流，它应满足容量条件和平衡条件。</p>
+                        <ul>
+                            <li><strong>1) 容量条件：</strong>对每一弧 $(v_i, v_j) \in A$，$0 \leq f_{ij} \leq c_{ij}$</li>
+                            <li><strong>2) 平衡条件：</strong>经过中间点的流入量等于流出量，对中间点 $v_i$ 需满足：
+                                $$\sum_{(v_i, v_j) \in A} f_{ij} - \sum_{(v_j, v_i) \in A} f_{ji} = 0$$
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <p>若网络起点为 $v_s$，终点为 $v_t$，则一个可行流的总流量为：</p>
+                    <div class="formula">
+                        $$\sum_{(v_s, v_j) \in A} f_{sj} - \sum_{(v_j, v_s) \in A} f_{js} = V(f)$$
+                        $$\sum_{(v_i, v_t) \in A} f_{it} - \sum_{(v_t, v_i) \in A} f_{ti} = -V(f)$$
+                    </div>
+                    
+                    <p>式中 $V(f)$ 称为这个可行流的流量，即发点的净输出量（或收点的净输入量）。</p>
+                    
+                    <p>任何一个网络总存在可行流，如令所有弧的流量 $f_{ij} = 0$，就得到一个可行流（<span class="highlight">零流</span>）。一个网络上所有可行流中流量最大的可行流称为<strong>最大流</strong>。所以，网络的最大流问题即是寻找流量最大的可行流。</p>
+                    
+                    <h4>3. 饱和弧与零流弧</h4>
+                    <div class="definition">
+                        <p>对网络上一个可行流 $\{f_{ij}\}$，若某弧上 $(v_i, v_j)$ 的流量 $f_{ij} = c_{ij}$（容量），则称该弧为<strong>饱和弧</strong>，否则称其为非饱和弧。</p>
+                        <p>对一个可行流 $\{f_{ij}\}$，若某弧上分配流量 $f_{ij} = 0$，称该弧为<strong>零流弧</strong>，否则称其为非零流弧。</p>
+                    </div>
+                    
+                    <h4>4. 可扩充链（或称增广链）</h4>
+                    <div class="image-placeholder">
+                        <strong>图 5.13：饱和弧与零流弧示意</strong>
+                    </div>
+                    
+                    <div class="definition">
+                        <p>设 $\{f_{ij}\}$ 是网络上一个可行流，若存在起点 $v_s$ 与终点 $v_t$ 之间一条链 $\mu$，规定其方向为 $v_s \to v_t$。链上相应弧按 $\mu$ 的方向分成两类：与 $\mu$ 方向一致的弧为<strong>前向弧</strong>，相反的弧则为<strong>后向弧</strong>。</p>
+                        
+                        <p>若链 $\mu$ 上弧的流量满足：</p>
+                        <ul>
+                            <li>① $\mu$ 上所有前向弧上流量 $f_{ij} < c_{ij}$</li>
+                            <li>② $\mu$ 上所有后向弧上流量 $f_{ij} > 0$</li>
+                        </ul>
+                        <p>则称 $\mu$ 为关于流 $\{f_{ij}\}$ 的<strong>可扩充链</strong>。</p>
+                    </div>
+                    
+                    <p>图 5.13 表示图 5.12 所示网络的一条链：</p>
+                    <div class="formula">
+                        $$\mu: v_1 \to v_2 \to v_3 \to v_4 \to v_5 \to v_6$$
+                    </div>
+                    <p>其中前向弧为 $\{(v_1, v_2), (v_3, v_4), (v_4, v_5), (v_5, v_6)\}$，后向弧为 $\{(v_3, v_2)\}$。</p>
+                    
+                    <h4>5. 截集与截量</h4>
+                    <div class="definition">
+                        <p>对于网络 $D = (V, A, C)$，若点集 $V$ 被分割为两个非空互补集合 $V_1$ 和 $\overline{V_1}$，使 $v_s \in V_1, v_t \in \overline{V_1}$，则把弧集 $(V_1, \overline{V_1})$（即始点在 $V_1$，终点在 $\overline{V_1}$ 的所有弧构成的集合）称为是（分离 $v_s$ 和 $v_t$ 的）<strong>截集</strong>。</p>
+                        
+                        <p>从直观上讲，截集是在图中分割 $V_1$ 和 $\overline{V_1}$ 的切割截得的正向弧集，是从 $v_s$ 至 $v_t$ 的必经之道。</p>
+                    </div>
+                    
+                    <p>若把某一截集的弧从网络中去掉，则从 $v_s$ 至 $v_t$ 便不存在路。一截集 $(V_1, \overline{V_1})$ 中所有弧的容量之和称为这个截集的<strong>容量</strong>，简称为<strong>截量</strong>，记为 $C(V_1, \overline{V_1})$：</p>
+                    <div class="formula">
+                        $$C(V_1, \overline{V_1}) = \sum_{(v_i, v_j) \in (V_1, \overline{V_1})} c_{ij}$$
+                    </div>
+                    
+                    <p>显然，任何一个可行流的流量 $V(f)$ 都不会超过任一截集的容量，即 $V(f) \leq C(V_1, \overline{V_1})$。</p>
+                    
+                    <p>因此，对于一个可行流 $f^*$，网络中有一个截集 $(V_1^*, \overline{V_1}^*)$，使 $V(f^*) = C(V_1^*, \overline{V_1}^*)$，则 $f^*$ 必定是最大流，而 $(V_1^*, \overline{V_1}^*)$ 也必定是所有截集中容量最小的一个。</p>
+                    
+                    <div class="highlight">
+                        <strong>最大流量最小截集定理：</strong>
+                        <p>任一网络 $D$ 中，从 $v_s$ 至 $v_t$ 的最大流的流量等于分离 $v_s, v_t$ 的最小截集的容量（证法略）。</p>
+                    </div>
+                    
+                    <h4>6. 最大流问题的数学模型</h4>
+                    <p>由前面的讨论可知，最大流问题就是在一个带收发点的网络中，在不超过每条弧的容量的前提下求出从发点到收点的最大流量。这显然是一个线性规划问题，数学模型的一般形式如下：</p>
+                    
+                    <div class="formula">
+                        $$\max V(f)$$
+                        $$\begin{cases}
+                        \sum_{(v_i, v_j) \in A} f_{ij} - \sum_{(v_j, v_i) \in A} f_{ji} = 0 \\
+                        \sum_{(v_s, v_j) \in A} f_{sj} - \sum_{(v_j, v_s) \in A} f_{js} = V(f) \\
+                        \sum_{(v_i, v_t) \in A} f_{it} - \sum_{(v_t, v_i) \in A} f_{ti} = -V(f) \\
+                        0 \leq f_{ij} \leq c_{ij} \\
+                        i, j \neq s, t
+                        \end{cases}$$
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">5.4.2 最大流问题的标号解法</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>寻找网络最大流的<strong>标号解法</strong>实际上分为两个过程，一是标号过程，即寻找可扩充链的过程；二是调整过程，即对当前的可行流进行改进的过程。其主要步骤是：</p>
+                    
+                    <div class="algorithm">
+                        <div class="algorithm-title">标号解法算法步骤</div>
+                        <ol>
+                            <li>确定一初始可行流 $\{f_{ij}\}$ 及其流量 $V(f)$</li>
+                            <li>检验当前所确定可行流是否是网络中的最大流。若不是，需进一步调整（正如前面所分析的那样，检验一个可行流是否为最大流，只要检查一下当前可行流是否还存在可扩充链，若存在，则说明当前可行流还不是最大流，否则是最大流。）</li>
+                            <li>将当前的可行流调整成一个流量更大的新可行流，再由②检验</li>
+                        </ol>
+                    </div>
+                    
+                    <p>通常用观察法确定网络的一初始可行流。对于较为复杂的网络，至少能把初始可行流取为零流。</p>
+                    
+                    <p>通过在网络上标号的方法能系统地寻找出当前可行流的可扩充链。它的基本思想是：从起点 $v_s$ 起，逐步寻找 $v_s$ 至各点 $v_i$ 间的可扩充链。若能找到 $v_s$ 至 $v_t$ 的一条可扩充链，则给点 $v_j$ 标号 $[\theta_j, \alpha_j]$。</p>
+                    
+                    <p>第一个标号 $\theta_j$ 即为 $v_s$ 至 $v_j$ 这条可扩充链上的最大可调整量，第二个标号 $\alpha_j$ 则表示这条链上点 $v_j$ 的前一点是 $\alpha_j$ 点。根据标号可反向追踪而写出这条链。在逐步寻找大已标号 $v_s$ 标号 $[\infty, v_s]$，含义为 $v_s$ 至 $v_s$ 的可扩充链已找到，前一点为 $v_s$，这链上的可调整量为 $\infty$。</p>
+                    
+                    <div class="example">
+                        <div class="example-title">例 5.5</div>
+                        <p><strong>问题：</strong>有三个发电站（节点 $v_1, v_2, v_3$），发电能力分别为 15,10 和 40 兆瓦，经输电网可把电力送到 8 号地区（节点 $v_8$），电网的能力如图 5.15。求三个发电站输到这地区（节点 $v_8$）的最大电力。</p>
+                        
+                        <div class="image-placeholder">
+                            <strong>图 5.15：电力网络</strong><br>
+                            展示三个发电站和输电网络
+                        </div>
+                        
+                        <p><strong>解：</strong>由于网络图只有一个发点和一个收点，所以有必要添加一个虚设的起点 $v_0$ 和弧 $(v_0, v_1), (v_0, v_2)$ 和 $(v_0, v_3)$。弧上容量 $c_{01} = 15, c_{02} = 10, c_{03} = 40$ 分别为 $v_1, v_2, v_3$ 三点的发电能力，如图 5.16 所示。</p>
+                        
+                        <div class="image-placeholder">
+                            <strong>图 5.16：带虚拟源点的网络</strong><br>
+                            展示标号过程
+                        </div>
+                        
+                        <p><strong>第一步，</strong>由观察法得一初始可行流 $\{f_{ij}\}$，即图 5.16 上所标 $(c_{ij}, f_{ij})$。$c_{ij}$ 为弧 $(v_i, v_j)$ 上容量，$f_{ij}$ 为弧上流量。</p>
+                        
+                        <p><strong>第二步，</strong>用标号法寻找可扩充链，由此检验当前可行流 $\{f_{ij}\}$ 是否是最大流，标号过程如下。</p>
+                        
+                        <p>（详细的标号过程省略，包括多个步骤的点集划分、弧的选择和标号更新）</p>
+                        
+                        <p>终点 $v_8$ 已标号，反向追踪可得 $v_0$ 至 $v_8$ 的可扩充链为：</p>
+                        <div class="formula">
+                            $$v_0 \to v_3 \to v_6 \to v_5 \to v_2 \to v_7 \to v_8$$
+                        </div>
+                        
+                        <p><strong>第三步，</strong>调整流量。由所得可扩充链确定一新可行流 $\{\overline{f}_{ij}\}$，可扩充链上前向弧上各流量均增加 $\theta_7 = 10$，即有：</p>
+                        <div class="formula">
+                            $$\begin{cases}
+                            \overline{f}_{03} = f_{03} + \theta_7 = 10 + 10 = 20 \\
+                            \overline{f}_{36} = f_{36} + \theta_7 = 10 + 10 = 20 \\
+                            \overline{f}_{65} = f_{65} + \theta_7 = 10 + 10 = 20 \\
+                            \overline{f}_{52} = f_{52} + \theta_7 = 0 + 10 = 10 \\
+                            \overline{f}_{27} = f_{27} + \theta_7 = 10 + 10 = 20 \\
+                            \overline{f}_{78} = f_{78} + \theta_7 = 25 + 10 = 35
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>链上无后向弧，非可扩充链各弧上流量不变，新可行流 $\{\overline{f}_{ij}\}$ 用图 5.17 表示。</p>
+                        
+                        <div class="image-placeholder">
+                            <strong>图 5.17：调整后的流</strong><br>
+                            展示新的流量分配
+                        </div>
+                        
+                        <p>继续用标号法检验当前可行流是否为最大流，标号过程如图 5.17 所示。</p>
+                        
+                        <p>（继续标号过程，最终发现无法再找到可扩充链）</p>
+                        
+                        <p>这说明网络中已找不到可扩充链，当前流即为最大流，最大流流量为：$20 + 15 + 10 = 45$，即三个发电站输送至 8 号地区的最大电力为 45 兆瓦。</p>
+                        
+                        <div class="formula">
+                            <p>进一步，由第⑤步知，$V_1 = \{v_0, v_1, v_3, v_4, v_6\}$ 为已标号点集，$\overline{V_1} = \{v_2, v_5, v_7, v_8\}$ 为未标号点集，则最小截集由 $V_1$ 流向 $\overline{V_1}$ 的弧集构成。它是：$\{(v_0, v_2), (v_6, v_5), (v_6, v_7)\}$，最小截集的截量为 $C(V_1, \overline{V_1}) = c_{02} + c_{65} + c_{67} = 10 + 20 + 15 = 45$。它恰好等于最大流的流量。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 习题部分 -->
+        <section id="exercises">
+            <h2>📝 习题 5</h2>
+            
+            <div class="example">
+                <div class="example-title">5.1</div>
+                <p>求图 5.18 中各图的最小部分树。</p>
+                <div class="image-placeholder">
+                    <strong>图 5.18：待求解的图</strong><br>
+                    (a) (b) (c) (d) 四个不同的赋权图
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">5.2</div>
+                <p>已知世界六大城市：(Pe)、(N)、(Pa)、(L)、(T)、(M)，试在由表 5.6 所示交通网络的数据中确定最小树。</p>
+                <table>
+                    <caption><strong>表 5.6</strong></caption>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Pe</th>
+                            <th>T</th>
+                            <th>Pa</th>
+                            <th>M</th>
+                            <th>N</th>
+                            <th>L</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Pe</td>
+                            <td>-</td>
+                            <td>13</td>
+                            <td>51</td>
+                            <td>77</td>
+                            <td>68</td>
+                            <td>50</td>
+                        </tr>
+                        <tr>
+                            <td>T</td>
+                            <td>13</td>
+                            <td>×</td>
+                            <td>60</td>
+                            <td>70</td>
+                            <td>67</td>
+                            <td>59</td>
+                        </tr>
+                        <tr>
+                            <td>Pa</td>
+                            <td>51</td>
+                            <td>60</td>
+                            <td>×</td>
+                            <td>57</td>
+                            <td>36</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>M</td>
+                            <td>77</td>
+                            <td>70</td>
+                            <td>57</td>
+                            <td>×</td>
+                            <td>20</td>
+                            <td>55</td>
+                        </tr>
+                        <tr>
+                            <td>N</td>
+                            <td>68</td>
+                            <td>67</td>
+                            <td>36</td>
+                            <td>20</td>
+                            <td>×</td>
+                            <td>34</td>
+                        </tr>
+                        <tr>
+                            <td>L</td>
+                            <td>50</td>
+                            <td>59</td>
+                            <td>2</td>
+                            <td>55</td>
+                            <td>34</td>
+                            <td>×</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">5.3</div>
+                <p>有 9 个城市 $v_1, v_2, \cdots, v_9$，其公路网如图 5.19 所示。弧旁数字是该段公路的长度，有一批货物要从 $v_1$ 运到 $v_9$，问走哪条路最短。</p>
+                <div class="image-placeholder">
+                    <strong>图 5.19：城市公路网</strong>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">5.4</div>
+                <p>求如图 5.20 所示的网络的最大流和最小截集。（每弧旁的数字是 $(c_{ij}, f_{ij})$）。</p>
+                <div class="image-placeholder">
+                    <strong>图 5.20：网络流</strong>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">5.5</div>
+                <p>考虑如图 5.21 所示的网络最大流问题，其中弧上的数字为容量，括号内的数字为流量。</p>
+                <ol>
+                    <li>在括号内填上适当的数字，使构成一个可行流。</li>
+                    <li>若选择点集 $V_1$ 和 $\overline{V_1}$ 如表 5.7，请填出相应的截集与截量。</li>
+                </ol>
+                <div class="image-placeholder">
+                    <strong>图 5.21：网络流量配置</strong>
+                </div>
+                <table>
+                    <caption><strong>表 5.7</strong></caption>
+                    <thead>
+                        <tr>
+                            <th>$V_1$</th>
+                            <th>$\overline{V_1}$</th>
+                            <th>$(V_1, \overline{V_1})$</th>
+                            <th>$C(V_1, \overline{V_1})$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>①,③</td>
+                            <td>②,④,⑤,⑥</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">5.6</div>
+                <p>过纽约的 ALBANY 的北-南高速公路，路况通过能力如图 5.22 图所示，图中弧上数字为各路段的通过能力（单位：千辆/小时），求(1)该路网能承受的北-南向最大流量；(2)若要将整个路网的北-南向通过能力扩充 2 千辆/小时，并只能在一条路段上扩充，请指出一个路段选择方案，并说明原因。</p>
+                <div class="image-placeholder">
+                    <strong>图 5.22：ALBANY 高速公路网</strong>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">5.7</div>
+                <p>某汽车公司正在制订 5 年内购买汽车租赁计划。下面给出一辆新汽车的价格（表 5.8）以及一辆汽车的使用维修费用（万元）（表 5.9）。试用网络分析中求最短路的方法确定一个使汽车购买成本和使用维修费最少的最优策略。</p>
+                <table>
+                    <caption><strong>表 5.8：汽车价格</strong></caption>
+                    <thead>
+                        <tr>
+                            <th>号</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>5</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>价格</td>
+                            <td>2</td>
+                            <td>2.1</td>
+                            <td>2.3</td>
+                            <td>2.4</td>
+                            <td>2.6</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <caption><strong>表 5.9：维修费</strong></caption>
+                    <thead>
+                        <tr>
+                            <th>汽车使用年数</th>
+                            <th>0~1</th>
+                            <th>1~2</th>
+                            <th>2~3</th>
+                            <th>3~4</th>
+                            <th>4~5</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>维修费用</td>
+                            <td>0.7</td>
+                            <td>1.1</td>
+                            <td>1.5</td>
+                            <td>2</td>
+                            <td>2.5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">5.8 填空</div>
+                <ol>
+                    <li>无_______的连通图称为树。若图 $G$ _______，则 $G$ 必有部分树；</li>
+                    <li>用标号法求解最大流问题，当求得最大流的同时，也得到了最小截集，它是由_______点集和_______点集构成的点集切割中的______（正还是反）向弧组成。</li>
+                </ol>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 图与网络技术交互式教程 | 管理科学基础</p>
+        <p>本网页需要联网以加载 MathJax 数学公式渲染</p>
+    </footer>
+    
+    <button id="scrollTop" title="返回顶部">↑</button>
+    
+    <script>
+        // Collapsible functionality
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(collapsible => {
+            collapsible.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        });
+        
+        // Scroll to top button
+        const scrollTopBtn = document.getElementById('scrollTop');
+        window.onscroll = function() {
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                scrollTopBtn.style.display = 'block';
+            } else {
+                scrollTopBtn.style.display = 'none';
+            }
+        };
+        
+        scrollTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Smooth scroll for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

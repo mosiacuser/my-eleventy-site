@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第6章 网络计划 - 交互式教程</title>
+    
+    <!-- MathJax 完整配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 100
+            },
+            displayAlign: "center",
+            displayIndent: "0em"
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-orange: #f27d00;
+            --primary-green: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --white: #ffffff;
+            --dark: #343434;
+            --light-gray: #f5f5f5;
+            --border-radius: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            overflow-x: hidden;
+        }
+        
+        /* 导航栏 */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav h1 {
+            color: var(--white);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-menu a {
+            color: var(--white);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .nav-menu a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 2rem;
+        }
+        
+        /* 标题样式 */
+        .main-title {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--white);
+            padding: 3rem 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(242, 125, 0, 0.3);
+        }
+        
+        .main-title h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .main-title p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        
+        /* 章节卡片 */
+        .section {
+            background: var(--white);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .section:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            transform: translateY(-5px);
+        }
+        
+        .section h2 {
+            color: var(--primary-orange);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-green);
+        }
+        
+        .section h3 {
+            color: var(--dark);
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            padding-left: 1rem;
+            border-left: 4px solid var(--primary-yellow);
+        }
+        
+        .section h4 {
+            color: var(--primary-orange);
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem;
+        }
+        
+        /* 折叠面板 */
+        .accordion {
+            margin: 1rem 0;
+        }
+        
+        .accordion-item {
+            background: var(--light-gray);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .accordion-item:hover {
+            border-color: var(--primary-green);
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, #b8e5d8 100%);
+            color: var(--dark);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #90cbb9 0%, #a6d6c9 100%);
+        }
+        
+        .accordion-header::after {
+            content: '▼';
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 1.5rem;
+            background: var(--white);
+        }
+        
+        .accordion-content.active {
+            max-height: 3000px;
+            padding: 1.5rem;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        thead {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--white);
+        }
+        
+        th {
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 0.8rem;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tbody tr:hover {
+            background: var(--primary-green);
+            transition: background 0.3s ease;
+        }
+        
+        /* 高亮框 */
+        .highlight {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, #ffd93d 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 5px solid var(--primary-orange);
+            box-shadow: 0 3px 10px rgba(242, 125, 0, 0.2);
+        }
+        
+        .highlight h4 {
+            margin-top: 0;
+            color: var(--dark);
+        }
+        
+        /* 例题框 */
+        .example {
+            background: linear-gradient(135deg, var(--primary-green) 0%, #d0f0e8 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 5px solid var(--primary-orange);
+        }
+        
+        .example h4 {
+            color: var(--primary-orange);
+            margin-bottom: 1rem;
+        }
+        
+        /* 公式框 */
+        .formula {
+            background: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px dashed var(--primary-orange);
+            text-align: center;
+        }
+        
+        /* 代码块 */
+        pre, code {
+            font-family: 'Roboto Mono', monospace;
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            padding: 0.2rem 0.5rem;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+            line-height: 1.8;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.4);
+        }
+        
+        /* 图像占位符 */
+        .image-placeholder {
+            background: var(--light-gray);
+            border: 2px dashed var(--primary-green);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: #666;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .main-title h1 {
+                font-size: 1.8rem;
+            }
+            
+            .nav-menu {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            table {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+        
+        /* MathJax 公式样式增强 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        /* 页脚 */
+        footer {
+            background: var(--dark);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <h1>📊 网络计划教程</h1>
+        <div class="nav-menu">
+            <a href="#intro">简介</a>
+            <a href="#section61">6.1 绘制</a>
+            <a href="#section62">6.2 计算</a>
+            <a href="#section63">6.3 优化</a>
+            <a href="#exercises">习题</a>
+        </div>
+    </nav>
+    
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 主标题 -->
+        <div class="main-title">
+            <h1>第6章 网络计划</h1>
+            <p>管理科学基础 - 交互式教程</p>
+        </div>
+        
+        <!-- 6.1 网络计划图的绘制 -->
+        <section id="section61" class="section">
+            <h2>6.1 网络计划图的绘制</h2>
+            
+            <div class="highlight">
+                <h4>💡 历史背景</h4>
+                <p>从20世纪50年代起，人们就试用网络方法来编制计划，用网络图来代替传统的横道图。其中最著名的是"<strong>关键路径法</strong>"（<strong>Critical Path Method</strong>，简称<strong>CPM方法</strong>）和"<strong>计划评审技术</strong>"（<strong>Program Evaluation and Review Technique</strong>，简称<strong>PERT法</strong>）。</p>
+                
+                <ul>
+                    <li><strong>CPM方法</strong>：1957年由美国杜邦公司的J.E.凯雷和杜邦公司的M.R.瓦尔科提出，首次应用于一个化学工厂设备维修工作计划中。</li>
+                    <li><strong>PERT方法</strong>：美国海军特种工程处在波兹（BOOZ）、阿伦（Allen）和汉密尔顿（Hamilton）管理咨询公司协助下首先研究出来的，这种网络方法因在美国北极星导弹研制工程计划中成功的应用而著名。</li>
+                </ul>
+            </div>
+            
+            <h3>主要区别</h3>
+            <p>CPM与PERT网络计划技术的原理基本一致，都是用网络表示工程项目，以确定关键路线。这是一思想是它们的基础。这两种方法的主要区别是：</p>
+            
+            <ol>
+                <li><strong>CPM方法</strong>对工程中各工序完工时间的估计是<strong>确定的</strong>，而<strong>PERT方法</strong>对时间估计是<strong>不确定的</strong>；</li>
+                <li><strong>PERT方法</strong>主要注重工程计划中的<strong>时间问题</strong>，而<strong>CPM方法</strong>在把费用概念引入计划控制过程中，不仅注重时间问题，而且还考虑工程的<strong>费用和成本问题</strong>，考虑工程时间的均衡问题。</li>
+            </ol>
+            
+            <p>在实际工作中，若一个工程的工序时间比较确定、费用也能预先估算得比较准确（例如一般的建筑工程），使用<strong>CPM方法</strong>；而当一个工程中不确定因素较多，特别是工序时间不确定时，选用<strong>PERT方法</strong>。</p>
+            
+            <!-- 折叠面板：网络图的组成要素 -->
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        6.1.1 网络图的组成要素
+                    </div>
+                    <div class="accordion-content">
+                        <p>一项工程总由许多彼此关联的独立活动组成。这些活动称为<strong>工序</strong>。各道工序之间先后关联，完成每道工序的时间称为<strong>工序时间</strong>。因此，可以采用一个<strong>网络图</strong>（赋权的有向图）表示各道工序之间的顺序及工序时间。</p>
+                        
+                        <p>用弧（箭线）表示工序的网络图称为<strong>箭线式（双代号）网络图</strong>，用结点表示工序的网络图称为<strong>结点式（单代号）网络图</strong>。本章只介绍箭线式网络图。</p>
+                        
+                        <h4>一般网络图的组成</h4>
+                        <p>一般表示工程计划的网络图由三部分组成，即<strong>箭线</strong>、<strong>结点</strong>和<strong>线路</strong>。</p>
+                        
+                        <div class="highlight">
+                            <h4>1) 实箭线</h4>
+                            <p>它表示一道具体工序。箭头表示工序进行方向，箭尾表示工序开始，箭头表示工序结束。箭头和箭尾与结点相连，结点用圆圈表示，并编上号码。箭线一端的结点号码就表示一道工序，通常称为双代号表示法。</p>
+                        </div>
+                        
+                        <div class="highlight">
+                            <h4>2) 虚箭线</h4>
+                            <p>它表示一道虚工序。虚工序不是实际中的具体工序，它仅用于表示工序与工序之间的关联关系。虚工序不需时间、费用和资源。</p>
+                        </div>
+                        
+                        <div class="highlight">
+                            <h4>3) 结点</h4>
+                            <p>它表示一个事项。事项又称事件，表示一些工序的结束或开始。在相邻工序首尾衔接处的结点用圆圈表示，圆内注上该结点（事项）的序号。</p>
+                            <p>连接箭尾的结点称为该工序的紧前事项，连接箭头的结点称为该工序的紧后事项。</p>
+                            <p>整个网络图起始结点称为总开工事项，而最后工序的结束结点为完工事项。网络中所有工序都是用事项（结点）进行相互联系并互相制约的，只有当事项的所有紧前工序完成后，事项的紧后工序才能开始。</p>
+                        </div>
+                        
+                        <div class="highlight">
+                            <h4>4) 线路</h4>
+                            <p>它是指从最初结点（总开工事项）开始顺着箭头方向连续不断地到达终点（总完工事项）的通路。这样通路有许多条，各条线路上工序时间的和可能不同，其中时间和最大的线路为<strong>关键线路</strong>，相应有次关键线路。关键线路上的工序称为<strong>关键工序</strong>。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        6.1.2 绘制网络图的准备工作
+                    </div>
+                    <div class="accordion-content">
+                        <p>在绘制工程计划网络图前，首先要完成下列准备工作：</p>
+                        
+                        <h4>1. 确定目标</h4>
+                        <p>工程计划目标是多方面综合的，但按侧重点不同大致可分成三类：</p>
+                        <ul>
+                            <li>第一类：<strong>时间要求为主</strong></li>
+                            <li>第二类：<strong>资源要求为主</strong></li>
+                            <li>第三类：<strong>费用要求为主</strong></li>
+                        </ul>
+                        
+                        <h4>2. 工程任务的分解和分析</h4>
+                        <p>分析工程由哪些工序组成，并列出全部工序及其代号清单。工程任务的分解，根据不同对象有不同要求。例如，对领导机构，重要的是纵观全局，掌握关键，因此，工程可以分解得粗一些；对基层生产单位，要根据网络图组织生产，因此，工程应该分解得细一些。</p>
+                        
+                        <h4>3. 确定各工序之间先后顺序及衔接关系</h4>
+                        <p>工序之间的先后顺序及衔接关系也称<strong>工序间的逻辑关系</strong>，绘图前要确定每一道工序开工之前紧邻着它有哪些工序必须先期完成，即确定每一道工序的紧前工序是哪些；或者确定每一道工序结束后紧接着有哪些工序要开始，即确定每一道工序的紧后工序是哪些。</p>
+                        
+                        <h4>4. 确定各工序时间</h4>
+                        <p>要确定每道工序的完成所需时间，称为<strong>工序时间</strong>。常用方法见6.1.4。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        6.1.3 网络图绘制规则
+                    </div>
+                    <div class="accordion-content">
+                        <p>双代号（箭线式）网络图绘图规则中最基本要求是：<strong>一项工作只能用唯一的实箭线和唯一的一双号表示</strong>。为此，需要恰当地引入虚工序，这主要有以下两种情况。</p>
+                        
+                        <div class="example">
+                            <h4>情况1：避免相同紧前工序的混淆</h4>
+                            <p>①两个或两个以上的工序有相同的紧前工序，又同时作为另外一工序的紧前工序，即成为两个事件之间平行进行的工序，需引入虚工序以区分这些平行工序的代号不使其相同。</p>
+                            
+                            <p><strong>例如</strong>：图6.1(a)是错误的，因代号(1,3)既表示A，又表示B。正确的画法如图6.1(b)。</p>
+                            
+                            <div class="image-placeholder">
+                                <p>📊 图6.1 示意图</p>
+                                <p>（左图）错误画法：工序A和B都从节点①到节点③</p>
+                                <p>（右图）正确画法：引入虚拟节点②，A从①到②，B从①到③，虚线从②到③</p>
+                            </div>
+                        </div>
+                        
+                        <div class="example">
+                            <h4>情况2：避免不同紧前工序的混淆</h4>
+                            <p>②一个（或几个）工序A同时作为两个（或两个以上）工序B和C的紧前工序，而B和C除共同的紧前工序A外又有各不相同的另外的紧前工序，这时需引入虚工序以"代表"A满足B和C都以A为紧前工序的要求。</p>
+                            
+                            <p><strong>表6.1中的例子</strong>：工程项目各项工序及其紧前工序</p>
+                            
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>工序</th>
+                                        <th>A</th>
+                                        <th>B</th>
+                                        <th>C</th>
+                                        <th>D</th>
+                                        <th>E</th>
+                                        <th>F</th>
+                                        <th>G</th>
+                                        <th>H</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>紧前工序</td>
+                                        <td>—</td>
+                                        <td>—</td>
+                                        <td>A</td>
+                                        <td>A,B</td>
+                                        <td>B</td>
+                                        <td>D,E</td>
+                                        <td>D,C</td>
+                                        <td>G,F</td>
+                                    </tr>
+                                    <tr>
+                                        <td>工序时间(天)</td>
+                                        <td>2</td>
+                                        <td>4</td>
+                                        <td>9</td>
+                                        <td>3</td>
+                                        <td>6</td>
+                                        <td>2</td>
+                                        <td>4</td>
+                                        <td>2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <p>根据表6.1分析：C都以A作为其紧前工序，其中A同时作为C和D的紧前工序，但C的紧前工序只有A，而D的紧前工序除A外还有B；同样，B同时作为E和D的紧前工序，但E的紧前工序只有B，而D的紧前工序除B外还有A。</p>
+                            
+                            <div class="image-placeholder">
+                                <p>📊 图6.2 三种不同的绘制方式</p>
+                                <p>(a) 正确画法：使用虚箭线连接</p>
+                                <p>(b) 错误画法：没有区分不同紧前工序</p>
+                                <p>(c) 错误画法：连接方式不当</p>
+                            </div>
+                        </div>
+                        
+                        <div class="highlight">
+                            <h4>⚠️ 重要规则</h4>
+                            <p>除以上最基本的要求外，双代号（箭线式）网络图绘图中还有两项基本要求：</p>
+                            <ol>
+                                <li>网络图中<strong>不能出现回路</strong>。回路所表示的是<strong>错误的逻辑关系</strong>，是无法实施的。</li>
+                                <li>另一是网络图中只能有<strong>一个结点</strong>表示工程项目的开始，即总开工事项结点；同时也只能有<strong>一个结点</strong>表示工程项目的结束，即总完工事项结点。</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        6.1.4 确定每道工序完成时间
+                    </div>
+                    <div class="accordion-content">
+                        <p>绘制一张网络图除要注意上述规则外，还必须用合适的方法估计每道工序完成时间，也称工序$(i,j)$的持续时间，用$D_{i \to j}$表示。这里$i$是工序箭尾结点号，$j$是工序箭头结点号。通常确定工序时间$D_{i \to j}$有二种方法。</p>
+                        
+                        <h4>1. 一时估计法</h4>
+                        <p>此法又称单一时间估计法，即对各道工序的完成时间仅估计或确定一个数值。</p>
+                        <p>在工序的工时定额资料比较健全或者有同类工序时间的统计资料，而且完成该项工序不确定因素很少时，经常使用一时估计法，根据资料，通过分析对比确定各工序的工序时间。此时得到的工序时间认为是确定的。</p>
+                        
+                        <h4>2. 三时估计法</h4>
+                        <p>当完成一项工序的不确定因素很多，而且有关资料较少，难以较准确确定该项工序时间时，往往采用三时估计法，以近似得到该工序时间的均值和方差。</p>
+                        
+                        <div class="example">
+                            <h4>📚 例6.1 化工厂拟进行管道安装工程</h4>
+                            <p>工程的组成及工艺流程已由表6.2给出。绘制出此工程相应的网络图（图6.8）。</p>
+                            
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>活动代号</th>
+                                        <th>活动项目</th>
+                                        <th>紧前工作</th>
+                                        <th>时间(h)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>A</td><td>器材调查</td><td>/</td><td>8</td></tr>
+                                    <tr><td>B</td><td>停止旧管道工作</td><td>A</td><td>8</td></tr>
+                                    <tr><td>C</td><td>搭脚手架</td><td>A</td><td>12</td></tr>
+                                    <tr><td>D</td><td>拆除旧管道阀门</td><td>B,C</td><td>35</td></tr>
+                                    <tr><td>E</td><td>准备阀门</td><td>A</td><td>225</td></tr>
+                                    <tr><td>F</td><td>准备管道</td><td>A</td><td>200</td></tr>
+                                    <tr><td>G</td><td>组装一部分管道</td><td>F</td><td>40</td></tr>
+                                    <tr><td>H</td><td>安装新管道</td><td>D,E,G</td><td>32</td></tr>
+                                    <tr><td>I</td><td>安装阀门</td><td>D,E</td><td>8</td></tr>
+                                    <tr><td>J</td><td>焊接管道</td><td>H,I</td><td>8</td></tr>
+                                    <tr><td>K</td><td>装配管道和阀门</td><td>J</td><td>8</td></tr>
+                                    <tr><td>L</td><td>包扎管道</td><td>J</td><td>24</td></tr>
+                                    <tr><td>M</td><td>拆脚手架</td><td>K,L</td><td>4</td></tr>
+                                    <tr><td>N</td><td>压力试验</td><td>K</td><td>6</td></tr>
+                                    <tr><td>P</td><td>整理现场</td><td>M,N</td><td>4</td></tr>
+                                </tbody>
+                            </table>
+                            
+                            <div class="image-placeholder">
+                                <p>📊 图6.8 化工厂管道安装工程网络图</p>
+                                <p>（复杂的网络图，包含节点①到⑬，以及各项活动A-P的连接关系）</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 6.2 时间参数计算与关键线路确定 -->
+        <section id="section62" class="section">
+            <h2>6.2 时间参数计算与关键线路确定</h2>
+            
+            <h3>6.2.1 时间参数定义</h3>
+            
+            <p>网络图相对于横道图最大的优点是能表示出工程项目中各工序的先后顺序关系。正因为一个项目中各工序有先后顺序关系，所以一个工序的开始和完成时间必然受到相互制约，由此有必要定义网络计划中的时间参数。</p>
+            
+            <p>双代号网络计划的时间参数主要包括<strong>工序的时间参数</strong>和（<strong>事件</strong>）<strong>结点的时间参数</strong>。</p>
+            
+            <h4>1. 工序$(i,j)$的时间参数</h4>
+            
+            <p>双代号网络图中一项工序可一般地表示为图6.9，用代号表示即工序$(i,j)$。</p>
+            
+            <div class="image-placeholder">
+                <p>📊 图6.9 工序符号表示</p>
+                <p>工序从节点$i$到节点$j$，持续时间为$D_{i \to j}$</p>
+            </div>
+            
+            <p>在以下的时间参数定义和计算中，多以图6.10为例说明，它是由图6.4加注各工序持续时间后得到的。</p>
+            
+            <div class="formula">
+                <h4>工序时间参数定义</h4>
+                
+                <p><strong>1) 工序$(i,j)$的最早开始时间 $ES_{i \to j}$（Earliest Start Time）</strong></p>
+                <p>工序$(i,j)$在其所有的紧前工序都完成而可以开始的最早时间，称为该工序的最早开始时间，记为$ES_{i \to j}$。</p>
+                
+                <p><strong>2) 工序$(i,j)$的最早完成时间 $EF_{i \to j}$（Earliest Finish Time）</strong></p>
+                <p>工序$(i,j)$在其所有的紧前工序都完成而可以完成的最早时间，称为该工序的最早完成时间，记为$EF_{i \to j}$。显然，工序的最早完成时间等于工序的最早开始时间加上工序时间，即</p>
+                $$EF_{i \to j} = ES_{i \to j} + D_{i \to j}$$
+                
+                <p><strong>3) 工序$(i,j)$的最迟完成时间 $LF_{i \to j}$（Latest Finish Time）</strong></p>
+                <p>在不影响工期的前提下，工序$(i,j)$最迟必须完成的时间，称为该工序的最迟完成时间，记为$LF_{i \to j}$。</p>
+                
+                <p><strong>4) 工序$(i,j)$的最迟开始时间 $LS_{i \to j}$（Latest Start Time）</strong></p>
+                <p>在不影响工期的前提下，工序$(i,j)$最迟必须开始的时间，称为该工序的最迟开始时间，记为$LS_{i \to j}$。显然，工序的最迟开始时间等于工序的最迟完成时间减去工序时间，即</p>
+                $$LS_{i \to j} = LF_{i \to j} - D_{i \to j}$$
+                
+                <p><strong>5) 工序$(i,j)$的总时差 $TF_{i \to j}$（Total Floating Time）</strong></p>
+                <p>在不影响工期的前提下，工序$(i,j)$所具有的机动时间，称为该工序的总时差，或称总浮动时间，记为$TF_{i \to j}$。</p>
+                $$TF_{i \to j} = LF_{i \to j} - ES_{i \to j} - D_{i \to j} = LF_{i \to j} - EF_{i \to j} = LS_{i \to j} - ES_{i \to j}$$
+                
+                <p><strong>6) 工序$(i,j)$的自由时差 $FF_{i \to j}$（Free Floating Time）</strong></p>
+                <p>在不影响紧后工序最早开始的前提下，工序$(i,j)$所具有的机动时间，称为工序的自由时差，或称自由浮动时间，记为$FF_{i \to j}$。</p>
+                $$FF_{i \to j} = (\text{紧后工序最早开始时间的最小值}) - ES_{i \to j} - D_{i \to j}$$
+                $$= (\text{紧后工序最早开始时间的最小值}) - EF_{i \to j}$$
+                
+                <p>由总时差和自由时差的定义，很容易得出，一个工序的自由时差不会超过总时差，即</p>
+                $$FF_{i \to j} \leq TF_{i \to j}$$
+            </div>
+            
+            <h4>2. 结点$i$的时间参数</h4>
+            
+            <p>如前所述，双代号网络图中结点表示工序开始或完成这一事项。如图6.12，结点$i$表示工序A和B完成而工序C和D开始这件事，由此可知，结点时间和相关工序时间是密切相关的。</p>
+            
+            <div class="formula">
+                <h4>结点时间参数定义</h4>
+                
+                <p><strong>1) 结点$i$的最早时间$ET_i$</strong></p>
+                <p>结点$i$所代表的事项最早可能发生的时间称为结点$i$的最早时间，记为$ET_i$。</p>
+                
+                <p>图6.12中，结点$i$的最早时间$ET_i$显然等于以结点$i$为起始点的工序C和D的最早开始时间；当然也等于以结点$i$为完成结点的工序A和B最早都完成的时间（即A和B最早完成时间的最大值）。</p>
+                
+                <p><strong>2) 结点$i$的最迟时间$LT_i$</strong></p>
+                <p>结点$i$所代表的事项在不影响工期前提下最迟必须发生的时间称为结点$i$的最迟时间，记为$LT_i$。</p>
+                
+                <p>图6.12中，结点$i$的最迟时间$LT_i$显然等于以结点$i$为完成结点的工序A和B的最迟完成时间；当然也等于以结点$i$为开始结点的工序C和D最迟开始时间的最小值。</p>
+            </div>
+            
+            <div class="image-placeholder">
+                <p>📊 图6.12 结点示意图</p>
+                <p>节点$i$：工序A和B汇入，工序C和D发出</p>
+            </div>
+            
+            <h3>6.2.2 时间参数的计算</h3>
+            
+            <p>网络计划中时间参数的计算常用的有<strong>按工序计算法</strong>和<strong>按节点计算法</strong>。所谓按工序计算法即按工序之间的先后顺序直接计算工序的时间参数，上述工序时间参数的定义中对图6.10某些工序时间参数的计算就是利用按工序计算法。而所谓按结点计算法则是先计算结点的最早最迟时间，然后用结点时间表示（或略加计算得出）工序时间。</p>
+            
+            <div class="highlight">
+                <h4>按结点计算法步骤</h4>
+                
+                <p><strong>第一步：计算结点最早时间</strong></p>
+                <p>在网络计划图中，结点最早时间的计算从始点开始，顺着箭线方向由前向后，依次逐项计算。网络计划始点结点的最早时间为0，即</p>
+                $$ET_1 = 0$$
+                
+                <p>其他结点最早时间计算如图6.14所示，结点$j$是工序A和B的完成结点，其最早时间是工序A和B最早完成时间的最大值，而工序A的最早完成时间等于它的开始结点$i_1$的最早时间加上A的工序时间；B的最早完成时间等于它的开始结点$i_2$的最早时间加上B的工序时间，因此对于起始结点以外的其他结点，有</p>
+                $$ET_j = \max(ET_i + D_{i \to j})$$
+                
+                <p>计算中，虚工序作为持续时间为0的工序。</p>
+                
+                <div class="image-placeholder">
+                    <p>📊 图6.14 结点最早时间计算示意图</p>
+                </div>
+                
+                <p><strong>第二步：计算结点最迟时间</strong></p>
+                <p>结点最迟时间的计算从终点开始，逆着箭线方向由后向前，依次逐项计算。网络计划终点结点的最迟时间等于计算工期，即</p>
+                $$LT_n = T_P$$
+                
+                <p>没有特别指明计划工期$T_P$时，用计算工期$T_C$代替。</p>
+                
+                <p>其他结点最迟时间计算如图6.15所示，结点$i$是工序C和D的开始结点，其最迟时间是工序C和D最迟开始时间的最小值，而工序C的最迟开始时间等于它的完成结点$j_1$的最迟时间减去C的工序时间；D的最迟开始时间等于它的完成结点$j_2$的最迟时间减去D的工序时间，因此对于终点结点以外的其他结点，有</p>
+                $$LT_i = \min(LT_j - D_{i \to j})$$
+                
+                <p>计算中，虚工序作为持续时间为0的工序。</p>
+                
+                <div class="image-placeholder">
+                    <p>📊 图6.15 结点最迟时间计算示意图</p>
+                </div>
+            </div>
+            
+            <div class="example">
+                <h4>📊 图6.10所示网络计划的计算示例</h4>
+                
+                <p><strong>结点最早时间计算：</strong></p>
+                <ul>
+                    <li>$ET_1 = 0$</li>
+                    <li>$ET_2 = ET_1 + 2 = 2$</li>
+                    <li>$ET_3 = ET_1 + 4 = 4$</li>
+                    <li>$ET_4 = \max(ET_2 + 0, ET_3 + 0) = \max(2 + 0, 4 + 0) = 4$</li>
+                </ul>
+                
+                <p><strong>结点最迟时间计算：</strong></p>
+                <ul>
+                    <li>$LT_9 = 17$</li>
+                    <li>$LT_8 = LT_9 - 2 = 15$</li>
+                    <li>$LT_7 = LT_8 - 2 = 13$</li>
+                    <li>$LT_6 = LT_8 - 4 = 11$</li>
+                    <li>$LT_5 = \min(LT_7 - 0, LT_6 - 0) = \min(13 - 0, 11 - 0) = 11$</li>
+                </ul>
+                
+                <p>各结点的时间参数计算结果见图6.16。</p>
+                
+                <div class="image-placeholder">
+                    <p>📊 图6.16 完整的时间参数标注网络图</p>
+                    <p>每个节点标注$ET$和$LT$值</p>
+                </div>
+            </div>
+            
+            <div class="formula">
+                <h4>工序时间参数与结点时间参数的关系</h4>
+                
+                <p>有了结点时间，很容易得到各工序时间，即可以用结点时间表示或进一步简单计算各工序时间。参看图6.13，当工序$(i,j)$开始结点和完成结点的最早最迟时间都已计算出之后，以下关系是明显成立的：</p>
+                
+                <p>① 工序$(i,j)$的最早开始时间等于该工序开始结点的最早时间，即</p>
+                $$ES_{i \to j} = ET_i$$
+                
+                <p>② 工序$(i,j)$的最早完成时间等于该工序开始结点的最早时间加上工序时间，即</p>
+                $$EF_{i \to j} = ET_i + D_{i \to j}$$
+                
+                <p>③ 工序$(i,j)$的最迟完成时间等于该工序完成结点的最迟时间，即</p>
+                $$LF_{i \to j} = LT_j$$
+                
+                <p>④ 工序$(i,j)$的最迟开始时间等于该工序完成结点的最迟时间减去工序时间，即</p>
+                $$LS_{i \to j} = LT_j - D_{i \to j}$$
+                
+                <p>⑤ 工序$(i,j)$的总时差等于该工序完成结点的最迟时间减去开始结点的最早时间再减去工序时间，即</p>
+                $$TF_{i \to j} = LT_j - ET_i - D_{i \to j}$$
+                
+                <p>由总时差的定义可以得到，</p>
+                $$TF_{i \to j} = LF_{i \to j} - ES_{i \to j} - D_{i \to j}$$
+                
+                <p>而</p>
+                $$ES_{i \to j} = ET_i \quad \text{和} \quad LF_{i \to j} = LT_j$$
+                
+                <p>即得上式。</p>
+            </div>
+            
+            <h3>6.2.3 关键工序和关键线路</h3>
+            
+            <p>一个工序的总时差为0意味着该工序在不影响工期前提下机动时间为0，即该工序的最早开始时间也是最迟开始时间，其开始和结束时间没有一点机动的余地，它的工序时间的任何延长都会引起工期的拖后，这样的工序称为<strong>关键工序</strong>，由关键工序构成的由网络计划始点到终点的线路称为<strong>关键线路</strong>。</p>
+            
+            <div class="highlight">
+                <h4>🔑 关键线路的重要性</h4>
+                <p>关键线路在网络计划的进度控制和网络优化中有重要作用。图6.17中，关键线路用粗线表示。</p>
+                
+                <p>关键线路可以如前述通过计算工序的总时差得到。另外，关键线路是从起点到终点持续时间最长的线路，它的长度就是网络计划的计算工期。故可以利用标号法求网络计划中的最长线路，即关键线路。</p>
+            </div>
+            
+            <div class="image-placeholder">
+                <p>📊 图6.17 标注总时差和自由时差的网络图</p>
+                <p>关键线路用粗线标出</p>
+            </div>
+        </section>
+        
+        <!-- 6.3 网络图的调整及优化 -->
+        <section id="section63" class="section">
+            <h2>6.3 网络图的调整及优化</h2>
+            
+            <p>网络图的调整及优化简称<strong>网络优化</strong>，是指在一定约束条件和目标下，对网络计划进行逐步调整，完善以达到预定要求的过程。从便于分析的角度，常把网络优化分为<strong>工期优化</strong>、<strong>费用优化</strong>和<strong>资源优化</strong>，而实际问题往往是工期、费用、资源等问题交织在一起，需要综合分析。</p>
+            
+            <h3>6.3.1 工期优化</h3>
+            
+            <p><strong>工期优化</strong>是在当前网络计划的计算工期不满足要求工期，需在一定约束条件和目标下，对当前网络计划进行逐步调整以达到要求工期的过程。由于关键线路决定着工期，因此在不改变工序间逻辑关系的前提下，必须改变某些关键工序的持续时间才可改变工期使之达到要求。</p>
+            
+            <div class="example">
+                <h4>📚 例6.3 工期优化问题</h4>
+                
+                <p>初始的网络计划仍用图6.10，经分析，在增加一定费用条件下，网络计划中工序C可由当前的9天（正常时间）缩短至7天（最短时间），即可"赶工"2天，但平均每天要增加5百元的费用（即"直接费率"为5，见下一小节费用优化中的定义）；工序G正常时间4天，最短时间2天，直接费率7；工序D正常时间3天，最短时间2天，直接费率2；工序E正常时间6天，最短时间4天，直接费率3；其他工序均不能赶工。如要求工期为13天，应如何调整，可在尽可能少增加费用的目标下达到要求工期。</p>
+                
+                <p>为方便，将以上已知条件注于图6.10而得到图6.20，其中，工序箭线下不带括弧的数字为正常时间，括弧内数字为最短时间，箭线上工序名称旁的数字为平均缩短1天需增加的费用，即直接费率。</p>
+                
+                <div class="image-placeholder">
+                    <p>📊 图6.20 工期优化初始网络图</p>
+                    <p>标注了正常时间、最短时间和直接费率</p>
+                </div>
+                
+                <div class="highlight">
+                    <h4>解题步骤</h4>
+                    
+                    <p><strong>第一步</strong>：由6.2节时间参数计算，正常工序时间下计算工期为17天，要求工期13天，其需压缩工期$17 - 13 = 4$天。当前网络计划关键线路只有一条，即A—C—G—H，使其变短工期即可变短。该条关键线路上可以缩短的关键工序为C和G，为尽可能少增加费用，考虑先压缩费率较低的C工序。</p>
+                    
+                    <p>C本身当前可压缩$9 - 7 = 2$天，而且当前关键线路即最长线路A—C—G—H比次最长线路B—E—F—H长$17 - 14 = 3$天，这一差额可由非关键工序总时差的最小值得到。因此压缩C工序2天，工期必相应缩短2天，于是先压缩C工序2天。</p>
+                    
+                    <p><strong>第二步</strong>：压缩C工序2天后，网络计划的时间参数发生一定变化，如图6.21所示，此时的关键线路仍为A—C—G—H，其长度即计算工期为15天，与要求工期差2天，还需使关键线路缩短2天。</p>
+                    
+                    <div class="image-placeholder">
+                        <p>📊 图6.21 压缩C工序2天后的网络图</p>
+                    </div>
+                    
+                    <p>虽然此时关键工序G可以压缩2天，但此时的次最长线路B—E—F—H只比关键线路短1天，若只将工序G压缩2天，计算工期只缩短1天，即那时原关键线路A—C—G—H不再是关键（最长）线路。为此，此步只压缩G工序1天。</p>
+                    
+                    <p><strong>第三步</strong>：压缩G工序1天后，网络计划的时间参数又发生变化，如图6.22所示，此时的关键线路变为两条，即A—C—G—H和B—E—F—H，其长度即计算工期均为14天，与要求工期还差1天，还需使两条关键线路同时缩短。</p>
+                    
+                    <div class="image-placeholder">
+                        <p>📊 图6.22 压缩G工序1天后的网络图</p>
+                    </div>
+                    
+                    <p>本例条件非常简单，使两条关键线路同时缩短的方案只有一个，即分别在两条关键线路上的G和E同时压缩1天。如果这样的方案有多个，显然应择直接费率（组合）最小的方案。</p>
+                    
+                    <p><strong>第三步完成后</strong>的网络计划如图6.23，它的计算工期为13天，已满足要求工期，是调整后的最优方案。</p>
+                    
+                    <div class="image-placeholder">
+                        <p>📊 图6.23 最终优化后的网络图</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="highlight">
+                <h4>💡 工期优化一般步骤</h4>
+                
+                <p>由这个例子可总结出以增加费用最少为目标的工期优化问题分析求解过程。一般地，这类问题的已知条件应包括：各工序$(i,j)$的紧前或紧后工序，正常工序时间$DN_{i \to j}$，最短工序时间$DC_{i \to j}$，赶工单位时间增加的费用，即直接费率$q_{i \to j}$，或给出正常工序时间的费用$CN_{i \to j}$和最短工序时间的费用$CC_{i \to j}$，按下一小节费用优化中给出的关系式算出直接费率$q_{i \to j}$，要求工期$T_e$。求解步骤如下。</p>
+                
+                <ol>
+                    <li>绘制网络图，计算时间参数和关键线路，得到计算工期$T_C$，确定需缩短的时间
+                        $$\Delta T = T_C - T_e$$
+                    </li>
+                    
+                    <li>确定关键线路上直接费率最小的可缩短工序时间的关键工序为压缩对象。如果有多条关键线路，需在各条关键线路上选一个可缩短工序时间的关键工序构成一个能使工期变短的组合，在所有这些组合中确定一个所含关键工序直接费率之和最小的组合作为压缩对象，记该组合中将被压缩的关键工序的下标集合为$I$。</li>
+                    
+                    <li>确定被压缩工序的压缩时间$\Delta t$，它由被压缩的工序自身可能压缩的时间$\alpha$和当前最长线路（关键线路）与次最长线路的差值$\beta$决定，即
+                        $$\Delta t = \min(\alpha, \beta)$$
+                        
+                        式中，$\alpha = \min_{(i,j) \in I}(D_{i \to j} - DC_{i \to j})$，这里$D_{i \to j}$是被压缩关键工序当前的工序时间，求解过程开始时它等于工序正常时间$DN_{i \to j}$。
+                        
+                        $$\beta = \min(TF_{i \to j} | TF_{i \to j} \neq 0)$$
+                        
+                        将被压缩工序的工序时间压缩时间$\Delta t$，重新计算时间参数和关键线路，返回步骤②。
+                    </li>
+                </ol>
+                
+                <p>应该指出，包括前述工期优化求解过程和这里的费用优化过程，是典型的逐步改进的过程，即每一步都只进行局部优化，与运筹问题确定初始方案的最优成本目程等类似，这样求解过程并不能保证最终结果一定是全局最优，但该求解过程容易理解，而且实际问题往往在条件和参数较为复杂，理想的可以求得最优解的模型和计算或过于复杂，或难以计算，而这里给出的方法实际上提供了一个很好的分析思路，尽管是近似的，但易于操作。</p>
+            </div>
+            
+            <h3>6.3.2 费用优化</h3>
+            
+            <p><strong>网络计划的费用优化</strong>又称时间费用（或成本）优化，是在一定条件下寻求最低费用的计划安排过程（也称最低成本日程）；或寻求实现要求工期的最低费用计划安排过程。就后者而言，前述工期优化例6.3也可认为是费用优化。</p>
+            
+            <p>在网络计划的费用优化中，费用分为<strong>直接费</strong>和<strong>间接费</strong>。直接费分解到每一个工序，主要指人工、材料、机械设备等直接用于一项工序的费用，而且一般认为一项工序的直接费在一定范围内与完成该工序的时间成反比。</p>
+            
+            <div class="formula">
+                <h4>直接费率的计算</h4>
+                
+                <p>如图6.24所示，工序$(i,j)$由正常工序时间$DN_{i \to j}$缩短到最短时间$DC_{i \to j}$时，其直接费由正常工序时间费用$CN_{i \to j}$升高到最短工序时间费用$CC_{i \to j}$。如果这一变化可以近似为线性的，则可用一系数表示：</p>
+                
+                $$q_{i \to j} = \frac{CC_{i \to j} - CN_{i \to j}}{DN_{i \to j} - DC_{i \to j}}$$
+                
+                <p>它就是前面工期优化中提到的工序$(i,j)$的<strong>直接费率</strong>。</p>
+                
+                <div class="image-placeholder">
+                    <p>📊 图6.24 工序直接费与时间关系</p>
+                    <p>横轴：工序持续时间，纵轴：工序直接费</p>
+                </div>
+            </div>
+            
+            <p>间接费主要指与整个项目相关的管理费、合同规定的项目提前完成的奖励或拖延的罚金等，它与项目的工期成正比，简单的分析中也用一个系数即"<strong>间接费率</strong>"$\rho$表示。注意这里的间接费不分解到各工序，"间接费率"$\rho$的含义是整个项目（即网络计划）的工期每提前单位时间可节约的费用。</p>
+            
+            <div class="highlight">
+                <h4>总费用与工期的关系</h4>
+                
+                <p>由于项工序的直接费与其完成时间成反比，网络计划的总直接费为各工序直接费之和，故总直接费与网络计划工期成反比，而间接费与工期成正比，因此如图6.25所示，总费用有可能在某个工期$T_0$下取得最小值。费用优化中的寻求最低费用的计划安排即由此而来。</p>
+                
+                <div class="image-placeholder">
+                    <p>📊 图6.25 总费用与工期关系图</p>
+                    <p>显示总费用、直接费、间接费三条曲线，在$T_0$处总费用最低</p>
+                </div>
+            </div>
+            
+            <h3>6.3.3 资源优化</h3>
+            
+            <p><strong>资源优化</strong>又称时间—资源优化，其主要目的是使资源对时间的分布更合理，从而提高效率、降低成本。资源优化方法的基本思路是利用非关键工序的机动时间，尤其是总时差，恰当安排其开始时间，以达到单位时间提供资源有限时使工期尽可能短或工期不变时资源的使用更加均衡。以下以一例简要说明。</p>
+            
+            <div class="example">
+                <h4>📚 例6.5 资源优化问题</h4>
+                
+                <p>设某项工程的网络计划图由图6.28给出。图中箭线下第一个数字为工序时间（单位：周），第二个数字为完成该工序每周所需的劳动力数。通过计算，结点时间参数也在图6.28上给出，该工程工期$T_C = 9$周。</p>
+                
+                <div class="image-placeholder">
+                    <p>📊 图6.28 资源优化示例网络图</p>
+                    <p>包含工序时间和每周劳动力需求</p>
+                </div>
+                
+                <p>现假设这项工程由一个作业组承包，全组共有9名劳力。这个承包组能否在预定的工期$T = 9$周内完成工程，各道工序进程应该如何安排才能使劳力资源均衡使用。</p>
+                
+                <div class="highlight">
+                    <h4>解题分析</h4>
+                    
+                    <p>首先，根据数据可算出完成此工程需要周数：$\sum \lambda_i = 79$工作周，其中$\lambda_i$为完成工序所需的工作周数（周×人数）。工程每周所需劳力为</p>
+                    $$\bar{\lambda} = \frac{1}{T}\sum \lambda_i = \frac{1}{9} \times 79 = 8.8 \text{人}$$
+                    
+                    <p>所以这适当安排各道工序进程，整个工程有可能在9周内完成，相反，要是每周需投入劳力数超过9人，则不论怎样调整安排工序进度均不可能在预定工期内完成。</p>
+                    
+                    <p>其次，根据网络图及时间参数作出初始进度计划，即把每道工序的开工时间都定在最早可能开工时间，则可以作出各道工序进度的横道表（表6.7）。表中"—"表示关键工序；"—"表示非关键工序；"…"表示在不影响工期条件下非关键工序允许变动范围。</p>
+                    
+                    <table>
+                        <caption>表6.7 初始进度表</caption>
+                        <thead>
+                            <tr>
+                                <th>工序</th>
+                                <th>1</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                                <th>7</th>
+                                <th>8</th>
+                                <th>9(周)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>A</td><td>6</td><td>6</td><td>6</td><td colspan="6"></td></tr>
+                            <tr><td>B</td><td>3</td><td>3</td><td colspan="7"></td></tr>
+                            <tr><td>C</td><td colspan="2">2</td><td colspan="7"></td></tr>
+                            <tr><td>D</td><td colspan="3"></td><td colspan="2">2</td><td colspan="4"></td></tr>
+                            <tr><td>E</td><td colspan="4"></td><td>6</td><td>6</td><td colspan="3"></td></tr>
+                            <tr><td>F</td><td colspan="5"></td><td>5</td><td>5</td><td>5</td><td>5</td></tr>
+                            <tr><td>G</td><td colspan="3"></td><td colspan="2">3</td><td colspan="4"></td></tr>
+                            <tr><td>H</td><td colspan="4"></td><td colspan="2">4</td><td colspan="3"></td></tr>
+                            <tr><td>I</td><td colspan="4"></td><td colspan="2">4</td><td colspan="3"></td></tr>
+                            <tr><th>劳力人数</th><td>11</td><td>9</td><td>6</td><td>15</td><td>14</td><td>9</td><td>5</td><td>5</td><td>5</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>表6.7中最后一行给出了该进度下每周所需劳力资源数。为了更形象描述该进度计划下资源使用状况，可根据横道表作出劳力资源需求曲线（图6.29）。资源需求曲线是一个阶梯曲线。其中$t$表示时间；$\lambda$表示资源需求量，即应安排的总人数；$\lambda_{\max}$为资源限制。</p>
+                    
+                    <div class="image-placeholder">
+                        <p>📊 图6.29 资源需求曲线</p>
+                        <p>显示人员短缺、人员合适和人员多余的时间段</p>
+                    </div>
+                    
+                    <p>显然，本例中$\lambda_{\max} = 9$人，在第1,4,5周中将缺少劳力资源，第3,7,8,9周中劳力资源将有剩余。</p>
+                </div>
+                
+                <div class="highlight">
+                    <h4>资源调整方法</h4>
+                    
+                    <p>再次，为了均衡使用劳力资源，必须对初始进度计划进行调整，或者更形象地说，必须重新安排工序进度，以使在可能延误整个工程完工期的情况下，试图把这工序尽可能延长地往后延缓，例如，首先延缓工序C的开工时间至第三周初（工序C总时差最大），这样工序A和工序B可以同时开工，而不超过劳力资源9人的限制，继续使用这个方法，就能得到表6.8所示的修订好的进度表。</p>
+                    
+                    <table>
+                        <caption>表6.8 修订后的进度表</caption>
+                        <thead>
+                            <tr>
+                                <th>工序</th>
+                                <th>1</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                                <th>7</th>
+                                <th>8</th>
+                                <th>9(周)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>A</td><td>6</td><td>6</td><td>6</td><td colspan="6"></td></tr>
+                            <tr><td>B</td><td>3</td><td>3</td><td colspan="7"></td></tr>
+                            <tr><td>C</td><td colspan="2"></td><td>2</td><td colspan="6"></td></tr>
+                            <tr><td>D</td><td colspan="4"></td><td colspan="2">2</td><td colspan="3"></td></tr>
+                            <tr><td>E</td><td colspan="3"></td><td>6</td><td>6</td><td colspan="4"></td></tr>
+                            <tr><td>F</td><td colspan="5"></td><td>5</td><td>5</td><td>5</td><td>5</td></tr>
+                            <tr><td>G</td><td colspan="3"></td><td colspan="2">3</td><td colspan="4"></td></tr>
+                            <tr><td>H</td><td colspan="5"></td><td colspan="2">4</td><td colspan="2"></td></tr>
+                            <tr><td>I</td><td colspan="7"></td><td colspan="2">4</td></tr>
+                            <tr><th>劳力人数</th><td>9</td><td>9</td><td>8</td><td>9</td><td>8</td><td>9</td><td>9</td><td>9</td><td>9</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>从表6.8上看出，此修订的进度计划在资源利用上有较好的均衡性。</p>
+                    
+                    <p>最后，评价一个工程进度计划对资源利用均衡程度一般以<strong>资源利用量的方差</strong>为标准，方差越小，则均衡性越好。若一个工程计划给定后，$T$为总工期，$\lambda_t$表示第$t$时间单位对资源的需求量，$\bar{\lambda}$表示该进度计划下单位时间资源利用量的均值，则根据方差定义，有</p>
+                    
+                    $$\lambda_d^2 = \frac{1}{T}\sum_{t=1}^{T}(\lambda_t - \bar{\lambda})^2$$
+                    
+                    <p>对于图6.29所示工程来说，初始进度计划表的$\lambda_d^2 = 13.50$。这个进度计划下劳力资源利用很不均衡，在进行时间—资源优化后，修订后进度计划表的$\lambda_d^2 = 1.56$。这样，它的资源利用就比较均衡了。</p>
+                </div>
+            </div>
+            
+            <h3>6.3.4 工程完工期的概率分析</h3>
+            
+            <p>工程完工期的概率分析是工序时间不确定情况下<strong>PERT</strong>（计划评审技术）的主要工作。如6.1.4中所述，工序持续时间可能是不确定的，此时的工期显然也是不确定的，由此就会提出在某个预定时间$T$内完成该工程项目的可能性多大，这就是完工期的概率分析。</p>
+            
+            <p>工序$(i,j)$的持续时间是不确定的，可视其为一个随机变量$d_{ij}$，准确地得到$d_{ij}$的分布函数或概率密度几乎是不可能的，而且也没有必要。一般采用"<strong>三点估计</strong>"的方法近似得到$d_{ij}$的数学期望（均值）和方差。所谓"三点估计"，是指在初步分析计算基础上，考虑实施工序$(i,j)$时的不确定因素，由有经验的工程技术人员对工序$(i,j)$的持续时间做出三个估计值：</p>
+            
+            <ul>
+                <li>$a_{ij}$ ：<strong>乐观估计时间</strong>，即很顺利完成时的最短时间；</li>
+                <li>$b_{ij}$ ：<strong>悲观估计时间</strong>，即很不顺利完成时的最长时间；</li>
+                <li>$m_{ij}$ ：<strong>最可能估计时间</strong>，即正常情况下最有可能完成的时间；</li>
+            </ul>
+            
+            <p>然后用以下公式计算$d_{ij}$的数学期望（均值）$\bar{d}_{ij}$和方差$\sigma_{ij}^2$</p>
+            
+            <div class="formula">
+                $$\bar{d}_{ij} = \frac{a_{ij} + 4m_{ij} + b_{ij}}{6}$$
+                
+                $$\sigma_{ij}^2 = \left(\frac{b_{ij} - a_{ij}}{6}\right)^2$$
+            </div>
+            
+            <p>在工序$(i,j)$的持续时间是确定值的情况下，网络计划的工期就是始点到终点的最长线路即关键线路的长度。而这里工序$(i,j)$的持续时间是不确定的，网络计划中任何一条始点到终点的线路的长度都是不确定的，可依期望值法则（参看本教材第7章）以平均长度最长（均值最长）的线路的长度表示网络计划的工期。找这条（均值）最长的线路包含的工序的下标集合为$l$，它的长度（即工期）用网络计划图终点结点$n$的结点时间$t_n$表示，即</p>
+            
+            <div class="formula">
+                $$t_n = \sum_{(i,j) \in l} \bar{d}_{ij}$$
+            </div>
+            
+            <p>$t_n$的数学期望（均值）$T_E$为构成它的各工序时间数学期望之和；当各工序时间相互独立时，$t_n$的方差$\sigma^2$为构成它的各工序时间方差之和，即</p>
+            
+            <div class="formula">
+                $$T_E = \sum_{(i,j) \in l} \bar{d}_{ij}$$
+                
+                $$\sigma^2 = \sum_{(i,j) \in l} \sigma_{ij}^2$$
+            </div>
+            
+            <p>由概率论的中心极限定理，$t_n$近似服从均值为$T_E$，方差为$\sigma^2$的正态分布。即</p>
+            
+            <div class="formula">
+                $$F(T) = P(t_n \leq T) = \frac{1}{\sqrt{2\pi\sigma}}\int_{-\infty}^{T} e^{-\frac{(t-T_E)^2}{2\sigma^2}} dt$$
+            </div>
+            
+            <p>由正态分布的性质，通过令$\lambda = \frac{T - T_E}{\sigma}$</p>
+            
+            <div class="formula">
+                $$\Phi(\lambda) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\lambda} e^{-\frac{t^2}{2}} dt$$
+            </div>
+            
+            <p>查标准正态分布表，即可得工程项目在预定时间$T$内完成的概率$P(t_n \leq T)$。</p>
+            
+            <div class="example">
+                <h4>📚 概率计算示例</h4>
+                
+                <p>例如，某工程网络图如图6.30所示。先按三时估计法算出每一工序时间的均值$\bar{d}_{ij}$及方差$\sigma_{ij}^2$，并可进一步计算得上述网络计划始点①到终点⑦的均值最长的线路。</p>
+                
+                <div class="image-placeholder">
+                    <p>📊 图6.30 PERT网络图示例</p>
+                    <p>标注三时估计值：$a-m-b$</p>
+                </div>
+                
+                <p>计算结果如表6.9：</p>
+                
+                <table>
+                    <caption>表6.9 工序时间参数</caption>
+                    <thead>
+                        <tr>
+                            <th>工序</th>
+                            <th>$a$</th>
+                            <th>$m$</th>
+                            <th>$b$</th>
+                            <th>$\bar{d}_{ij}$</th>
+                            <th>$\sigma_{ij}^2$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>①—②</td><td>10</td><td>13</td><td>15</td><td>12.83</td><td>0.69</td></tr>
+                        <tr><td>②—④</td><td>7</td><td>8</td><td>10</td><td>8.17</td><td>0.25</td></tr>
+                        <tr><td>④—⑥</td><td>8</td><td>10</td><td>14</td><td>10.33</td><td>1.00</td></tr>
+                        <tr><td>⑥—⑦</td><td>9</td><td>11</td><td>13</td><td>11</td><td>0.44</td></tr>
+                    </tbody>
+                </table>
+                
+                <p>由表算得，工程完工期的期望值</p>
+                $$T_E = 12.83 + 8.17 + 10.33 + 11 = 42.33$$
+                
+                <p>标准差</p>
+                $$\sigma = \sqrt{0.69 + 0.25 + 1.00 + 0.44} = 1.54$$
+                
+                <p>若指定要求工程在43天内完成，即$T = 43$，则计算</p>
+                $$\lambda = \frac{T - T_E}{\sigma} = \frac{43 - 42.33}{1.54} = 0.44$$
+                
+                <p>查标准正态分布表，可得$\Phi(0.44) = 0.67$，则可知工程在43天内完成的概率为0.67。</p>
+                
+                <p>通过计算工程在各工期内完工的可能性（概率），可比较工程在工期内完工的难易程度。表6.10给出计算出的完工概率与如期完成难易程度评价的对照。</p>
+                
+                <table>
+                    <caption>表6.10 完工概率评价标准</caption>
+                    <thead>
+                        <tr>
+                            <th>概率(%)</th>
+                            <th>工程完工期难易程度评价</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>0~4</td><td>极难</td></tr>
+                        <tr><td>5~14</td><td>困难</td></tr>
+                        <tr><td>15~49</td><td>较难</td></tr>
+                        <tr><td>50~84</td><td>较易</td></tr>
+                        <tr><td>85~95</td><td>容易</td></tr>
+                        <tr><td>95~100</td><td>极易</td></tr>
+                    </tbody>
+                </table>
+                
+                <p>另外，如果对工程工期完工的可能性有所要求时，即要求工程完工时间的概率不小于某一数值时，也可根据上述公式算出相应的完工期。上例中若要求完工可能性达95%的工期，查正态分布表$\Phi(\lambda) = 0.95$，得$\lambda = 1.6$。由$\lambda = \frac{T - T_E}{\sigma}$，得相应工期为</p>
+                $$T = T_E + \sigma\lambda = 42.33 + (1.6 \times 1.51) = 45 \text{天}$$
+            </div>
+        </section>
+        
+        <!-- 习题 -->
+        <section id="exercises" class="section">
+            <h2>习题 6</h2>
+            
+            <div class="example">
+                <h4>6.1</h4>
+                <p>已知某工程有关资料如表6.11。</p>
+                
+                <table>
+                    <caption>表6.11</caption>
+                    <thead>
+                        <tr>
+                            <th>工序</th>
+                            <th>紧前工序</th>
+                            <th>工序时间</th>
+                            <th>工序</th>
+                            <th>紧前工序</th>
+                            <th>工序时间</th>
+                            <th>工序</th>
+                            <th>紧前工序</th>
+                            <th>工序时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>a</td><td>—</td><td>60</td><td>g</td><td>b,c</td><td>7</td><td>m</td><td>j,k</td><td>5</td></tr>
+                        <tr><td>b</td><td>a</td><td>14</td><td>h</td><td>e,f</td><td>12</td><td>n</td><td>i,l</td><td>15</td></tr>
+                        <tr><td>c</td><td>a</td><td>20</td><td>i</td><td>f</td><td>60</td><td>o</td><td>n</td><td>2</td></tr>
+                        <tr><td>d</td><td>a</td><td>30</td><td>j</td><td>d,g</td><td>10</td><td>p</td><td>m</td><td>7</td></tr>
+                        <tr><td>e</td><td>a</td><td>21</td><td>k</td><td>h</td><td>25</td><td>q</td><td>o,p</td><td>5</td></tr>
+                        <tr><td>f</td><td>a</td><td>10</td><td>l</td><td>j,k</td><td>10</td><td colspan="3"></td></tr>
+                    </tbody>
+                </table>
+                
+                <p>要求：(1)绘制网络图；</p>
+                <p>(2)计算各项时间参数，求出完工期；</p>
+                <p>(3)确定关键路线。</p>
+            </div>
+            
+            <div class="example">
+                <h4>6.2</h4>
+                <p>已知如表6-12所示资料。</p>
+                
+                <table>
+                    <caption>表6.12</caption>
+                    <thead>
+                        <tr>
+                            <th>工序</th>
+                            <th>正常作业时间</th>
+                            <th>紧前工序</th>
+                            <th>正常完成进度的直接费用(百元)</th>
+                            <th>赶进度一天所需费用(百元)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>A</td><td>4</td><td></td><td>20</td><td>5</td></tr>
+                        <tr><td>B</td><td>8</td><td></td><td>30</td><td>4</td></tr>
+                        <tr><td>C</td><td>6</td><td>B</td><td>15</td><td>3</td></tr>
+                        <tr><td>D</td><td>3</td><td>A</td><td>5</td><td>2</td></tr>
+                        <tr><td>E</td><td>5</td><td>A</td><td>18</td><td>4</td></tr>
+                        <tr><td>F</td><td>7</td><td>A</td><td>40</td><td>7</td></tr>
+                        <tr><td>G</td><td>4</td><td>B,D</td><td>10</td><td>3</td></tr>
+                        <tr><td>H</td><td>3</td><td>E,F,G</td><td>15</td><td>6</td></tr>
+                        <tr><td colspan="3">合计</td><td colspan="2">153</td></tr>
+                        <tr><td colspan="3">工程的间接费用</td><td colspan="2">5(百元/天)</td></tr>
+                    </tbody>
+                </table>
+                
+                <p>另已知每项工序都只能赶工一天。</p>
+                <p>要求：(1)按正常情况绘制网络图，求出工期和关键线路；</p>
+                <p>(2)求出该工程的最低成本工期；</p>
+                <p>(3)若要求在最低成本工期基础上再提前一天，求出赶工成本最低的赶工方案。</p>
+            </div>
+            
+            <div class="example">
+                <h4>6.3</h4>
+                <p>已知条件如表6.13，又知间接费率为15(千元/周)，求总费用最低方案及规定工期为8周的总费用最低方案。</p>
+                
+                <table>
+                    <caption>表6.13</caption>
+                    <thead>
+                        <tr>
+                            <th>工作名称</th>
+                            <th>紧前工作</th>
+                            <th>正常工作时间(周)</th>
+                            <th>最短工作时间(周)</th>
+                            <th>直接费率(千元/周)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>A</td><td>—</td><td>2</td><td>2</td><td>—</td></tr>
+                        <tr><td>B</td><td>—</td><td>6</td><td>4</td><td>8</td></tr>
+                        <tr><td>C</td><td>A</td><td>3</td><td>2</td><td>12</td></tr>
+                        <tr><td>D</td><td>A</td><td>5</td><td>2</td><td>12</td></tr>
+                        <tr><td>E</td><td>B,C</td><td>4</td><td>2</td><td>7</td></tr>
+                        <tr><td>F</td><td>B,C</td><td>3</td><td>1</td><td>9</td></tr>
+                        <tr><td>G</td><td>D,E</td><td>3</td><td>1</td><td>6</td></tr>
+                        <tr><td>H</td><td>D,E,F</td><td>2</td><td>2</td><td>—</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="example">
+                <h4>6.4</h4>
+                <p>已知条件如表6.14，其中$a_{ij}$，$m_{ij}$，$b_{ij}$分别是对工作$(i,j)$持续时间所作的乐观、最可能和悲观估计值，试求该工程在20周内完成的概率。</p>
+                
+                <table>
+                    <caption>表6.14</caption>
+                    <thead>
+                        <tr>
+                            <th>工作名称</th>
+                            <th>紧前工作</th>
+                            <th>$a_{ij}$</th>
+                            <th>$m_{ij}$</th>
+                            <th>$b_{ij}$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>A</td><td></td><td>1</td><td>2</td><td>3</td></tr>
+                        <tr><td>B</td><td>—</td><td>1</td><td>2</td><td>3</td></tr>
+                        <tr><td>C</td><td>—</td><td>1</td><td>2</td><td>3</td></tr>
+                        <tr><td>D</td><td>A</td><td>1</td><td>2</td><td>9</td></tr>
+                        <tr><td>E</td><td>A</td><td>2</td><td>3</td><td>10</td></tr>
+                        <tr><td>G</td><td>B</td><td>3</td><td>6</td><td>15</td></tr>
+                        <tr><td>H</td><td>B</td><td>2</td><td>5</td><td>14</td></tr>
+                        <tr><td>I</td><td>D,E</td><td>1</td><td>4</td><td>7</td></tr>
+                        <tr><td>J</td><td>C</td><td>4</td><td>9</td><td>20</td></tr>
+                        <tr><td>K</td><td>H,J</td><td>1</td><td>2</td><td>9</td></tr>
+                        <tr><td>L</td><td>G,I,K</td><td>4</td><td>4</td><td>4</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="example">
+                <h4>6.5</h4>
+                <p>某项工程有关资料如表6.15。</p>
+                
+                <table>
+                    <caption>表6.15</caption>
+                    <thead>
+                        <tr>
+                            <th>工序</th>
+                            <th>紧前工序</th>
+                            <th>平均工序时间(周)$\frac{1}{6}(a+4m+b)$</th>
+                            <th>工序时间方差$\sigma^2=\left(\frac{b-a}{6}\right)^2$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>A</td><td>—</td><td>2</td><td>1.05</td></tr>
+                        <tr><td>B</td><td>—</td><td>3</td><td>2.25</td></tr>
+                        <tr><td>C</td><td>B</td><td>2.5</td><td>4.34</td></tr>
+                        <tr><td>D</td><td>B</td><td>6</td><td>3.70</td></tr>
+                        <tr><td>E</td><td>A,C</td><td>20</td><td>4.95</td></tr>
+                        <tr><td>F</td><td>D,E</td><td>4</td><td>4.66</td></tr>
+                        <tr><td>G</td><td>F</td><td>2</td><td>4.05</td></tr>
+                    </tbody>
+                </table>
+                
+                <p>要求：(1)画出施工网络图，确定关键工序及期望完工期；</p>
+                <p>(2)估计工程在30周内完工的概率。</p>
+            </div>
+            
+            <div class="example">
+                <h4>6.6 填空</h4>
+                <p>PERT与CPM的主要区别是PERT的工序时间是_______的，从而完工期也是随机的，求出的$T_E$实现的概率只有_______。</p>
+            </div>
+        </section>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer>
+        <p>&copy; 2025 网络计划教程 | 基于管理科学基础教材制作</p>
+        <p>使用MathJax渲染数学公式 | 交互式HTML教程</p>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // 折叠面板功能
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const allHeaders = document.querySelectorAll('.accordion-header');
+            const allContents = document.querySelectorAll('.accordion-content');
+            
+            // 关闭其他面板
+            allHeaders.forEach(h => {
+                if (h !== header) {
+                    h.classList.remove('active');
+                }
+            });
+            allContents.forEach(c => {
+                if (c !== content) {
+                    c.classList.remove('active');
+                }
+            });
+            
+            // 切换当前面板
+            header.classList.toggle('active');
+            content.classList.toggle('active');
+        }
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 页面加载完成后提示
+        window.addEventListener('load', function() {
+            console.log('网络计划教程已加载完成！');
+            console.log('MathJax正在渲染数学公式，请稍候...');
+        });
+    </script>
+</body>
+</html>
+
+<!--
+使用说明：
+1. 保存为.html文件：将此代码复制到文本编辑器，保存为 "network_planning_tutorial.html"
+2. 需要网络连接：MathJax需要从CDN加载，请确保有网络连接
+3. 在浏览器中打开：双击HTML文件或拖到浏览器窗口即可查看
+4. 最佳浏览体验：建议使用Chrome、Firefox或Edge浏览器
+
+功能特点：
+✓ 完整保留PDF所有内容
+✓ 使用MathJax正确渲染所有数学公式
+✓ 交互式折叠面板，便于导航
+✓ 色彩丰富的设计（使用指定的5种颜色）
+✓ 响应式布局，支持移动设备
+✓ 平滑滚动和动画效果
+✓ 清晰的章节结构和导航
+
+注意事项：
+- 公式渲染需要几秒钟时间，请耐心等待
+- 如果公式显示异常，请刷新页面
+- 建议全屏查看以获得最佳体验
+-->

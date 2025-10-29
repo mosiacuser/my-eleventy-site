@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线性规划 - 管理科学基础交互式教程</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+
+<!-- MathJax Configuration -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            displayMath: [['$$','$$'], ['\\[','\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        "HTML-CSS": {
+            availableFonts: ["TeX"],
+            linebreaks: { automatic: true },
+            scale: 110
+        },
+        displayAlign: "center"
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    :root {
+        --primary-orange: #f27d00;
+        --primary-green: #a6d6c9;
+        --primary-yellow: #f7d117;
+        --primary-white: #ffffff;
+        --primary-dark: #343434;
+        --light-gray: #f5f5f5;
+    }
+    
+    body {
+        font-family: 'Noto Sans SC', sans-serif;
+        line-height: 1.8;
+        color: var(--primary-dark);
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+    
+    /* Header */
+    header {
+        background: linear-gradient(135deg, var(--primary-orange) 0%, #d96b00 100%);
+        color: var(--primary-white);
+        padding: 2rem 0;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+    
+    /* Navigation */
+    nav {
+        position: sticky;
+        top: 0;
+        background: var(--primary-dark);
+        padding: 1rem 0;
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    nav li {
+        margin: 0.5rem 1rem;
+    }
+    
+    nav a {
+        color: var(--primary-white);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        transition: all 0.3s;
+        display: block;
+    }
+    
+    nav a:hover {
+        background: var(--primary-orange);
+        transform: translateY(-2px);
+    }
+    
+    /* Container */
+    .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+    
+    /* Section */
+    section {
+        background: var(--primary-white);
+        margin: 2rem 0;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        animation: fadeIn 0.5s;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Headings */
+    h2 {
+        color: var(--primary-orange);
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        border-bottom: 3px solid var(--primary-green);
+        padding-bottom: 0.5rem;
+    }
+    
+    h3 {
+        color: var(--primary-dark);
+        font-size: 1.5rem;
+        margin: 1.5rem 0 1rem 0;
+        padding-left: 1rem;
+        border-left: 4px solid var(--primary-yellow);
+    }
+    
+    h4 {
+        color: var(--primary-orange);
+        font-size: 1.2rem;
+        margin: 1rem 0 0.5rem 0;
+    }
+    
+    /* Paragraphs */
+    p {
+        margin: 1rem 0;
+        text-align: justify;
+    }
+    
+    /* Lists */
+    ul, ol {
+        margin: 1rem 0;
+        padding-left: 2rem;
+    }
+    
+    li {
+        margin: 0.5rem 0;
+    }
+    
+    /* Tables */
+    .table-container {
+        overflow-x: auto;
+        margin: 1.5rem 0;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--primary-white);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    th {
+        background: linear-gradient(135deg, var(--primary-orange) 0%, #d96b00 100%);
+        color: var(--primary-white);
+        padding: 1rem;
+        text-align: center;
+        font-weight: 700;
+    }
+    
+    td {
+        padding: 0.8rem;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+    
+    tr:nth-child(even) {
+        background: var(--light-gray);
+    }
+    
+    tr:hover {
+        background: var(--primary-green);
+        transition: background 0.3s;
+    }
+    
+    /* Example boxes */
+    .example {
+        background: linear-gradient(135deg, #fff9e6 0%, #ffedcc 100%);
+        border-left: 5px solid var(--primary-yellow);
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border-radius: 5px;
+    }
+    
+    .example-title {
+        color: var(--primary-orange);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Solution boxes */
+    .solution {
+        background: linear-gradient(135deg, #e6f7f1 0%, #ccf0e6 100%);
+        border-left: 5px solid var(--primary-green);
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border-radius: 5px;
+    }
+    
+    .solution-title {
+        color: var(--primary-dark);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Formula display */
+    .formula-display {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border-radius: 5px;
+        border: 2px dashed var(--primary-orange);
+        overflow-x: auto;
+    }
+    
+    /* Code blocks */
+    .code-block {
+        background: var(--primary-dark);
+        color: var(--primary-green);
+        padding: 1rem;
+        border-radius: 5px;
+        font-family: 'Roboto Mono', monospace;
+        overflow-x: auto;
+        margin: 1rem 0;
+    }
+    
+    /* Accordion */
+    details {
+        background: var(--light-gray);
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 5px;
+        border: 2px solid var(--primary-green);
+    }
+    
+    summary {
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--primary-orange);
+        padding: 0.5rem;
+        transition: all 0.3s;
+    }
+    
+    summary:hover {
+        background: var(--primary-green);
+        border-radius: 5px;
+    }
+    
+    details[open] summary {
+        margin-bottom: 1rem;
+        border-bottom: 2px solid var(--primary-orange);
+    }
+    
+    /* Highlight box */
+    .highlight {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffe5a1 100%);
+        border: 2px solid var(--primary-yellow);
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 5px;
+    }
+    
+    .highlight strong {
+        color: var(--primary-orange);
+    }
+    
+    /* Image placeholder */
+    .image-placeholder {
+        background: var(--primary-green);
+        color: var(--primary-dark);
+        padding: 3rem;
+        text-align: center;
+        border-radius: 10px;
+        margin: 1.5rem 0;
+        border: 3px dashed var(--primary-orange);
+    }
+    
+    /* Button */
+    .btn {
+        background: var(--primary-orange);
+        color: var(--primary-white);
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s;
+        display: inline-block;
+        text-decoration: none;
+        margin: 0.5rem;
+    }
+    
+    .btn:hover {
+        background: #d96b00;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    /* Footer */
+    footer {
+        background: var(--primary-dark);
+        color: var(--primary-white);
+        text-align: center;
+        padding: 2rem;
+        margin-top: 3rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        header h1 {
+            font-size: 1.8rem;
+        }
+        
+        nav ul {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            padding: 0 1rem;
+        }
+        
+        section {
+            padding: 1rem;
+        }
+        
+        table {
+            font-size: 0.9rem;
+        }
+    }
+    
+    /* MathJax styling */
+    .mjx-chtml {
+        font-size: 1.1em !important;
+    }
+    
+    /* Matrix styling */
+    .matrix-container {
+        display: flex;
+        justify-content: center;
+        margin: 1.5rem 0;
+    }
+</style>
+</head>
+<body>
+    <header>
+        <h1>📊 线性规划技术</h1>
+        <p>管理科学基础 - 第二章</p>
+    </header>
+<nav>
+    <ul>
+        <li><a href="#intro">引言</a></li>
+        <li><a href="#model">模型与图解法</a></li>
+        <li><a href="#simplex">单纯形法</a></li>
+        <li><a href="#dual">对偶与灵敏度</a></li>
+        <li><a href="#transport">运输问题</a></li>
+        <li><a href="#integer">整数规划</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <!-- 2.1 线性规划的模型与图解法 -->
+    <section id="model">
+        <h2>2.1 线性规划的模型与图解法</h2>
+        
+        <h3>2.1.1 线性规划的问题与模型</h3>
+        
+        <p>要想在工农业生产、交通运输、商业贸易等各方面提高效益，有两种途径：一是革新技术；二是改进生产组织与计划，即合理安排有限的人力和物力资源，最合理地组织生产过程。数学规划能够为更好地配置资源、组织生产提供理论和方法，包括线性规划、非线性规划、整数规划、多目标规划等很多分支。其中<strong>线性规划</strong>是在现代管理中应用最广、理论比较完善的一个部分。随着电子计算机的发展，数学规划在现代化管理中的重要性日益明显。</p>
+        
+        <div class="example">
+            <div class="example-title">📋 例2.1 生产计划问题</div>
+            <p>某工厂计划生产甲、乙两种产品，生产1 kg甲产品需耗煤9 t、电力4 kW·h、油3 t；生产1 kg乙产品需耗煤4 t、电力5 kW·h、油10 t。该工厂现有煤360 t、电力200 kW·h、油300 t。已知甲产品每千克售价为7万元，乙产品每千克售价为12万元。在上述条件下决定生产方案，使总收入最大，具体数据如表2.1所示。</p>
+            
+            <div class="table-container">
+                <table>
+                    <caption><strong>表2.1</strong></caption>
+                    <thead>
+                        <tr>
+                            <th>资源 \ 产品</th>
+                            <th>甲</th>
+                            <th>乙</th>
+                            <th>资源限量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>煤(t)</td>
+                            <td>9</td>
+                            <td>4</td>
+                            <td>360</td>
+                        </tr>
+                        <tr>
+                            <td>电(kW·h)</td>
+                            <td>4</td>
+                            <td>5</td>
+                            <td>200</td>
+                        </tr>
+                        <tr>
+                            <td>油(t)</td>
+                            <td>3</td>
+                            <td>10</td>
+                            <td>300</td>
+                        </tr>
+                        <tr>
+                            <td>单位价格(万元)</td>
+                            <td>7</td>
+                            <td>12</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="solution">
+                <div class="solution-title">💡 建立数学模型</div>
+                <p>为求解上述问题，设 $x_1$ 为甲产品生产量，$x_2$ 为乙产品生产量，称 $x_1$ 和 $x_2$ 为决策变量，向量 $[x_1 \quad x_2]^T$ 表示一个生产方案，称之为决策变量向量，简称决策变量。由于煤、电、油资源的限制，生产方案 $[x_1 \quad x_2]^T$ 的取值也必受到一定限制。例如，采取生产方案 $[x_1 \quad x_2]^T$，耗煤总量为 $9x_1 + 4x_2$，它不能超过煤资源总量。这样所取的生产方案 $[x_1 \quad x_2]^T$ 必须满足条件</p>
+                
+                <div class="formula-display">
+                    $$9x_1 + 4x_2 \leq 360 \quad \text{(煤资源限制)}$$
+                </div>
+                
+                <p>同样，$[x_1 \quad x_2]^T$ 必须满足条件</p>
+                
+                <div class="formula-display">
+                    $$4x_1 + 5x_2 \leq 200 \quad \text{(电资源限制)}$$
+                    $$3x_1 + 10x_2 \leq 300 \quad \text{(油资源限制)}$$
+                </div>
+                
+                <p>同时，$x_1$ 和 $x_2$ 不能取负数，即须满足</p>
+                
+                <div class="formula-display">
+                    $$x_1 \geq 0, \quad x_2 \geq 0 \quad \text{(非负限制)}$$
+                </div>
+                
+                <p>所以，一个可行生产方案 $[x_1 \quad x_2]^T$ 必须满足条件</p>
+                
+                <div class="formula-display">
+                    $$\begin{cases}
+                    9x_1 + 4x_2 \leq 360 \\
+                    4x_1 + 5x_2 \leq 200 \\
+                    3x_1 + 10x_2 \leq 300 \\
+                    x_1 \geq 0, x_2 \geq 0
+                    \end{cases} \tag{2.1}$$
+                </div>
+                
+                <p>式(2.1)称为一组约束条件。</p>
+                
+                <p>对于每一个可行生产方案 $[x_1 \quad x_2]^T$，均有一个由这个方案产生的总收入 $z$ 与之对应，即有</p>
+                
+                <div class="formula-display">
+                    $$[x_1 \quad x_2]^T \to z = 7x_1 + 12x_2$$
+                </div>
+                
+                <p>称 $z = 7x_1 + 12x_2$ 为目标函数，并由它衡量各生产方案的优劣。</p>
+                
+                <p>综上所述，对问题1求解最优方案的问题可由下列数学模型描述：</p>
+                
+                <div class="formula-display">
+                    $$\max \ z = 7x_1 + 12x_2$$
+                    $$\text{s.t.} \begin{cases}
+                    9x_1 + 4x_2 \leq 360 \\
+                    4x_1 + 5x_2 \leq 200 \\
+                    3x_1 + 10x_2 \leq 300 \\
+                    x_1 \geq 0, x_2 \geq 0
+                    \end{cases} \tag{2.2}$$
+                </div>
+            </div>
+        </div>
+        
+        <p>式(2.2)表示在所有满足约束条件式(2.1)的可行方案 $[x_1 \quad x_2]^T$ 中，去寻找收入 $z$ 最大的方案 $[x_1^* \quad x_2^*]^T$。其中的 s.t. 是约束条件的符号，也可以省略。式(2.2)称为<strong>线性规划模型</strong>，它由三个基本要素组成：①决策变量 $\mathbf{X} = [x_1 \quad x_2]^T$，表示一个方案；②约束条件式(2.1)，表示决策变量必须满足的条件；③目标函数 $z = 7x_1 + 12x_2$，表示决策变量 $[x_1 \quad x_2]^T$ 优劣的数量指标。</p>
+        
+        <div class="highlight">
+            <p><strong>💡 关键概念：</strong>由于式(2.2)中目标函数与约束条件均是线性的，所以称此模型为线性规划模型。</p>
+        </div>
+        
+        <h3>2.1.2 线性规划的图解法</h3>
+        
+        <p>对于只有两个变量的线性规划问题，可以直接用图解法求解。图解法比较直观，而且对一般问题的解法很有启发作用。</p>
+        
+        <p>图解法可分为两步进行。第一步，根据约束条件画出与约束条件相应方程的直线，由这些直线共同确定的区域即为可行解的区域（满足约束条件的决策变量集合）；第二步，画出目标函数的等值线，然后平行移动至与可行区域边界"相切"之点，此点即为最优点，相应的坐标 $[x_1 \quad x_2]^T$ 即为最优解。</p>
+        
+        <div class="example">
+            <div class="example-title">📊 图解法示例</div>
+            <p>以问题1为例说明，式(2.2)的约束中每个不等式都表示一个半平面。第一步画出这些半平面的分界直线，即</p>
+            
+            <div class="formula-display">
+                $$9x_1 + 4x_2 = 360$$
+                $$4x_1 + 5x_2 = 200$$
+                $$3x_1 + 10x_2 = 300$$
+            </div>
+            
+            <p>确定它们与 $x_1 \geq 0, x_2 \geq 0$ 共同围成的部分即为可行域（即画影线部分），如图2.1所示。</p>
+            
+            <div class="image-placeholder">
+                <p>📐 <strong>图2.1 可行域与最优解示意图</strong></p>
+                <p>坐标系显示三条约束线交叉形成的可行域（阴影区域）</p>
+                <p>目标函数等值线 $7x_1 + 12x_2 = k$ 平移找到最优点D(20, 24)</p>
+            </div>
+            
+            <p>第二步，作目标函数等值线 $7x_1 + 12x_2 = k$，沿 $k$ 增大方向平行移动，与可行域"相切"于 $D$ 点，故点 $D$ 为最优点。求解两直线之交点，即解方程组</p>
+            
+            <div class="formula-display">
+                $$\begin{cases}
+                4x_1 + 5x_2 = 200 \\
+                3x_1 + 10x_2 = 300
+                \end{cases}$$
+            </div>
+            
+            <p>得 $D$ 的坐标为 $x_1 = 20, x_2 = 24$，即 $\mathbf{X}^* = [20 \quad 24]^T$ 为最优生产方案，最大收入为</p>
+            
+            <div class="formula-display">
+                $$z^* = (7 \times 20) + (12 \times 24) = 428$$
+            </div>
+        </div>
+        
+        <details>
+            <summary>🔍 点击展开：图解法可能出现的4种情况</summary>
+            <div style="padding: 1rem;">
+                <ol>
+                    <li><strong>有唯一最优解</strong>（图2.1）：目标函数等值线"相切"于约束集合的一个角点 $D$，则 $D$ 点是线性规划问题的唯一最优解；</li>
+                    <li><strong>有多个最优解</strong>（图2.2）：目标函数等值线平行于一条约束边界，则此边上所有点都是最优解；</li>
+                    <li><strong>有可行解，但没有使目标值为有限的最优解</strong>，无限最优解，也称无界解（图2.3）；</li>
+                    <li><strong>无可行解</strong>（图2.4）：约束集合是空集，即无可行解。</li>
+                </ol>
+            </div>
+        </details>
+        
+        <div class="highlight">
+            <p><strong>⭐ 重要结论：</strong>图解法只能用于两个变量的情况，但从图解法能得到两个重要结论：</p>
+            <ol>
+                <li>线性规划的约束集合是<strong>凸多面体</strong>；</li>
+                <li>线性规划若有最优解，则<strong>最优解一定在凸多面体的角点（顶点）上达到</strong>。</li>
+            </ol>
+            <p>这样，问题就转化为从有限多个角点中去寻找最优点，使原来从所有可行解中去寻找最优解的工作大大简化。线性规划的单纯形解法的依据就是这两个结论。</p>
+        </div>
+    </section>
+    
+    <!-- 2.2 单纯形法 -->
+    <section id="simplex">
+        <h2>2.2 单纯形法</h2>
+        
+        <h3>2.2.1 单纯形法的原理与基本概念</h3>
+        
+        <p><strong>单纯形法</strong>（simplex method）是由美国数学家 G.B. Dantzig 于1947年提出的，到目前为止，它仍是线性规划问题最有效的解法。单纯形法是一种迭代算法。它利用线性规划最优解在可行域角点上得到这一结论，首先确定一个初始角点，用某种法则判别它是否是最优解。若不是最优解，则设法去寻找一个更好的角点。所谓"更好"的角点是指新角点的目标函数值比旧角点的目标函数值大。由于角点个数是有限的，经过有限次迭代（寻找更好角点）后必定达到最优点。这样，单纯形法就需要解决4个问题：①可行域的角点有什么特征？②如何确定第一个角点？③如何判定一个角点是否是最优？④如何从一个角点出发去寻找更好的角点？</p>
+        
+        <p>单纯形法要求先将模型化为<strong>标准型</strong>。把最大化、等式约束型的线性规划称为线性规划的标准型，即</p>
+        
+        <div class="formula-display">
+            $$\max \ z = c_1x_1 + c_2x_2 + \cdots + c_nx_n$$
+            $$\begin{cases}
+            a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n = b_1 \\
+            a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n = b_2 \\
+            \vdots \\
+            a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n = b_m \\
+            x_j \geq 0, j = 1,2,\cdots,n
+            \end{cases} \tag{2.3}$$
+        </div>
+        
+        <p>标准型的矩阵形式为</p>
+        
+        <div class="formula-display">
+            $$\max \ z = \mathbf{CX}$$
+            $$\begin{cases}
+            \mathbf{AX} = \mathbf{b} \\
+            \mathbf{X} \geq \mathbf{0}
+            \end{cases}$$
+        </div>
+        
+        <p>其中 $\mathbf{C} = [c_1 \quad c_2 \quad \cdots \quad c_n]$，$\mathbf{X} = [x_1 \quad x_2 \quad \cdots \quad x_n]^T$，$\mathbf{b} = [b_1 \quad b_2 \quad \cdots \quad b_m]^T$，</p>
+        
+        <div class="matrix-container">
+            <div class="formula-display">
+                $$\mathbf{A} = \begin{bmatrix}
+                a_{11} & a_{12} & \cdots & a_{1n} \\
+                a_{21} & a_{22} & \cdots & a_{2n} \\
+                \vdots & \vdots & & \vdots \\
+                a_{m1} & a_{m2} & \cdots & a_{mn}
+                \end{bmatrix}$$
+            </div>
+        </div>
+        
+        <p>习惯上称 $\mathbf{C}$ 为价格系数向量；$\mathbf{b}$ 为资源向量，标准型中设 $\mathbf{b} \geq \mathbf{0}$；$\mathbf{A}$ 为技术系数矩阵。</p>
+        
+        <div class="highlight">
+            <p><strong>📌 标准化转换规则：</strong>各种非标准形式的线性规划都可以通过适当的变换化为等价的标准型问题。具体做法如下：</p>
+        </div>
+        
+        <details>
+            <summary>🔄 点击展开：标准化转换方法</summary>
+            <div style="padding: 1rem;">
+                <h4>①原问题目标函数求极小，可以改变目标函数的符号，然后求极大</h4>
+                <p>例如，原问题 $\min z = 2x_1 + 4x_2$ 可化为 $\max z' = -2x_1 - 4x_2$</p>
+                
+                <h4>②对"≤"约束，可添加松弛变量构成新的等式约束</h4>
+                <p>例如，对约束 $9x_1 + 4x_2 \leq 360$，添加松弛变量 $x_3 \geq 0$，构成等式约束</p>
+                <div class="formula-display">
+                    $$9x_1 + 4x_2 + x_3 = 360$$
+                </div>
+                <p>目标函数中松弛变量 $x_3$ 的价格系数 $c_3 = 0$。</p>
+                
+                <h4>③对"≥"约束，可减去一个剩余变量构成等式约束</h4>
+                <p>例如，对约束 $5x_1 - 2x_2 \geq 2$，减去剩余变量 $x_4 \geq 0$，构成等式约束</p>
+                <div class="formula-display">
+                    $$5x_1 - 2x_2 - x_4 = 2$$
+                </div>
+                <p>同样，剩余变量的价格系数 $c_4 = 0$。相对于松弛或剩余变量，原有的变量也可称为结构变量。</p>
+                
+                <h4>④对原问题中所含的 $x_j$ 不限制取非负值由称之为自由变量，并可进行变换</h4>
+                <div class="formula-display">
+                    $$x_j = x_j' - x_j'', \quad x_j' \geq 0, x_j'' \geq 0$$
+                </div>
+                <p>代入原问题的目标函数及约束条件中，化成一个不含自由变量的线性规划问题。</p>
+            </div>
+        </details>
+        
+        <div class="example">
+            <div class="example-title">📋 例2.6 标准化示例</div>
+            <p>对线性规划式(2.2)，添加松弛变量 $x_3 \geq 0, x_4 \geq 0, x_5 \geq 0$，相应 $c_3 = c_4 = c_5 = 0$，得标准型</p>
+            
+            <div class="formula-display">
+                $$\max \ z = 7x_1 + 12x_2$$
+                $$\begin{cases}
+                9x_1 + 4x_2 + x_3 & = 360 \\
+                4x_1 + 5x_2 + x_4 & = 200 \\
+                3x_1 + 10x_2 + x_5 & = 300 \\
+                x_j \geq 0, j = 1,2,\cdots,5
+                \end{cases} \tag{2.4}$$
+            </div>
+            
+            <p>标准型式(2.4)与原问题式(2.2)是等价的。在此例中不难理解，松弛变量的实际意义是剩余的资源。</p>
+        </div>
+        
+        <h4>🔑 基本概念介绍</h4>
+        
+        <details>
+            <summary>1. 基与基变量</summary>
+            <div style="padding: 1rem;">
+                <p>若 $\mathbf{P}_{j_1}, \mathbf{P}_{j_2}, \cdots, \mathbf{P}_{j_m}$ 是 $\mathbf{A} = [\mathbf{P}_1 \quad \mathbf{P}_2 \quad \cdots \quad \mathbf{P}_n]$ 中 $m$ 个线性无关的列，则称方阵</p>
+                <div class="formula-display">
+                    $$\mathbf{B} = [\mathbf{P}_{j_1} \quad \mathbf{P}_{j_2} \quad \cdots \quad \mathbf{P}_{j_m}]$$
+                </div>
+                <p>为一个<strong>基</strong>，称其余列构成的矩阵为<strong>非基</strong>向量矩阵，记为 $\mathbf{N}$。</p>
+                
+                <p>基 $\mathbf{B}$ 中各列对应的变量称为<strong>基变量</strong>，记为</p>
+                <div class="formula-display">
+                    $$\mathbf{X_B} = [x_{j_1} \quad x_{j_2} \quad \cdots \quad x_{j_m}]^T$$
+                </div>
+                
+                <p>其余对应于非基矩阵各列的变量称为<strong>非基变量</strong>，记为 $\mathbf{X_N}$。例如，在标准型问题式(2.4)中有</p>
+                
+                <div class="formula-display">
+                    $$\mathbf{A} = \begin{bmatrix}
+                    9 & 4 & 1 & 0 & 0 \\
+                    4 & 5 & 0 & 1 & 0 \\
+                    3 & 10 & 0 & 0 & 1
+                    \end{bmatrix} = [\mathbf{P}_1 \quad \mathbf{P}_2 \quad \mathbf{P}_3 \quad \mathbf{P}_4 \quad \mathbf{P}_5]$$
+                </div>
+            </div>
+        </details>
+        
+        <details>
+            <summary>2. 基本解与基本可行解</summary>
+            <div style="padding: 1rem;">
+                <p>对于确定的一个基 $\mathbf{B}$，能由基 $\mathbf{B}$ 去确定约束方程 $\mathbf{AX} = \mathbf{b}$ 的一个解。为了叙述方便，假设基 $\mathbf{B}$ 是选择由 $\mathbf{A}$ 的前 $m$ 列组成（不失一般性），即有</p>
+                <div class="formula-display">
+                    $$\mathbf{B} = [\mathbf{P}_1 \quad \mathbf{P}_2 \quad \cdots \quad \mathbf{P}_m], \quad \mathbf{N} = [\mathbf{P}_{m+1} \quad \mathbf{P}_{m+2} \quad \cdots \quad \mathbf{P}_n]$$
+                </div>
+                
+                <p>约束方程 $\mathbf{AX} = \mathbf{b}$ 可表示为</p>
+                <div class="formula-display">
+                    $$[\mathbf{B} \quad \mathbf{N}]\begin{bmatrix} \mathbf{X_B} \\ \mathbf{X_N} \end{bmatrix} = \mathbf{b}$$
+                </div>
+                
+                <p>其中 $\mathbf{A} = [\mathbf{B} \quad \mathbf{N}]$，$\mathbf{X} = \begin{bmatrix} \mathbf{X_B} \\ \mathbf{X_N} \end{bmatrix}$，进一步有</p>
+                <div class="formula-display">
+                    $$\mathbf{BX_B} + \mathbf{NX_N} = \mathbf{b}$$
+                    $$\mathbf{X_B} = \mathbf{B}^{-1}\mathbf{b} - \mathbf{B}^{-1}\mathbf{NX_N} \tag{2.5}$$
+                </div>
+                
+                <p>令非基变量 $\mathbf{X_N} = [x_{m+1} \quad x_{m+2} \quad \cdots \quad x_n]^T = \mathbf{0}$，有</p>
+                <div class="formula-display">
+                    $$\mathbf{X_B} = \mathbf{B}^{-1}\mathbf{b} = \begin{bmatrix} b'_1 \\ b'_2 \\ \vdots \\ b'_m \end{bmatrix}$$
+                </div>
+                
+                <p>这样，由基 $\mathbf{B}$ 确定了方程 $\mathbf{AX} = \mathbf{b}$ 的一个解</p>
+                <div class="formula-display">
+                    $$\mathbf{X} = \begin{bmatrix} \mathbf{B}^{-1}\mathbf{b} \\ \mathbf{0} \end{bmatrix} = [b'_1 \quad b'_2 \quad \cdots \quad b'_m \quad 0 \quad \cdots \quad 0]^T$$
+                </div>
+                
+                <p>称这个解为一个<strong>基本解</strong>。若它进一步满足非负约束 $x_j \geq 0(j=1,2,\cdots,n)$，即满足</p>
+                <div class="formula-display">
+                    $$\mathbf{B}^{-1}\mathbf{b} = [b'_1 \quad b'_2 \quad \cdots \quad b'_m]^T \geq \mathbf{0}$$
+                </div>
+                
+                <p>则称这个解是一个<strong>基本可行解</strong>，称基 $\mathbf{B}$ 为<strong>可行基</strong>。</p>
+                
+                <div class="highlight">
+                    <p><strong>⭐ 重要定理：</strong>可以证明，线性规划可行域角点的坐标恰好是一个基本可行解，即角点与基本可行解是一一对应的，在角点中寻找最优点即可转化为在所有基本可行解中去寻找最优解。因此，只需考虑所有基本可行解就够了。</p>
+                </div>
+            </div>
+        </details>
+        
+        <h3>2.2.2 单纯形法的步骤</h3>
+        
+        <p>单纯形法是一个迭代算法，它主要由三步组成，见图2.5。方法的前提是模型已化为标准型。</p>
+        
+        <div class="image-placeholder">
+            <p>🔄 <strong>图2.5 单纯形法流程图</strong></p>
+            <p>确定初始基本可行解 → 检验其是否最优 → 是：输出；否：寻找更好的基本可行解</p>
+        </div>
+        
+        <details open>
+            <summary><strong>步骤1：确定一个初始基本可行解</strong></summary>
+            <div style="padding: 1rem;">
+                <p>先对原问题添加松弛变量化为标准型，即</p>
+                <div class="formula-display">
+                    $$\max \ z = \mathbf{CX}$$
+                    $$\mathbf{AX} = \mathbf{b}$$
+                    $$\mathbf{X} \geq \mathbf{0}$$
+                </div>
+                
+                <p>若系数矩阵 $\mathbf{A}$ 中含单位矩阵 $\mathbf{I}$，则取初始基 $\mathbf{B_0} = \mathbf{I}$，由此初始基 $\mathbf{B_0}$ 可得初始基本可行解</p>
+                <div class="formula-display">
+                    $$\mathbf{X_{B_0}} = \mathbf{B_0}^{-1}\mathbf{b} = \mathbf{b}^*, \quad \mathbf{X_{N_0}} = \mathbf{0}$$
+                </div>
+                
+                <p>若 $\mathbf{A}$ 中不含单位矩阵 $\mathbf{I}$，则可由以后介绍的大M法确定一个初始基本可行解。</p>
+            </div>
+        </details>
+        
+        <details open>
+            <summary><strong>步骤2：检验一个基本可行解是否最优</strong></summary>
+            <div style="padding: 1rem;">
+                <p>对于给定的可行基 $\mathbf{B}$，相应基本可行解为 $\mathbf{X_B} = \mathbf{B}^{-1}\mathbf{b}$，$\mathbf{X_N} = \mathbf{0}$。而由式(2.5)知，基变量 $\mathbf{X_B}$ 可由非基变量 $\mathbf{X_N}$ 线性表示为</p>
+                <div class="formula-display">
+                    $$\mathbf{X_B} = \mathbf{B}^{-1}\mathbf{b} - \mathbf{B}^{-1}\mathbf{NX_N}$$
+                </div>
+                
+                <p>代入目标函数 $z = \mathbf{CX} = \mathbf{C_BX_B} + \mathbf{C_NX_N}$ 得</p>
+                <div class="formula-display">
+                    $$z = \mathbf{C_B}\mathbf{B}^{-1}\mathbf{b} + (\mathbf{C_N} - \mathbf{C_B}\mathbf{B}^{-1}\mathbf{N})\mathbf{X_N} \tag{2.6}$$
+                </div>
+                
+                <p>其中 $\mathbf{C_B}$ 为基变量 $\mathbf{X_B} = [x_{B_1} \quad x_{B_2} \quad \cdots \quad x_{B_m}]^T$ 在目标函数中的系数，即</p>
+                <div class="formula-display">
+                    $$\mathbf{C_B} = [c_{B_1} \quad c_{B_2} \quad \cdots \quad c_{B_m}]$$
+                </div>
+                
+                <p>而 $\mathbf{C_N}$ 为由非基变量 $\mathbf{X_N}$ 在目标函数中系数构成的向量。</p>
+                
+                <p>从式(2.6)可知，当向量 $\mathbf{C_N} - \mathbf{C_B}\mathbf{B}^{-1}\mathbf{N} \leq \mathbf{0}$ 时，对应于这个基本可行解 $\mathbf{X_B} = \mathbf{B}^{-1}\mathbf{b} = [b'_{B_1} \quad b'_{B_2} \quad \cdots \quad b'_{B_m}]^T$，$\mathbf{X_N} = \mathbf{0}$ 的目标函数值 $z = \mathbf{C_B}\mathbf{B}^{-1}\mathbf{b}$ 为最大，即这个基本可行解为最优解。向量 $\mathbf{C_N} - \mathbf{C_B}\mathbf{B}^{-1}\mathbf{N}$ 为判别是否最优的检验向量。因此，对给定的一个可行基 $\mathbf{B}$（即给定一个基本可行解 $\mathbf{X_B} = \mathbf{B}^{-1}\mathbf{b}$，$\mathbf{X_N} = \mathbf{0}$），判别它是否最优，只需计算每一非基变量 $x_j$ 的检验数（检验向量 $\mathbf{C_N} - \mathbf{C_B}\mathbf{B}^{-1}\mathbf{N}$ 的每一分量）</p>
+                <div class="formula-display">
+                    $$\sigma_j = c_j - \mathbf{C_B}\mathbf{B}^{-1}\mathbf{P_j}$$
+                </div>
+                
+                <p>式中，$c_j$ 为非基变量 $x_j$ 的价格系数；$\mathbf{P_j}$ 为 $\mathbf{A}$ 中对应于非基变量 $x_j$ 之列向量。若所有 $\sigma_j \leq 0$，这个基本可行解为最优，反之；若有某一检验数 $\sigma_k > 0$，则此解一定不是最优。同时可以证明，若某 $\sigma_k > 0$，而相应 $\mathbf{B}^{-1}\mathbf{P_k} \leq \mathbf{0}$（每个分量≤0）时，原问题没有有限最优解。若讨论的线性规划是 min 型，则当所有 $\sigma_j \geq 0$ 时为最优。</p>
+            </div>
+        </details>
+        
+        <details open>
+            <summary><strong>步骤3：寻找一个更好的基本可行解</strong></summary>
+            <div style="padding: 1rem;">
+                <p>对于一个基本可行解 $\mathbf{X_B} = \mathbf{B}^{-1}\mathbf{b}$，$\mathbf{X_N} = \mathbf{0}$，经第二步检验不是最优解，则需寻找一个更好的基本可行解，即去寻找一个新的可行基 $\mathbf{B}$。$\mathbf{B}$ 的选择是在基 $\mathbf{B}$ 的基础上进行的。假设 $\mathbf{B} = [\mathbf{P}_1 \quad \cdots \quad \mathbf{P}_l \quad \cdots \quad \mathbf{P}_m]$，$\mathbf{N} = [\mathbf{P}_{m+1} \quad \mathbf{P}_{m+2} \quad \cdots \quad \mathbf{P}_n]$，新可行基 $\mathbf{B}$ 是由从原非基阵 $\mathbf{N}$ 中选择一列 $\mathbf{P_k}$ 去代换原基 $\mathbf{B}$ 中的某一列 $\mathbf{P_l}$ 而得（一般地，基并不一定是由 $\mathbf{A}$ 中前 $m$ 列组成，则出基 $\mathbf{P_l}$ 和进基 $\mathbf{P_k}$ 也不一定是 $\mathbf{A}$ 中原第 $l$ 和 $k$ 列），即</p>
+                <div class="formula-display">
+                    $$\mathbf{B} = [\mathbf{P}_1 \quad \cdots \quad \mathbf{P}_k \quad \cdots \quad \mathbf{P}_m]$$
+                </div>
+                
+                <p>新基 $\mathbf{B}$ 与旧基 $\mathbf{B}$ 仅有一列不同，问题是如何选择进基列 $\mathbf{P_k}$ 和出基列 $\mathbf{P_l}$，使得构成的新基 $\mathbf{B}$ 是一个可行基，而且相应基本可行解的目标函数值上升。</p>
+                
+                <p>首先决定进基列 $\mathbf{P_k}$，计算所有非基变量的检验数</p>
+                <div class="formula-display">
+                    $$\max\{\sigma_j > 0\} = \sigma_k$$
+                </div>
+                
+                <p>则选择相应的列 $\mathbf{P_k}$ 作为进基列。</p>
+                
+                <p>然后选择出基列 $\mathbf{P_l}$，计算</p>
+                <div class="formula-display">
+                    $$\theta = \min_i\left[\frac{(\mathbf{B}^{-1}\mathbf{b})_i}{(\mathbf{B}^{-1}\mathbf{P_k})_i}, (\mathbf{B}^{-1}\mathbf{P_k})_i > 0\right] = \frac{(\mathbf{B}^{-1}\mathbf{b})_l}{(\mathbf{B}^{-1}\mathbf{P_k})_l} = \frac{b'_l}{a'_{lk}}$$
+                </div>
+                
+                <p>式中，$\mathbf{B}^{-1}\mathbf{b} = \begin{bmatrix} b'_1 \\ b'_2 \\ \vdots \\ b'_m \end{bmatrix}$，$\mathbf{B}^{-1}\mathbf{P_k} = \begin{bmatrix} a'_{1k} \\ a'_{2k} \\ \vdots \\ a'_{mk} \end{bmatrix}$。这样选择的出基列为 $\mathbf{P_l}$。</p>
+                
+                <p>可以证明，依这样的法则得到的新基</p>
+                <div class="formula-display">
+                    $$\mathbf{B} = [\mathbf{P}_1 \quad \cdots \quad \mathbf{P}_k \quad \cdots \quad \mathbf{P}_m]$$
+                </div>
+                
+                <p>是一个可行基，而且相应的目标函数值上升。其新基本可行解 $\mathbf{X_B} = \mathbf{B}^{-1}\mathbf{b}$，$\mathbf{X_N} = \mathbf{0}$，转入第二步检验。</p>
+            </div>
+        </details>
+        
+        <h3>2.2.3 单纯形表</h3>
+        
+        <p>上述计算步骤可以通过制作单纯形表在表上计算完成。对每个确定的可行基 $\mathbf{B}$ 可作出一个单纯形表，如表2.3所示。</p>
+        
+        <div class="table-container">
+            <table>
+                <caption><strong>表2.3 单纯形表格式</strong></caption>
+                <thead>
+                    <tr>
+                        <th>$\mathbf{C_B}$</th>
+                        <th>$\mathbf{X_B}$</th>
+                        <th>$\mathbf{B}^{-1}\mathbf{b}$</th>
+                        <th>$c_1$<br>$x_1$</th>
+                        <th>$c_2$<br>$x_2$</th>
+                        <th>$\cdots$<br>$\cdots$</th>
+                        <th>$c_n$<br>$x_n$</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>$c_{B_1}$</td>
+                        <td>$x_{B_1}$</td>
+                        <td>$b'_1$</td>
+                        <td>$a'_{11}$</td>
+                        <td>$a'_{12}$</td>
+                        <td>$\cdots$</td>
+                        <td>$a'_{1n}$</td>
+                    </tr>
+                    <tr>
+                        <td>$c_{B_2}$</td>
+                        <td>$x_{B_2}$</td>
+                        <td>$b'_2$</td>
+                        <td>$a'_{21}$</td>
+                        <td>$a'_{22}$</td>
+                        <td>$\cdots$</td>
+                        <td>$a'_{2n}$</td>
+                    </tr>
+                    <tr>
+                        <td>$\vdots$</td>
+                        <td>$\vdots$</td>
+                        <td>$\vdots$</td>
+                        <td>$\vdots$</td>
+                        <td>$\vdots$</td>
+                        <td></td>
+                        <td>$\vdots$</td>
+                    </tr>
+                    <tr>
+                        <td>$c_{B_m}$</td>
+                        <td>$x_{B_m}$</td>
+                        <td>$b'_m$</td>
+                        <td>$a'_{m1}$</td>
+                        <td>$a'_{m2}$</td>
+                        <td>$\cdots$</td>
+                        <td>$a'_{mn}$</td>
+                    </tr>
+                    <tr style="background: #ffe5a1; font-weight: bold;">
+                        <td colspan="3">检验数 $\sigma_j = c_j - \mathbf{C_B}\mathbf{B}^{-1}\mathbf{P_j}$</td>
+                        <td>$\sigma_1$</td>
+                        <td>$\sigma_2$</td>
+                        <td>$\cdots$</td>
+                        <td>$\sigma_n$</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <p>单纯形表中的表头 $\mathbf{X_B}$ 下填确定的基变量名，$\mathbf{C_B}$ 下填相应的基变量价格系数，$\mathbf{B}^{-1}\mathbf{b}$ 下填基本可行解中基变量之解值（非基变量为零）。</p>
+        
+        <div class="highlight">
+            <p><strong>📊 单纯形表的计算规则：</strong></p>
+            <p>在每个基的单纯形表上能完成三件事：</p>
+            <ol>
+                <li>确定对应于基的基本可行解，即 $\mathbf{X_B} = \mathbf{B}^{-1}\mathbf{b}$；</li>
+                <li>计算检验数行值，判断当前解是否最优；</li>
+                <li>可由表上确定进基变量 $x_k$，出基变量 $x_l$（确定主元 $a'_{lk}$），从而确定一个新的更好的基。</li>
+            </ol>
+        </div>
+        
+        <button class="btn" onclick="alert('💡 提示：单纯形法的详细计算过程需要多次迭代，每次迭代都要更新单纯形表。初学者建议多做练习来熟悉这个过程！')">💡 学习提示</button>
+    </section>
+    
+    <!-- 2.3 对偶问题与灵敏度分析 -->
+    <section id="dual">
+        <h2>2.3 对偶问题与灵敏度分析</h2>
+        
+        <h3>2.3.1 线性规划的对偶问题</h3>
+        
+        <h4>1. 对偶问题的定义</h4>
+        
+        <div class="example">
+            <div class="example-title">📋 问题2：价格制定问题</div>
+            <p>对于问题1，假设某一公司欲购买这个工厂的全部资源（煤、电、油），公司提出的价格为 $y_1$（煤）、$y_2$（电）、$y_3$（油）。该公司希望确定一组价格，一方面使工厂能接受这价格而同意出售资源，另一方面又使公司购买这些资源的总成本最低。这样一个寻求最优价格的问题可由另一个线性规划确定，即</p>
+            
+            <div class="formula-display">
+                $$\min \ w = 360y_1 + 200y_2 + 300y_3 \quad \text{(总成本)}$$
+                $$\begin{cases}
+                9y_1 + 4y_2 + 3y_3 \geq 7 \\
+                4y_1 + 5y_2 + 10y_3 \geq 12 \\
+                y_1, y_2, y_3 \geq 0
+                \end{cases} \tag{2.7}$$
+            </div>
+            
+            <p>（价格 $y_1, y_2, y_3$ 为厂方能接受的水平）</p>
+        </div>
+        
+        <p>在这个线性规划中，决策变量 $[y_1 \quad y_2 \quad y_3]^T$，分别表示购买煤、电、油之单价，目标函数为购买工厂煤、电、油资源的总成本，而约束条件表示厂方能接受的价格所必须满足的条件，即厂方按这个价格出售单位产品所需资源的收入，必须不低于工厂用这些资源自己生产产品所得的收入，只有这样的价格工厂才会接受，同意出售自己的资源。</p>
+        
+        <div class="highlight">
+            <p><strong>🔄 对偶关系：</strong>问题1和问题2无论从经济意义上或者是在数学形式上都是紧密相连的。从经济上看，问题1是寻找最优生产方案，以获得最大收入；问题2是寻找最优价格使总成本最低。从数学模型的形式上看，它们也是关联的，比较两模型如下：</p>
+        </div>
+        
+        <div class="table-container">
+            <table style="width: 80%; margin: 1.5rem auto;">
+                <tr>
+                    <td style="text-align: center;"><strong>问题1 式(2.2)</strong></td>
+                    <td style="text-align: center;"><strong>问题2 式(2.7)</strong></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">价格系数 ←</td>
+                    <td style="text-align: center;">→ 资源向量</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">资源向量 ←</td>
+                    <td style="text-align: center;">→ 价格系数</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">最大化 ←</td>
+                    <td style="text-align: center;">→ 最小化</td>
+                </tr>
+            </table>
+        </div>
+        
+        <p>把线性规划(2.2)称为原问题，而把线性规划(2.7)称为其对偶问题。如果设对偶变量 $\mathbf{Y}$ 为 $m$ 维行向量，其一般式为</p>
+        
+        <div class="formula-display">
+            $$\begin{array}{c|c}
+            \text{原问题(P)} & \text{对偶问题(D)} \\
+            \hline
+            \max \ z = \mathbf{CX} & \min \ w = \mathbf{Yb} \\
+            \mathbf{AX} \leq \mathbf{b} & \mathbf{YA} \geq \mathbf{C} \\
+            \mathbf{X} \geq \mathbf{0} & \mathbf{Y} \geq \mathbf{0}
+            \end{array}$$
+        </div>
+        
+        <div class="highlight">
+            <p><strong>⭐ 对偶定理：</strong></p>
+            <ol>
+                <li><strong>对称性</strong>：一个线性规划的对偶问题的对偶问题恰是原问题。</li>
+                <li><strong>弱对偶性</strong>：假设 $\mathbf{X}$ 是原规划(P)的任一可行解，$\mathbf{Y}$ 是对偶规划(D)的任一可行解，则有 $\mathbf{CX} \leq \mathbf{YAX} \leq \mathbf{Yb}$。</li>
+                <li><strong>无界性</strong>：若原问题（对偶问题）为无界解，则其对偶问题（原问题）无可行解（逆命题不成立）。</li>
+                <li><strong>强对偶性</strong>：原规划有最优解，则对偶规划也有最优解，且最优值相同。</li>
+                <li><strong>互补松弛性</strong>：在线性规划问题的最优解中，若对应某一约束条件的对偶变量值为非零，则该约束条件取严格等式；另一方面，如果约束条件取严格不等式，则此对应的对偶变量一定为零。</li>
+            </ol>
+        </div>
+        
+        <h3>2.3.2 灵敏度分析</h3>
+        
+        <p>线性规划方法的应用可分成三步：第一步对实际问题进行细致分析，建立合适的线性规划模型；第二步求解这个线性规划模型；第三步对已求出的最优解进行分析。对管理决策者来讲，在求出最优解后，继续进行第三步工作是极为重要的，因为在求解线性规划时都是系数 $\mathbf{A}$、$\mathbf{b}$、$\mathbf{C}$ 作为确定元素考虑。实际上，这些系数往往是变化的，例如市场条件变化会使价格系数 $\mathbf{C}$ 改变，技术革新会改变系数矩阵 $\mathbf{A}$。所谓灵敏度分析工作就是分析系数 $\mathbf{A}$、$\mathbf{b}$、$\mathbf{C}$ 的变化对已得到的最优解有何影响。这里只讨论几种简单情况。</p>
+        
+        <details>
+            <summary><strong>1. 资源向量 $\mathbf{b}$ 的分量 $b_i$ 变化的分析</strong></summary>
+            <div style="padding: 1rem;">
+                <p>主要分析 $b_i$ 在什么范围内变化不影响最优基。以问题1为例，考虑电资源 $b_2$ 在何范围内变化时不影响最优基？设 $b_2$ 变为 $b_2 + \Delta$，有</p>
+                
+                <div class="formula-display">
+                    $$\mathbf{b} = \begin{bmatrix} 360 \\ 200 \\ 300 \end{bmatrix} \to \tilde{\mathbf{b}} = \begin{bmatrix} 360 \\ 200 + \Delta \\ 300 \end{bmatrix}$$
+                </div>
+                
+                <p>由于 $\mathbf{b}$ 值变化并不改变检验数 $\sigma_j = c_j - \mathbf{C_B}\mathbf{B}^{-1}\mathbf{P_j}$ 的值，只可能破坏非负条件，因此只要 $\mathbf{b}$ 变成 $\tilde{\mathbf{b}}$ 后，仍然满足非负条件，即有 $\mathbf{B}^{-1}\tilde{\mathbf{b}} \geq \mathbf{0}$</p>
+                
+                <p>则原有的最优基 $\mathbf{B}$ 仍是 $\mathbf{b}$ 变化后条件下的最优基。从问题1终表中知，松弛变量 $x_3, x_4, x_5$ 下元素列为</p>
+                
+                <div class="formula-display">
+                    $$[\mathbf{P}'_3 \quad \mathbf{P}'_4 \quad \mathbf{P}'_5] = \mathbf{B}_2^{-1}[\mathbf{P}_3 \quad \mathbf{P}_4 \quad \mathbf{P}_5] = \mathbf{B}_2^{-1}\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix} = \mathbf{B}_2^{-1}$$
+                </div>
+                
+                <p>即知最优基 $\mathbf{B}_2$ 的逆为</p>
+                
+                <div class="formula-display">
+                    $$\mathbf{B}_2^{-1} = [\mathbf{P}'_3 \quad \mathbf{P}'_4 \quad \mathbf{P}'_5] = \begin{bmatrix} 1 & -3.12 & -1.16 \\ 0 & 0.40 & -0.2 \\ 0 & -0.12 & 0.16 \end{bmatrix}$$
+                </div>
+                
+                <p>为保持非负约束 $\mathbf{B}^{-1}\tilde{\mathbf{b}} \geq \mathbf{0}$，有</p>
+                
+                <div class="formula-display">
+                    $$\begin{bmatrix} 1 & -3.12 & 1.16 \\ 0 & 0.40 & -0.20 \\ 0 & -0.12 & 0.16 \end{bmatrix}\begin{bmatrix} 360 \\ 200 + \Delta \\ 300 \end{bmatrix} \geq \mathbf{0}$$
+                </div>
+                
+                <p>即为</p>
+                
+                <div class="formula-display">
+                    $$\begin{cases}
+                    84 - 3.12\Delta \geq 0 \\
+                    20 + 0.40\Delta \geq 0 \\
+                    24 - 0.12\Delta \geq 0
+                    \end{cases}$$
+                </div>
+                
+                <p>由此得，$-50 \leq \Delta \leq 27$ 或 $150 \leq b_2 \leq 227$。</p>
+                
+                <p>这样就得知，当电资源在150至227之间变化时，原来的方案中，基 $\mathbf{B}_2 = [\mathbf{P}_3 \quad \mathbf{P}_1 \quad \mathbf{P}_2]$ 仍是最优基。</p>
+            </div>
+        </details>
+        
+        <details>
+            <summary><strong>2. 价格系数 $c_j$ 变化的分析</strong></summary>
+            <div style="padding: 1rem;">
+                <p>根据 $c_j$ 对应的变量，在终表中是基变量还是非基变量，分别讨论它们的变化对解的影响。先考虑 $c_j$ 对应基变量的情况。仍考虑问题1，目标函数 $z = 7x_1 + 12x_2$。现设 $c_1$ 由7变化至 $7 + \Delta$，$c_2$ 不变。由于 $c_1$ 是基变量 $x_1$ 之系数，$c_1$ 的变化将影响各检验数，然而并不破坏非负条件 $\mathbf{B}_2^{-1}\mathbf{b} \geq \mathbf{0}$。</p>
+                
+                <p>考虑变化后非基变量检验数，有</p>
+                
+                <div class="formula-display">
+                    $$\tilde{\sigma}_4 = c_4 - \mathbf{C_{B_2}}\mathbf{B}_2^{-1}\mathbf{P_4} = 0 - [0 \quad 7+\Delta \quad 12]\begin{bmatrix} -3.12 \\ 0.40 \\ -0.12 \end{bmatrix} = -1.36 - 0.40\Delta$$
+                </div>
+                
+                <div class="formula-display">
+                    $$\tilde{\sigma}_5 = c_5 - \mathbf{C_{B_2}}\mathbf{B}_2^{-1}\mathbf{P_5} = 0 - [0 \quad 7+\Delta \quad 12]\begin{bmatrix} -1.16 \\ -0.20 \\ 0.16 \end{bmatrix} = -0.52 + 0.20\Delta$$
+                </div>
+                
+                <p>为保证原解仍是最优解，必使 $\tilde{\sigma}_4 \leq 0, \tilde{\sigma}_5 \leq 0$，即</p>
+                
+                <div class="formula-display">
+                    $$\begin{cases}
+                    -1.36 - 0.40\Delta \leq 0 \\
+                    -0.52 + 0.20\Delta \leq 0
+                    \end{cases}$$
+                </div>
+                
+                <p>由此得 $-3.4 \leq \Delta \leq 2.6$，即 $3.6 \leq c_1 \leq 9.6$</p>
+                
+                <p>在这个范围内，最优解不变。</p>
+            </div>
+        </details>
+        
+        <div class="highlight">
+            <p><strong>💰 影子价格（Shadow Price）的经济意义：</strong></p>
+            <p>影子价格在经济管理中的用处很多。一般说来，它可以提供以下几个方面的信息，这里仍以例2.16中的数字说明。</p>
+            <ol>
+                <li>影子价格可以<strong>告诉决策者，增加哪一种资源对增加经济效益最有利</strong>。如本例中的三种资源影子价格为0、1、3，说明首先应考虑增加第三种资源，因为相比之下它能使收益增加最多。</li>
+                <li>影子价格可以<strong>告诉决策者，用多大的代价增加资源才是合算的</strong>。如第三种资源每增加一个单位能使收益增加3，如果增加这种资源的代价大于3就不划算了。</li>
+                <li>告诉决策者<strong>应如何考虑新产品的价格</strong>。企业要生产一种新产品时，如果每件新产品耗用的这三种资源数量是1、2、3单位，则新产品的定价一定要大于 $[0 \quad 1 \quad 3]\begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix} = 11$ 才能增加公司的收益，如售价低于11的话，生产是不划算的。</li>
+                <li><strong>使决策者知道产品价格变动时哪些资源最为可贵</strong>，哪些无关紧要。如上述例子中，产品的售价不是[5 4]而是[5 5]，则从单纯形表格中可以算出影子价格将从[0 1 3]改变为 $[0 \quad 5 \quad 5]\begin{bmatrix} 1 \\ 2 \\ -5 \\ 0 \\ -1 \\ 2 \end{bmatrix} = [0 \quad 0 \quad 5]$，这说明如第二种产品增加价格的话，资源3将变得更"宝贵"了。</li>
+                <li><strong>可以帮助分析工艺改变后对资源节约的收益</strong>。如工艺过程改进后使第三种资源能节约2%，则带来的经济收益将是 $3 \times 45 \times 2\% = 2.7$。</li>
+            </ol>
+        </div>
+    </section>
+    
+    <!-- 2.4 运输问题 -->
+    <section id="transport">
+        <h2>2.4 运输问题</h2>
+        
+        <h3>2.4.1 运输问题的一般模型</h3>
+        
+        <p>运输问题就是研究如何制定最合理的物资调运方案，使总运输费用最低。运输问题模型不仅适用于物资运输，也同样适用于其他类似问题。</p>
+        
+        <p>运输问题的一般模型可由图2.6表示。其中有 $m$ 个生产地点（产地）可以供应物资，用 $\mathbf{A}_i(i=1,2,\cdots,m)$ 表示。有 $n$ 个消费地点（销地）需要物资，用 $\mathbf{B}_j(j=1,2,\cdots,n)$ 表示。又知产地 $\mathbf{A}_i$ 的产量为 $a_i$，销地 $\mathbf{B}_j$ 的销量（需求量）为 $b_j$，从 $\mathbf{A}_i$ 到 $\mathbf{B}_j$ 的单位运价为 $c_{ij}$。</p>
+        
+        <div class="image-placeholder">
+            <p>🚚 <strong>图2.6 运输问题网络示意图</strong></p>
+            <p>左侧：产地 A₁, A₂, ..., Aₘ（供应量 a₁, a₂, ..., aₘ）</p>
+            <p>右侧：销地 B₁, B₂, ..., Bₙ（需求量 b₁, b₂, ..., bₙ）</p>
+            <p>中间：连线表示从Aᵢ到Bⱼ的运输路线，标注单位运价 cᵢⱼ</p>
+        </div>
+        
+        <p>在运输问题模型中，总产量 $\sum_{i=1}^{m}a_i$ 等于总销量 $\sum_{j=1}^{n}b_j$ 时，称为产销平衡问题。实际工作中，常用产销平衡表（表2.20）和单位运价表（表2.21）描述这类问题。</p>
+        
+        <div class="table-container">
+            <table>
+                <caption><strong>表2.20 产销平衡表</strong></caption>
+                <thead>
+                    <tr>
+                        <th>产地 \ 销地</th>
+                        <th>B₁</th>
+                        <th>B₂</th>
+                        <th>⋯</th>
+                        <th>Bₙ</th>
+                        <th>产量</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>A₁</td>
+                        <td>$x_{11}$</td>
+                        <td>$x_{12}$</td>
+                        <td>⋯</td>
+                        <td>$x_{1n}$</td>
+                        <td>$a_1$</td>
+                    </tr>
+                    <tr>
+                        <td>A₂</td>
+                        <td>$x_{21}$</td>
+                        <td>$x_{22}$</td>
+                        <td>⋯</td>
+                        <td>$x_{2n}$</td>
+                        <td>$a_2$</td>
+                    </tr>
+                    <tr>
+                        <td>⋮</td>
+                        <td>⋮</td>
+                        <td>⋮</td>
+                        <td></td>
+                        <td>⋮</td>
+                        <td>⋮</td>
+                    </tr>
+                    <tr>
+                        <td>Aₘ</td>
+                        <td>$x_{m1}$</td>
+                        <td>$x_{m2}$</td>
+                        <td>⋯</td>
+                        <td>$x_{mn}$</td>
+                        <td>$a_m$</td>
+                    </tr>
+                    <tr style="font-weight: bold;">
+                        <td>销量</td>
+                        <td>$b_1$</td>
+                        <td>$b_2$</td>
+                        <td>⋯</td>
+                        <td>$b_n$</td>
+                        <td>$\sum_{i=1}^{m}a_i = \sum_{j=1}^{n}b_j$</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <p>用 $x_{ij}$ 表示从 $\mathbf{A}_i$ 运往 $\mathbf{B}_j$ 的运输量。在产销平衡条件下，运输问题的数学模型为</p>
+        
+        <div class="formula-display">
+            $$\min \ z = \sum_{i=1}^{m}\sum_{j=1}^{n}c_{ij}x_{ij}$$
+            $$\begin{cases}
+            \sum_{j=1}^{n}x_{ij} = a_i \quad (i=1,2,\cdots,m) \\
+            \sum_{i=1}^{m}x_{ij} = b_j \quad (j=1,2,\cdots,n) \\
+            x_{ij} \geq 0 \quad (i=1,\cdots,m; j=1,\cdots,n)
+            \end{cases} \tag{2.8}$$
+        </div>
+        
+        <p>其中 $\sum_{i=1}^{m}a_i = \sum_{j=1}^{n}b_j$</p>
+        
+        <p>显然这是一个线性规划问题，可以用单纯形法求解。由于这个线性规划自身结构的特殊性，它的系数矩阵中每列只有两个元素为1，其余均为零。因此，可以用更为方便的特殊方法处理。下面介绍的表上作业法就是解决运输问题的常用方法。</p>
+        
+        <h3>2.4.2 表上作业法</h3>
+        
+        <p>表上作业法类似于单纯形法，也分为三步进行：</p>
+        
+        <ul>
+            <li><strong>第一步</strong>，确定一个初始可行调运方案。常用的方法有最小元素法、西北角法等；</li>
+            <li><strong>第二步</strong>，判别当前可行方案是否最优。常用方法有闭回路法和位势法，用这两种方法计算出检验数，从而判别方案是否最优；</li>
+            <li><strong>第三步</strong>，方案调整，即从当前方案出发去寻找另一个更好的调运方案。</li>
+        </ul>
+        
+        <div class="highlight">
+            <p><strong>🎯 关键技巧：</strong>表上作业法的核心是在运价表上直接进行迭代计算，避免了单纯形法中复杂的矩阵运算。每次迭代只需要确定：</p>
+            <ol>
+                <li>哪个格子的货物量应该增加（入基变量）</li>
+                <li>哪个格子的货物量应该减少到零（出基变量）</li>
+                <li>调整量是多少</li>
+            </ol>
+        </div>
+        
+        <details>
+            <summary>📊 点击展开：闭回路法详解</summary>
+            <div style="padding: 1rem;">
+                <p>对方案表中每一空格，确定一条由空格出发的闭回路。闭回路是由水平或垂直线组成的闭合图形。闭回路上的顶点除了这个空格外，其余均为有数格。例如，在上述表2.24确定的方案表(一)中，空格 $x_{11}$ 出发的闭回路为</p>
+                
+                <div class="formula-display">
+                    $$x_{11} - x_{13} - x_{23} - x_{21} - x_{11}$$
+                </div>
+                
+                <p>可以证明，对每一个空格都存在而且唯一存在这样一条封闭回路。在表2.25确定的方案表(一)中各空格的封闭回路为</p>
+                
+                <ul>
+                    <li>$x_{11} - x_{13} - x_{23} - x_{21} - x_{11}$</li>
+                    <li>$x_{12} - x_{14} - x_{34} - x_{32} - x_{12}$</li>
+                    <li>$x_{22} - x_{23} - x_{13} - x_{14} - x_{34} - x_{32} - x_{22}$</li>
+                    <li>$x_{24} - x_{23} - x_{13} - x_{14} - x_{24}$</li>
+                </ul>
+                
+                <p>由各封闭回路可计算各空格的检验数 $\sigma_{ij}$。它等于其闭回路上奇数顶点运价与偶数顶点运价之和，在本例中有</p>
+                
+                <div class="formula-display">
+                    $$\sigma_{11} = c_{11} - c_{13} + c_{23} - c_{21} = 1$$
+                    $$\sigma_{12} = c_{12} - c_{14} + c_{34} - c_{32} = 2$$
+                    $$\sigma_{22} = c_{22} - c_{23} + c_{13} - c_{14} + c_{34} - c_{32} = 1$$
+                    $$\sigma_{24} = c_{24} - c_{23} + c_{13} - c_{14} = -1$$
+                </div>
+                
+                <p>式中 $c_{ij}$ 为封闭回路顶点 $x_{ij}$ 位置上的单位运价。这样得到了方案表(一)的检验数表(一)(表2.26)。</p>
+            </div>
+        </details>
+        
+        <button class="btn" onclick="alert('💡 提示：运输问题的表上作业法是线性规划单纯形法的一个特例，但由于其特殊的矩阵结构，可以大大简化计算！')">💡 学习提示</button>
+    </section>
+    
+    <!-- 2.5 线性整数规划 -->
+    <section id="integer">
+        <h2>2.5 线性整数规划</h2>
+        
+        <p>前面讨论的线性规划中的决策变量都是连续的。然而，许多实际问题中，决策变量往往只能取整数值，例如人数、次数、个数等的变量，把限制部分决策变量或全部决策变量只能取整数的线性规划称为<strong>线性整数规划</strong>，简称<strong>整数规划</strong>（Integer Programming），或简称<strong>IP问题</strong>。线性整数规划的一般形式为</p>
+        
+        <div class="formula-display">
+            $$\max \ z = \sum_{j=1}^{n}c_jx_j$$
+            $$\begin{cases}
+            \sum_{j=1}^{n}a_{ij}x_j = b_i \quad (i=1,2,\cdots,m) \\
+            x_j \geq 0 \quad (j=1,2,\cdots,n) \\
+            x_j \text{ 为整数（部分或全部）}
+            \end{cases}$$
+        </div>
+        
+        <p>整数规划一般可分成三类：</p>
+        <ul>
+            <li><strong>1) 纯整数规划</strong>：全部决策变量都限定取整数。</li>
+            <li><strong>2) 混合整数规划</strong>：部分决策变量限定取整数，即规划中决策变量一部分是整数变量，另一部分是连续变量。</li>
+            <li><strong>3) 0-1型整数规划</strong>：不仅限制决策变量为整数，而且只允许取0和1两个值。</li>
+        </ul>
+        
+        <p>整数规划的解法比线性规划复杂，通常使用分支定界法和割平面法。这些方法的基本思想是把一个整数规划问题转化为一系列线性规划问题，通过求解这一系列线性规划问题而最终得到整数规划的最优解。限于篇幅，本书对整数规划的解法不作详细介绍，有兴趣的读者可参考有关著作，这里只简单介绍几个0-1整数规划的实际建模例子。</p>
+        
+        <div class="highlight">
+            <p><strong>🔢 0-1规划的特点：</strong>0-1型整数规划问题的隐枚举法（implicit enumeration），本书同样不再做详细阐述。</p>
+        </div>
+        
+        <h3>2.5.1 厂址选择与固定费用问题</h3>
+        
+        <h4>1. 厂址选择问题</h4>
+        
+        <div class="example">
+            <div class="example-title">🏭 厂址选择实例</div>
+            <p>某地区有 $m$ 座煤矿，$i$ 号矿每年产量为 $a_i$ t，现有火力发电厂一个，每年需用煤 $b_0$ t，每年运行的固定费用（包括折旧旧费、但不包括煤的运费）为 $h_0$ 元。现规划新建一个发电厂，$m$ 座煤矿每年开采的原煤将全部供给这两个电厂发电用。现有几个备选的厂址，若在 $j$ 号备选厂址建电厂，每年运行的固定费用为 $h_j$，每吨原煤从 $i$ 号矿运送到 $j$ 号各选厂址的运费为 $c_{ij}(i=1,\cdots,m; j=0,1,\cdots,n)$。问在哪里建厂最合理，即应该怎样配给两个电厂，才能使每年总费用（电厂运行的固定费用与原煤运费之和）最小？</p>
+            
+            <div class="solution">
+                <div class="solution-title">💡 建模思路</div>
+                <p>这样的选址问题可以用0-1型整数规划求解。从条件可知，新建电厂每年用煤量</p>
+                <div class="formula-display">
+                    $$b = \sum_{i=1}^{m}a_i - b_0$$
+                </div>
+                
+                <p>令决策变量</p>
+                <div class="formula-display">
+                    $$y_j = \begin{cases}
+                    1, & j \text{号备选址被选中}(j=1,2,\cdots,n) \\
+                    0, & \text{否则}
+                    \end{cases}$$
+                </div>
+                
+                <p>为了方便，称原有电厂为0号厂，在 $j$ 号备选厂址处建的厂为 $j$ 号厂。设 $x_{ij}$ 为每年从 $i$ 号矿运送到 $j$ 号厂的原煤数量$(i=1,2,\cdots,m; j=0,1,\cdots,n)$。于是，每年总费用等于</p>
+                
+                <div class="formula-display">
+                    $$z = \sum_{i=1}^{m}\sum_{j=0}^{n}c_{ij}x_{ij} + \sum_{j=1}^{n}h_jy_j + h_0$$
+                </div>
+                
+                <p>若 $j$ 号备选厂址未被选中，即 $y_j = 0$，那么 $j$ 厂根本就不存在，这时 $x_{ij}$ 应全为零，故有下列约束条件：</p>
+                
+                <div class="formula-display">
+                    $$\sum_{j=0}^{n}x_{ij} = a_i \quad (i=1,2,\cdots,m)$$
+                    $$\sum_{i=1}^{m}x_{i0} = b_0$$
+                    $$\sum_{i=1}^{m}x_{ij} = by_j \quad (j=1,2,\cdots,n)$$
+                    $$x_{ij} \geq 0 \quad (i=1,2,\cdots,m; j=0,1,2,\cdots,n)$$
+                </div>
+                
+                <p>又因只需建一个电厂，故还应有约束条件</p>
+                <div class="formula-display">
+                    $$\sum_{j=1}^{n}y_j = 1$$
+                </div>
+                
+                <p>于是，上述选址问题可以归纳成下列形式的整数规划：</p>
+                
+                <div class="formula-display">
+                    $$\min \ z = \sum_{i=1}^{m}\sum_{j=0}^{n}c_{ij}x_{ij} + \sum_{j=1}^{n}h_jy_j + h_0$$
+                    $$\begin{cases}
+                    \sum_{j=0}^{n}x_{ij} = a_i \quad (i=1,2,\cdots,m) \\
+                    \sum_{i=1}^{m}x_{i0} = b_0 \\
+                    \sum_{i=1}^{m}x_{ij} = by_j \quad (j=1,2,\cdots,n) \\
+                    \sum_{j=1}^{n}y_j = 1 \\
+                    x_{ij} \geq 0 \quad (i=1,2,\cdots,m; j=0,1,\cdots,n) \\
+                    y_j = 0 \text{ 或 } 1 \quad (j=1,2,\cdots,n)
+                    \end{cases}$$
+                </div>
+            </div>
+        </div>
+        
+        <h3>2.5.2 多种类、多方案投资决策问题</h3>
+        
+        <p>在许多复杂的情况下，最优投资方案的选择可归结为整数规划问题。</p>
+        
+        <p>有一笔投资 $p$，对 $k$ 种产品投资。第 $i$ 种产品有 $m_i$ 个投资方案。第 $i$ 种产品的第 $j$ 个方案需投资为 $p_{ij}$，相应每年收益为 $M_{ij}(i=1,2,\cdots,k; j=1,2,\cdots,m_i)$。投资为 $n$ 年，如资金总额用不完，则以平均利率 $r$ 作为普通投资（或作其他企业投资），试作出最优投资决策。</p>
+        
+        <p>为此，引入0-1型决策变量：</p>
+        <div class="formula-display">
+            $$x_{ij} = \begin{cases}
+            1, & \text{表示选用第 } i \text{ 种产品的第} j \text{ 种方案} \\
+            0, & \text{表示不选用第 } i \text{ 种产品的第} j \text{ 方案}
+            \end{cases}$$
+        </div>
+        
+        <p>由于最多只能在 $i$ 产品的 $m_i$ 个方案中选用一个，并且总资金 $\sum_{i=1}^{k}\sum_{j=1}^{m_i}x_{ij}p_{ij}$ 应不超过 $p$，则约束条件为</p>
+        
+        <div class="formula-display">
+            $$\sum_{j=1}^{m_i}x_{ij} \leq 1 \quad (i=1,2,\cdots,k)$$
+            $$\sum_{i=1}^{k}\sum_{j=1}^{m_i}p_{ij}x_{ij} \leq p$$
+        </div>
+        
+        <p>每年的投资收益有两部分，一为所用投资资金的收益 $f_1(\mathbf{X}) = \sum_{i=1}^{k}\sum_{j=1}^{m_i}x_{ij}M_{ij}$，另一为剩余资金的收益，剩余资金为 $p - \sum_{i=1}^{k}\sum_{j=1}^{m_i}x_{ij}p_{ij}$，将其转化为普通投资（以平均利率 $r$ 计算），则剩余资金的收益为</p>
+        
+        <div class="formula-display">
+            $$f_2(\mathbf{X}) = \left(p - \sum_{i=1}^{k}\sum_{j=1}^{m_i}x_{ij}p_{ij}\right)\frac{r(1+r)^n}{(1+r)^n - 1}$$
+        </div>
+        
+        <p>式中，$\frac{r(1+r)^n}{(1+r)^n - 1}$ 为资金回收系数。</p>
+        
+        <p>目标函数即为每年的总收益</p>
+        
+        <div class="formula-display">
+            $$z = f_1(\mathbf{X}) + f_2(\mathbf{X}) = \sum_{i=1}^{k}\sum_{j=1}^{m_i}x_{ij}M_{ij} + \left(p - \sum_{i=1}^{k}\sum_{j=1}^{m_i}x_{ij}p_{ij}\right)\frac{r(1+r)^n}{(1+r)^n - 1}$$
+        </div>
+        
+        <p>整个投资决策归结为求解下列整数规划问题：</p>
+        
+        <div class="formula-display">
+            $$\max \ z = \sum_{i=1}^{k}\sum_{j=1}^{m_i}x_{ij}M_{ij} + \left(p - \sum_{i=1}^{k}\sum_{j=1}^{m_i}x_{ij}p_{ij}\right)\frac{r(1+r)^n}{(1+r)^n - 1}$$
+            $$\begin{cases}
+            \sum_{j=1}^{m_i}x_{ij} \leq 1 \quad (i=1,2,\cdots,k) \\
+            \sum_{i=1}^{k}\sum_{j=1}^{m_i}p_{ij}x_{ij} \leq p \\
+            x_{ij} = 0 \text{ 或 } 1 \quad (i=1,2,\cdots,k; \quad j=1,2,\cdots,m_i)
+            \end{cases}$$
+        </div>
+        
+        <div class="highlight">
+            <p><strong>🎓 学习总结：</strong>线性规划是运筹学的基础和核心内容，掌握了线性规划的理论和方法，就为学习其他优化技术打下了坚实的基础。无论是单纯形法、对偶理论，还是运输问题和整数规划，它们在实际管理决策中都有广泛的应用。</p>
+        </div>
+    </section>
+    
+    <!-- 练习题部分 -->
+    <section style="background: linear-gradient(135deg, #fff9e6 0%, #ffedcc 100%);">
+        <h2>🎯 练习题</h2>
+        
+        <details>
+            <summary><strong>习题2.1</strong></summary>
+            <div style="padding: 1rem;">
+                <p>某工厂在计划期内要安排生产Ⅰ、Ⅱ两种产品，这些产品分别需要在A、B、C、D四种不同的设备上加工。按工艺规定，产品Ⅰ和Ⅱ在各设备上所需要的加工台时数及有关数据如表2.45所示。现工厂需规定，产品Ⅰ和Ⅱ的产量使总利润最大的生产计划。</p>
+                <ol>
+                    <li>建立此问题的数学模型；</li>
+                    <li>用图解法求解最优计划和最大利润。</li>
+                </ol>
+            </div>
+        </details>
+        
+        <details>
+            <summary><strong>习题2.2</strong></summary>
+            <div style="padding: 1rem;">
+                <p>分别用图解法和单纯形法求解下面的线性规划，并指出单纯形法选代的每一步相当于图形上哪一个顶点。</p>
+                <div class="formula-display">
+                    $$\max \ z = 2x_1 + x_2$$
+                    $$\begin{cases}
+                    3x_1 + 5x_2 \leq 15 \\
+                    6x_1 + 2x_2 \leq 24 \\
+                    x_1, x_2 \geq 0
+                    \end{cases}$$
+                </div>
+            </div>
+        </details>
+        
+        <button class="btn" onclick="alert('💪 加油！完成这些练习题将帮助你更好地掌握线性规划的理论和方法！')">查看更多习题</button>
+    </section>
+</div>
+
+<footer>
+    <p>&copy; 2025 管理科学基础 - 线性规划交互式教程</p>
+    <p>📚 本教程基于《管理科学基础》教材制作 | 🎨 采用响应式设计，支持移动端访问</p>
+    <p style="margin-top: 1rem; font-size: 0.9rem;">
+        <strong>⚠️ 重要提示：</strong>
+    </p>
+    <ul style="text-align: left; max-width: 600px; margin: 0.5rem auto; font-size: 0.9rem;">
+        <li>请确保网络连接可用（MathJax需要从CDN加载）</li>
+        <li>如果数学公式显示不正常，请刷新页面</li>
+        <li>建议使用Chrome、Firefox或Edge浏览器以获得最佳体验</li>
+        <li>保存此文件为.html格式，可在任何浏览器中离线查看（需要网络加载MathJax）</li>
+    </ul>
+</footer>
+
+<script>
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // 添加一个简单的交互式按钮功能
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+        section.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.01)';
+            this.style.transition = 'transform 0.3s';
+        });
+        section.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+    
+    // 显示加载提示
+    window.addEventListener('load', function() {
+        console.log('✅ 页面加载完成！');
+        console.log('📐 MathJax正在渲染数学公式...');
+    });
+    
+    // MathJax加载完成后的回调
+    if (typeof MathJax !== 'undefined') {
+        MathJax.Hub.Queue(function() {
+            console.log('✅ MathJax渲染完成！');
+            alert('🎉 欢迎学习线性规划！\n\n📊 本教程包含完整的理论讲解、例题分析和交互式元素。\n\n💡 提示：点击"详情"按钮可以展开更多内容。\n\n祝学习愉快！');
+        });
+    }
+</script>
+</body>
+</html>

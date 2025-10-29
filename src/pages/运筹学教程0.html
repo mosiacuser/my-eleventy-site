@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运筹学教程 - 交互式教程</title>
+    
+    <!-- MathJax 配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-orange: #f27d00;
+            --primary-green: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --primary-white: #ffffff;
+            --primary-dark: #343434;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-white) 50%, var(--primary-yellow) 100%);
+            color: var(--primary-dark);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+        
+        /* 导航栏 */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--primary-dark) 0%, #4a4a4a 100%);
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        nav h2 {
+            color: var(--primary-yellow);
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 3px solid var(--primary-orange);
+            padding-bottom: 15px;
+        }
+        
+        nav ul {
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin: 15px 0;
+        }
+        
+        nav ul li a {
+            color: var(--primary-white);
+            text-decoration: none;
+            display: block;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 400;
+        }
+        
+        nav ul li a:hover {
+            background: var(--primary-orange);
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(242, 125, 0, 0.4);
+        }
+        
+        /* 移动端导航切换按钮 */
+        .nav-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            border: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+        
+        /* 主内容区 */
+        main {
+            margin-left: 270px;
+            padding: 40px;
+            max-width: 1200px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--primary-white);
+            padding: 60px 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(242, 125, 0, 0.3);
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+        
+        /* 章节样式 */
+        section {
+            background: var(--primary-white);
+            padding: 40px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        section h2 {
+            color: var(--primary-orange);
+            font-size: 2em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary-green);
+        }
+        
+        section h3 {
+            color: var(--primary-dark);
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 5px solid var(--primary-yellow);
+        }
+        
+        section p {
+            margin: 15px 0;
+            text-align: justify;
+            text-indent: 2em;
+        }
+        
+        /* 折叠面板 */
+        .accordion {
+            margin: 20px 0;
+        }
+        
+        .accordion-item {
+            background: #f9f9f9;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .accordion-header {
+            background: linear-gradient(90deg, var(--primary-green) 0%, #c0e5d9 100%);
+            color: var(--primary-dark);
+            padding: 18px 25px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1.1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(90deg, #8fc7b3 0%, var(--primary-green) 100%);
+        }
+        
+        .accordion-header::after {
+            content: '▼';
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            padding: 0 25px;
+        }
+        
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 20px 25px;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: var(--primary-white);
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        thead {
+            background: linear-gradient(90deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--primary-white);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+        
+        tbody tr {
+            transition: background 0.3s ease;
+        }
+        
+        tbody tr:hover {
+            background: #fff8f0;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        tbody tr:nth-child(even):hover {
+            background: #fff8f0;
+        }
+        
+        /* 高亮框 */
+        .highlight-box {
+            background: linear-gradient(135deg, #fff9e6 0%, var(--primary-yellow) 100%);
+            border-left: 5px solid var(--primary-orange);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(247, 209, 23, 0.3);
+        }
+        
+        .highlight-box strong {
+            color: var(--primary-orange);
+            font-size: 1.1em;
+        }
+        
+        /* 按钮 */
+        .btn {
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(242, 125, 0, 0.3);
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            background: #d96d00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.4);
+        }
+        
+        /* 回到顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 3px 15px rgba(242, 125, 0, 0.4);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .back-to-top:hover {
+            background: #d96d00;
+            transform: scale(1.1);
+        }
+        
+        /* 页脚 */
+        footer {
+            background: var(--primary-dark);
+            color: var(--primary-white);
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        /* 动画 */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* MathJax 公式样式 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            nav {
+                transform: translateX(-100%);
+            }
+            
+            nav.active {
+                transform: translateX(0);
+            }
+            
+            .nav-toggle {
+                display: block;
+            }
+            
+            main {
+                margin-left: 0;
+                padding: 80px 20px 20px 20px;
+            }
+            
+            header h1 {
+                font-size: 2em;
+            }
+            
+            section {
+                padding: 25px;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+        }
+        
+        /* 列表样式 */
+        ul.custom-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        ul.custom-list li {
+            padding: 10px 0 10px 30px;
+            position: relative;
+        }
+        
+        ul.custom-list li::before {
+            content: '▸';
+            color: var(--primary-orange);
+            font-weight: bold;
+            position: absolute;
+            left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航切换按钮 -->
+    <button class="nav-toggle" onclick="toggleNav()">☰ 菜单</button>
+    
+    <!-- 侧边导航栏 -->
+    <nav id="sidebar">
+        <h2>📚 目录导航</h2>
+        <ul>
+            <li><a href="#intro">绪论</a></li>
+            <li><a href="#section1">第一节 运筹学释义与发展简史</a></li>
+            <li><a href="#section2">第二节 研究的基本特征与方法</a></li>
+            <li><a href="#section3">第三节 主要分支简介</a></li>
+            <li><a href="#section4">第四节 运筹学与管理科学</a></li>
+            <li><a href="#section5">第五节 应用软件简介</a></li>
+        </ul>
+    </nav>
+    
+    <!-- 主内容区 -->
+    <main>
+        <header id="intro">
+            <h1>📊 运筹学教程</h1>
+            <p>Operations Research Tutorial - 第5版</p>
+            <p style="margin-top: 15px; font-size: 1em;">作者：胡运权 郭耀煌 龚益鸣 程佳惠 陈秉正</p>
+        </header>
+        
+        <!-- 绪论 -->
+        <section style="background: linear-gradient(135deg, #fff 0%, #fff9f0 100%);">
+            <h2>🎯 绪论</h2>
+            <p>运筹学是一门应用于管理有组织系统的科学，为掌管这类系统的人提供决策目标和数量分析的工具。本教程将系统介绍运筹学的基本理论、方法和应用。</p>
+        </section>
+        
+        <!-- 第一节 -->
+        <section id="section1">
+            <h2>第一节 运筹学释义与发展简史</h2>
+            
+            <div class="highlight-box">
+                <strong>💡 核心定义：</strong>运筹学是用数学方法研究经济、民政和国防等部门在内外环境的约束条件下合理分配人力、物力、财力等资源，使实际系统有效运行的技术科学。
+            </div>
+            
+            <h3>📖 运筹学的定义与起源</h3>
+            <p>运筹学一词起源于20世纪30年代。据《大英百科全书》释义，"运筹学是一门应用于管理有组织系统的科学"，"运筹学为掌管这类系统的人提供决策目标和数量分析的工具"。</p>
+            
+            <p>《中国大百科全书》的释义为：运筹学，是用数学方法研究经济、民政和国防等部门在内外环境的约束条件下合理分配人力、物力、财力等资源，使实际系统有效运行的技术科学，可以用来预测发展趋势，制订行动规划或优选可行方案。</p>
+            
+            <p>运筹学一词在英国称为operational research，在美国称为operations research（缩写为O.R.），可直译为"运用研究"或"作业研究"。1957年我国从"夫运筹帷幄之中，决胜千里之外"（见《史记·高祖本纪》）这句古语中摘取"运筹"二字，将O.R.正式译作运筹学，包含运用筹划，以策略取胜等意义，比较恰当地反映了这门学科的性质和内涵。</p>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        🏛️ 中国古代的运筹学思想
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">朴素的运筹学思想在我国古代文献中就有不少记载。</p>
+                        
+                        <h3 style="border-left: none; padding-left: 0; font-size: 1.2em;">🐎 齐王与田忌赛马</h3>
+                        <p>齐王与田忌赛马说的是一次齐王和田忌赛马，规定双方各出上、中、下三个等级的马各一匹。如果按同等级的马比赛，齐王可获全胜，但田忌采取的策略是以下马对齐王的上马，以上马对齐王的中马，以中马对齐王的下马，结果田忌反以二比一获胜。</p>
+                        
+                        <h3 style="border-left: none; padding-left: 0; font-size: 1.2em;">🏗️ 丁渭修复皇宫</h3>
+                        <p>丁渭修复皇宫的故事发生在北宋时代，皇宫因火焚毁，由丁渭主持修复工作。他计划在宫前大街取土烧砖，挖成大沟后灌水成渠，利用水渠运来各种建筑用材料，工程完毕后再以废砖烂瓦等填沟修复大街，做到减少和方便运输，加快了工程进度。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        ⚔️ 运筹学的正式诞生（1938年）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">运筹学这个术语的正式使用是在1938年，当时英国为解决空袭的早期预警，做好反侵略战争准备，积极进行"雷达"的研究。但随着雷达性能的改善和配置数量的增多，出现了来自不同雷达站的信息以及雷达站同整个防空作战系统的协调配合问题。</p>
+                        
+                        <p style="text-indent: 0;">1938年7月，波得塞（Bawdsey）雷达站的负责人罗伊（A. P. Rowe）提出立即进行整个防空作战系统运行的研究，并用"operational research"一词作为这方面研究的描述，这就是O.R.（运筹学）这个术语的起源。</p>
+                        
+                        <p style="text-indent: 0;">1940年9月英国成立了由物理学家布莱克特（P. M. S. Blackett）领导的第一个运筹学小组，后来发展到每一个英军指挥部都成立运筹学小组。1942年美国和加拿大也都相继成立运筹学小组。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>📈 运筹学的发展阶段</h3>
+            <p>第二次世界大战以后，运筹学的活动扩展到工业和政府等部门，它的发展大致可分三个阶段：</p>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        (1) 创建阶段（1945年-1950年代初）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;"><strong>特点：</strong>从事运筹学研究的人数不多，范围较小，运筹学的出版物、学会等寥寥无几。</p>
+                        
+                        <p style="text-indent: 0;"><strong>重要里程碑：</strong></p>
+                        <ul class="custom-list">
+                            <li>1948年：英国成立"运筹学俱乐部"，在煤炭、电力等部门推广应用</li>
+                            <li>1948年：美国麻省理工学院把运筹学作为一门课程进行介绍</li>
+                            <li>1950年：英国伯明翰大学正式开设运筹学课程</li>
+                            <li>1950年：第一本运筹学杂志《运筹学季刊》（O.R.Quarterly）于英国创刊</li>
+                            <li>1952年：美国卡斯（Case）工业大学设立了运筹学的硕士和博士学位</li>
+                            <li>1952年：第一个运筹学会——美国运筹学会成立，并出版《运筹学学报》</li>
+                            <li>1947年：丹齐克（G. B. Dantzig）提出了线性规划及其通用解法——单纯形法</li>
+                            <li>1951年：莫尔斯和金博尔合著的《运筹学方法》一书正式出版</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        (2) 成长阶段（1950年代初期-1950年代末期）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;"><strong>第一个特点：</strong>电子计算机技术的迅速发展，使得运筹学中一些方法如单纯形法、动态规划方法等，得以用来解决实际管理系统中的优化问题。到50年代末，美国大约有半数的大公司在自己的经营管理中应用运筹学。</p>
+                        
+                        <p style="text-indent: 0;"><strong>第二个特点：</strong>有更多刊物、学会的出现。从1956年到1959年就有法国、印度、日本、荷兰、比利时等10个国家成立运筹学学会，又有6种运筹学刊物问世。</p>
+                        
+                        <p style="text-indent: 0;"><strong>国际合作：</strong>1957年在英国牛津大学召开了第一次国际运筹学会议，以后每3年举行一次。1959年成立国际运筹学联合会（IFORS）。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        (3) 普及和迅速发展阶段（1960年代以来）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;"><strong>特点：</strong>运筹学进一步细分为各个分支，专业学术团体迅速增多，更多的期刊创办，运筹学书籍大量出版，以及更多学校将运筹学课程纳入教学计划之中。</p>
+                        
+                        <p style="text-indent: 0;">第三代电子数字计算机的出现，促使运筹学得以用来研究一些大的复杂的系统，如城市交通、环境污染、国民经济计划等。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>🇨🇳 我国运筹学的发展</h3>
+            <p>我国第一个运筹学小组于1956年在中国科学院力学研究所成立，1958年建立了运筹学研究室。1960年在山东济南召开全国应用运筹学的经验交流和推广会议，1980年4月成立中国运筹学学会。</p>
+            
+            <p>在农林、交通运输、建筑、机械、冶金、石油化工、水利、邮电、纺织等部门和军事领域，运筹学的方法已开始得到应用推广。我国各高等院校，特别是各经济管理类专业已普遍把运筹学作为一门专业主干课程列入教学计划之中。</p>
+        </section>
+        
+        <!-- 第二节 -->
+        <section id="section2">
+            <h2>第二节 运筹学研究的基本特征与基本方法</h2>
+            
+            <h3>🎯 运筹学研究的基本特征</h3>
+            <div class="highlight-box">
+                <strong>三大特征：</strong>
+                <ul class="custom-list" style="margin-top: 10px;">
+                    <li>系统的整体观念</li>
+                    <li>多学科的综合</li>
+                    <li>模型方法的应用</li>
+                </ul>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        (1) 系统的整体观念
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">所谓系统可以理解为是由相互关联、相互制约、相互作用的一些部分组成的具有某种功能的有机整体。例如一个企业的经营管理由很多子系统组成，包括生产、技术、供应、销售、财务等。</p>
+                        
+                        <p style="text-indent: 0;">各子系统的目标往往不一致：</p>
+                        <ul class="custom-list">
+                            <li><strong>生产部门：</strong>为提高劳动生产率，希望增大产品批量</li>
+                            <li><strong>销售部门：</strong>为满足市场用户需求，要求产品适销对路，小批量，多花色品种</li>
+                            <li><strong>财务部门：</strong>强调减少库存，加速资金周转，以降低成本</li>
+                        </ul>
+                        
+                        <p style="text-indent: 0;">运筹学研究中不是对各子系统的决策行为孤立评价，而把有关子系统相互关联的决策结合起来考虑，从系统整体利益出发，寻找一个优化协调的方案。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        (2) 多学科的综合
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">一个组织或系统的有效管理涉及很多方面，运筹学研究中吸收来自不同领域、具有不同经验和技能的专家。由于专家们来自不同的学科领域，具有不同的经历和经验，增强了发挥小组集体智慧、提出问题和解决问题的能力。</p>
+                        
+                        <p style="text-indent: 0;">这种多学科的协调配合在研究的初期，在分析和确定问题的主要方面，在选定和探索解决问题的途径时，显得特别重要。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        (3) 模型方法的应用
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">在各门学科的研究中广泛应用实验的方法，但运筹学研究的系统往往不能搬到实验室中，替代方法是建立问题的数学模型或模拟的模型。</p>
+                        
+                        <p style="text-indent: 0;"><strong>重要性：</strong>为制定决策提供科学依据是运筹学应用的核心，而建立模型则是运筹学方法的精髓。学习运筹学要掌握的最重要技巧就是提高运筹学数学模型的表达、运算和分析能力。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>🔧 运筹学研究的基本方法（六个步骤）</h3>
+            <div style="background: #f0f8ff; padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            步骤一：分析表述问题及收集数据
+                        </div>
+                        <div class="accordion-content">
+                            <p style="text-indent: 0;">任何决策问题进行定量分析前，首先必须认真地进行定性分析：</p>
+                            <ul class="custom-list">
+                                <li>确定决策目标，明确主要要决策什么</li>
+                                <li>选取决策时的有效性度量</li>
+                                <li>对方案比较时这些度量的权衡</li>
+                                <li>辨认决策中的关键因素</li>
+                                <li>确定存在哪些资源或环境的限制</li>
+                            </ul>
+                            <p style="text-indent: 0; margin-top: 15px;">收集相关数据，这些数据既用于获得对问题的更充分理解，同时也为下阶段建立模型提供所需的输入。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            步骤二：建立模型
+                        </div>
+                        <div class="accordion-content">
+                            <p style="text-indent: 0;">模型是对现实世界的事物、现象、过程和系统的简化描述，或其部分属性的模仿，是对实际问题的抽象概括和严格的逻辑表达。</p>
+                            
+                            <p style="text-indent: 0;"><strong>建立模型的好处：</strong></p>
+                            <ul class="custom-list">
+                                <li>使问题的描述高度规范化，掌握其本质规律</li>
+                                <li>可以通过输入各种数据资料，分析各种因素同系统整体目标之间的因果关系</li>
+                                <li>为应用电子计算机来解决实际问题架设起桥梁</li>
+                            </ul>
+                            
+                            <p style="text-indent: 0; margin-top: 15px;">一般建模时应尽可能选择建立数学模型，即用数学语言描述的一类模型。但有时问题中的各种关系难以用数学语言描绘，或问题中包含的随机因素较多，也可以建立起一个模拟的模型。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            步骤三：求解模型和优化方案
+                        </div>
+                        <div class="accordion-content">
+                            <p style="text-indent: 0;">即用数学方法或其他工具（如编写计算机程序）对模型求解。根据问题的要求，可分别求出最优解、次优解或满意解；依据对解的精度的要求及算法上实现的可能性，又可区分为精确解和近似解等。</p>
+                            
+                            <p style="text-indent: 0;">近年来出现的启发式算法和一些软计算方法为一些结构复杂的运筹学模型的求解提供了有力的工具。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            步骤四：测试模型及对模型进行必要的修正
+                        </div>
+                        <div class="accordion-content">
+                            <p style="text-indent: 0;">将实际问题的数据资料代入模型，找出精确的或近似的解，这解毕竟是模型的解。为了检验得到的解是否正确，常采用回溯的方法，即将历史的资料输入模型，研究得到的解与历史实际的符合程度，以判断模型是否正确。</p>
+                            
+                            <p style="text-indent: 0;">检查内容包括：</p>
+                            <ul class="custom-list">
+                                <li>实际问题中的重要因素在模型中是否已考虑</li>
+                                <li>模型中各公式的表达是否前后一致</li>
+                                <li>输入发生微小变化时，检验输出变化的相对大小是否合适</li>
+                                <li>当模型中各参数取极值时，检验问题的解</li>
+                                <li>模型是否容易求解，并在规定时间内算出所需的结果</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            步骤五：建立对解的有效控制
+                        </div>
+                        <div class="accordion-content">
+                            <p style="text-indent: 0;">任何模型都有一定的适用范围，模型的解是否有效，要首先注意模型是否继续有效，并依据灵敏度分析的方法，确定最优解保持稳定时的参数变化范围。</p>
+                            
+                            <p style="text-indent: 0;">一旦外界条件参数变化超出这个范围时，及时对模型和导出的解进行修正。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            步骤六：方案的实施
+                        </div>
+                        <div class="accordion-content">
+                            <p style="text-indent: 0;">方案实施是很关键的一步，但也是很困难的一步。只有实施方案后，研究成果才能有收获。</p>
+                            
+                            <p style="text-indent: 0;"><strong>这一步要求明确：</strong></p>
+                            <ul class="custom-list">
+                                <li>方案由谁实施</li>
+                                <li>什么时间实施</li>
+                                <li>如何实施</li>
+                                <li>估计实施过程可能遇到的阻力</li>
+                                <li>制定相应的克服困难的措施</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 第三节 -->
+        <section id="section3">
+            <h2>第三节 运筹学主要分支简介</h2>
+            
+            <p>运筹学按所解决问题性质的差别，将实际的问题归结为不同类型的数学模型。这些不同类型的数学模型构成了运筹学的各个分支。</p>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        一、线性规划（Linear Programming）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">经营管理中如何有效地利用现有人力、物力完成更多的任务，或在预定的任务目标下，如何耗用最少的人力、物力去实现目标。</p>
+                        
+                        <p style="text-indent: 0;">当变量连续取值，且目标函数和约束条件均为线性时，称这类规划为线性规划的模型。线性规划建模相对简单，有通用算法和计算机软件，是运筹学中应用最为广泛的一个分支。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        二、非线性规划（Nonlinear Programming）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">如线性规划模型中目标函数或约束条件不全是线性的，对这类模型的研究构成非线性规划分支。</p>
+                        
+                        <p style="text-indent: 0;">由于大多数工程物理量的表达式是非线性的，因此非线性规划在各类工程的优化设计中得到较多应用，它是优化设计的有力工具。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        三、整数规划（Integer Programming）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">上述两类规划中变量的取值必须为整数时，分别构成线性整数规划或非线性整数规划模型。</p>
+                        
+                        <p style="text-indent: 0;">整数规划中有一类变量取值只能为0或1，称0-1整数规划模型，它对应方案的"舍"或"取"，对问题的建模起到了特殊作用。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        四、目标规划（Goal Programming）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">上面三类规划模型中，均为在满足一组约束条件下追求单一目标的优化。实际问题中往往需要对多个目标进行优化，且这些目标间既在优化方向上存在矛盾，又缺乏公度性，无法综合成统一目标，因而导致了目标规划分支的诞生。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        五、动态规划（Dynamic Programming）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">动态规划是研究多阶段决策过程最优化的运筹学分支。有些经营管理活动由一系列相互关联的阶段组成，在每个阶段依次进行决策，而且上一阶段的输出状态就是下一阶段的输入状态，且各阶段决策之间互相关联，因而构成一个多阶段的决策过程。</p>
+                        
+                        <p style="text-indent: 0;">动态规划研究多阶段决策过程的总体优化，即从系统总体出发，要求各阶段决策所构成的决策序列使目标函数值达到最优。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        六、图论与网络分析（Graph Theory and Network Analysis）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">生产管理中经常遇到工序间的合理衔接搭配问题，设计中经常遇到研究各种管道、线路的通过能力，以及仓库、附属设施的布局等问题。</p>
+                        
+                        <p style="text-indent: 0;">运筹学中把一些研究的对象用节点表示，对象之间的联系用连线（边）表示，点、边的集合构成图。图论是研究由节点和边所组成图形的数学理论和方法。</p>
+                        
+                        <p style="text-indent: 0;">网络分析还包括利用网络图形来描述一项工程中各项作业的进度和结构关系，以便对工程进度进行优化控制。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        七、存储论（Inventory Theory）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">一种研究最优存储策略的理论和方法。如为了保证企业生产的正常进行，需要有一定数量原材料和零部件的储备，以调节供需之间的不平衡。</p>
+                        
+                        <p style="text-indent: 0;">存储策略研究在不同需求、供货及到达方式等情况下，确定在什么时间点及一次提出多大批量的订货，使用于订购、储存和可能发生短缺的费用的总和为最少。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        八、排队论（Queueing Theory or Waiting Line）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">生产和生活中存在大量有形与无形的拥挤和排队现象。排队系统由服务机构（服务员）及被服务的对象（顾客）组成。</p>
+                        
+                        <p style="text-indent: 0;">排队论研究顾客不同输入、各类服务时间的分布、不同服务员数及不同排队规则情况下，排队系统的工作性能和状态，为设计新的排队系统及改进现有系统的性能提供数量依据。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        九、对策论（Game Theory）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">对策论用于研究具有对抗局势的模型。在这类模型中，参与对抗的各方称为局中人，每个局中人均有一组策略可供选择。</p>
+                        
+                        <p style="text-indent: 0;">对策论为局中人在这种高度不确定和充满竞争的环境中，提供一套完整的、定量化和程序化的选择策略的理论与方法。</p>
+                        
+                        <p style="text-indent: 0;">对策论已应用于商品、消费者、生产者之间的供求平衡分析，利益集团间的协商和谈判，以及军事上各种作战模型的研究等。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        十、决策论（Decision Theory）
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;">决策是指为最优地达到目标，依据一定准则，对若干备选行动的方案进行的抉择。随着科学技术的发展，生产规模和人类社会活动的扩大，要求用科学的决策替代经验决策。</p>
+                        
+                        <p style="text-indent: 0;"><strong>决策过程一般是指：</strong></p>
+                        <ul class="custom-list">
+                            <li>形成决策问题，包括提出方案，确定目标及效果的度量</li>
+                            <li>确定各方案对应的结局及出现的概率</li>
+                            <li>确定决策者对不同结局的效用值</li>
+                            <li>综合评价，决定方案的取舍</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 第四节 -->
+        <section id="section4">
+            <h2>第四节 运筹学与管理科学</h2>
+            
+            <div class="highlight-box">
+                <strong>💡 核心观点：</strong>管理是运筹学孕育的主要土壤，基于军事和经济研究中产生的运筹学方法或分支最终都移植到管理中应用和发展。
+            </div>
+            
+            <p>一般认为运筹学诞生的3个来源是军事、管理和经济，但其中管理是运筹学孕育的主要土壤。管理是从生产出现分工开始就有的，但管理作为一门科学则开始于20世纪初。</p>
+            
+            <p>运筹学的诞生既是管理科学发展的需要，也是管理科学研究深化的标志。运筹学的一些分支，如规划论、排队论、存储论、对策论等，无不同管理的发展具有密切联系。</p>
+            
+            <h3>📊 运筹学对管理科学的贡献</h3>
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        理论深化的例子
+                    </div>
+                    <div class="accordion-content">
+                        <p style="text-indent: 0;"><strong>例1：库存问题</strong></p>
+                        <p style="text-indent: 0;">管理中有关库存问题的讨论，对最高和最低控制限的存储方法，过去只从定性上进行描述，而运筹学则进一步研究了在各种不同需求情况下最高与最低控制限的具体数值。</p>
+                        
+                        <p style="text-indent: 0; margin-top: 15px;"><strong>例2：协作效率</strong></p>
+                        <p style="text-indent: 0;">经验告诉我们，从事相同服务工作的人，如果协调合作，可以提高效率，减少被服务对象的等待。运筹学的排队论分支中，用具体例子说明，3个人联合看管20台机器，不仅数量上多于3个人每人分别看管6台机器，提高了工作效率，而且还缩短了机器的平均等待时间，从理论上论证了系统整体的涌现性原理。</p>
+                        
+                        <p style="text-indent: 0; margin-top: 15px;"><strong>例3：网络计划</strong></p>
+                        <p style="text-indent: 0;">计划的编制，过去习惯采用的甘特图，它只是反映了各道工序的起止时间，反映不出相互之间的联系和制约。运筹学中通过编制网络计划，从系统的观点揭示了这种工序间的联系和制约，为计划的调整优化提供了科学的依据。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>🎓 运筹学在管理人才培养中的作用</h3>
+            <div style="background: linear-gradient(135deg, #fff9e6 0%, #fffae6 100%); padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <p style="text-indent: 0;"><strong>1. 训练逻辑思维能力</strong></p>
+                <p>运筹学研究问题的6个步骤将锻炼观察问题和归纳问题的能力，辨别问题中的可控因素和非可控因素，弄清问题的要素结构及其相互联系，确定分析问题需获取的资料数据以及怎样获取，如何使建立的模型既接近实际，又尽可能简化等。</p>
+                
+                <p style="text-indent: 0; margin-top: 15px;"><strong>2. 培养直觉洞察和全局分析能力</strong></p>
+                <p>应用运筹学对实际问题的求解分析将有助于培养管理人员对问题的直觉洞察和全局分析能力，当面对一个问题时能很快对该问题作出一个大概的判断，以致预见到问题的可能结局。</p>
+            </div>
+            
+            <h3>💰 运筹学应用的经济效益</h3>
+            <p>运筹学的研究应用已经给企业和国民经济各部门带来了巨大的财富节约。下表列出了部分国际上获得弗兰茨·厄德曼（Franz Edelman）奖的运筹学应用成果：</p>
+            
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>组织</th>
+                            <th>成果概况</th>
+                            <th>发表年份</th>
+                            <th>效益（亿美元/年）</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>联合航空公司</td>
+                            <td>对机场和后备部门职员的工作计划安排</td>
+                            <td>1986</td>
+                            <td>0.06</td>
+                        </tr>
+                        <tr>
+                            <td>Citgo石油公司</td>
+                            <td>炼油过程及产品供应、分配、销售的整体优化</td>
+                            <td>1987</td>
+                            <td>0.7</td>
+                        </tr>
+                        <tr>
+                            <td>旧金山警署</td>
+                            <td>应用计算机系统实现巡警值班与调度的优化</td>
+                            <td>1989</td>
+                            <td>0.11</td>
+                        </tr>
+                        <tr>
+                            <td>Texaco公司</td>
+                            <td>满足质量和销售需要汽油产品的优化调和</td>
+                            <td>1989</td>
+                            <td>0.3</td>
+                        </tr>
+                        <tr>
+                            <td>美国电报电话公司</td>
+                            <td>商用客户营业中心的优化选址</td>
+                            <td>1990</td>
+                            <td>4.06</td>
+                        </tr>
+                        <tr>
+                            <td>IBM公司</td>
+                            <td>备件库存的全国网络的整合用以改进服务支持</td>
+                            <td>1990</td>
+                            <td>0.02及降低库存2.5</td>
+                        </tr>
+                        <tr>
+                            <td>美洲航空公司</td>
+                            <td>设计一个票价结构、订票和协调航班的系统用来增加收入</td>
+                            <td>1992</td>
+                            <td>5.0及更多收入</td>
+                        </tr>
+                        <tr>
+                            <td>中国</td>
+                            <td>为满足国家未来能源需求的发电、交通、采煤等大型项目的优选及投产安排</td>
+                            <td>1995</td>
+                            <td>4.25</td>
+                        </tr>
+                        <tr>
+                            <td>数字设备公司</td>
+                            <td>供应商、工厂、分销中心、潜在厂址和市场区域的全球供应链重构</td>
+                            <td>1995</td>
+                            <td>8.0</td>
+                        </tr>
+                        <tr>
+                            <td>宝洁公司</td>
+                            <td>重新设计北美的生产和分销系统以降低成本和加速市场进入</td>
+                            <td>1997</td>
+                            <td>2.0</td>
+                        </tr>
+                        <tr>
+                            <td>联邦快递</td>
+                            <td>物流计划与运送投递</td>
+                            <td>1997</td>
+                            <td>未估算</td>
+                        </tr>
+                        <tr>
+                            <td>国际商用机械公司</td>
+                            <td>重新建立全球供应链，当库存最少时快速响应顾客需求</td>
+                            <td>2000</td>
+                            <td>第一年7.5</td>
+                        </tr>
+                        <tr>
+                            <td>新西兰航空公司</td>
+                            <td>航空公司机组的安排</td>
+                            <td>2001</td>
+                            <td>0.067</td>
+                        </tr>
+                        <tr>
+                            <td>通用汽车</td>
+                            <td>提高生产线效率</td>
+                            <td>2006</td>
+                            <td>0.9</td>
+                        </tr>
+                        <tr>
+                            <td>挪威公司</td>
+                            <td>通过沿海管道的改造极大化天然气的输送能力</td>
+                            <td>2009</td>
+                            <td>1.4</td>
+                        </tr>
+                        <tr>
+                            <td>MISO（美国中西部独立电网运营机构）</td>
+                            <td>美国13个州电力输送的管理</td>
+                            <td>2012</td>
+                            <td>7.0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="highlight-box" style="margin-top: 30px;">
+                <strong>📌 马克思名言：</strong>"一门科学只有成功地应用数学时，才算达到了完善的地步。"
+            </div>
+        </section>
+        
+        <!-- 第五节 -->
+        <section id="section5">
+            <h2>第五节 运筹学应用软件简介</h2>
+            
+            <p>运筹学应用软件的开发是同运筹学的发展紧密相连的。因为即使是一个只含几十个到上百个变量的线性规划模型，通过手工求解十分繁杂甚至不可能。而实际问题的数学模型要远远复杂得多，变量个数甚至多达几十万个、上百万个，因此必须借助计算机软件进行求解。</p>
+            
+            <div style="background: linear-gradient(135deg, var(--primary-green) 0%, #d4eee5 100%); padding: 30px; border-radius: 15px; margin: 25px 0;">
+                <h3 style="color: var(--primary-dark); border: none; padding: 0; margin-bottom: 20px;">💻 常用运筹学软件</h3>
+                
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            LINDO
+                        </div>
+                        <div class="accordion-content">
+                            <p style="text-indent: 0;">LINDO（Linear Interactive and Discrete Optimizer）是一款专门用于求解线性规划和整数规划问题的优化软件。它提供了友好的用户界面和强大的求解能力，是教学和科研中常用的工具。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            LINGO
+                        </div>
+                        <div class="accordion-content">
+                            <p style="text-indent: 0;">LINGO是LINDO的升级版，功能更加强大。它不仅可以求解线性规划，还可以处理非线性规划、整数规划等多种优化问题。LINGO提供了建模语言，使得大规模问题的建模和求解更加便捷。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            WinQSB
+                        </div>
+                        <div class="accordion-content">
+                            <p style="text-indent: 0;">WinQSB（Windows Quantitative Systems for Business）是一个集成的决策支持系统，包含了运筹学中多个模块，如线性规划、整数规划、网络模型、动态规划、排队论、存储论等。它的图形化界面友好，特别适合教学使用。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            MATLAB
+                        </div>
+                        <div class="accordion-content">
+                            <p style="text-indent: 0;">MATLAB是一个强大的数值计算和编程环境，它的Optimization Toolbox提供了各种优化算法，可以求解线性规划、非线性规划、整数规划等问题。MATLAB还支持用户自定义算法，具有很强的灵活性和扩展性。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="highlight-box">
+                <strong>📚 更多信息：</strong>本书附录A的拓展资源中对这些软件进行了详细介绍，包括软件的安装、使用方法和实例演示。
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="btn" onclick="alert('欢迎学习运筹学！\n\n本教程涵盖了运筹学的基本理论、方法和应用。\n\n请按照章节顺序学习，并完成相应的练习。')">🎉 开始学习</button>
+                <button class="btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">⬆️ 返回顶部</button>
+            </div>
+        </section>
+        
+        <footer>
+            <p>&copy; 2024 运筹学教程 | 第5版</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">作者：胡运权 郭耀煌 龚益鸣 程佳惠 陈秉正</p>
+            <p style="margin-top: 15px; font-size: 0.85em; opacity: 0.8;">本网页为交互式教程，仅供学习参考使用</p>
+        </footer>
+    </main>
+    
+    <!-- 回到顶部按钮 -->
+    <div class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        ↑
+    </div>
+    
+    <script>
+        // 导航栏切换
+        function toggleNav() {
+            const nav = document.getElementById('sidebar');
+            nav.classList.toggle('active');
+        }
+        
+        // 折叠面板功能
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const isActive = content.classList.contains('active');
+            
+            // 关闭所有其他面板（可选，如果想要手风琴效果）
+            // const allContents = document.querySelectorAll('.accordion-content');
+            // const allHeaders = document.querySelectorAll('.accordion-header');
+            // allContents.forEach(c => c.classList.remove('active'));
+            // allHeaders.forEach(h => h.classList.remove('active'));
+            
+            // 切换当前面板
+            if (isActive) {
+                content.classList.remove('active');
+                header.classList.remove('active');
+            } else {
+                content.classList.add('active');
+                header.classList.add('active');
+            }
+        }
+        
+        // 回到顶部按钮显示/隐藏
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTop.style.display = 'flex';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // 移动端关闭导航
+                    if (window.innerWidth <= 768) {
+                        document.getElementById('sidebar').classList.remove('active');
+                    }
+                }
+            });
+        });
+        
+        // 点击页面其他地方关闭移动端导航
+        document.addEventListener('click', function(event) {
+            const nav = document.getElementById('sidebar');
+            const toggle = document.querySelector('.nav-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                nav.classList.contains('active') && 
+                !nav.contains(event.target) && 
+                !toggle.contains(event.target)) {
+                nav.classList.remove('active');
+            }
+        });
+    </script>
+    
+    <!-- 
+    ===================================
+    使用说明：
+    ===================================
+    1. 保存文件：
+       - 将此代码保存为 .html 文件（例如：operations_research_tutorial.html）
+       - 使用UTF-8编码保存
+    
+    2. 网络要求：
+       - 需要网络连接以加载 MathJax（用于数学公式渲染）
+       - 需要网络连接以加载 Google Fonts（字体）
+    
+    3. 浏览器打开：
+       - 双击 .html 文件在浏览器中打开
+       - 推荐使用 Chrome、Firefox、Edge 等现代浏览器
+       - 首次加载可能需要几秒钟时间加载外部资源
+    
+    4. 功能说明：
+       - 点击侧边栏导航可跳转到相应章节
+       - 点击折叠面板可展开/收起内容
+       - 移动端点击左上角菜单按钮可显示/隐藏导航
+       - 滚动页面后会显示"回到顶部"按钮
+    
+    5. 自定义：
+       - 可以修改CSS中的颜色变量来改变配色方案
+       - 可以添加更多交互功能和内容
+    
+    注意：本HTML文件已包含完整的MathJax配置，支持LaTeX数学公式渲染。
+    ===================================
+    -->
+</body>
+</html>

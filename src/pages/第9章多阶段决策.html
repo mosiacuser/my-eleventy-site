@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第9章 多阶段决策——动态规划 交互式教程</title>
+    
+    <!-- MathJax 配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --primary-mint: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --primary-white: #ffffff;
+            --primary-dark: #343434;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--primary-dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            overflow-x: hidden;
+        }
+        
+        /* 导航栏样式 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9a3d 100%);
+            color: var(--primary-white);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: var(--primary-white);
+            color: var(--primary-orange);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        /* 侧边栏导航 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 80px;
+            width: 280px;
+            height: calc(100vh - 80px);
+            background: var(--primary-white);
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            padding: 2rem 0;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin: 0;
+        }
+        
+        .sidebar a {
+            display: block;
+            padding: 0.8rem 2rem;
+            color: var(--primary-dark);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .sidebar a:hover {
+            background: var(--primary-mint);
+            border-left-color: var(--primary-orange);
+            padding-left: 2.5rem;
+        }
+        
+        .sidebar .sub-item {
+            padding-left: 3rem;
+            font-size: 0.9rem;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            margin-left: 280px;
+            margin-top: 80px;
+            padding: 3rem;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        
+        .content-card {
+            background: var(--primary-white);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 标题样式 */
+        h2 {
+            color: var(--primary-orange);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-yellow);
+        }
+        
+        h3 {
+            color: var(--primary-orange);
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem 0;
+        }
+        
+        h4 {
+            color: #ff9a3d;
+            font-size: 1.2rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+        
+        /* 段落样式 */
+        p {
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+        
+        /* 公式样式 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        .formula-block {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--primary-orange);
+            overflow-x: auto;
+        }
+        
+        /* 例题样式 */
+        .example {
+            background: linear-gradient(135deg, var(--primary-mint) 0%, #d4e9e4 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            border-left: 5px solid var(--primary-orange);
+        }
+        
+        .example-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+            margin-bottom: 1rem;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: var(--primary-white);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        
+        th {
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 0.8rem;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        /* 折叠面板样式 */
+        .accordion {
+            margin: 1.5rem 0;
+        }
+        
+        .accordion-item {
+            background: var(--primary-white);
+            border: 2px solid var(--primary-mint);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .accordion-header {
+            background: var(--primary-mint);
+            color: var(--primary-dark);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .accordion-header:hover {
+            background: #8fc6b8;
+        }
+        
+        .accordion-header::after {
+            content: '+';
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion-header.active::after {
+            transform: rotate(45deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 1.5rem;
+        }
+        
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 1.5rem;
+        }
+        
+        /* 高亮框样式 */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, #fce181 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            border-left: 5px solid var(--primary-orange);
+        }
+        
+        .highlight-box strong {
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+        }
+        
+        /* 代码块样式 */
+        code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        /* 图形容器 */
+        .diagram {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .diagram img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            background: #ff9a3d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .navbar h1 {
+                font-size: 1.3rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-orange);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff9a3d;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <h1>第9章 多阶段决策——动态规划</h1>
+        <button class="menu-toggle" onclick="toggleSidebar()">☰ 目录</button>
+    </nav>
+    
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="#section-intro">章节概述</a></li>
+            <li><a href="#section-9-1">9.1 多阶段决策问题</a></li>
+            <li><a href="#section-9-2">9.2 动态规划的基本概念</a>
+                <ul>
+                    <li><a href="#section-9-2-1" class="sub-item">9.2.1 阶段与阶段变量</a></li>
+                    <li><a href="#section-9-2-2" class="sub-item">9.2.2 状态与状态变量</a></li>
+                    <li><a href="#section-9-2-3" class="sub-item">9.2.3 决策与决策变量</a></li>
+                    <li><a href="#section-9-2-4" class="sub-item">9.2.4 状态转移</a></li>
+                    <li><a href="#section-9-2-5" class="sub-item">9.2.5 策略</a></li>
+                    <li><a href="#section-9-2-6" class="sub-item">9.2.6 后部子策略</a></li>
+                    <li><a href="#section-9-2-7" class="sub-item">9.2.7 阶段指标</a></li>
+                    <li><a href="#section-9-2-8" class="sub-item">9.2.8 指标函数与最优指标函数</a></li>
+                </ul>
+            </li>
+            <li><a href="#section-9-3">9.3 最优性原理与逆推方程</a></li>
+            <li><a href="#section-9-4">9.4 动态规划应用例解</a></li>
+        </ul>
+    </aside>
+    
+    <!-- 主内容区 -->
+    <main class="main-content" id="mainContent">
+        <!-- 章节概述 -->
+        <section id="section-intro" class="content-card">
+            <h2>章节概述</h2>
+            <div class="highlight-box">
+                <strong>学习目标：</strong>
+                <ul>
+                    <li>理解多阶段决策问题的基本概念</li>
+                    <li>掌握动态规划的基本理论和方法</li>
+                    <li>学习Bellman最优性原理</li>
+                    <li>能够应用动态规划方法解决实际问题</li>
+                </ul>
+            </div>
+            <p>在生产、计划、管理中往往需要研究处理包含多个阶段决策过程的问题。这类问题能分解为若干阶段或若干子问题，通过对每个子问题作出决策得到解决。动态规划就是研究这种多阶段决策问题的优化方法。</p>
+            <p>动态规划的理论基础是由 R. Bellman 提出的<strong>最优性原理</strong>。这个原理归结为一个递推关系表达式，用它描述多阶段决策过程的状态转移。一般采用逆序方法求这类问题的解，即从最终状态出发，逐步推算到初始状态，从而得到一个最优决策序列。与其他优化技术相比，动态规划能得到一个多阶段的整体最优解。</p>
+        </section>
+        
+        <!-- 9.1 多阶段决策问题 -->
+        <section id="section-9-1" class="content-card">
+            <h2>9.1 多阶段决策问题</h2>
+            
+            <p>因为决策过程的时间参数可连续或离散，决策过程可分为连续决策过程和离散决策过程。根据决策过程演变是确定性的还是随机性的，决策过程又可分为确定性决策过程和随机性决策过程。综合起来便有离散确定性、离散随机性、连续确定性、连续随机性共四种决策过程模型。</p>
+            
+            <p>本书主要阐述离散决策过程，介绍动态规划的基本概念、理论及方法，并以各种实例说明其应用。</p>
+            
+            <p>多阶段决策问题很多，下面首先通过两个具体例子说明什么是多阶段决策问题。</p>
+            
+            <div class="example">
+                <div class="example-title">例 9.1 最短路问题：现欲从图</div>
+                <p>9.1 中的 $A$ 点沿道路铺设管道至 $E$ 点，应如何铺设管道，使得管子总长度最短？</p>
+                
+                <div class="diagram">
+                    <p><strong>图 9.1 最短路问题示意图</strong></p>
+                    <p style="color: #666; font-style: italic;">（图中显示从A点到E点的网络，包含节点B₁, B₂, B₃, C₁, C₂, C₃, D₁, D₂和相应的边权重）</p>
+                </div>
+                
+                <p>这个问题从图形看就是求 $A$ 至 $E$ 的最短路径问题，可以看成是一个多阶段决策问题。把它分成 4 个阶段考虑，每个阶段需从它所在位置选择这一阶段铺设的道路，连接各个阶段选择的道路即是 $A$ 至 $E$ 的一条路径。这样构成的路径有许多条，问题是如何在每个阶段作出适当选择，而使构成的路径为最短。</p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">例 9.2 机器负荷分配问题</div>
+                <p>某种机器可以在高低两种不同负荷下生产。在高负荷下生产时，产品的年产量 $y_1$ 和投入生产机器数 $x$ 的关系为</p>
+                
+                <div class="formula-block">
+                    $$y_1 = g(x)$$
+                </div>
+                
+                <p>这时机器完好率为 $\alpha$，即如果年初完好机器数为 $x$，到年终完好机器数为 $\alpha x$，$0 \lt \alpha \lt 1$；在低负荷生产时，产品的年产量 $y_2$ 和投入生产机器数量 $x$ 的关系为</p>
+                
+                <div class="formula-block">
+                    $$y_2 = f(x)$$
+                </div>
+                
+                <p>相应机器完好率为 $b$，$0 \lt b \lt 1$。</p>
+                
+                <p>假定开始生产时完好机器数为 $S_1$。试制定一个五年计划，在每年初决定重新分配在两种负荷下生产的机器数，使五年内总产量达最高。</p>
+                
+                <p>这是一个典型的多阶段决策问题，每年为一个阶段，每阶段需决定投入多少台机器在高负荷下生产，使得 5 年总产量最高（图 9.2）。</p>
+                
+                <div class="diagram">
+                    <p><strong>图 9.2 五年计划示意图</strong></p>
+                    <p style="color: #666;">（显示5个阶段的状态转移：$S_1 \rightarrow S_2 \rightarrow S_3 \rightarrow S_4 \rightarrow S_5$）</p>
+                </div>
+            </div>
+            
+            <p>由上述实例可知，多阶段决策问题是这样一种特殊的决策过程，即可将该过程分为若干个互相联系的阶段，在它的每一阶段都需作出决策，从而使整个过程达到最优。当然，各个阶段决策的选取不是任意确定的，它依赖于当前面临的状态，又影响以后的发展。当各个阶段决策确定后，就构成了一个决策序列，因而也就决定了整个过程的一条活动路线。这样把一个问题看做是一个前后关联具有链状结构的多阶段过程就称为多阶段决策过程，也称顺序决策过程，相应的问题就称为多阶段决策问题。</p>
+        </section>
+        
+        <!-- 9.2 动态规划的基本概念 -->
+        <section id="section-9-2" class="content-card">
+            <h2>9.2 动态规划的基本概念</h2>
+            
+            <p>用动态规划处理多阶段决策问题时，首先要建立一些基本概念，通过这些概念定量描述这个多阶段决策问题。现在结合例 9.1 解释这些概念。</p>
+            
+            <h3 id="section-9-2-1">9.2.1 阶段与阶段变量</h3>
+            <p>原问题分成若干相互联系的子问题，每个子问题称为一个阶段，用变量 $k$ 表示，$k=1,2,\cdots,n$，称其为阶段变量。如由图 9.1 所示的最短路问题就分成 4 个阶段，$k=1,2,3,4$。</p>
+            
+            <h3 id="section-9-2-2">9.2.2 状态与状态变量</h3>
+            <p>过程各阶段所处的"位置"称为状态，用变量 $S_k$ 表示第 $k$ 阶段初所处的状态，称其为状态变量。某阶段所有可能状态的全体称为状态集合。例 9.1 中，$S_3$ 表示第三阶段初起点之位置，状态集合 $|S_3|=\{C_1,C_2,C_3\}$；例 9.2 中，$S_2$ 表示第二年初完好机器的数目。</p>
+            
+            <h3 id="section-9-2-3">9.2.3 决策与决策变量</h3>
+            <p>某阶段初状态决定后，从这状态向下一阶段某个状态演变的选择称为决策，用变量 $x_k = x_k(S_k)$ 表示由 $k$ 阶段 $S_k$ 状态出发所作的决策，称之为决策变量。在 $S_k$ 状态下所有可选择的决策变量 $x_k(S_k)$ 的范围称为允许决策集合，用 $D_k(S_k)$ 表示。</p>
+            
+            <h3 id="section-9-2-4">9.2.4 状态转移</h3>
+            <p>前一阶段的状态和决策决定了下一阶段的状态，它们之间的关系称为状态转移，用方程</p>
+            
+            <div class="formula-block">
+                $$S_{k+1} = T[S_k, x_k(S_k)]$$
+            </div>
+            
+            <p>表示。如图 9.2 中，$S_k$ 表示第 $k$ 年初完好机器数（状态）；$x_k(S_k)$ 表示决定投入高负荷生产的机器数（决策），则下一年初完好的机器数</p>
+            
+            <div class="formula-block">
+                $$S_{k+1} = ax_k(S_k) + b(S_k - x_k(S_k))$$
+            </div>
+            
+            <p>即是由 $S_k$ 状态经决策 $x_k(S_k)$ 至 $S_{k+1}$ 状态的转移方程。</p>
+            
+            <h3 id="section-9-2-5">9.2.5 策略</h3>
+            <p>由阶段 $k=1$ 至阶段 $k=n$ 的全过程中，由每个阶段所选择的决策构成一决策序列，称之为一个策略，记为</p>
+            
+            <div class="formula-block">
+                $$P_1(S_1) = \{x_1(S_1), x_2(S_2), \cdots, x_n(S_n)\}$$
+            </div>
+            
+            <p>在例 9.1 中每一策略即表示由 $A \rightarrow E$ 的一条通路，如 $P_1(S_1)=\{A,B_1,C_2,D_2,E\}$ 表示一个策略。</p>
+            
+            <h3 id="section-9-2-6">9.2.6 后部子策略</h3>
+            <p>从 $k$ 阶段某状态 $S_k$ 出发到终点的过程称为后部子过程。它相应的决策序列称为后部子策略，记为</p>
+            
+            <div class="formula-block">
+                $$P_{kn}(S_k) = \{x_k(S_k), \cdots, x_n(S_n)\}$$
+            </div>
+            
+            <p>如在例 9.1 中，从 $k=2$，$S_2=B_1$ 出发的一个后部子策略</p>
+            
+            <div class="formula-block">
+                $$P_{2n}(S_2) = \{B_1, C_2, D_2, E\}$$
+            </div>
+            
+            <p>即表示由 $B_1$ 至 $E$ 的一条通路。</p>
+            
+            <h3 id="section-9-2-7">9.2.7 阶段指标</h3>
+            <p>$k$ 阶段中，评价由状态 $S_k$ 出发作出决策 $x_k(S_k)$ 所产生效果的数量指标记为</p>
+            
+            <div class="formula-block">
+                $$V_k(S_k, x_k)$$
+            </div>
+            
+            <p>在例 9.1 中，如由 $k=2$，$S_2=B_1$ 出发，选择决策 $x_2(B_1)=C_1$，则阶段指标 $V_2(B_1,C_1)=3$，即用 $B_1C_1$ 之路长作为决策效果评价的数量指标。</p>
+            
+            <h3 id="section-9-2-8">9.2.8 指标函数与最优指标函数</h3>
+            <p>评价由 $k$ 阶段 $S_k$ 状态出发到终点的后部子策略 $P_{kn}(S_k)$ 产生效果的数量指标记为</p>
+            
+            <div class="formula-block">
+                $$V_{kn}[S_k, P_{kn}(S_k)] = V_{kn}(S_k, x_k, S_{k+1}, x_{k+1}, \cdots, S_{n+1})$$
+            </div>
+            
+            <p>它是用某量值所实现过程优劣的一种数量指标，这个数量指标由状态 $S_k$ 和后部子策略 $P_{kn}(S_k)$ 决定，所以称为 $S_k$ 和 $P_{kn}(S_k)$ 的指标函数。而由 $k$ 阶段 $S_k$ 状态出发，所有可能的后部子策略所产生的指标函数值中最优者称为最优指标函数值，记为 $f_k(S_k)$，即</p>
+            
+            <div class="formula-block">
+                $$f_k(S_k) = \underset{x_k,\cdots,x_n}{\text{opt}} \, V_{kn}[S_k, P_{kn}(S_k)]$$
+            </div>
+            
+            <p>显然它是由状态 $S_k$ 决定，称为状态 $S_k$ 的最优指标函数。特别当 $k=1$ 时，$f_1(S_1)$ 表示全过程的最优指标值，相应的策略 $P_{1n}(S_1)$ 即为最优策略。在例 9.1 中，当 $k=3$，$S_3=C_1$ 时，每一个后部策略表示由 $C_1 \rightarrow E$ 的一条路径，相应指标函数值就是这条路的路长。而最优指标函数值 $f_3(C_1)$ 为 $C_1 \rightarrow E$ 所有通路中最短的路长。$f_1(A)$ 表示由 $A \rightarrow E$ 的最短路长，相应最优策略 $P_{1n}^*(A)$ 为 $A \rightarrow E$ 的最短路径。</p>
+        </section>
+        
+        <!-- 9.3 最优性原理与逆推方程 -->
+        <section id="section-9-3" class="content-card">
+            <h2>9.3 最优性原理与逆推方程</h2>
+            
+            <p>本节通过例 9.1 说明动态规划怎样根据最优性原理，通过逆推形式解决多阶段决策问题。动态规划的理论依据是 Bellman 提出的最优性原理。</p>
+            
+            <div class="highlight-box">
+                <strong>最优性原理：</strong>一个过程的最优策略具有这样的性质，即无论过去状态和决策如何，对前面决策形成的状态而言，余下的决策必构成最优策略。这就是最优性原理。
+            </div>
+            
+            <p>这个原理实际上是常识性的。如在例 9.1 中，若</p>
+            
+            <div class="formula-block">
+                $$A \rightarrow B_1 \rightarrow C_3 \rightarrow D_2 \rightarrow E$$
+            </div>
+            
+            <p>是 $A \rightarrow E$ 的最优策略（最短路），则 $C_3 \rightarrow D_2 \rightarrow E$ 必是 $C_3 \rightarrow E$ 的最短路径。</p>
+            
+            <p>现在看例 9.1。例 9.1 的问题是寻找 $A \rightarrow E$ 的最短路径（最优策略）及最短路长（最优指标函数值 $f_1(A)$）。如果能求出</p>
+            
+            <div class="formula-block">
+                $$\begin{cases}
+                B_1 \rightarrow E & \text{的最短路及最短路长} \{f_2(B_1) \\
+                B_2 \rightarrow E & f_2(B_2)
+                \end{cases}$$
+            </div>
+            
+            <p>则根据 Bellman 最优性原理，相应能求出 $A \rightarrow E$ 的最优指标函数值 $f_1(A)$ 及最短路，即有</p>
+            
+            <div class="formula-block">
+                $$f_1(A) = \min\{V_1(A,B_1) + f_2(B_1), V_1(A,B_2) + f_2(B_2)\}$$
+            </div>
+            
+            <p>其中 $V_1(A,B_1)$ 为 $AB_1$ 的路长，$V_1(A,B_2)$ 为 $AB_2$ 的路长。</p>
+            
+            <p>这样，求 $A \rightarrow E$ 最短路问题 1 转为求 $B_1 \rightarrow E$ 和 $B_2 \rightarrow E$ 最短路问题 2。</p>
+            
+            <p>同样，欲求 $B_1 \rightarrow E$ 最短路问题，可转化为求</p>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        点击展开详细推导过程
+                    </div>
+                    <div class="accordion-content">
+                        <div class="formula-block">
+                            $$\begin{cases}
+                            C_1 \rightarrow E & \text{最短路及最短路长} \{f_3(C_1) \\
+                            C_2 \rightarrow E & f_3(C_2) \\
+                            C_3 \rightarrow E & f_3(C_3)
+                            \end{cases}$$
+                            
+                            $$f_2(B_1) = \min\begin{cases}
+                            V_2(B_1,C_1) + f_3(C_1) \\
+                            V_2(B_1,C_2) + f_3(C_2) \\
+                            V_2(B_1,C_3) + f_3(C_3)
+                            \end{cases}$$
+                            
+                            <p>同样，求 $B_2 \rightarrow E$ 最短路问题有</p>
+                            
+                            $$f_2(B_2) = \min\begin{cases}
+                            V_2(B_2,C_1) + f_3(C_1) \\
+                            V_2(B_2,C_2) + f_3(C_2) \\
+                            V_2(B_2,C_3) + f_3(C_3)
+                            \end{cases}$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <p>依此类推，求 $C_1 \rightarrow E$ 最短路问题 3 转为求</p>
+            
+            <div class="formula-block">
+                $$\begin{cases}
+                D_1 \rightarrow E & \text{的最短路及最短路长} \{f_4(D_1) \\
+                D_2 \rightarrow E & f_4(D_2)
+                \end{cases}$$
+            </div>
+            
+            <p>的问题 4，这样由逆向递推求解</p>
+            
+            <div class="diagram">
+                <p style="font-family: 'Roboto Mono', monospace;">
+                    $\begin{cases} D_1 \\ D_2 \end{cases} \rightarrow E$ 最短路 $\rightarrow \begin{cases} C_1 \\ C_2 \\ C_3 \end{cases} \rightarrow E$ 最短路
+                </p>
+                <p>(问题 4) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (问题 3)</p>
+                <p>$\Rightarrow \begin{cases} B_1 \\ B_2 \end{cases} \rightarrow E$ 最短路 $\rightarrow A \rightarrow E$ 最短路</p>
+                <p>(问题 2) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (问题 1)</p>
+            </div>
+            
+            <p>而问题 4 求 $D_i \rightarrow E$ 最短路是容易解得的。整个求解过程由下列步骤表示：</p>
+            
+            <div class="example">
+                <p><strong>$k=4$：</strong></p>
+                <div class="formula-block">
+                    $$f_4(D_1) = V_4(D_1,E) = 4$$
+                    $$f_4(D_2) = V_4(D_2,E) = 3$$
+                </div>
+                
+                <p><strong>$k=3$：</strong></p>
+                <div class="formula-block">
+                    $$f_3(C_1) = \min\begin{cases}
+                    V_3(C_1,D_1) + f_4(D_1) \\
+                    V_3(C_1,D_2) + f_4(D_2)
+                    \end{cases} = \min\begin{cases} 2+4 \\ 1+3 \end{cases} = 4$$
+                    
+                    $$f_3(C_2) = \min\begin{cases}
+                    V_3(C_2,D_1) + f_4(D_1) \\
+                    V_3(C_2,D_2) + f_4(D_2)
+                    \end{cases} = \min\begin{cases} 4+4 \\ 2+3 \end{cases} = 5$$
+                    
+                    $$f_3(C_3) = \min\begin{cases}
+                    V_3(C_3,D_1) + f_4(D_1) \\
+                    V_3(C_3,D_2) + f_4(D_2)
+                    \end{cases} = \min\begin{cases} 5+4 \\ 2+3 \end{cases} = 5$$
+                </div>
+                
+                <p><strong>$k=2$：</strong></p>
+                <div class="formula-block">
+                    $$f_2(B_1) = \min\begin{cases}
+                    V_2(B_1,C_1) + f_3(C_1) \\
+                    V_2(B_1,C_2) + f_3(C_2) \\
+                    V_2(B_1,C_3) + f_3(C_3)
+                    \end{cases} = \min\begin{cases} 3+4 \\ 6+5 \\ 1+5 \end{cases} = 6$$
+                    
+                    $$f_2(B_2) = \min\begin{cases}
+                    V_2(B_2,C_1) + f_3(C_1) \\
+                    V_2(B_2,C_2) + f_3(C_2) \\
+                    V_2(B_2,C_3) + f_3(C_3)
+                    \end{cases} = \min\begin{cases} 8+4 \\ 7+5 \\ 6+5 \end{cases} = 11$$
+                </div>
+                
+                <p><strong>$k=1$：</strong></p>
+                <div class="formula-block">
+                    $$f_1(A) = \min\begin{cases}
+                    V_1(A,B_1) + f_2(B_1) \\
+                    V_1(A,B_2) + f_2(B_2)
+                    \end{cases} = \min\begin{cases} 5+6 \\ 3+11 \end{cases} = 11$$
+                </div>
+            </div>
+            
+            <p>则 $A \rightarrow E$ 最短路长为 $f_1(A)=11$，最优策略即最短路可由反向追踪得</p>
+            
+            <div class="formula-block">
+                $$A \rightarrow B_1 \rightarrow C_3 \rightarrow D_2 \rightarrow E$$
+            </div>
+            
+            <p>从上述求解过程可看出，动态规划是通过求解逆推过程</p>
+            
+            <div class="formula-block">
+                $$\begin{cases}
+                f_k(S_k) = \underset{x_k \in D_k(S_k)}{\text{opt}} [V_k(S_k,x_k) + f_{k+1}(S_{k+1})] \\
+                f_{n+1}(S_{n+1}) = 0, (k=n,(n-1),\cdots 1)
+                \end{cases} \tag{9.1}$$
+            </div>
+            
+            <p>逆推来得最优策略 $P_{1n}^*(S_1)$ 及最优指标函数。式(9.1)称为动态规划的逆推方程或基本方程。</p>
+            
+            <p>其中，$D_k(S_k)$ 为允许决策集合，$S_{k+1}=T(S_k,x_k)$，称 $f_{n+1}(S_{n+1})=0$ 为边界条件，"opt"是英文最优化的缩写，可根据题意取 min 或 max。式(9.1)中 $V_k(S_k,x_k)$ 与 $f_{k+1}(S_{k+1})$ 之间的运算除"+"之外，也可能是"×"（乘）。</p>
+            
+            <div class="highlight-box">
+                <p><strong>确切地讲，式(9.1)只是动态规划逆序解法的基本方程。</strong>相应地，可以给出顺序解法的基本方程。所谓顺序解法是指寻优途径是从初始阶段开始到最后阶段结束即恰与逆序解法的寻优方向相反的一种动态规划问题的求解方法。</p>
+            </div>
+            
+            <p>以下给出动态规划顺序解法的基本方程如下：</p>
+            
+            <div class="formula-block">
+                $$\begin{cases}
+                f_k(S_k) = \underset{x_k \in D_k(S_k)}{\text{opt}} [V_k(S_k,x_k) + f_{k-1}(S_{k-1})] \\
+                f_0(S_1) = 0, k=1,2,\cdots,n
+                \end{cases} \tag{9.2}$$
+            </div>
+            
+            <p>这时的状态转移不是由 $S_k,x_k$ 去确定 $S_{k+1}$，而是反过来由 $S_{k+1},x_{k+1}$ 去确定 $S_k$，则状态转移方程一般形式为 $S_k=T'(S_{k+1},x_{k+1})$。其求解过程是根据边界条件，从 $k=1$ 开始，从前向后顺推，逐步可求得各阶段的最优决策和相应的最优值，最后求出 $f_n(S_n)$ 时，就得到整个问题的最优解。</p>
+            
+            <p>本书主要阐述利用逆序解法求解动态规划问题的方法。</p>
+            
+            <p>最后，可将动态规划解法的基本步骤归纳如下：</p>
+            
+            <ol>
+                <li>规定过程的分段，构造出状态，定义状态变量，使状态序列能描述整个过程，状态具有无后效性；（所谓"无后效性"是指：若某阶段状态给定，则在这阶段以后过程的发展只与当前的状态有关，而与过去历史无关。）</li>
+                <li>定义决策变量，确定允许决策集合；</li>
+                <li>确定状态转移规律，写出转移方程；</li>
+                <li>定出指标函数，写出递推方程，求解。</li>
+            </ol>
+            
+            <p>对于离散的状态变量及决策变量问题，常采用列表形式递推计算 $f_k(S_k)$ 及 $x_k^*(S_k)$，通常有表 9.1 和表 9.2 两种表格形式。</p>
+            
+            <div class="diagram">
+                <p><strong>表 9.1 $k$ 阶段[计算 $f_k(S_k)$ 及 $x_k^*(S_k)$]表</strong></p>
+                <table>
+                    <tr>
+                        <th>$S_k$</th>
+                        <th colspan="4">$V_k(S_k,x_k) + f_{k+1}(S_{k+1})$</th>
+                        <th>$f_k(S_k)$</th>
+                        <th>$x_k^*$</th>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>$x_{k1}$</td>
+                        <td>$x_{k2}$</td>
+                        <td>$\cdots$</td>
+                        <td>$x_{kn}$</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="7" style="height: 50px;"></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="diagram">
+                <p><strong>表 9.2 $k$ 阶段[计算 $f_k(S_k)$ 及 $x_k^*(S_k)$]表</strong></p>
+                <table>
+                    <tr>
+                        <th>$S_k$</th>
+                        <th>$x_k$</th>
+                        <th>$V_k(S_k,x_k)$</th>
+                        <th>$S_{k+1}=T(S_k,x_k)$</th>
+                        <th>$f_{k+1}(S_{k+1})$</th>
+                        <th>$V_k(S_k,x_k) + f_{k+1}(S_{k+1})$</th>
+                        <th>$f_k(S_k)$</th>
+                        <th>$x_k^*$</th>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="height: 50px;"></td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+        
+        <!-- 9.4 动态规划应用例解 -->
+        <section id="section-9-4" class="content-card">
+            <h2>9.4 动态规划应用例解</h2>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        例 9.3（资源分配问题）
+                    </div>
+                    <div class="accordion-content">
+                        <div class="example">
+                            <p>某工厂有 100 台机器，拟分四期使用，在每一周期有两种生产任务。根据经验要把机器 $x_1$ 台投入第一种生产任务，则在一个生产周期中将有 $\frac{1}{3}x_1$ 台机器报废，余下机器全部投入第二种生产任务，则在一个生产周期中将有 $\frac{1}{10}$ 台机器报废。如果在一生产周期中干第一种生产任务每一台机器可收益 10，干第二种生产任务每一台机器可收益 7。问怎样分配机器使总收益最大？</p>
+                            
+                            <p><strong>解</strong>：这可视为一个 4 阶段决策问题，可用动态规划方法求解。设阶段变量 $k=1,2,3,4$。状态变量 $S_k$ 表示 $k$ 年初完好机器台数。决策变量 $x_k$ 表示 $k$ 年初决定投入第一种生产任务的机器数。状态转移方程为</p>
+                            
+                            <div class="formula-block">
+                                $$S_{k+1} = \frac{2}{3}x_k + \frac{9}{10}(S_k - x_k) \quad (0 \leq x_k \leq S_k)$$
+                            </div>
+                            
+                            <p>阶段指标</p>
+                            
+                            <div class="formula-block">
+                                $$V(S_k,x_k) = 10x_k + 7(S_k - x_k)$$
+                            </div>
+                            
+                            <p>计算过程（略，包含详细的数值计算表格）</p>
+                            
+                            <p>最优策略即各期机器最优分配如下：</p>
+                            
+                            <div class="formula-block">
+                                $$S_1 = 100, x_1^* = 0; \quad S_2 = 90, x_2^* = 0$$
+                                $$S_3 = 81, x_3^* = 81; \quad S_4 = 54, x_1^* = 54$$
+                            </div>
+                            
+                            <p>最大总收益 $f_1(100) = 2\,680$。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        例 9.4（生产计划问题）
+                    </div>
+                    <div class="accordion-content">
+                        <div class="example">
+                            <p>某公司与一顾客订立合同，在 4 个月内出售一定数量的某种产品。由于各种原因，每月至多生产 100 单位，产量限于 10 的倍数。产品可以贮存，贮存费用每单位 2 元。生产成本及每月销售额如表 9.3 给出。要求确定一个生产过程，使能满足合同要求，在生产能力以内使生产成本最小。</p>
+                            
+                            <div class="diagram">
+                                <p><strong>表 9.3</strong></p>
+                                <table>
+                                    <tr>
+                                        <th>月份</th>
+                                        <th>单位生产成本 $C_i$(元)</th>
+                                        <th>合同销售额 $d_i$</th>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>70</td>
+                                        <td>60</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>72</td>
+                                        <td>70</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>80</td>
+                                        <td>120</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>76</td>
+                                        <td>60</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            
+                            <p><strong>解</strong>：阶段变量 $k=1,2,3,4$ 表示月份。状态变量 $S_k$ 表示 $k$ 月初已有产品数。决策变量 $x_k$ 表示决定 $k$ 月的生产数量，满足约束</p>
+                            
+                            <div class="formula-block">
+                                $$x_k + S_k \geq d_k, x_k \leq 100, x_k = 0,10,20,\cdots$$
+                            </div>
+                            
+                            <p>状态转移 $S_{k+1} = S_k + x_k - d_k$，阶段指标 $V_k(S_k,x_k) = c_kx_k + 2S_k$。</p>
+                            
+                            <p>（详细计算过程见原文表格）</p>
+                            
+                            <p>最小总成本 $f_1(0) = 22\,980$，最优生产安排如表 9.8 所示。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        例 9.5（投资分配）
+                    </div>
+                    <div class="accordion-content">
+                        <div class="example">
+                            <p>现有 8 百万资金向三个企业($i=1,2,3$)投资，$V_i(x)$($i=1,2,3$)是向第 $i$ 个企业投资 $x$ 时产生的利润函数，其数据如表 9.9 所示。试求使总利润最大的投资计划。</p>
+                            
+                            <div class="diagram">
+                                <p><strong>表 9.9</strong></p>
+                                <table>
+                                    <tr>
+                                        <th>$x$</th>
+                                        <th>0</th>
+                                        <th>1</th>
+                                        <th>2</th>
+                                        <th>3</th>
+                                        <th>4</th>
+                                        <th>5</th>
+                                        <th>6</th>
+                                        <th>7</th>
+                                        <th>8</th>
+                                    </tr>
+                                    <tr>
+                                        <td>$V_1(x)$</td>
+                                        <td>0</td>
+                                        <td>5</td>
+                                        <td>15</td>
+                                        <td>40</td>
+                                        <td>80</td>
+                                        <td>90</td>
+                                        <td>95</td>
+                                        <td>98</td>
+                                        <td>100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$V_2(x)$</td>
+                                        <td>0</td>
+                                        <td>5</td>
+                                        <td>15</td>
+                                        <td>40</td>
+                                        <td>60</td>
+                                        <td>70</td>
+                                        <td>73</td>
+                                        <td>74</td>
+                                        <td>75</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$V_3(x)$</td>
+                                        <td>0</td>
+                                        <td>4</td>
+                                        <td>26</td>
+                                        <td>40</td>
+                                        <td>45</td>
+                                        <td>50</td>
+                                        <td>51</td>
+                                        <td>52</td>
+                                        <td>53</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            
+                            <p><strong>解</strong>：可把这个问题作为一个多阶段决策问题来考虑，如图 9.3 所示。阶段变量 $k=1,2,3$。</p>
+                            
+                            <p>（详细计算过程略）</p>
+                            
+                            <p>最大总利润 $f_1(8) = 140$</p>
+                            
+                            <p>最优投资策略：</p>
+                            <div class="formula-block">
+                                $$S_1 = 8, x_1^* = 4 \quad S_2 = 4, x_2^* = 4 \quad S_3 = 0, x_3^* = 0$$
+                            </div>
+                            
+                            <p>即最优投资计划为向第一个企业投资 400 万元，向第二个企业投资 400 万元，向第三个企业投资为零。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="highlight-box" style="margin-top: 2rem;">
+                <h3>章节小结</h3>
+                <p>本章介绍了动态规划的基本理论和方法，包括：</p>
+                <ul>
+                    <li>多阶段决策问题的基本概念和特征</li>
+                    <li>动态规划的核心要素：阶段、状态、决策、策略</li>
+                    <li>Bellman 最优性原理及其应用</li>
+                    <li>逆推方程的建立和求解方法</li>
+                    <li>多种实际问题的动态规划建模与求解</li>
+                </ul>
+                <p>掌握动态规划方法对于解决资源分配、生产计划、投资决策等实际问题具有重要意义。</p>
+            </div>
+        </section>
+        
+        <!-- 页脚 -->
+        <footer style="text-align: center; padding: 2rem; color: #666; margin-top: 3rem; border-top: 2px solid var(--primary-mint);">
+            <p>管理科学基础 - 第9章 多阶段决策——动态规划</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                <strong>使用说明：</strong>本页面需要网络连接以加载 MathJax 数学公式渲染引擎。<br>
+                请确保浏览器支持 JavaScript 并已联网。
+            </p>
+        </footer>
+    </main>
+    
+    <script>
+        // 切换侧边栏显示/隐藏
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('show');
+            mainContent.classList.toggle('expanded');
+        }
+        
+        // 折叠面板功能
+        function toggleAccordion(element) {
+            const content = element.nextElementSibling;
+            const allHeaders = document.querySelectorAll('.accordion-header');
+            const allContents = document.querySelectorAll('.accordion-content');
+            
+            // 关闭其他所有打开的面板
+            allHeaders.forEach(header => {
+                if (header !== element) {
+                    header.classList.remove('active');
+                }
+            });
+            
+            allContents.forEach(c => {
+                if (c !== content) {
+                    c.classList.remove('active');
+                }
+            });
+            
+            // 切换当前面板
+            element.classList.toggle('active');
+            content.classList.toggle('active');
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 响应式设计：在移动设备上点击链接后自动隐藏侧边栏
+        if (window.innerWidth <= 768) {
+            document.querySelectorAll('.sidebar a').forEach(link => {
+                link.addEventListener('click', () => {
+                    toggleSidebar();
+                });
+            });
+        }
+        
+        // 页面加载动画
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.content-card').forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.animation = 'fadeInUp 0.6s ease forwards';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
+
+<!-- 
+使用说明：
+1. 保存为 .html 文件：将此代码保存为 "dynamic_programming_tutorial.html"
+2. 需要网络连接：页面使用 CDN 加载 MathJax 和 Google Fonts，需要互联网连接
+3. 在浏览器中打开：使用现代浏览器（Chrome、Firefox、Safari、Edge）打开文件
+4. 交互功能：
+   - 点击侧边栏导航可快速跳转到各章节
+   - 点击折叠面板可展开/收起详细内容
+   - 在移动设备上点击"☰ 目录"按钮可显示/隐藏侧边栏
+5. 数学公式：所有数学公式使用 MathJax 渲染，首次加载可能需要几秒钟
+
+特色功能：
+- 响应式设计，支持桌面和移动设备
+- 交互式折叠面板，可选择性查看详细内容
+- 侧边栏导航，快速定位到各章节
+- 色彩丰富的界面设计，使用指定配色方案
+- 完整的 LaTeX 数学公式支持
+- 平滑滚动和动画效果
+-->

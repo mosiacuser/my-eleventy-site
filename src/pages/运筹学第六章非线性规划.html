@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第六章 非线性规划 - 交互式教程</title>
+    
+    <!-- 完整的MathJax配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-orange: #f27d00;
+            --secondary-green: #a6d6c9;
+            --accent-yellow: #f7d117;
+            --white: #ffffff;
+            --dark: #343434;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Roboto', sans-serif;
+            line-height: 1.8;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* 顶部导航栏 */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #d66d00 100%);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .navbar h1 {
+            color: var(--white);
+            font-size: 2em;
+            font-weight: 700;
+        }
+        
+        .menu-toggle {
+            background: var(--white);
+            color: var(--primary-orange);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .menu-toggle:hover {
+            background: var(--accent-yellow);
+            transform: scale(1.05);
+        }
+        
+        /* 侧边栏导航 */
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100%;
+            background: var(--dark);
+            padding: 80px 20px 20px;
+            overflow-y: auto;
+            transition: left 0.3s;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.3);
+        }
+        
+        .sidebar.active {
+            left: 0;
+        }
+        
+        .sidebar-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-orange);
+            color: var(--white);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        
+        .sidebar nav ul {
+            list-style: none;
+        }
+        
+        .sidebar nav ul li {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar nav ul li a {
+            color: var(--white);
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .sidebar nav ul li a:hover {
+            background: var(--primary-orange);
+            transform: translateX(5px);
+        }
+        
+        /* 主内容区域 */
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #fafafa;
+            border-radius: 10px;
+            border-left: 5px solid var(--primary-orange);
+        }
+        
+        .section h2 {
+            color: var(--primary-orange);
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary-green);
+        }
+        
+        .section h3 {
+            color: var(--dark);
+            font-size: 1.4em;
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent-yellow);
+        }
+        
+        .section h4 {
+            color: var(--primary-orange);
+            font-size: 1.2em;
+            margin: 20px 0 10px;
+        }
+        
+        /* 定理、定义等特殊块 */
+        .theorem, .definition, .example {
+            background: var(--white);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .theorem {
+            border-left: 5px solid var(--primary-orange);
+        }
+        
+        .definition {
+            border-left: 5px solid var(--secondary-green);
+        }
+        
+        .example {
+            border-left: 5px solid var(--accent-yellow);
+            background: #fffef5;
+        }
+        
+        .theorem-title, .definition-title, .example-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .theorem-title {
+            color: var(--primary-orange);
+        }
+        
+        .definition-title {
+            color: var(--secondary-green);
+        }
+        
+        .example-title {
+            color: #d4a017;
+        }
+        
+        /* 折叠/展开功能 */
+        .collapsible {
+            background: var(--secondary-green);
+            color: var(--dark);
+            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            font-weight: 500;
+            border-radius: 5px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        
+        .collapsible:hover {
+            background: var(--primary-orange);
+            color: var(--white);
+        }
+        
+        .collapsible:after {
+            content: '\\002B';
+            color: var(--white);
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: "\\2212";
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: var(--white);
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .collapsible-content-inner {
+            padding: 20px;
+        }
+        
+        /* 数学公式样式 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        .formula-block {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid var(--secondary-green);
+            overflow-x: auto;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        th {
+            background: var(--primary-orange);
+            color: var(--white);
+            padding: 15px;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        /* 提示框 */
+        .note {
+            background: #fff9e6;
+            border-left: 5px solid var(--accent-yellow);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .note:before {
+            content: "💡 提示：";
+            font-weight: bold;
+            color: #d4a017;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar h1 {
+                font-size: 1.5em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            .sidebar {
+                width: 250px;
+            }
+        }
+        
+        /* 返回顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-orange);
+            color: var(--white);
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: none;
+            transition: all 0.3s;
+        }
+        
+        .back-to-top:hover {
+            background: var(--dark);
+            transform: translateY(-5px);
+        }
+        
+        /* 图像样式 */
+        .figure {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .figure-caption {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部导航栏 -->
+        <div class="navbar">
+            <h1>第六章 非线性规划</h1>
+            <button class="menu-toggle" onclick="toggleSidebar()">☰ 目录</button>
+        </div>
+        
+        <!-- 侧边栏导航 -->
+        <div class="sidebar" id="sidebar">
+            <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+            <nav>
+                <ul>
+                    <li><a href="#intro">章节简介</a></li>
+                    <li><a href="#section1">第一节 基本概念</a></li>
+                    <li><a href="#section2">第二节 一维搜索</a></li>
+                    <li><a href="#section3">第三节 无约束极值问题</a></li>
+                    <li><a href="#section4">第四节 约束极值问题</a></li>
+                    <li><a href="#exercises">习题</a></li>
+                </ul>
+            </nav>
+        </div>
+        
+        <!-- 主内容区域 -->
+        <div class="content">
+            <!-- 章节简介 -->
+            <section id="intro" class="section">
+                <h2>章节简介</h2>
+                <p>线性规划的目标函数和约束条件都是其自变量的线性函数。如果目标函数或约束条件中包含有自变量的非线性函数，则这样的规划问题就属于非线性规划。</p>
+                
+                <p>很多工程设计优化问题的表达式中，含有变量的非线性函数。在管理问题中，如著名的马可维茨（Markowitz）投资优化组合模型，存储论中平均总费用与订货批量的关系，产品定价的决策及车间设施布局等，都涉及非线性函数的情况，这些问题均需用非线性规划的模型来表达，并借助于非线性规划的解法来求解。</p>
+            </section>
+            
+            <!-- 第一节 基本概念 -->
+            <section id="section1" class="section">
+                <h2>第一节 基本概念</h2>
+                
+                <h3>一、非线性规划的数学模型</h3>
+                <p>非线性规划数学模型的一般形式是：</p>
+                <div class="formula-block">
+                    $$\begin{cases}
+                    \min f(X) \\
+                    h_i(X) = 0 \quad (i = 1, 2, \dots, m) \\
+                    g_j(X) \geq 0 \quad (j = 1, 2, \dots, l)
+                    \end{cases} \tag{6.1}$$
+                </div>
+                
+                <p>其中，$X = (x_1, x_2, \dots, x_n)^T$ 是 $n$ 维欧氏空间 $E_n$ 中的点（向量），目标函数 $f(X)$ 和约束函数 $h_i(X)$、$g_j(X)$ 为 $X$ 的实函数。</p>
+                
+                <p>有时，也将非线性规划的数学模型写成：</p>
+                <div class="formula-block">
+                    $$\begin{cases}
+                    \min f(X) \\
+                    g_j(X) \geq 0 \quad (j = 1, 2, \dots, l)
+                    \end{cases} \tag{6.2}$$
+                </div>
+                
+                <p>即约束条件中不出现等式。如果有某一约束条件为等式 $g_j(X) = 0$，则可用如下两个不等式约束替代：</p>
+                <div class="formula-block">
+                    $$\begin{cases}
+                    g_j(X) \geq 0 \\
+                    -g_j(X) \geq 0
+                    \end{cases}$$
+                </div>
+                
+                <p>模型(6.2)也常表示成另一种形式：</p>
+                <div class="formula-block">
+                    $$\begin{cases}
+                    \min f(X), \quad X \in R \subset E_n \\
+                    R = \{X \mid g_j(X) \geq 0, \; (j = 1, 2, \dots, l)\}
+                    \end{cases} \tag{6.3}$$
+                </div>
+                
+                <div class="note">
+                    上式中 $R$ 为问题的可行域。由于 $\max f(X) = -\min[-f(X)]$，且这两种情况下求出的最优解相同（如有最优解存在），故当需使目标函数极大化时，只需求其负函数极小化即可。
+                </div>
+                
+                <button class="collapsible">二、二维问题的图解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>当只有两个自变量时，求解非线性规划也可像对线性规划那样借助于图解法。</p>
+                        
+                        <div class="example">
+                            <div class="example-title">示例：考虑非线性规划问题</div>
+                            <div class="formula-block">
+                                $$\begin{cases}
+                                \min f(X) = (x_1 - 2)^2 + (x_2 - 1)^2 \\
+                                x_1^2 + x_2^2 - 5x_2 \geq 0 \\
+                                x_1 + x_2 - 5 \leq 0 \\
+                                x_1 \geq 0 \\
+                                x_2 \geq 0
+                                \end{cases} \tag{6.4}$$
+                            </div>
+                            
+                            <p>如对线性规划所作的那样，在 $x_1x_2$ 坐标平面上画出目标函数的等值线，它是以点 $(2, 1)$ 为圆心的同心圆。再根据约束条件画出可行域，它是抛物线段 ABCD。</p>
+                            
+                            <p>令动点从 A 出发沿抛物线 ABCD 移动，当动点从 A 移向 B 时，目标函数值下降；当动点由 B 移向 C 时，目标函数值上升。从而可知，在可行域 AC 这一范围内，B 点的目标函数值 $f(B)$ 最小，因而点 B 是一个<strong>极小点</strong>。</p>
+                            
+                            <p>当动点由 C 向 D 移动时，目标函数值再次下降，在 D 点（其坐标为 $(4, 1)$）目标函数值最小。在本例中，目标函数值 $f(B)$ 仅是目标函数 $f(X)$ 在一部分可行域上的极小值，而不是在整个可行域上的极小值，这样的极小值称为<strong>局部极小值</strong>（或相对极小值）。像 B 这样的点称为<strong>局部极小点</strong>（或相对极小点）。</p>
+                            
+                            <p>$f(D)$ 是目标函数在整个可行域上的极小值，称<strong>全局极小值</strong>（最小值），或绝对极小值；像 D 这样的点称<strong>全局极小点</strong>（最小点），或绝对极小点。全局极小点当然也是局部极小点，但局部极小点不一定是全局极小点。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">三、几个定义</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>下面给出有关局部极小和全局极小的定义。</p>
+                        
+                        <div class="definition">
+                            <div class="definition-title">定义：局部极小点</div>
+                            <p>设 $f(X)$ 为定义在 $n$ 维欧氏空间 $E_n$ 的某一区域 $R$ 上的 $n$ 元实函数（可记为 $f(X): R \subset E_n \rightarrow E_1$），对于 $X^* \in R$，如果存在某个 $\varepsilon \gt 0$，使得所有与 $X^*$ 的距离小于 $\varepsilon$ 的 $X \in R$（即 $X \in R$ 且 $\|X - X^*\| \leq \varepsilon$），都有 $f(X) \geq f(X^*)$，则称 $X^*$ 为 $f(X)$ 在 $R$ 上的<strong>局部极小点</strong>，$f(X^*)$ 为局部极小值。</p>
+                            
+                            <p>若对于所有 $X \neq X^*$ 且与 $X^*$ 的距离小于 $\varepsilon$ 的 $X \in R$，都有 $f(X) \gt f(X^*)$，则称 $X^*$ 为 $f(X)$ 在 $R$ 上的<strong>严格局部极小点</strong>，$f(X^*)$ 为严格局部极小值。</p>
+                        </div>
+                        
+                        <div class="definition">
+                            <div class="definition-title">定义：全局极小点</div>
+                            <p>设 $f(X)$ 为定义在 $E_n$ 的某一区域 $R$ 上的 $n$ 元实函数，若存在 $X^* \in R$，对所有 $X \in R$ 都有 $f(X) \geq f(X^*)$，则称 $X^*$ 为 $f(X)$ 在 $R$ 上的<strong>全局极小点</strong>，$f(X^*)$ 为全局极小值。</p>
+                            
+                            <p>若对于所有 $X \in R$ 且 $X \neq X^*$，都有 $f(X) \gt f(X^*)$，则称 $X^*$ 为 $f(X)$ 在 $R$ 上的<strong>严格全局极小点</strong>，$f(X^*)$ 为严格全局极小值。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">四、多元函数极值点存在的条件</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>二阶可微的一元函数 $f(x)$ 极值点存在的条件如下：</p>
+                        
+                        <p><strong>必要条件：</strong>$f'(x) = 0$</p>
+                        
+                        <p><strong>充分条件：</strong></p>
+                        <ul>
+                            <li>对于极小点：$f'(x) = 0$ 且 $f''(x) \gt 0$</li>
+                            <li>对于极大点：$f'(x) = 0$ 且 $f''(x) \lt 0$</li>
+                        </ul>
+                        
+                        <p>对于无约束多元函数，其极值点存在的必要条件和充分条件，与一元函数极值点的相应条件类似。</p>
+                        
+                        <div class="theorem">
+                            <div class="theorem-title">定理1（必要条件）</div>
+                            <p>设 $R$ 是 $n$ 维欧氏空间 $E_n$ 上的某一开集，$f(X)$ 在 $R$ 上有连续一阶偏导数，且在点 $X^* \in R$ 取得局部极值，则必有：</p>
+                            <div class="formula-block">
+                                $$\frac{\partial f(X^*)}{\partial x_1} = \frac{\partial f(X^*)}{\partial x_2} = \cdots = \frac{\partial f(X^*)}{\partial x_n} = 0 \tag{6.5}$$
+                            </div>
+                            <p>或写成：</p>
+                            <div class="formula-block">
+                                $$\nabla f(X^*) = 0 \tag{6.6}$$
+                            </div>
+                            <p>此处：</p>
+                            <div class="formula-block">
+                                $$\nabla f(X^*) = \left(\frac{\partial f(X^*)}{\partial x_1}, \frac{\partial f(X^*)}{\partial x_2}, \dots, \frac{\partial f(X^*)}{\partial x_n}\right)^T \tag{6.7}$$
+                            </div>
+                            <p>为函数 $f(X)$ 在点 $X^*$ 处的梯度。</p>
+                        </div>
+                        
+                        <div class="note">
+                            这个定理是显然的。像一元函数那样，称满足条件(6.5)的点为稳定点（驻点）。函数 $f(X)$ 的梯度 $\nabla f(X)$ 有两个十分重要的性质：(1) 函数 $f(X)$ 在某点 $X^{(0)}$ 的梯度 $\nabla f(X^{(0)})$ 必与函数过该点的等值面（或等值线）正交（没 $\nabla f(X^{(0)})$ 不为零）；(2) 梯度向量的方向是函数值（在该点处）增加最快的方向，而负梯度方向则是函数值（在该点处）减少最快的方向。
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">五、凸函数和凹函数</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h4>1. 定义</h4>
+                        <div class="definition">
+                            <div class="definition-title">凸函数的定义</div>
+                            <p>设 $f(X)$ 为定义在 $n$ 维欧氏空间 $E_n$ 中某个凸集 $R_c$ 上的函数，若对任何实数 $\alpha$ ($0 \lt \alpha \lt 1$) 以及 $R_c$ 中的任意两点 $X^{(1)}$ 和 $X^{(2)}$，恒有：</p>
+                            <div class="formula-block">
+                                $$f(\alpha X^{(1)} + (1-\alpha)X^{(2)}) \leq \alpha f(X^{(1)}) + (1-\alpha)f(X^{(2)}) \tag{6.12}$$
+                            </div>
+                            <p>则称 $f(X)$ 为定义在 $R_c$ 上的<strong>凸函数</strong>。</p>
+                            
+                            <p>若对每一个 $\alpha$ ($0 \lt \alpha \lt 1$) 和任意两点 $X^{(1)} \neq X^{(2)} \in R_c$，恒有：</p>
+                            <div class="formula-block">
+                                $$f(\alpha X^{(1)} + (1-\alpha)X^{(2)}) \lt \alpha f(X^{(1)}) + (1-\alpha)f(X^{(2)}) \tag{6.13}$$
+                            </div>
+                            <p>则称 $f(X)$ 为定义在 $R_c$ 上的<strong>严格凸函数</strong>。</p>
+                        </div>
+                        
+                        <p>若式(6.12)和式(6.13)中的不等号反向，即可得到凹函数和严格凹函数的定义。显然，若函数 $f(X) = -g(X)$ 是凸函数（严格凸函数），则 $g(X)$ 一定是凹函数（严格凹函数）。</p>
+                        
+                        <h4>2. 凸函数的性质</h4>
+                        <div class="theorem">
+                            <div class="theorem-title">性质1</div>
+                            <p>设 $f(X)$ 为定义在凸集 $R_c$ 上的凸函数，则对任意实数 $\beta \geq 0$，函数 $\beta f(X)$ 也是定义在 $R_c$ 上的凸函数。</p>
+                        </div>
+                        
+                        <div class="theorem">
+                            <div class="theorem-title">性质2</div>
+                            <p>设 $f_1(X)$ 和 $f_2(X)$ 为定义在凸集 $R_c$ 上的两个凸函数，则这两个凸函数的和 $f(X) = f_1(X) + f_2(X)$ 仍为定义在 $R_c$ 上的凸函数。</p>
+                        </div>
+                        
+                        <div class="theorem">
+                            <div class="theorem-title">性质3</div>
+                            <p>设 $f(X)$ 为定义在凸集 $R_c$ 上的凸函数，则对每一实数 $\beta$，集合（称为水平集）</p>
+                            <div class="formula-block">
+                                $$S_\beta = \{X \mid X \in R_c, f(X) \leq \beta\} \tag{6.14}$$
+                            </div>
+                            <p>是凸集。</p>
+                        </div>
+                        
+                        <h4>3. 凸函数的判定</h4>
+                        <p>要判定一个函数是不是凸函数，可直接依据定义；对于可微凸函数，也可利用下述两个条件。</p>
+                        
+                        <div class="theorem">
+                            <div class="theorem-title">一阶条件</div>
+                            <p>设 $R_c$ 为 $E_n$ 上的开凸集，$f(X)$ 在 $R_c$ 上可微，则 $f(X)$ 为 $R_c$ 上的凸函数的充要条件是：对任意不同两点 $X^{(1)} \in R_c$ 和 $X^{(2)} \in R_c$，恒有：</p>
+                            <div class="formula-block">
+                                $$f(X^{(2)}) \geq f(X^{(1)}) + \nabla f(X^{(1)})^T(X^{(2)} - X^{(1)}) \tag{6.15}$$
+                            </div>
+                        </div>
+                        
+                        <div class="theorem">
+                            <div class="theorem-title">二阶条件</div>
+                            <p>设 $R_c$ 为 $E_n$ 上的开凸集，$f(X)$ 在 $R_c$ 上二阶可微，则 $f(X)$ 为 $R_c$ 上的凸函数（凹函数）的充要条件是：对所有 $X \in R_c$，其黑塞矩阵半正定（半负定）。</p>
+                            
+                            <p>若 $f(X)$ 的黑塞矩阵对所有 $X \in R_c$ 都是正定（负定）的，则 $f(X)$ 是 $R_c$ 上的严格凸函数（严格凹函数）。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">六、凸规划</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>现考虑非线性规划式(6.2)，若其中的 $f(X)$ 为凸函数，$g_j(X)$ ($j=1,2,\dots,l$) 全是凹函数（即所有 $-g_j(X)$ 全为凸函数），就称这种规划为<strong>凸规划</strong>。</p>
+                        
+                        <div class="theorem">
+                            <div class="theorem-title">凸规划的性质</div>
+                            <p>凸规划具有人们希望的下述很好的性质：</p>
+                            <ol>
+                                <li>可行解集为凸集</li>
+                                <li>最优解集为凸集（假定最优解存在）</li>
+                                <li>任何局部最优解也是其全局最优解</li>
+                                <li>若目标函数为严格凸函数，且最优解存在，则其最优解必唯一</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="example">
+                            <div class="example-title">例4：验证下述非线性规划为凸规划</div>
+                            <div class="formula-block">
+                                $$\begin{cases}
+                                \min f(X) = x_1^2 + x_2^2 - 4x_1 + 4 \\
+                                g_1(X) = x_1 - x_2 + 2 \geq 0 \\
+                                g_2(X) = -x_1^2 + x_2 - 1 \geq 0 \\
+                                g_3(X) = x_1 \geq 0 \\
+                                g_4(X) = x_2 \geq 0
+                                \end{cases}$$
+                            </div>
+                            
+                            <p><strong>解：</strong>第一、第三和第四个约束条件都是自变量的线性函数，把它们看成凸函数和凹函数都可以。</p>
+                            
+                            <p>第二个约束条件的黑塞矩阵是：</p>
+                            <div class="formula-block">
+                                $$\nabla^2 g_2(X) = \begin{pmatrix} -2 & 0 \\ 0 & 0 \end{pmatrix}$$
+                            </div>
+                            <p>因它半负定，故 $g_2(X)$ 也为凹函数。</p>
+                            
+                            <p>目标函数 $f(X)$ 的黑塞矩阵是：</p>
+                            <div class="formula-block">
+                                $$\nabla^2 f(X) = \begin{pmatrix} 2 & 0 \\ 0 & 2 \end{pmatrix}$$
+                            </div>
+                            <p>因它正定，故 $f(X)$ 为严格凸函数。</p>
+                            
+                            <p>从而可知该非线性规划是凸规划。它有唯一一极小点 $X^* = (0.58, 1, 3.34)^T$，$f(X^*) = 3.8$。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第二节 一维搜索 -->
+            <section id="section2" class="section">
+                <h2>第二节 一维搜索</h2>
+                
+                <p>一维搜索用于求解单变量的无约束极值问题，它同时也为求解后面各节中更复杂的问题提供基础。</p>
+                
+                <p>一维搜索的方法很多，这里仅介绍斐波那契（Fibonacci）法和0.618法。这两种方法属直接法，仅需计算函数值，不必计算函数的导数。</p>
+                
+                <button class="collapsible">一、斐波那契法（分数法）</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>设 $y = f(t)$ 是区间 $[a, b]$ 上的单变量下单峰函数，它在该区间上有唯一极小点 $t^*$，而且函数在 $t^*$ 之左严格下降，在 $t^*$ 之右严格上升。</p>
+                        
+                        <p>若在此区间之内任取两点 $t_1$ 和 $t_2$，且 $t_1 \lt t_2$，并计算函数值 $f(t_1)$ 和 $f(t_2)$，则可能有以下两种情况：</p>
+                        
+                        <ol>
+                            <li>$f(t_1) \lt f(t_2)$：这时极小点 $t^*$ 必在区间 $[a, t_2]$ 内</li>
+                            <li>$f(t_1) \geq f(t_2)$：这时极小点 $t^*$ 必在区间 $[t_1, b]$ 内</li>
+                        </ol>
+                        
+                        <p>这说明，只要在搜索区间 $[a, b]$ 内取两个不同点，并算出它们的函数值加以比较，即可把包含极小点的区间由 $[a, b]$ 缩小为 $[a, t_2]$ 或 $[t_1, b]$。</p>
+                        
+                        <div class="note">
+                            斐波那契数列：$F_0 = F_1 = 1$，$F_n = F_{n-1} + F_{n-2}$ ($n \geq 2$)
+                        </div>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>$n$</th>
+                                    <th>0</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th>6</th>
+                                    <th>7</th>
+                                    <th>8</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>$F_n$</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>3</td>
+                                    <td>5</td>
+                                    <td>8</td>
+                                    <td>13</td>
+                                    <td>21</td>
+                                    <td>34</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <button class="collapsible">二、0.618法（黄金分割法）</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>由上节的论述可知，当用斐波那契法以 $n$ 个试点来缩短某一区间时，区间长度的第一次缩短率为 $F_{n-2}/F_n$。</p>
+                        
+                        <p>以不变的区间缩短率0.618代替斐波那契法每次不同的缩短率，就得到了0.618法。</p>
+                        
+                        <p>可以把这个方法看成是斐波那契法的近似，它比较容易实现，效果也很好，因而更易于为人们所接受。</p>
+                        
+                        <div class="note">
+                            0.618法是一种等速对称消去区间的方法，每次的试点均取在区间相对长度的0.618和0.382处。
+                        </div>
+                        
+                        <div class="example">
+                            <div class="example-title">例6：用0.618法求函数</div>
+                            <div class="formula-block">
+                                $$f(t) = \begin{cases}
+                                t/2, & \text{当 } t \leq 2 \\
+                                -t + 3, & \text{当 } t \gt 2
+                                \end{cases}$$
+                            </div>
+                            <p>在区间 $[0, 3]$ 上的极大点，要求缩短后的区间长度不大于原区间长度的10%。</p>
+                            
+                            <p><strong>解：</strong>已知 $a_0 = 0$，$b_0 = 3$</p>
+                            <p>$t_1 = 0.382(3 - 0) = 1.146$，$t_1' = 0.618(3 - 0) = 1.854$</p>
+                            <p>$f(t_1) = 0.5(1.146) = 0.573$，$f(t_1') = 0.5(1.854) = 0.927$</p>
+                            <p>继续迭代直到满足精度要求...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第三节 无约束极值问题 -->
+            <section id="section3" class="section">
+                <h2>第三节 无约束极值问题</h2>
+                
+                <p>无约束极值问题可表述为：</p>
+                <div class="formula-block">
+                    $$\min f(X), \quad X \in E_n \tag{6.32}$$
+                </div>
+                
+                <button class="collapsible">一、梯度法（最速下降法）</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>梯度法是一种古老的方法，但由于它的迭代过程简单，使用方便，而且又是理解其他非线性最优化方法的基础，所以先来说明这一方法。</p>
+                        
+                        <p>假定问题(6.32)中的目标函数 $f(X)$ 具有一阶连续偏导数，已存在极小点 $X^*$。以 $X^{(k)}$ 表示极小点的第 $k$ 次近似，为了求其第 $k+1$ 次近似 $X^{(k+1)}$，在 $X^{(k)}$ 点沿方向 $P^{(k)}$ 作射线：</p>
+                        <div class="formula-block">
+                            $$X = X^{(k)} + \lambda P^{(k)}, \quad \lambda \geq 0 \tag{6.33}$$
+                        </div>
+                        
+                        <p>将 $f(X)$ 在 $X^{(k)}$ 处作泰勒展开，得：</p>
+                        <div class="formula-block">
+                            $$f(X) = f(X^{(k)} + \lambda P^{(k)}) = f(X^{(k)}) + \lambda \nabla f(X^{(k)})^T P^{(k)} + o(\lambda)$$
+                        </div>
+                        
+                        <p>其中 $\nabla f(X^{(k)})$ 为函数 $f(X)$ 在 $X^{(k)}$ 点的梯度。对于充分小的 $\lambda$，只要：</p>
+                        <div class="formula-block">
+                            $$\nabla f(X^{(k)})^T P^{(k)} \lt 0 \tag{6.34}$$
+                        </div>
+                        <p>即可保证 $f(X^{(k)} + \lambda P^{(k)}) \lt f(X^{(k)})$。</p>
+                        
+                        <div class="note">
+                            负梯度方向是函数值下降最快的方向。沿这一方向搜索，有可能较快地达到极小点，梯度法就采用这样的方向为搜索方向。
+                        </div>
+                        
+                        <div class="example">
+                            <div class="example-title">例7：用梯度法求函数 $f(X) = x_1^2 + 5x_2^2$ 的极小点</div>
+                            <p>取允许误差 $\varepsilon = 0.7$。</p>
+                            
+                            <p><strong>解：</strong>取初始点 $X^{(0)} = (2, 1)^T$</p>
+                            <p>$\nabla f(X) = (2x_1, 10x_2)^T$，$\nabla f(X^{(0)}) = (4, 10)^T$</p>
+                            
+                            <p>其黑塞矩阵：</p>
+                            <div class="formula-block">
+                                $$\nabla^2 f(X) = \begin{pmatrix} 2 & 0 \\ 0 & 10 \end{pmatrix}$$
+                            </div>
+                            
+                            <p>计算步长：</p>
+                            <div class="formula-block">
+                                $$\lambda_0 = \frac{(4, 10) \begin{pmatrix} 4 \\ 10 \end{pmatrix}}{(4, 10) \begin{pmatrix} 2 & 0 \\ 0 & 10 \end{pmatrix} \begin{pmatrix} 4 \\ 10 \end{pmatrix}} = 0.1124$$
+                            </div>
+                            
+                            <p>继续迭代直到满足收敛条件...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">二、牛顿法</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>首先考虑正定二次函数：</p>
+                        <div class="formula-block">
+                            $$f(X) = \frac{1}{2}X^T AX + B^T X + c \tag{6.41}$$
+                        </div>
+                        
+                        <p>此处 $A$ 为 $n \times n$ 对称正定阵，$X \in E_n$，$B \in E_n$，$c$ 为常数。</p>
+                        
+                        <p>假定该函数的极小点是 $X^*$，则必有：</p>
+                        <div class="formula-block">
+                            $$\nabla f(X^*) = AX^* + B = 0$$
+                        </div>
+                        
+                        <p>从而，$AX^* = -B$。对任一点 $X^{(0)} \in E_n$，函数在该点的梯度 $\nabla f(X^{(0)}) = AX^{(0)} + B$。</p>
+                        
+                        <p>消去 $B$，得到：</p>
+                        <div class="formula-block">
+                            $$X^* = X^{(0)} - A^{-1}\nabla f(X^{(0)}) \tag{6.42}$$
+                        </div>
+                        
+                        <p>这说明，对于正定二次函数，从任意近似点 $X^{(0)}$ 出发，沿 $-A^{-1}\nabla f(X^{(0)})$ 方向搜索，以1为步长，迭代一步即可达极小点。</p>
+                        
+                        <div class="note">
+                            牛顿法的优点是收敛速度快；缺点是有时进行不下去而需采取改进措施。此外，当维数较高时，计算 $[\nabla^2 f(X^{(k)})]^{-1}$ 的工作量很大。
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第四节 约束极值问题 -->
+            <section id="section4" class="section">
+                <h2>第四节 约束极值问题</h2>
+                
+                <p>绝大部分实际问题都受到某些条件的限制，这些限制条件（约束）常给寻优工作带来很大困难。下面首先说明约束极值问题解的最优性条件，然后研究几种基本的解法。</p>
+                
+                <button class="collapsible">一、最优性条件</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h4>1. 可行下降方向</h4>
+                        
+                        <p><strong>(1) 起作用约束</strong></p>
+                        <p>假定 $X^{(0)}$ 是问题(6.3)的一个可行解，它满足所有约束条件。对某一个约束条件 $g_j(X) \geq 0$ 来说，$X^{(0)}$ 满足它有两种情况：</p>
+                        <ul>
+                            <li>一种情况 $g_j(X^{(0)}) \gt 0$，这时，$X^{(0)}$ 不在由这个约束条件形成的可行域边界上，我们称这一约束为 $X^{(0)}$ 点的<strong>不起作用约束</strong>（或无效约束）</li>
+                            <li>另一种情况是 $g_j(X^{(0)}) = 0$，这时，$X^{(0)}$ 点处于由这个约束条件形成的可行域边界上，对 $X^{(0)}$ 点的进一步摄动来说，这一约束起到了某种限制作用，故称它为 $X^{(0)}$ 点的<strong>起作用约束</strong>（或有效约束）</li>
+                        </ul>
+                        
+                        <p>显然，等式约束条件对所有可行点都是起作用约束。</p>
+                        
+                        <p><strong>(2) 可行方向</strong></p>
+                        <p>设 $X^{(0)}$ 为任一可行点，对某一方向 $P$ 来说，若存在实数 $\lambda_0 \gt 0$，使对任意的 $\lambda \in [0, \lambda_0]$ 均有：</p>
+                        <div class="formula-block">
+                            $$X^{(0)} + \lambda P \in R$$
+                        </div>
+                        <p>就称方向 $P$ 为 $X^{(0)}$ 点的一个<strong>可行方向</strong>。</p>
+                        
+                        <p><strong>(3) 下降方向</strong></p>
+                        <p>设 $X^{(0)} \in R$，对某一方向 $P$ 来说，若存在实数 $\lambda' \gt 0$，使对任意的 $\lambda \in [0, \lambda']$ 均有：</p>
+                        <div class="formula-block">
+                            $$f(X^{(0)} + \lambda P) \lt f(X^{(0)})$$
+                        </div>
+                        <p>就称方向 $P$ 为 $X^{(0)}$ 点的一个<strong>下降方向</strong>。</p>
+                        
+                        <p><strong>(4) 可行下降方向</strong></p>
+                        <p>若 $X^{(0)}$ 点的某一方向 $P$，既是该点的可行方向，又是该点的下降方向，就称它为这个点的<strong>可行下降方向</strong>。</p>
+                        
+                        <div class="theorem">
+                            <div class="theorem-title">定理4</div>
+                            <p>设 $X^*$ 是问题(6.3)的一个局部极小点，$f(X)$ 在 $X^*$ 处可微，而且 $g_j(X)$ 在 $X^*$ 处可微（当 $j \in J$ 时）；$g_j(X)$ 在 $X^*$ 处连续（当 $j \notin J$ 时），则在 $X^*$ 点不存在可行下降方向，从而不存在 $P$ 同时满足：</p>
+                            <div class="formula-block">
+                                $$\begin{cases}
+                                \nabla f(X^*)^T P \lt 0 \\
+                                \nabla g_j(X^*)^T P \gt 0 \quad j \in J
+                                \end{cases} \tag{6.48}$$
+                            </div>
+                            <p>其中，指标集 $J = \{j \mid g_j(X^*) = 0, 1 \leq j \leq l\}$</p>
+                        </div>
+                        
+                        <h4>2. 库恩-塔克（Kuhn-Tucker）条件</h4>
+                        
+                        <div class="theorem">
+                            <div class="theorem-title">库恩-塔克条件</div>
+                            <p>设 $X^*$ 是非线性规划(6.3)的局部极小点，$f(X)$ 和 $g_j(X)$ ($j=1,2,\dots,l$) 在点 $X^*$ 处有一阶连续偏导数，而且 $X^*$ 处的所有起作用约束的梯度线性无关，则存在数 $\mu_1^*, \mu_2^*, \dots, \mu_l^*$，使：</p>
+                            <div class="formula-block">
+                                $$\begin{cases}
+                                \nabla f(X^*) - \sum_{j=1}^l \mu_j^* \nabla g_j(X^*) = 0 \\
+                                \mu_j^* g_j(X^*) = 0 \quad (j = 1, 2, \dots, l) \\
+                                \mu_j^* \geq 0 \quad (j = 1, 2, \dots, l)
+                                \end{cases} \tag{6.50}$$
+                            </div>
+                        </div>
+                        
+                        <p>条件(6.50)称为库恩-塔克条件（简称为KT条件），满足这个条件的点称为库恩-塔克点或KT点。</p>
+                        
+                        <div class="note">
+                            库恩-塔克条件是确定某点为最优点的必要条件。但一般说来它并不是充分条件。可是，对于凸规划，库恩-塔克条件不但是最优点存在的必要条件，它同时也是充分条件。
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">二、制约函数法</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>制约函数法是通过构造某种制约函数，并将它加到非线性规划的目标函数上，从而将原来的约束极值问题，转化为无约束极值问题来求解。</p>
+                        
+                        <h4>1. 罚函数法（外点法）</h4>
+                        
+                        <p>考虑非线性规划(6.3)。构造函数：</p>
+                        <div class="formula-block">
+                            $$\phi(t) = \begin{cases}
+                            0, & \text{当 } t \geq 0 \\
+                            t^2, & \text{当 } t \lt 0
+                            \end{cases} \tag{6.56}$$
+                        </div>
+                        
+                        <p>现把某一约束函数 $g_j(X)$ 视为 $t$，显然，当 $X$ 满足该约束时，$g_j(X) \geq 0$，从而 $\phi(g_j(X)) = 0$；当 $X$ 不满足该约束条件时，$\phi(g_j(X)) \gt 0$。</p>
+                        
+                        <p>如果选取很大的实数 $M \gt 0$，将式(6.54)改为：</p>
+                        <div class="formula-block">
+                            $$P(X, M) = f(X) + M\sum_{j=1}^l \phi(g_j(X)) \tag{6.57}$$
+                        </div>
+                        
+                        <p>则很容易看出：当 $X \in R$ 时，有 $P(X, M) = f(X)$；当 $X \notin R$ 时，由于 $M$ 很大，将使 $M\sum_{j=1}^l \phi(g_j(X))$ 很大，从而使 $P(X, M)$ 的值也很大，这就相当于对非可行点的"惩罚"。</p>
+                        
+                        <div class="note">
+                            这种方法称为（惩）罚函数法，$M$ 称为（惩）罚因子，$P(X, M)$ 为（惩）罚函数，$M\sum_{j=1}^l \phi(g_j(X))$ 为（惩）罚项。
+                        </div>
+                        
+                        <h4>2. 障碍函数法（内点法）</h4>
+                        
+                        <p>罚函数法的一个重要缺点，就是罚函数 $P(X, M)$ 可在整个 $E_n$ 空间内进行优化，可以任意选择初始点，这给计算带来了很大方便。但由于迭代过程常常在可行域外进行，因而不能以中间结果直接作为原约束问题的可行解使用。</p>
+                        
+                        <p>如果要求每次的近似解都是可行解，以便观察目标函数值的改善情况；或者，如果目标函数在可行域外的性质比较复杂，甚至没有意义，这时就无法使用上面所述的罚函数法了。</p>
+                        
+                        <p>障碍函数法（也称内点法）与罚函数法不同，它要求迭代过程始终在可行域内部进行。可以仿照罚函数法，通过罚函数叠加的办法来改造原约束极值问题的目标函数，使改造后的目标函数具有这样性质：在可行域R的内部，它的值与原来的目标函数值近似；而在接近边界面时可以达到任意大的值。</p>
+                        
+                        <p>考虑非线性规划(6.3)，当 $X$ 点从可行域 $R$ 内部趋于边界时，至少有某一个约束函数 $g_j(X)$ ($1 \leq j \leq l$) 趋于零。从而，下述倒数函数：</p>
+                        <div class="formula-block">
+                            $$\sum_{j=1}^l \frac{1}{g_j(X)} \tag{6.65}$$
+                        </div>
+                        
+                        <p>和对数函数：</p>
+                        <div class="formula-block">
+                            $$-\sum_{j=1}^l \lg(g_j(X)) \tag{6.66}$$
+                        </div>
+                        
+                        <p>都将无限增大。如果把式(6.65)或式(6.66)加到非线性规划(6.3)的目标函数 $f(X)$ 上，就能构成我们所要求的新的目标函数。为了逐步逼近问题(6.3)的极小点，取实数 $r_k \gt 0$，并构成一系列无约束性质的极小化问题如下：</p>
+                        <div class="formula-block">
+                            $$\min_{X \in R_0} P(X, r_k) \tag{6.67}$$
+                        </div>
+                        
+                        <p>其中：</p>
+                        <div class="formula-block">
+                            $$P(X, r_k) = f(X) + r_k \sum_{j=1}^l \frac{1}{g_j(X)} \tag{6.68}$$
+                        </div>
+                        
+                        <p>或：</p>
+                        <div class="formula-block">
+                            $$P(X, r_k) = f(X) - r_k \sum_{j=1}^l \lg(g_j(X)) \tag{6.69}$$
+                        </div>
+                        
+                        <p>式(6.68)和式(6.69)右端的第二项称为障碍项，$r_k$ 称为障碍因子。函数 $P(X, r_k)$ 称为障碍函数。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 习题 -->
+            <section id="exercises" class="section">
+                <h2>习题</h2>
+                
+                <div class="example">
+                    <div class="example-title">6.1 下列说法中正确的有：</div>
+                    <ol>
+                        <li>若函数在驻点处的黑塞矩阵为正定，则函数值在该点处为极小</li>
+                        <li>两个凹函数之和仍为凹函数</li>
+                        <li>若 $f(x)$ 为凸函数，则 $1/f(x)$ 为凹函数</li>
+                        <li>一个线性函数既可看作是凹函数，也可看作是凸函数</li>
+                    </ol>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">6.2 如何判定函数的凸凹性？</div>
+                    <p>说明各种判定方法的适用性和优缺点。</p>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">6.9 欲用无约束极小化方法解线性方程组</div>
+                    <div class="formula-block">
+                        $$\begin{cases}
+                        x_1 - 2x_2 + 3x_3 = 2 \\
+                        3x_1 - 2x_2 + x_3 = 7 \\
+                        x_1 + x_2 - x_3 = 1
+                        \end{cases}$$
+                    </div>
+                    <p>试建立数学模型并说明计算过程。</p>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">6.13 以 $X^{(0)} = (0, 0)^T$ 为初始点</div>
+                    <p>分别使用最速下降法（迭代三次）和牛顿法求解无约束问题：</p>
+                    <div class="formula-block">
+                        $$\min f(X) = 2x_1^2 + x_2^2 + 2x_1x_2 + x_1 - x_2$$
+                    </div>
+                    <p>并绘图表示使用这两种方法的寻优过程。</p>
+                </div>
+            </section>
+        </div>
+        
+        <!-- 返回顶部按钮 -->
+        <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+    </div>
+    
+    <script>
+        // 侧边栏切换
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+        
+        // 折叠/展开功能
+        const collapsibles = document.getElementsByClassName('collapsible');
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        }
+        
+        // 返回顶部
+        window.onscroll = function() {
+            const backToTop = document.getElementById('backToTop');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTop.style.display = 'block';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        };
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // 关闭侧边栏
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+            });
+        });
+    </script>
+    
+    <!-- 
+    使用说明：
+    1. 保存为 .html 文件：将此代码保存为 nonlinear_programming_tutorial.html
+    2. 需要网络连接：MathJax 需要从 CDN 加载以渲染数学公式
+    3. 在浏览器中打开：直接双击 HTML 文件即可在浏览器中查看
+    4. 交互功能：
+       - 点击"目录"按钮打开侧边栏导航
+       - 点击章节标题可折叠/展开内容
+       - 点击右下角的"↑"按钮返回顶部
+       - 所有数学公式由 MathJax 渲染，确保正确显示
+    -->
+</body>
+</html>

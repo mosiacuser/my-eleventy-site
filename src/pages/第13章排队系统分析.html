@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第13章 排队系统分析 - 交互式教程</title>
+    
+    <!-- 完整的MathJax配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-orange: #f27d00;
+            --primary-green: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --primary-white: #ffffff;
+            --primary-dark: #343434;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--primary-dark);
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8f5f1 100%);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            padding: 20px;
+        }
+        
+        /* 侧边导航栏 */
+        .sidebar {
+            background: var(--primary-white);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+        
+        .sidebar h2 {
+            color: var(--primary-orange);
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary-green);
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-menu li {
+            margin-bottom: 8px;
+        }
+        
+        .nav-menu a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+        
+        .nav-menu a:hover {
+            background: var(--primary-green);
+            color: var(--primary-white);
+            transform: translateX(5px);
+        }
+        
+        .nav-menu .sub-menu {
+            padding-left: 15px;
+            margin-top: 5px;
+        }
+        
+        .nav-menu .sub-menu a {
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            background: var(--primary-white);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 4px solid var(--primary-orange);
+            margin-bottom: 40px;
+        }
+        
+        header h1 {
+            color: var(--primary-orange);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header .subtitle {
+            color: var(--primary-dark);
+            font-size: 1.3em;
+            font-weight: 300;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            scroll-margin-top: 20px;
+        }
+        
+        h2 {
+            color: var(--primary-orange);
+            font-size: 1.8em;
+            margin: 30px 0 20px;
+            padding-left: 15px;
+            border-left: 5px solid var(--primary-yellow);
+        }
+        
+        h3 {
+            color: var(--primary-dark);
+            font-size: 1.4em;
+            margin: 25px 0 15px;
+            padding: 10px 15px;
+            background: linear-gradient(90deg, var(--primary-green) 0%, transparent 100%);
+            border-radius: 8px;
+        }
+        
+        h4 {
+            color: var(--primary-orange);
+            font-size: 1.2em;
+            margin: 20px 0 10px;
+        }
+        
+        p {
+            margin: 15px 0;
+            text-align: justify;
+        }
+        
+        /* 数学公式样式 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        .formula-block {
+            background: #f9f9f9;
+            border-left: 4px solid var(--primary-orange);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        
+        /* 定义框 */
+        .definition {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffef0 100%);
+            border: 2px solid var(--primary-yellow);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .definition::before {
+            content: "定义";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+            padding: 4px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .definition-title {
+            color: var(--primary-orange);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        /* 例题框 */
+        .example {
+            background: linear-gradient(135deg, #e6f7ff 0%, #f0faff 100%);
+            border: 2px solid var(--primary-green);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .example::before {
+            content: "例题";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--primary-green);
+            color: var(--primary-white);
+            padding: 4px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .example-title {
+            color: var(--primary-orange);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .solution {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed var(--primary-green);
+        }
+        
+        .solution::before {
+            content: "解：";
+            color: var(--primary-orange);
+            font-weight: bold;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #ff9933 100%);
+            color: var(--primary-white);
+            padding: 15px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        /* 折叠面板 */
+        .collapsible {
+            background: var(--primary-green);
+            color: var(--primary-white);
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .collapsible:hover {
+            background: var(--primary-orange);
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            color: var(--primary-white);
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .collapsible-content-inner {
+            padding: 20px;
+        }
+        
+        /* 重要提示框 */
+        .important {
+            background: linear-gradient(135deg, #fff5e6 0%, #fff9f0 100%);
+            border-left: 5px solid var(--primary-orange);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .important::before {
+            content: "💡 重要：";
+            color: var(--primary-orange);
+            font-weight: bold;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        /* 返回顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(242, 125, 0, 0.4);
+            transition: all 0.3s;
+            font-size: 1.5em;
+        }
+        
+        .back-to-top:hover {
+            background: var(--primary-yellow);
+            color: var(--primary-dark);
+            transform: translateY(-5px);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+                max-height: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.4em;
+            }
+            
+            h3 {
+                font-size: 1.2em;
+            }
+        }
+        
+        /* 图片占位符 */
+        .image-placeholder {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-yellow) 100%);
+            border: 2px dashed var(--primary-dark);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边导航栏 -->
+        <aside class="sidebar">
+            <h2>📚 章节导航</h2>
+            <ul class="nav-menu">
+                <li><a href="#section-13-1">13.1 基本概念</a>
+                    <ul class="sub-menu">
+                        <li><a href="#section-13-1-1">13.1.1 排队系统的组成</a></li>
+                        <li><a href="#section-13-1-2">13.1.2 排队模型的表示</a></li>
+                        <li><a href="#section-13-1-3">13.1.3 排队问题的求解</a></li>
+                    </ul>
+                </li>
+                <li><a href="#section-13-2">13.2 到达与服务的规律</a>
+                    <ul class="sub-menu">
+                        <li><a href="#section-13-2-1">13.2.1 到达的规律</a></li>
+                        <li><a href="#section-13-2-2">13.2.2 服务的规律</a></li>
+                        <li><a href="#section-13-2-3">13.2.3 分布律的检验</a></li>
+                    </ul>
+                </li>
+                <li><a href="#section-13-3">13.3 M/M/1 排队模型</a>
+                    <ul class="sub-menu">
+                        <li><a href="#section-13-3-1">13.3.1 标准的M/M/1模型</a></li>
+                        <li><a href="#section-13-3-2">13.3.2 系统容量有限</a></li>
+                        <li><a href="#section-13-3-3">13.3.3 顾客源有限</a></li>
+                    </ul>
+                </li>
+                <li><a href="#section-13-4">13.4 M/M/C 排队模型</a></li>
+                <li><a href="#section-13-5">13.5 一般服务时间模型</a></li>
+                <li><a href="#section-13-6">13.6 排队系统的优化</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <header>
+                <h1>第VI章 随机运筹技术</h1>
+                <p class="subtitle">第13章 排队系统分析</p>
+            </header>
+            
+            <!-- 13.1 基本概念 -->
+            <section id="section-13-1">
+                <h2>13.1 基本概念</h2>
+                
+                <section id="section-13-1-1">
+                    <h3>13.1.1 排队系统的组成</h3>
+                    
+                    <p>排队是在日常生活中经常遇到的现象。如到商店买东西、到医院看病、均是顾客希望得到某种服务，而当某时刻要求服务的顾客数量超过服务机构的容量时，便出现排队现象。这时，排队等待的顾客与服务机构便构成一个排队系统，如图13.1所示。</p>
+                    
+                    <div class="image-placeholder">
+                        图13.1 排队系统示意图<br>
+                        [顾客源] → [到达] → [队列] → [服务机构] → [离去]
+                    </div>
+                    
+                    <p>现实世界中存在着形形色色的排队系统，如表13.1所示。</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>到达的顾客</th>
+                                <th>要求服务的内容</th>
+                                <th>服务机构</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1. 不能运转的机器</td><td>修理</td><td>修理技工</td></tr>
+                            <tr><td>2. 修理技工</td><td>领取修配零件</td><td>发放零件的管理员</td></tr>
+                            <tr><td>3. 病人</td><td>就诊</td><td>医生</td></tr>
+                            <tr><td>4. 打长话呼叫</td><td>通话</td><td>交换台</td></tr>
+                            <tr><td>5. 文稿</td><td>打字</td><td>打字员</td></tr>
+                            <tr><td>6. 求人计算机中的文件</td><td>打印</td><td>打印机</td></tr>
+                            <tr><td>7. 提货单</td><td>提取存货</td><td>仓库管理员</td></tr>
+                            <tr><td>8. 到达机场上空的飞机</td><td>降落</td><td>跑道指挥机构</td></tr>
+                            <tr><td>9. 进入港口的货船</td><td>装货或卸货</td><td>码头(泊位)</td></tr>
+                            <tr><td>10. 进入水库的上游河水</td><td>放水、调蓄水位</td><td>水闸管理员</td></tr>
+                            <tr><td>11. 来到路口的汽车</td><td>通过路口</td><td>交通警或红绿灯</td></tr>
+                            <tr><td>12. 来到车站的乘客</td><td>乘车</td><td>公交车管理员</td></tr>
+                            <tr><td>13. 进入餐馆的顾客</td><td>就餐</td><td>餐位的服务员</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>如果服务设施过少或服务效率太低，便会加剧拥挤、排队成龙。但增加服务设施便会增加服务成本或造成系统空闲，而有些服务设施如机场跑道、港口泊位等一旦建成就不易改动。因此，有必要对排队系统的结构和运行规律加以研究，为排队系统的设计和调控提供依据。</p>
+                    
+                    <p>排队系统的基本组成部分主要有输入过程、排队规则、服务机构。</p>
+                    
+                    <button class="collapsible">1. 输入过程</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>输入过程是指顾客到达排队系统的过程，对此我们主要讨论两方面内容：</p>
+                            
+                            <p><strong>①顾客源</strong>，即顾客总体的数量，可以是有限的，也可以是无限的，河流上游进入水库的水量可以认为是无限的，车间内停机待修的机器显然是有限的；</p>
+                            
+                            <p><strong>②顾客到达的规律</strong>，主要指顾客到达系统的时间间隔的分布，其类型可以是确定的，如自动生产线上待装配的部件便是按定长时间间隔到达装配点，但更多的情形是随机的。</p>
+                            
+                            <p>我们主要讨论到达间隔服从负指数分布的类型。</p>
+                        </div>
+                    </div>
+                    
+                    <button class="collapsible">2. 排队规则</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>排队规则是指顾客到达系统后排队等候服务的方式和规则。可分为三种类型。</p>
+                            
+                            <h4>(1) 损失制</h4>
+                            <p>指顾客到达系统时，若所有服务设施均被占用，则顾客自动离去，不再回来。如电话系统，当电话呼唤遇到占线则会挂机离去。这实际上是一种不允许排队的规则，系统将"损失"掉许多顾客。</p>
+                            
+                            <h4>(2) 等待制</h4>
+                            <p>指顾客到达系统时，若所有服务设施均被占用，则留下来排队等待，直至被服务完毕后离去。等待制的排队规则又可按顾客被服务的次序分为以下几种。</p>
+                            
+                            <ul>
+                                <li><strong>1) 先到先服务(FCFS)</strong> 即按到达次序接受服务，这是最通常的情形。</li>
+                                <li><strong>2) 后到先服务(LCFS)</strong> 即后来的反而先被服务。如乘用电梯的顾客常是后入的先出，仓库中存放的厚钢板也是如此。在情报系统中，最后到达的信息往往是最有价值的，常首先加以分析和利用。</li>
+                                <li><strong>3) 具有优先权的服务(PS)</strong> 即服务机构根据顾客的优先权进行服务，优先权高的顾客先接受服务。如医院对于病情危重的患者将给予优先治疗。</li>
+                            </ul>
+                            
+                            <p>本书主要讨论先到先服务的最一般情形。</p>
+                            
+                            <h4>(3) 混合制</h4>
+                            <p>这是损失制和等待制的混合。这种排队规则既允许排队又不允许队列无限长，主要包括系统容量有限制和等待时间有限制两种情况。系统容量有限制是指系统中只能容纳或服务$N$个顾客，那么第$N$个及其以前到达的顾客是等待制，而第$N+1$个及以后到达的顾客便是损失制。等待时间有限制是指顾客在系统中的等待时间不能超过某一固定长度$T$。当等待时间超过$T$时，顾客自动离去。如易损电子元件的有效期为$T$，若其在库存待用$T$时间后仍未被使用，便失效不再会被使用。</p>
+                        </div>
+                    </div>
+                    
+                    <button class="collapsible">3. 服务机构</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>对服务机构的研究内容主要有服务设施(称为服务台)的数量和服务的规律。</p>
+                            
+                            <h4>(1) 服务台数量</h4>
+                            <p>服务台的数量$C$可分为等于1和大于1两种情形。$C=1$表示服务机构中只有单个服务设施，每次只能为1个顾客提供服务；$C>1$表示服务机构中有多个服务设施，可同时为$C$个顾客提供服务。对于多个服务台的系统，服务台的排列方式可以是平行并列也可以是依次串列，顾客的队列形式也可以是单队或并列多队。</p>
+                            
+                            <h4>(2) 服务规律</h4>
+                            <p>这主要指服务台对顾客的服务时间的分布。与到达时间的分布一样，服务时间可以是确定的，如汽车自动冲洗机的冲洗时间为定长，但更多的情形是随机的。本书主要讨论服务时间服从负指数分布的情形。</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="section-13-1-2">
+                    <h3>13.1.2 排队模型的表示</h3>
+                    
+                    <p>根据输入过程、排队规则和服务机构的不同情况对排队系统进行描述和分类，可以给出很多排队模型。为了方便对众多模型的描述，康道尔(D.G. Kendall)在1953年提出一种依据排队系统的三个最基本特征(顾客到达时间间隔的分布、服务时间的分布和服务台数)对排队模型进行分类的表示方法，称为Kendall记号。其一般形式为</p>
+                    
+                    <div class="formula-block">
+                        $$X/Y/Z$$
+                    </div>
+                    
+                    <p>其中$X$表示顾客到达时间间隔的分布；$Y$表示服务时间的分布；$Z$表示并列的服务台的个数。</p>
+                    
+                    <p>顾客到达时间间隔的分布与服务时间的分布，除了主要讨论的负指数分布之外，还有其他一些分布类型，其名称及简写号如下：</p>
+                    
+                    <ul>
+                        <li>M 表示负指数分布</li>
+                        <li>$\text{E}_k$ 表示$k$阶爱尔朗分布</li>
+                        <li>D 表示定长分布</li>
+                        <li>G 号示一般分布</li>
+                    </ul>
+                    
+                    <p>例如，M/M/1 表示顾客到达的间隔时间服从负指数分布，服务台的服务时间也服从负指数分布和单服务台的模型；D/M/C 表示确定的到达间隔、服务时间均为负指数分布和$C$个并行服务台(但顾客是一队)的模型。</p>
+                    
+                    <p>后来，在1971年的一次关于排队论符号标准化会议上决定，将Kendall记号扩充为</p>
+                    
+                    <div class="formula-block">
+                        $$X/Y/Z/A/B/C$$
+                    </div>
+                    
+                    <p>的形式，其中前三项意义不变，而</p>
+                    
+                    <ul>
+                        <li>A 表示系统容量限制$N$</li>
+                        <li>B 表示顾客源的数目$m$</li>
+                        <li>C 表示服务规则，如先到先服务 FCFS，后到先服务 LCFS 等</li>
+                    </ul>
+                    
+                    <p>并约定，如略去后三项，即指$X/Y/Z/\infty/\infty/$FCFS 的情形。在本书中，因只讨论先到先服务FCFS的情形，所以略去第六项。</p>
+                </section>
+                
+                <section id="section-13-1-3">
+                    <h3>13.1.3 排队问题的求解</h3>
+                    
+                    <p>研究排队系统的目的是通过了解系统运行的状况，对系统进行调整和控制，使系统处于最优运行状态。而描述系统运行状况的客观数量指标主要是系统中由于排队和被服务而滞留的顾客数量，以及顾客为等待服务而必须在系统中消耗的时间。因此，排队论中对排队问题的求解，一个基本内容就是研究和计算这些描述系统运行状态的数量指标，简称系统运行指标。这些数量指标一般来说都是随机变量，并且和系统运行的时间$t$有关。这里主要研究当$t\rightarrow\infty$时的稳态情形。这时系统处于平衡状态，数量指标的分布等与时间无关，这时求得的结果称为系统处于统计平衡下的解。主要研究下述两类指标的概率分布和数字特征，如平均值。</p>
+                    
+                    <button class="collapsible">1. 队长和排队长</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>队长是指系统中的顾客数(排队等待的顾客数与正在接受服务的顾客数之和)，其概率分布称为系统的状态概率，记为$P_n$，表示系统中有$n$个顾客的概率。其均值记为$L_s$。</p>
+                            
+                            <p>排队长又称队列长，是指系统中正在排队等待服务的顾客数。其均值记为$L_q$。</p>
+                        </div>
+                    </div>
+                    
+                    <button class="collapsible">2. 逗留时间和等待时间</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>逗留时间是指一个顾客在系统中的停留时间(排队等待时间与被服务时间之和)，记为$W$，其均值记为$W_s$。</p>
+                            
+                            <p>等待时间又称虚等时间，是指一个顾客在系统中排队等待服务的时间，其均值记为$W_q$。</p>
+                            
+                            <p>上述两类数量指标是排队问题求解的最基本内容。除此之外，还有一些数量指标，如忙期(系统连续工作的时间)和闲期(系统连续空闲的时间)，服务强度(系统忙着的概率)和顾客损失率(在损失制或系统容量有限的情况下，由于顾客被拒绝而使系统受到的损失)等。而研究这些数量指标的基础是顾客到达(输入)系统的规律以及系统对顾客服务的规律。</p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+            
+            <!-- 13.2 到达与服务的规律 -->
+            <section id="section-13-2">
+                <h2>13.2 到达与服务的规律</h2>
+                
+                <p>本节研究顾客到达系统的规律以及系统对顾客服务的规律。这里的"规律"主要是指随机变量的概率分布。</p>
+                
+                <section id="section-13-2-1">
+                    <h3>13.2.1 到达的规律</h3>
+                    
+                    <p>可以从两个角度描述顾客到达系统的规律：一是在一定时间里(如单位时间)到达系统的顾客数量；二是顾客相继到达系统的间隔时间。</p>
+                    
+                    <p>在概率论中已知，若随机变量$N$的概率分布为</p>
+                    
+                    <div class="formula-block">
+                        $$P\{N=n\}=\frac{\lambda^n}{n!}e^{-\lambda}\quad(n=0,1,\cdots;\lambda>0)$$
+                    </div>
+                    
+                    <p>则称$N$服从泊松(Poisson)分布。还知道在实际中很多随机现象都近似泊松分布，例如在单位时间(如1分钟)内通过某路口的车辆数、到达某交换台的电话呼唤数、到达某商店的顾客数等等。总之，在1单位时间内到达某排队系统的顾客数$N$是服从泊松分布的随机变量。那么，在$t$单位时间内到达该排队系统的顾客数若记为$N(t)$，则其概率分布表达式应为</p>
+                    
+                    <div class="formula-block">
+                        $$P\{N(t)=n\}=\frac{(\lambda t)^n}{n!}e^{-\lambda t}\quad(n=0,1,\cdots;\lambda>0;t>0)$$
+                    </div>
+                    
+                    <p>称$N(t)$为泊松过程，又称泊松流。</p>
+                    
+                    <button class="collapsible">1. 泊松流</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <div class="definition">
+                                <div class="definition-title">定义 13.1</div>
+                                <p>称满足下列三条件的输入为泊松流(也称泊松过程或最简单流)：无后效性，即在不相交的时间区间内到达的顾客数是相互独立的；平稳性，即在$[t,t+\Delta t)$时段内有1个顾客的概率与$t$无关，只与$\Delta t$有关(均匀的)，也即$P\{N[t,t+\Delta t)=1\}\approx\lambda\Delta t$(记为$P_1(\Delta t)\approx\lambda\Delta t$)；普通性，也称稀有性，即在瞬时内只可能有1个顾客到达，也即对充分小的$\Delta t$，$$\sum_{n=2}^{\infty}P_n(\Delta t)=0。$$</p>
+                            </div>
+                            
+                            <p>可以证明，如果一个排队系统的顾客输入是满足上述条件的泊松流，那么在长为$t$的时段内到达$n$个顾客的概率</p>
+                            
+                            <div class="formula-block">
+                                $$P_n(t)=\frac{(\lambda t)^n}{n!}e^{-\lambda t}\quad(n=0,1,\cdots;\lambda>0;t>0)$$
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p>下面分析参数$\lambda$的含义。由泊松分布的数字特征可知，均值$E\{N(t)\}=\lambda t$，说明$\lambda$为单位时间内的平均到达顾客数。又由$P_1(\Delta t)=\lambda\Delta t$可知，$\lambda$为单位时间内有1个顾客到达的概率(适当取时间单位可使$\lambda<1$)。实际上，两种解释是一致的。例如，某排队系统平均每5分钟来3名顾客，那么平均每1分钟来$\frac{3}{5}$名顾客，也可以说平均每分钟有1个顾客到达的概率是$\frac{3}{5}$。</p>
+                    
+                    <p>以上从顾客到达数这一角度，就实际中最常见的泊松流输入讨论了顾客到达的规律。下面将从顾客到达间隔时间的角度，就最常见的负指数间隔进行讨论，并讨论这两种角度之间的关系。</p>
+                    
+                    <button class="collapsible">2. 负指数分布</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <div class="definition">
+                                <div class="definition-title">定义 13.2</div>
+                                <p>若随机变量$T$的分布密度为</p>
+                                <div class="formula-block">
+                                    $$f_T(t)=\begin{cases}\lambda e^{-\lambda t}, & t\geq 0\\0, & t<0\end{cases}$$
+                                </div>
+                                <p>则称$T$服从参数为$\lambda$的负指数分布$(\lambda>0)$。它是连续型分布，其密度函数如图13.2所示。</p>
+                            </div>
+                            
+                            <div class="image-placeholder">
+                                图13.2 负指数分布密度函数图<br>
+                                [显示一条从点$\lambda$开始向右下方递减的指数曲线]
+                            </div>
+                            
+                            <p>负指数分布的分布函数为</p>
+                            
+                            <div class="formula-block">
+                                $$F_T(t)=P(T\leq t)=\begin{cases}1-e^{-\lambda t}, & t\geq 0\\0, & t<0\end{cases}$$
+                            </div>
+                            
+                            <p>其均值$E(T)=\frac{1}{\lambda}$，方差$D(T)=\frac{1}{\lambda^2}$。</p>
+                            
+                            <p>负指数分布有下列性质。</p>
+                            
+                            <p><strong>①若$T$服从参数为$\lambda$的负指数分布，则有</strong></p>
+                            
+                            <div class="formula-block">
+                                $$P\{T>t_0+t|T>t_0\}=P\{T>t\}.$$
+                            </div>
+                            
+                            <div class="important">
+                                <strong>证</strong> 由条件概率公式得
+                                \begin{align}
+                                P\{T>t_0+t|T>t_0\}&=P\{(T>t_0+t)\cap(T>t_0)\}/P\{T>t_0\}\\
+                                &=P\{T>t_0+t\}/P\{T>t_0\}\\
+                                &=e^{-\lambda(t_0+t)}/e^{-\lambda t_0}\\
+                                &=e^{-\lambda t}=P\{T>t\}
+                                \end{align}
+                            </div>
+                            
+                            <p>这个性质称为无记忆性。它表明，在已知$T>t_0$条件下估计$T>t_0+t$的概率与不考虑$T>t_0$这一条件而直接估计$T>t$的概率是相同的，也可以说$T$对于它已大于$t_0$这一点"无记忆"。如果$T$表示一种电子元件的使用寿命，那么当元件已经用了$t_0$年后再估计它还能用$t$年的概率，与它全新时估计能用$t$年的概率一样，即它对已使用了的$t_0$年无记忆，是一种极其耐磨损的高精度元件。</p>
+                            
+                            <p>在排队系统中，如果顾客到达的间隔时间$T$是服从负指数分布的，那么在已知间隔超过$t_0$的条件下估计间隔还要跨越$t$的概率与直接估计间隔超过$t$的概率相同，也可以说顾客到达的间隔时间是纯随机的。由于无记忆性又称马尔可夫(A. Markov)性，故负指数分布的表示简记为M。</p>
+                            
+                            <p><strong>②若排队系统的顾客到达数$N(t)$为泊松流，则顾客的到达间隔$T$服从负指数分布，且参数$\lambda$相同。</strong></p>
+                            
+                            <div class="important">
+                                <strong>证</strong> 因为到达为泊松流，所以$t$时段内没有顾客到来的概率
+                                $$P_0(t)=\frac{(\lambda t)^0}{0!}e^{-\lambda t}=e^{-\lambda t}$$
+                                
+                                从而$t$时段内有顾客到来(也即间隔不超过$t$)的概率
+                                $$P(T\leq t)=1-e^{-\lambda t}$$
+                                
+                                即$T$的分布函数$F(t)=1-e^{-\lambda t}$，说明$T$服从参数为$\lambda$的负指数分布。
+                            </div>
+                            
+                            <p>可以证明，这一性质反之也成立，故有"到达数为泊松流的充要条件是到达间隔服从负指数分布，且参数相同"。前面已从泊松流的均值角度解释了参数$\lambda$的含义，即$\lambda$表示单位时间内到达系统的平均顾客数，现在再从负指数分布的均值的角度来解释$\lambda$的含义。由于$E(T)=\frac{1}{\lambda}$，说明$\lambda$的倒数表示平均每两位顾客到达的间隔时间。显然这两种角度的解释是等价的，例如若平均间隔$\frac{1}{5}$小时来1位顾客，则平均每小时到达的顾客数是5人。</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="section-13-2-2">
+                    <h3>13.2.2 服务的规律</h3>
+                    
+                    <p>描述排队系统的服务规律主要是采用系统对顾客服务时间$v$的分布。常见的分布有定长分布、负指数分布、爱尔朗分布等。</p>
+                    
+                    <p>这里主要讨论服务时间$v$服从负指数分布的情形。设分布参数为$\mu$。由于$E(v)=\frac{1}{\mu}$，所以对$\mu$的含义的解释是：系统对每位顾客的平均服务时间为$\frac{1}{\mu}$，或者说系统平均每单位时间服务完$\mu$个顾客，即系统的平均服务率是$\mu$。</p>
+                    
+                    <p>当排队系统的服务机构由$k$个串联的服务台组成时，每个服务台的服务时间相互独立，且服从相同的负指数分布(参数设为$k\mu$)，那么一顾客完这$k$个服务台总共需要的服务时间$v$就服从$k$阶爱尔朗分布。</p>
+                    
+                    <div class="definition">
+                        <div class="definition-title">定义 13.3</div>
+                        <p>若随机变量$v_1,\cdots,v_k$独立且同服从参数为$k\mu$的负指数分布，则$T=\sum_{i=1}^k v_i$服从$k$阶爱尔朗(Erlang)分布，密度为</p>
+                        <div class="formula-block">
+                            $$f_T(t)=\frac{k\mu(k\mu t)^{k-1}}{(k-1)!}e^{-k\mu t}\quad(t\geq 0)$$
+                        </div>
+                        <p>爱尔朗分布的期望与方差分别是</p>
+                        <div class="formula-block">
+                            $$E(T)=\frac{1}{\mu},D(T)=\frac{1}{k\mu^2}$$
+                        </div>
+                    </div>
+                    
+                    <div class="image-placeholder">
+                        图13.3 爱尔朗分布密度函数<br>
+                        [显示k=1,2,3和k→∞时的密度曲线]
+                    </div>
+                    
+                    <p>爱尔朗分布是随$k$而变化的一族分布。当$k=1$时化为负指数分布；而当$k\rightarrow\infty$时，由于$D(T)\rightarrow 0$，故化为确定型分布；当$1<k<\infty$时，它是介于纯随机和完全确定之间的中间型分布，能对现实世界提供更加广泛的适应性。爱尔朗分布族密度函数如图13.3所示。</p>
+                </section>
+                
+                <section id="section-13-2-3">
+                    <h3>13.2.3 分布律的检验</h3>
+                    
+                    <p>对于一个实际的排队系统，如何检验它的顾客到达是否形成泊松流，或者它的服务机构的服务时间是否服从负指数分布，是一个重要的现实问题。可以根据数理统计中检验分布律的方法(如$\chi^2$检验法)解决。该方法步骤如下：</p>
+                    
+                    <ol>
+                        <li>①提出假设$H_0$，总体分布$F(x)=F_0(x)$(其中$F_0(x)$为某已知分布函数)；</li>
+                        <li>②在总体$X$中抽取样本点$x_1,\cdots,x_n$；</li>
+                        <li>③将$x$轴分为$m$个不相交的小区间$(-\infty,t_1],(t_1,t_2],\cdots,(t_{m-1},+\infty)$，记落入第$i$个小区间$(t_{i-1},t_i]$中的样本点个数为$f_i$；</li>
+                        <li>④计算皮尔逊统计量$V=\sum_{i=1}^m\frac{(f_i-np_i)^2}{np_i}$，其中$p_i=F_0(t_i)-F_0(t_{i-1})$；</li>
+                        <li>⑤由$\chi^2$表查得临界值$\chi_{\alpha}^2(m-r-1)$，其中$r$为$F_0(x)$中未知参数的个数；</li>
+                        <li>⑥若$V<\chi_{\alpha}^2(m-r-1)$，则肯定$H_0$，否则否定$H_0$。</li>
+                    </ol>
+                    
+                    <div class="example">
+                        <div class="example-title">例 13.1</div>
+                        <p>某排队系统为了检验每周的顾客到达是否服从泊松分布，连续观察了52周的到达数量，数据如表13.2所示。</p>
+                        
+                        <table>
+                            <caption><strong>表13.2</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th>周</th>
+                                    <th colspan="13">顾客到达数</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1~13</td>
+                                    <td>5</td><td>5</td><td>2</td><td>1</td><td>3</td><td>3</td><td>3</td><td>3</td><td>8</td><td>6</td><td>5</td><td>3</td><td>6</td>
+                                </tr>
+                                <tr>
+                                    <td>14~26</td>
+                                    <td>4</td><td>6</td><td>5</td><td>3</td><td>2</td><td>6</td><td>2</td><td>5</td><td>3</td><td>2</td><td>8</td><td>2</td><td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>27~39</td>
+                                    <td>6</td><td>3</td><td>6</td><td>2</td><td>5</td><td>4</td><td>6</td><td>4</td><td>5</td><td>3</td><td>4</td><td>2</td><td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>40~52</td>
+                                    <td>6</td><td>6</td><td>3</td><td>7</td><td>5</td><td>0</td><td>4</td><td>4</td><td>10</td><td>1</td><td>3</td><td>4</td><td>0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="solution">
+                            <p>根据顾客到达情况，将观测值的范围分为8个组：0~1为一组，2,3,4,5,6,7各为一组，8以上为一组。为了在理论分布值，计算52个样本值的均值$\overline{x}=4$。然后由$\lambda=4$的泊松分布查得各组的概率$p_i$，如$p_1=P(0)+P(1)=0.018\,3+0.073\,3=0.091\,6$，$p_2=P(2)=0.146\,5$，再计算$F_i=np_i=52p_i$，$f_i-F_i$和$(f_i-F_i)^2/F_i$，计算结果列于表13.3。</p>
+                            
+                            <table>
+                                <caption><strong>表13.3</strong></caption>
+                                <thead>
+                                    <tr>
+                                        <th>组</th>
+                                        <th>到达数</th>
+                                        <th>观测频数</th>
+                                        <th>理论频率</th>
+                                        <th>理论频数</th>
+                                        <th>残差</th>
+                                        <th>相对残差平方</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>$i$</td><td>$x$</td><td>$f_i$</td><td>$p_i$</td><td>$F_i$</td><td>$f_i-F_i$</td><td>$(f_i-F_i)^2/F_i$</td></tr>
+                                    <tr><td>1</td><td>0~1</td><td>4</td><td>.091 6</td><td>4.763</td><td>-.763</td><td>.122</td></tr>
+                                    <tr><td>2</td><td>2</td><td>9</td><td>.146 5</td><td>7.613</td><td>1.382</td><td>.251</td></tr>
+                                    <tr><td>3</td><td>3</td><td>11</td><td>.195 4</td><td>10.161</td><td>.839</td><td>.069</td></tr>
+                                    <tr><td>4</td><td>4</td><td>7</td><td>.195 4</td><td>10.161</td><td>-3.161</td><td>.983</td></tr>
+                                    <tr><td>5</td><td>5</td><td>8</td><td>.156 3</td><td>8.128</td><td>-.128</td><td>.002</td></tr>
+                                    <tr><td>6</td><td>6</td><td>9</td><td>.104 2</td><td>5.418</td><td>3.582</td><td>2.363</td></tr>
+                                    <tr><td>7</td><td>7</td><td>1</td><td>.059 5</td><td>3.094</td><td>-2.094</td><td>1.417</td></tr>
+                                    <tr><td>8</td><td>8以上</td><td>3</td><td>.051 1</td><td>2.657</td><td>.343</td><td>.044</td></tr>
+                                    <tr><td></td><td>总计</td><td>52</td><td>1.000 0</td><td>52.000</td><td>0.000</td><td>5.256</td></tr>
+                                </tbody>
+                            </table>
+                            
+                            <p>由于$F_0(x)$中有一个未知参数$\lambda$，故$r=1$。取检验的水平$\alpha=0.05$，查$\chi^2$表得临界值$\chi_{0.05}^2(8-1-1)=12.592$。由于$V=5.256<12.592$，故应肯定$H_0$，即可认为顾客的到达是服从泊松分布，其参数估计值$\lambda=4$。
+                        </div>
+                    </div>
+                </section>
+            </section>
+            
+            <!-- 13.3 M/M/1排队模型 -->
+            <section id="section-13-3">
+                <h2>13.3 M/M/1 排队模型</h2>
+                
+                <p>本节研究具有泊松输入和负指数服务的单服务台排队系统，分三种情况讨论排队模型。</p>
+                
+                <section id="section-13-3-1">
+                    <h3>13.3.1 标准的 M/M/1 模型(M/M/1/$\infty$/$\infty$)</h3>
+                    
+                    <p>标准的M/M/1模型是针对适合下列条件的排队系统：</p>
+                    <ul>
+                        <li>①输入过程——顾客源是无限的，顾客单个到来，到达的间隔时间服从负指数分布，设其参数为$\lambda$；</li>
+                        <li>②排队规则——单队，对队长没有限制，先到先服务；</li>
+                        <li>③服务机构——单服务台，服务时间服从负指数分布，设参数为$\mu$。</li>
+                    </ul>
+                    
+                    <button class="collapsible">1. 系统的状态概率</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>系统中的状态是指系统中的顾客数量，记为$n$。对于标准的M/M/1系统，$n=0,1,\cdots$，系统的状态概率记为$P_n$，表示系统中有$n$个顾客的概率。对于稳态的情形，首先可将系统状态间的转移关系用图13.4表示。图中的$\circled{n}$表示状态$n(n=0,1,\cdots)$。由状态$n-1$转移到状态$n$，是由于又来了一位顾客，而顾客的到达率为$\lambda$，故在图中表示相邻状态增加的箭线上标上$\lambda$，转移的概率是$\lambda P_{n-1}$，表示原来是状态$n-1$且又来了一位。由状态$n+1$转移到状态$n$，是由于服务完了一位顾客，而系统的服务率为$\mu$，故在图中表示相邻状态减少的箭线上标上$\mu$，转移的概率是$\mu P_{n+1}$，表示原来是状态$n+1$且又走了一位。</p>
+                            
+                            <div class="image-placeholder">
+                                图13.4 M/M/1系统状态转移图<br>
+                                [显示状态0,1,2,...,n-1,n,n+1,...之间用λ和μ箭头连接的转移图]
+                            </div>
+                            
+                            <p>对于状态$n(n=1,2,\cdots)$，由于系统满足统计平衡，即流入应等于流出，故有</p>
+                            <div class="formula-block">
+                                $$\lambda P_{n-1}+\mu P_{n+1}=\lambda P_n+\mu P_n$$
+                            </div>
+                            
+                            <p>对于状态0，也应有</p>
+                            <div class="formula-block">
+                                $$\lambda P_0=\mu P_1$$
+                            </div>
+                            
+                            <p>将二式联立，即系统状态的平衡方程组</p>
+                            <div class="formula-block">
+                                $$\begin{cases}\lambda P_0=\mu P_1\\\lambda P_{n-1}+\mu P_{n+1}=(\lambda+\mu)P_n\quad(n=1,2,\cdots)\end{cases}$$
+                            </div>
+                            
+                            <p>下面求解平衡方程组，以得到状态概率。首先由第一个方程解得</p>
+                            <div class="formula-block">
+                                $$P_1=\frac{\lambda}{\mu}P_0$$
+                            </div>
+                            
+                            <p>在第二个方程中令$n=1$，可得到</p>
+                            <div class="formula-block">
+                                $$P_2=\frac{\lambda}{\mu}P_1=\left(\frac{\lambda}{\mu}\right)^2P_0$$
+                            </div>
+                            
+                            <p>再分别令$n=2,3,\cdots$，可得到</p>
+                            <div class="formula-block">
+                                $$P_n=\frac{\lambda}{\mu}P_{n-1}=\left(\frac{\lambda}{\mu}\right)^nP_0$$
+                            </div>
+                            
+                            <p>记$\rho=\frac{\lambda}{\mu}$，并设$\rho<1$(否则队列将排至无限远)，由概率性质，有</p>
+                            <div class="formula-block">
+                                $$\sum_{n=0}^{\infty}P_n=1$$
+                            </div>
+                            
+                            <p>将$P_n$的表达式代入，有</p>
+                            <div class="formula-block">
+                                $$P_0\sum_{n=0}^{\infty}\rho^n=P_0\frac{1}{1-\rho}=1$$
+                            </div>
+                            
+                            <p>可得状态概率</p>
+                            <div class="formula-block">
+                                $$\begin{cases}P_0=1-\rho\\P_n=\rho^nP_0=(1-\rho)\rho^n\quad(n=1,2,\cdots)\end{cases}$$
+                            </div>
+                            
+                            <p>式中的$\rho$有明确的实际意义。由$\rho=\frac{\lambda}{\mu}$说明，$\rho$是平均到达率与平均服务率之比，由$\rho=\frac{1}{\lambda}/\frac{1}{\mu}$说明$\rho$是平均服务时间与平均到达间隔时间之比，反映了系统的服务强度。而由$\rho=1-P_0$说明$\rho$是系统忙着的概率，反映了系统的繁忙程度和利用率。因此，称$\rho$为服务强度或服务机构的利用率。</p>
+                        </div>
+                    </div>
+                    
+                    <button class="collapsible">2. 系统的运行指标</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>基于状态概率，可计算出系统的运行指标。</p>
+                            
+                            <h4>(1) 平均队长和排队长</h4>
+                            <p>队长的平均值$L_s$表示系统中的平均顾客数，表达式为</p>
+                            <div class="formula-block">
+                                \begin{align}
+                                L_s&=\sum_{n=0}^{\infty}nP_n=\sum_{n=0}^{\infty}n\rho^n(1-\rho)\\
+                                &=\rho(1-\rho)\sum_{n=1}^{\infty}n\rho^{n-1}\\
+                                &=\rho(1-\rho)\sum_{n=1}^{\infty}\frac{d\rho^n}{d\rho}\\
+                                &=\rho(1-\rho)\frac{d}{d\rho}\sum_{n=0}^{\infty}\rho^n\\
+                                &=\rho(1-\rho)\frac{d}{d\rho}\frac{1}{1-\rho}\\
+                                &=\frac{\rho}{1-\rho},0<\rho<1
+                                \end{align}
+                            </div>
+                            
+                            <p>或</p>
+                            <div class="formula-block">
+                                $$L_s=\frac{\lambda}{\mu-\lambda}$$
+                            </div>
+                            
+                            <p>排队长又称队列长，其平均值$L_q$表示系统中排队等待的平均顾客数。由于系统有一个服务台，故其表达式为</p>
+                            <div class="formula-block">
+                                $$L_q=\sum_{n=1}^{\infty}(n-1)P_n=\sum_{n=0}^{\infty}nP_n-\sum_{n=1}^{\infty}P_n=L_s-\rho=\frac{\rho^2}{1-\rho}$$
+                            </div>
+                            
+                            <p>注意这里的队长与排队长之差直观上看似乎应为1，但上面的计算说明$L_s-L_q=\rho<1$，这是因为它们的差在系统忙时是1，而在系统闲时是0，故其均值为$0\cdot P_0+1\cdot(1-P_0)=\rho$。</p>
+                            
+                            <h4>(2) 平均逗留时间和等待时间</h4>
+                            <p>首先可证，顾客在系统中的逗留时间$W$服从参数为$\mu-\lambda$的负指数分布。</p>
+                            
+                            <p>事实上，设一顾客到达时系统中已有$n$个顾客，则该顾客在系统中的逗留时间$W_s=v_1'+v_2+\cdots+v_n+v_{n+1}$，其中$v_1'$为正被服务的第1位顾客还需要的服务时间，$v_i(i=2,\cdots,n)$为第$i$位顾客的被服务时间，$v_{n+1}$为该顾客的被服务时间。</p>
+                            
+                            <p>因为$v_i(i=2,\cdots,n+1)$独立且同服从参数为$\mu$的负指数分布，而$v_1'$由无记忆性也服从参数为$\mu$的负指数分布，所以$W_s$服从$n+1$阶爱尔朗分布，即</p>
+                            <div class="formula-block">
+                                $$f_{W_s}(t)=\frac{\mu(\mu t)^n}{n!}e^{-\mu t}$$
+                            </div>
+                            
+                            <p>从而$W$的分布函数</p>
+                            <div class="formula-block">
+                                \begin{align}
+                                F_W(t)&=P(W\leq t)=\sum_{n=0}^{\infty}P_nP\{W\leq t|n\}\\
+                                &=\sum_{n=0}^{\infty}\rho^n(1-\rho)\int_0^t\frac{\mu(\mu t)^n}{n!}e^{-\mu t}dt\\
+                                &=1-e^{-(\mu-\lambda)t}
+                                \end{align}
+                            </div>
+                            
+                            <p>即$W$服从参数为$\mu-\lambda$的负指数分布，故其均值</p>
+                            <div class="formula-block">
+                                $$W_s=\frac{1}{\mu-\lambda}$$
+                            </div>
+                            
+                            <p>而平均等待时间应等于平均逗留时间与平均服务时间之差，故</p>
+                            <div class="formula-block">
+                                $$W_q=\frac{1}{\mu-\lambda}-\frac{1}{\mu}=\frac{\lambda}{\mu(\mu-\lambda)}$$
+                            </div>
+                            
+                            <h4>(3) 运行指标之间的关系</h4>
+                            <p>先将上述4个系统运行指标归纳如下：</p>
+                            <div class="formula-block">
+                                $$L_s=\frac{\lambda}{\mu-\lambda}\quad L_q=\frac{\rho\lambda}{\mu-\lambda}$$
+                                $$W_s=\frac{1}{\mu-\lambda}\quad W_q=\frac{\rho}{\mu-\lambda}$$
+                            </div>
+                            
+                            <p>易见它们之间的关系如下：</p>
+                            <div class="formula-block">
+                                $$L_s=\lambda W_s\quad L_q=\lambda W_q$$
+                                $$L_s-L_q=\frac{\lambda}{\mu}\quad W_s-W_q=\frac{1}{\mu}$$
+                            </div>
+                            
+                            <p>这一组关系式称为里特(Little)公式。里特公式对于其他一些排队模型也成立，只是式中的$\lambda$一般应为平均的顾客实际进入系统率，也称有效到达率，记为$\lambda_e$。在本模型中因为到来的顾客均能进入系统，故$\lambda_e=\lambda$。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">例 13.2</div>
+                        <p>某修理店只有一个修理工，来修理的顾客到达过程为泊松流，平均每小时4人。修理时间服从负指数分布，平均需要6 min。试求：①修理店空闲的概率；②店内有3个顾客的概率；③店内至少有1个顾客的概率；④在店内的平均顾客数；⑤等待服务的平均顾客数；⑥每位顾客在店内的平均逗留时间；⑦每位顾客平均等待修理的时间；⑧顾客在店内需消耗15 min以上的概率。</p>
+                        
+                        <div class="solution">
+                            <p>本例可看做一个标准的M/M/1模型，$\lambda=4$人/h，$\mu=\frac{1}{6}$人/min$=10$人/h，$\rho=\frac{\lambda}{\mu}=\frac{2}{5}$。</p>
+                            
+                            <p>①修理店空闲的概率</p>
+                            <div class="formula-block">
+                                $$P_0=1-\rho=1-\frac{2}{5}=\frac{3}{5}=0.6$$
+                            </div>
+                            
+                            <p>②店内有3个顾客的概率</p>
+                            <div class="formula-block">
+                                $$P_3=\rho^3(1-\rho)=\left(\frac{2}{5}\right)^3\left(1-\frac{2}{5}\right)=0.038$$
+                            </div>
+                            
+                            <p>③店内至少有1个顾客的概率</p>
+                            <div class="formula-block">
+                                $$1-P_0=\rho=\frac{2}{5}=0.4$$
+                            </div>
+                            
+                            <p>④店内(每小时)顾客平均数</p>
+                            <div class="formula-block">
+                                $$L_s=\frac{\rho}{1-\rho}=\frac{\frac{2}{5}}{1-\frac{2}{5}}=\frac{2}{3}=0.67\text{人}$$
+                            </div>
+                            
+                            <p>⑤(每小时)等待服务的平均顾客数</p>
+                            <div class="formula-block">
+                                $$L_q=L_s-\rho=\frac{2}{3}-\frac{2}{5}=\frac{4}{15}=0.267\text{人}$$
+                            </div>
+                            
+                            <p>⑥(每位)顾客在店内的平均逗留时间</p>
+                            <div class="formula-block">
+                                $$W_s=\frac{L_s}{\lambda}=\frac{2}{3}\times\frac{1}{4}=\frac{1}{6}\text{h/人}=10\text{ min}$$
+                            </div>
+                            
+                            <p>⑦(每位)顾客平均等修理时间</p>
+                            <div class="formula-block">
+                                $$W_q=W_s-\frac{1}{\mu}=\frac{1}{6}-\frac{1}{10}=\frac{1}{15}\text{h/人}=4\text{min}$$
+                            </div>
+                            
+                            <p>⑧(每位)顾客在店内需消耗15分钟以上的概率</p>
+                            <div class="formula-block">
+                                \begin{align}
+                                P\left(W\geq\frac{1}{4}\right)&=1-P\left(W<\frac{1}{4}\right)\\
+                                &=1-e^{-(10-4)\frac{1}{4}}\\
+                                &=e^{-1.5}=0.223
+                                \end{align}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">例 13.3</div>
+                        <p>考虑一个铁路列车编组站，设待编列车到达时间间隔服从负指数分布，平均每小时到达2列；编组站的编组时间也服从负指数分布，平均每20分钟可编一组。该编组站内共有2股车道，当两股占用时，再来的列车只能停在站外或前方站。①求该编组系统中列车的平均数，每一列车的平均停留时间和等待编组的列车平均数。②如果列车因站内的2股车道均被占用而停在站外或前方站时，每列车的费用为每小时$a$元，求每天由此而造成的平均费用损失。</p>
+                        
+                        <div class="solution">
+                            <p>本例可看做一个标准的M/M/1系统，$\lambda=2$列/h，$\mu=\frac{1}{20}$列/min$=3$列/h，$\rho=\frac{\lambda}{\mu}=\frac{2}{3}$</p>
+                            
+                            <p>①编组系统中列车的平均数</p>
+                            <div class="formula-block">
+                                $$L_s=\frac{\rho}{1-\rho}=\frac{\frac{2}{3}}{1-\frac{2}{3}}=2\text{列}$$
+                            </div>
+                            
+                            <p>列车的平均停留时间</p>
+                            <div class="formula-block">
+                                $$W_s=\frac{L_s}{\lambda}=\frac{2}{2}=1\text{ h}$$
+                            </div>
+                            
+                            <p>等待编组的列车平均数</p>
+                            <div class="formula-block">
+                                $$L_q=L_s-\rho=2-\frac{2}{3}=\frac{4}{3}\text{列}$$
+                            </div>
+                            
+                            <p>②每天由于列车站外等待而造成的平均费用为</p>
+                            <div class="formula-block">
+                                $$24\lambda W_q(1-P_0-P_1-P_2)a=24\times 2\times\left(\frac{2}{3}\right)^3a=14.2a\text{元}$$
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="section-13-3-2">
+                    <h3>13.3.2 系统容量有限的 M/M/1 模型(M/M/1/$N$/$\infty$)</h3>
+                    
+                    <p>本模型与标准的M/M/1模型的主要区别有二：一是系统的状态只有$N+1$种$(n=0,1,\cdots,N)$；二是顾客的实际进入系统率当$n<N$时为$\lambda$，而当$n=N$时为0，故平均值(即有效到达率)</p>
+                    <div class="formula-block">
+                        $$\lambda_e=\lambda(1-P_N)+0\cdot P_N=\lambda(1-P_N)$$
+                    </div>
+                    
+                    <button class="collapsible">1. 系统的状态概率</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>首先仍可画出系统的状态转移图，如图13.5所示。由统计平衡，列出系统状态的平衡方程组</p>
+                            
+                            <div class="image-placeholder">
+                                图13.5 系统容量有限的M/M/1系统状态转移图<br>
+                                [显示状态0到N之间的转移，最后一个状态N只有向左的μ箭头]
+                            </div>
+                            
+                            <div class="formula-block">
+                                $$\begin{cases}\lambda P_0=\mu P_1\\\lambda P_{n-1}+\mu P_{n+1}=(\lambda+\mu)P_n\quad(n=1,\cdots,N-1)\\\lambda P_{N-1}=\mu P_N\end{cases}$$
+                            </div>
+                            
+                            <p>求解平衡方程组，首先可得$P_n=\frac{\lambda}{\mu}P_{n-1}=\left(\frac{\lambda}{\mu}\right)^nP_0$，记$\rho=\frac{\lambda}{\mu}$。当$\rho\neq 1$，有</p>
+                            <div class="formula-block">
+                                $$\sum_{n=0}^NP_n=P_0(1+\rho+\cdots+\rho^N)=P_0\frac{1-\rho^{N+1}}{1-\rho}=1$$
+                            </div>
+                            
+                            <p>解得</p>
+                            <div class="formula-block">
+                                $$\begin{cases}P_0=\frac{1-\rho}{1-\rho^{N+1}}\\P_n=\rho^nP_0\quad(n=1,\cdots,N)\end{cases}$$
+                            </div>
+                            
+                            <p>当$\rho=1$，由平衡方程组可得$P_0=P_1=\cdots=P_N=\frac{1}{N+1}$。</p>
+                            
+                            <p>状态概率中的$P_N$表示系统满员的概率，因此也可称为系统对顾客的拒绝率或顾客的损失率。</p>
+                        </div>
+                    </div>
+                    
+                    <button class="collapsible">2. 系统的运行指标</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>先求出系统的平均队长，当$\rho\neq 1$时有</p>
+                            <div class="formula-block">
+                                \begin{align}
+                                L_s&=\sum_{n=0}^NnP_n=P_0\sum_{n=0}^Nn\rho^n=P_0\rho\frac{d}{d\rho}\left(\sum_{n=0}^N\rho^n\right)\\
+                                &=P_0\rho\frac{d}{d\rho}\left(\frac{1-\rho^{N+1}}{1-\rho}\right)=P_0\rho\frac{1-(N+1)\rho^N+N\rho^{N+1}}{(1-\rho)^2}\\
+                                &=\frac{\rho[1-(N+1)\rho^N+N\rho^{N+1}]}{(1-\rho^{N+1})(1-\rho)}\\
+                                &=\frac{\rho}{1-\rho}-\frac{(N+1)\rho^{N+1}}{1-\rho^{N+1}}
+                                \end{align}
+                            </div>
+                            
+                            <p>当$\rho=1$时有</p>
+                            <div class="formula-block">
+                                $$L_s=\frac{1}{N+1}(1+2+\cdots+N)=\frac{N}{2}$$
+                            </div>
+                            
+                            <p>再由里特公式，求出其他三个指标。当$\rho\neq 1$时，平均排队长</p>
+                            <div class="formula-block">
+                                $$L_q=L_s-(1-P_0)=L_s-\frac{\rho(1+N\rho^N)}{1-\rho^{N+1}}=\frac{\rho}{1-\rho}-\frac{\rho(1+N\rho^N)}{1-\rho^{N+1}}$$
+                            </div>
+                            
+                            <p>当$\rho=1$时，平均排队长</p>
+                            <div class="formula-block">
+                                $$L_q=L_s-(1-P_0)=\frac{N}{2}-\left(1-\frac{1}{N+1}\right)=\frac{N(N-1)}{2(N+1)}$$
+                            </div>
+                            
+                            <p>平均逗留时间$W_s=L_s/\lambda_e$，平均等待时间$W_q=L_q/\lambda_e$或$W_q=W_s-\frac{1}{\mu}$。</p>
+                            
+                            <p>这里的有效到达率$\lambda_e=\lambda(1-P_N)$的直观解释是，顾客到达且系统未满而实际进入系统率。由统计平衡知，它应等于实际服务率$\mu(1-P_0)$。它表示系统不空且以$\mu$的速率服务着。</p>
+                            
+                            <p>$\frac{\lambda_e}{\mu}$称为本系统的服务强度。</p>
+                            
+                            <p>将M/M/1/$N$/$\infty$排队模型的运行指标归纳如下：</p>
+                            <div class="formula-block">
+                                $$L_s=\begin{cases}\frac{\rho}{1-\rho}-\frac{(N+1)\rho^{N+1}}{1-\rho^{N+1}}, & \rho\neq 1\\\frac{N}{2}, & \rho=1\end{cases}$$
+                            </div>
+                            <div class="formula-block">
+                                $$L_q=L_s-(1-P_0)=\begin{cases}\frac{\rho}{1-\rho}-\frac{\rho(1+N\rho^N)}{1-\rho^{N+1}}, & \rho\neq 1\\\frac{N(N-1)}{2(N+1)}, & \rho=1\end{cases}$$
+                            </div>
+                            <div class="formula-block">
+                                $$W_s=\frac{L_s}{\lambda_e}=\frac{L_s}{\lambda(1-P_N)}$$
+                            </div>
+                            <div class="formula-block">
+                                $$W_q=\frac{L_q}{\lambda_e}=\frac{L_q}{\lambda(1-P_N)}$$
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">例 13.4</div>
+                        <p>某修理站只有一个修理工，且站内最多只能停放3台待修的机器。设待修机器按泊松流到达修理站，平均每分钟到达1台；修理时间服从负指数分布，平均每1.25 min可修理1台，试求：①空闲率；②顾客损失率；③顾客的有效到达率；④平均队长；⑤平均排队长；⑥平均逗留时间；⑦平均等待时间。</p>
+                        
+                        <div class="solution">
+                            <p>本例可看做一个M/M/1/4/$\infty$排队系统，$\lambda=1$台/min，$\mu=\frac{1}{1.25}=0.8$台/min，$\rho=\frac{\lambda}{\mu}=\frac{1}{0.8}=1.25$。</p>
+                            
+                            <p>①空闲率 $P_0=\frac{1-\rho}{1-\rho^{4+1}}=\frac{1-1.25}{1-1.25^5}=0.122$</p>
+                            
+                            <p>②顾客损失率 $P_4=\rho^4P_0=1.25^4\times 0.122=0.298$</p>
+                            
+                            <p>③有效到达率 $\lambda_e=\lambda(1-P_4)=1\times(1-0.298)=0.702$</p>
+                            
+                            <p>④平均队长 $L_s=\frac{\rho}{1-\rho}-\frac{(4+1)\rho^5}{1-\rho^5}=\frac{1.25}{1-1.25}-\frac{5\times 1.25^5}{1-1.25^5}=2.44$台</p>
+                            
+                            <p>⑤平均排队长 $L_q=L_s-(1-P_0)=2.44-(1-0.122)=1.56$台</p>
+                            
+                            <p>⑥平均逗留时间 $W_s=\frac{L_s}{\lambda_e}=\frac{2.44}{0.702}=3.48$ min</p>
+                            
+                            <p>⑦平均等待时间 $W_q=\frac{L_q}{\lambda_e}=\frac{1.56}{0.702}=2.23$ min</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="section-13-3-3">
+                    <h3>13.3.3 顾客源有限的 M/M/1 模型(M/M/1/$\infty$/$m$)</h3>
+                    
+                    <p>本模型与标准的M/M/1模型的主要区别有二：一是系统的状态只有$m+1$种$(n=0,1,\cdots,m)$；二是平均到达率$\lambda$在无限源时表示全体顾客的平均到达率，即单位时间平均到$\lambda$人，而在有限源时表示每个顾客的平均到达率，即单位时间每人到$\lambda$次；三是实际进入系统率，当$n<m$时为$(m-n)\lambda$，而当$n=m$时为0，平均到达率</p>
+                    <div class="formula-block">
+                        $$\lambda_e=E[(m-n)\lambda]=E(m\lambda)-E(n\lambda)=m\lambda-\lambda E(n)=m\lambda-\lambda L_s=\lambda(m-L_s)$$
+                    </div>
+                    
+                    <button class="collapsible">1. 系统的状态概率</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>首先画出系统的状态转移图，如图13.6所示。</p>
+                            
+                            <div class="image-placeholder">
+                                图13.6 顾客源有限的M/M/1系统状态转移图<br>
+                                [显示状态间的转移，到达率随状态递减：mλ,(m-1)λ,(m-n+1)λ,(m-n)λ,...,λ]
+                            </div>
+                            
+                            <p>由统计平衡列出系统状态的平衡方程组</p>
+                            <div class="formula-block">
+                                $$\begin{cases}m\lambda P_0=\mu P_1\\(m-n+1)\lambda P_{n-1}+\mu P_{n+1}=[(m-n)\lambda+\mu]P_n\quad(n=1,\cdots,m-1)\\\mu P_m=\lambda P_{m-1}\end{cases}$$
+                            </div>
+                            
+                            <p>求解平衡方程组，可得系统的状态概率</p>
+                            <div class="formula-block">
+                                $$\begin{cases}P_0=\frac{1}{\sum_{i=0}^m\frac{m!}{(m-i)!}\left(\frac{\lambda}{\mu}\right)^i}\\P_n=\frac{m!}{(m-n)!}\left(\frac{\lambda}{\mu}\right)^nP_0\quad(n=1,\cdots,m)\end{cases}$$
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="collapsible">2. 系统的运行指标</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>由里特公式得</p>
+                            <div class="formula-block">
+                                $$L_s-L_q=\frac{\lambda_e}{\mu}=\frac{\lambda(m-L_s)}{\mu}$$
+                            </div>
+                            
+                            <p>另一方面，$L_s-L_q=1-P_0$，由此解得</p>
+                            <div class="formula-block">
+                                $$L_s=m-\frac{\mu}{\lambda}(1-P_0)$$
+                            </div>
+                            
+                            <p>将$L_s$的表达式写成$\lambda(m-L_s)=\mu(1-P_0)$，可以得直观地解释其实际意义：$m-L_s$为系统外的顾客数，$\lambda(m-L_s)$为系统的实际到达率；$1-P_0$为系统忙着的概率，$\mu(1-P_0)$为系统忙时的服务率，由统计平衡，二者应当相等。</p>
+                            
+                            <p>由里特公式，可得另三个指标：</p>
+                            <div class="formula-block">
+                                $$L_q=L_s-(1-P_0)$$
+                                $$W_s=L_s/\lambda_e$$
+                                $$W_q=L_q/\lambda_e$$
+                            </div>
+                            
+                            <p>在本模型中，仍将$\frac{\lambda_e}{\mu}$称做服务强度。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">例 13.6</div>
+                        <p>某车间有5台机器，每台机器的连续运转时间服从负指数分布，平均连续运转时间为15 min。有一个修理工，每次修理时间服从负指数分布，平均每次12 min。求：①修理工空闲的概率；②五台机器都出故障的概率；③出故障机器的平均台数；④等待修理机器的平均台数；⑤每台机器的平均停工时间；⑥每台机器平均等待修理时间。</p>
+                        
+                        <div class="solution">
+                            <p>此问题可看做是一个M/M/1/$\infty$/5排队系统，$\lambda=\frac{1}{15}$台/min，$\mu=\frac{1}{12}$台/min，$\frac{\lambda}{\mu}=\frac{12}{15}=0.8$</p>
+                            
+                            <p>①修理工空闲的概率</p>
+                            <div class="formula-block">
+                                $$P_0=\left[\frac{5!}{5!}(0.8)^0+\frac{5!}{4!}(0.8)^1+\frac{5!}{3!}(0.8)^2+\frac{5!}{2!}(0.8)^3+\frac{5!}{1!}(0.8)^4+\frac{5!}{0!}(0.8)^5\right]^{-1}=0.007\,3$$
+                            </div>
+                            
+                            <p>②五台机器都出故障的概率</p>
+                            <div class="formula-block">
+                                $$P_5=\frac{5!}{0!}(0.8)^5P_0=0.287$$
+                            </div>
+                            
+                            <p>③出故障机器的平均台数</p>
+                            <div class="formula-block">
+                                $$L_s=5-\frac{1}{0.8}(1-0.007\,3)=3.76\text{台}$$
+                            </div>
+                            
+                            <p>④等待修理机器的平均台数</p>
+                            <div class="formula-block">
+                                $$L_q=3.76-(1-0.007\,3)=2.77\text{台}$$
+                            </div>
+                            
+                            <p>⑤每台机器平均停工时间</p>
+                            <div class="formula-block">
+                                $$W_s=\frac{5}{\frac{1}{12}(1-0.007\,3)}-15=46\text{ min}$$
+                            </div>
+                            
+                            <p>⑥每台机器平均待修时间</p>
+                            <div class="formula-block">
+                                $$W_q=46-12=34\text{ min}$$
+                            </div>
+                            
+                            <p>上述结果表明，机器停工时间过长，修理工几乎没有空闲时间，应当提高服务率或增加修理工人。</p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+            
+            <!-- 13.4 M/M/C排队模型 -->
+            <section id="section-13-4">
+                <h2>13.4 M/M/C 排队模型</h2>
+                
+                <p>本节研究具有泊松输入和负指数服务的多服务台排队系统，仍可类似于上节分为三种类型讨论。这里只讨论第一种类型，即系统容量和顾客源均为无限的标准的M/M/C模型(M/M/C/$\infty$/$\infty$)。讨论的前提是系统为单队、并列$C$个服务台，如图13.7所示。</p>
+                
+                <div class="image-placeholder">
+                    图13.7 M/M/C排队系统示意图<br>
+                    [显示顾客源→队列→C个并列服务台→离去]
+                </div>
+                
+                <p>标准的M/M/C模型与标准的M/M/1模型的主要区别——是M/M/1模型中的服务率$\mu$与系统的状态无关，而M/M/C模型的服务率与系统状态有关，当$n<C$为$n\mu$；当$n\geq C$为$C\mu$；二是M/M/1系统的服务强度$\rho=\frac{\lambda}{\mu}$，而M/M/C系统的服务强度$\rho=\frac{\lambda}{C\mu}(\mathit{仍设}\rho<1)$，表示每个服务台单位时间内的平均负荷。</p>
+                
+                <button class="collapsible">1. 系统的状态概率</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>首先画出标准的M/M/C系统的状态转移图，如图13.8所示。</p>
+                        
+                        <div class="image-placeholder">
+                            图13.8 M/M/C系统状态转移图<br>
+                            [显示状态间转移，服务率在n&lt;C时为nμ，n≥C时为Cμ]
+                        </div>
+                        
+                        <p>再由统计平衡列出系统状态的平衡方程组</p>
+                        <div class="formula-block">
+                            $$\begin{cases}\lambda P_0=\mu P_1\\\lambda P_{n-1}+(n+1)\mu P_{n+1}=(\lambda+n\mu)P_n\quad(n<C)\\\lambda P_{n-1}+C\mu P_{n+1}=(\lambda+C\mu)P_n\quad(n\geq C)\end{cases}$$
+                        </div>
+                        
+                        <p>求解方程组可得</p>
+                        <div class="formula-block">
+                            $$P_1=\frac{\lambda}{\mu}P_0,P_2=\frac{\lambda}{2\mu}P_1,\cdots,P_C=\frac{\lambda}{C\mu}P_{C-1},P_n=\frac{\lambda}{C\mu}P_{n-1}\quad(n>C)$$
+                        </div>
+                        
+                        <p>再由$\sum_{n=1}^{\infty}P_n=1$解出$P_0$，得到状态概率</p>
+                        <div class="formula-block">
+                            $$P_0=\left[\sum_{k=0}^{C-1}\frac{1}{k!}\left(\frac{\lambda}{\mu}\right)^k+\frac{1}{C!}\frac{1}{1-\rho}\left(\frac{\lambda}{\mu}\right)^C\right]^{-1}$$
+                        </div>
+                        <div class="formula-block">
+                            $$P_n=\begin{cases}\frac{1}{n!}\left(\frac{\lambda}{\mu}\right)^nP_0 & (n\leq C)\\\frac{1}{C!C^{n-C}}\left(\frac{\lambda}{\mu}\right)^nP_0 & (n>C)\end{cases}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">2. 系统运行指标</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>平均队长</p>
+                        <div class="formula-block">
+                            \begin{align}
+                            L_s&=\sum_{n=0}^{\infty}nP_n=\sum_{n=0}^CnP_n+\sum_{n=C+1}^{\infty}(n-C)P_n+\sum_{n=C+1}^{\infty}CP_n\\
+                            &=\sum_{n=0}^C(n-C)P_n+L_q+C\sum_{n=0}^{\infty}P_n\\
+                            &=L_q+C-\sum_{n=0}^C(C-n)P_n
+                            \end{align}
+                        </div>
+                        
+                        <p>其中，$C-\sum_{n=0}^C(C-n)P_n$的直观意义是平均忙着的服务台数，而每台平均服务率为$\mu$，故系统平均服务率为$\mu[C-\sum_{n=0}^C(C-n)P_n]$。由统计平衡，它应等于顾客的平均到达率$\lambda$，即</p>
+                        <div class="formula-block">
+                            $$C-\sum_{n=0}^C(C-n)P_n=\frac{\lambda}{\mu}$$
+                        </div>
+                        
+                        <p>从而有 $L_s=L_q+\frac{\lambda}{\mu}$</p>
+                        
+                        <p>平均排队长</p>
+                        <div class="formula-block">
+                            \begin{align}
+                            L_q&=\sum_{n=C+1}^{\infty}(n-C)P_n=\sum_{n=1}^{\infty}nP_{n+C}\\
+                            &=\sum_{n=1}^{\infty}n\cdot\frac{1}{C!C^n}(C\rho)^{n+C}P_0\\
+                            &=\frac{(C\rho)^C}{C!}P_0\sum_{n=1}^{\infty}n\rho^n=\frac{(C\rho)^C\rho}{C!(1-\rho)^2}P_0
+                            \end{align}
+                        </div>
+                        
+                        <p>平均逗留时间</p>
+                        <div class="formula-block">
+                            $$W_s=\frac{L_s}{\lambda}$$
+                        </div>
+                        
+                        <p>平均等待时间</p>
+                        <div class="formula-block">
+                            $$W_q=\frac{L_q}{\lambda}$$
+                        </div>
+                        
+                        <p>将M/M/C/$\infty$/$\infty$系统运行指标归纳如下：</p>
+                        <div class="formula-block">
+                            $$L_s=L_q+\frac{\lambda}{\mu}$$
+                            $$L_q=\frac{(C\rho)^C\rho}{C!(1-\rho)^2}P_0,\text{其中}\rho=\frac{\lambda}{C\mu}<1$$
+                            $$W_s=\frac{L_s}{\lambda}$$
+                            $$W_q=\frac{L_q}{\lambda}$$
+                        </div>
+                        
+                        <p>由于$L_s-L_q=\frac{\lambda}{\mu}$，故$W_s-W_q=\frac{L_s-L_q}{\lambda}=\frac{1}{\mu}$，均与标准的M/M/1系统相同，而与$C$无关。</p>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例 13.7</div>
+                    <p>某售票所有三个窗口，顾客到达服从泊松流，平均到达率为每分钟0.9人。售票服务时间服从负指数分布，平均服务率为每分钟0.4人。如果售票所的排队方式是顾客到达后排成一队，依次向空闲的窗口购票，求：①售票所空闲的概率；②售票所内的平均顾客数和排队等待的平均顾客数；③顾客为购票需在售票所的平均消耗时间和平均排队等待的时间；④顾客到达后必须排队等待的概率。</p>
+                    
+                    <div class="solution">
+                        <p>这是一个M/M/3/$\infty$/$\infty$排队系统，$\lambda=0.9$人/min，$\mu=0.4$人/min，$\frac{\lambda}{\mu}=\frac{0.9}{0.4}=2.25$，$\rho=\frac{\lambda}{3\mu}=\frac{2.25}{3}=0.75$。</p>
+                        
+                        <p>①售票所空闲的概率</p>
+                        <div class="formula-block">
+                            $$P_0=\left[\frac{(2.25)^0}{0!}+\frac{(2.25)^1}{1!}+\frac{(2.25)^2}{2!}+\frac{(2.25)^3}{3!(1-2.25/3)}\right]^{-1}=0.074\,8$$
+                        </div>
+                        
+                        <p>②售票所内排队等待的平均顾客数</p>
+                        <div class="formula-block">
+                            $$L_q=\frac{(2.25)^3\times 0.75}{3!(1-0.75)^2}\times 0.074\,8=1.70\text{人}$$
+                        </div>
+                        
+                        <p>售票所内的平均顾客数</p>
+                        <div class="formula-block">
+                            $$L_s=L_q+\frac{\lambda}{\mu}=1.70+2.25=3.95\text{人}$$
+                        </div>
+                        
+                        <p>③顾客的平均消耗时间</p>
+                        <div class="formula-block">
+                            $$W_s=\frac{L_s}{\lambda}=\frac{3.95}{0.9}=4.39\text{ min}$$
+                        </div>
+                        
+                        <p>顾客的平均等待时间</p>
+                        <div class="formula-block">
+                            $$W_q=\frac{L_q}{\lambda}=\frac{1.70}{0.9}=1.89\text{ min}$$
+                        </div>
+                        
+                        <p>④顾客到达后必须排队等待的概率</p>
+                        <div class="formula-block">
+                            \begin{align}
+                            P(n\geq 3)&=1-P_0-P_1-P_2\\
+                            &=1-0.074\,8-2.25\times 0.074\,8-\frac{1}{2}\times(2.25)^2\times 0.074\,8\\
+                            &=0.57
+                            \end{align}
+                        </div>
+                    </div>
+                </div>
+                
+                <p>在本例中，如果顾客的排队方式变为到达售票所后可到任一窗口排队，且入队后不再换队，即可形成3个并行的队列。这时，原来的M/M/3/$\infty$/$\infty$系统实际上变成了由3个M/M/1/$\infty$/$\infty$子系统组成的排队系统，且每个子系统的平均到达率为</p>
+                <div class="formula-block">
+                    $$\lambda_1=\lambda_2=\lambda_3=\frac{0.9}{3}=0.3\text{人/min}$$
+                </div>
+                
+                <p>按M/M/1模型重新求解本例的各问，并将结果列于表13.4进行比较。</p>
+                
+                <table>
+                    <caption><strong>表13.4</strong></caption>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>1个(M/M/3/$\infty$/$\infty$)</th>
+                            <th>3个(M/M/1/$\infty$/$\infty$)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>系统空闲的概率$P_0$</td><td>0.074 8</td><td>0.25(每个子系统)</td></tr>
+                        <tr><td>顾客需等待的概率</td><td>0.57</td><td>0.75</td></tr>
+                        <tr><td>平均队长$L_s$</td><td>3.95</td><td>9(每个系统)</td></tr>
+                        <tr><td>平均排队长$L_q$</td><td>1.70</td><td>2.25(每个子系统)</td></tr>
+                        <tr><td>平均逗留时间$W_s(\text{min})$</td><td>4.39</td><td>10</td></tr>
+                        <tr><td>平均等待时间$W_q(\text{min})$</td><td>1.89</td><td>7.5</td></tr>
+                    </tbody>
+                </table>
+                
+                <p>由表13.4不难看出，在多个并列服务台的排队系统，排成单队比排成并列多队的方式具有显著的优越性。</p>
+                
+                <p>由于计算$P_0$和各项运行指标的公式比较复杂，现已有专门的数值表可供使用。表13.5给出了标准的M/M/C系统$W_q\cdot\mu$数值表。</p>
+                
+                <table>
+                    <caption><strong>表13.5</strong></caption>
+                    <thead>
+                        <tr>
+                            <th rowspan="2">$W_q\cdot\mu$<br>$\rho=\frac{\lambda}{C\mu}$</th>
+                            <th rowspan="2">C</th>
+                            <th colspan="4">服务台数 C</th>
+                        </tr>
+                        <tr>
+                            <th>$C=1$</th>
+                            <th>$C=2$</th>
+                            <th>$C=3$</th>
+                            <th>$C=4$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>0.1</td><td>0.111 1</td><td>0.010 1</td><td>0.001 4</td><td>0.000 2</td></tr>
+                        <tr><td>0.2</td><td>0.250 0</td><td>0.041 7</td><td>0.010 3</td><td>0.003 0</td></tr>
+                        <tr><td>0.3</td><td>0.428 6</td><td>0.098 9</td><td>0.033 3</td><td>0.013 2</td></tr>
+                        <tr><td>0.4</td><td>0.666 7</td><td>0.190 5</td><td>0.078 4</td><td>0.037 8</td></tr>
+                        <tr><td>0.5</td><td>1.000 0</td><td>0.333 3</td><td>0.157 9</td><td>0.087 0</td></tr>
+                        <tr><td>0.6</td><td>1.500 0</td><td>0.562 5</td><td>0.295 6</td><td>0.179 4</td></tr>
+                        <tr><td>0.7</td><td>2.333 3</td><td>0.960 8</td><td>0.547 0</td><td>0.357 2</td></tr>
+                        <tr><td>0.8</td><td>4.000 0</td><td>1.777 8</td><td>1.078 7</td><td>0.745 5</td></tr>
+                        <tr><td>0.9</td><td>9.000 0</td><td>4.263 2</td><td>2.723 5</td><td>1.969 4</td></tr>
+                        <tr><td>0.95</td><td>19.000 0</td><td>9.256 4</td><td>6.046 7</td><td>4.457 1</td></tr>
+                    </tbody>
+                </table>
+                
+                <p>如果表中没有某一$\rho$值，可利用线性插值法从表内求出。设欲查的$\rho$值介于表中的$\rho_1$和$\rho_2$之间，即$\rho_1<\rho<\rho_2$，与$\rho$相应的$W_q\cdot\mu$值可由与$\rho_1,\rho_2$相应的$(W_q\cdot\mu)_1$和$(W_q\cdot\mu)_2$按下面的线性插值公式算出：</p>
+                <div class="formula-block">
+                    $$(W_q\cdot\mu)=(W_q\cdot\mu)_1+\frac{\rho-\rho_1}{\rho_2-\rho_1}[(W_q\cdot\mu)_2-(W_q\cdot\mu)_1]$$
+                </div>
+                
+                <p>例如在例13.7中，$C=3$，$\rho=0.75$，表中无此值。由于$0.7<\rho<0.8$，由插值法，与$\rho$相应的$W_q\cdot\mu$为</p>
+                <div class="formula-block">
+                    $$W_q\cdot\mu=0.547\,0+\frac{0.75-0.7}{0.8-0.7}[1.078\,7-0.547\,0]=0.547\,0+0.5\times 0.531\,7=0.812\,9$$
+                    $$W_q=\frac{0.812\,9}{0.4}=2.03\text{ min}$$
+                </div>
+                
+                <p>这一结果与例中的计算有一点差异，是由于插值引起的。</p>
+            </section>
+            
+            <!-- 13.5 一般服务时间的M/G/1排队模型 -->
+            <section id="section-13-5">
+                <h2>13.5 一般服务时间的 M/G/1 排队模型</h2>
+                
+                <p>本节讨论具有泊松输入、一般分布的服务时间、系统容量和顾客源均无限制的单服务台排队系统。</p>
+                
+                <section id="section-13-5-1">
+                    <h3>13.5.1 M/G/1/$\infty$/$\infty$排队模型</h3>
+                    
+                    <p>假设服务时间$v$的期望$E(v)$和方差$D(v)$存在，服务强度$\rho=\lambda E(v)<1$，则可利用布拉切克(P-K)公式及里特公式求出系统运行指标：</p>
+                    
+                    <div class="formula-block">
+                        $$L_s=\rho+\frac{\rho^2+\lambda^2D(v)}{2(1-\rho)}$$
+                        $$W_s=\frac{L_s}{\lambda}$$
+                        $$W_q=W_s-E(v)$$
+                        $$L_q=\lambda W_q=L_s-\rho$$
+                    </div>
+                    
+                    <p>其中$L_s$的计算公式称P-K公式。它表明，只要知道服务时间$v$的期望和方差，而不管$v$是服从什么分布，都可以求出系统运行指标。</p>
+                    
+                    <div class="example">
+                        <div class="example-title">例 13.9</div>
+                        <p>有一汽车冲洗台，汽车按平均每小时18辆的泊松流到达，冲洗时间$v$的期望$E(v)=0.05\text{h/辆}$，方差$D(v)=0.01\text{h/辆}$，求系统的运行指标，并对系统进行评价。</p>
+                        
+                        <div class="solution">
+                            <p>此问题属于M/G/1/$\infty$/$\infty$类型，$\lambda=18$，$\rho=\lambda E(v)=0.9$，$D(v)=0.01$，于是有</p>
+                            
+                            <div class="formula-block">
+                                $$L_q=\frac{18^2\times 0.01+(0.9)^2}{2(1-0.9)}=20.25\text{辆}$$
+                                $$L_s=20.25+0.9=21.15\text{辆}$$
+                                $$W_s=\frac{21.15}{18}=1.175\text{ h}$$
+                                $$W_q=\frac{20.15}{18}=1.125\text{ h}$$
+                            </div>
+                            
+                            <p>上述结果表明，该服务机构存在的突出问题是顾客的平均等待时间太长，是被服务时间的$\frac{1.125}{0.05}=22.5$倍。</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="section-13-5-2">
+                    <h3>13.5.2 M/D/1/$\infty$/$\infty$排队模型</h3>
+                    
+                    <p>作为M/G/1/$\infty$/$\infty$的一种特殊情形，M/D/1/$\infty$/$\infty$表示泊松输入、定长服务时间以及系统容量和顾客源均无限制的单服务台排队系统。这里的服务时间$v=E(v)$，$D(v)=0$，由P-K公式可得</p>
+                    
+                    <div class="formula-block">
+                        $$L_s=\rho+\frac{\rho^2}{2(1-\rho)},L_q=L_s-\rho=\frac{\rho^2}{2(1-\rho)}$$
+                        $$W_s=\frac{L_s}{\lambda},W_q=\frac{L_q}{\lambda}$$
+                    </div>
+                    
+                    <p>若记$E(v)=\frac{1}{\mu}$，则有</p>
+                    
+                    <div class="formula-block">
+                        $$L_q=\frac{\lambda^2}{2\mu(\mu-\lambda)},W_q=\frac{\lambda}{2(\mu-\lambda)}$$
+                    </div>
+                    
+                    <p>均为标准的M/M/1系统相应运行指标值的一半，可见系统内部越有规律越省时间。</p>
+                    
+                    <div class="example">
+                        <div class="example-title">例 13.10</div>
+                        <p>某实验室有一台自动检验机器性能的仪器，要求检验机器的顾客按泊松过程到达，平均每小时4个顾客，检验每台机器所需时间为6 min。求：①在检验室内的平均机器台数$L_s$；②等待检验的平均机器台数$L_q$；③每台机器在室内的平均消耗时间$W_s$；④每台机器平均等待检验的时间$W_q$。</p>
+                        
+                        <div class="solution">
+                            <p>此问题属于(M/D/1/$\infty$/$\infty$)类型，$\lambda=4$个/h，$E(v)=\frac{1}{10}$h，$\rho=\frac{4}{10}$，$D(v)=0$</p>
+                            
+                            <div class="formula-block">
+                                $$①L_s=0.4+\frac{(0.4)^2}{2(1-0.4)}=0.533\text{台}$$
+                                $$②L_q=0.533-0.4=0.133\text{台}$$
+                                $$③W_s=\frac{0.533}{4}=0.133\text{ h}=8\text{ min}$$
+                                $$④W_q=\frac{0.133}{4}=0.033\text{ h}=2\text{ min}$$
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="section-13-5-3">
+                    <h3>13.5.3 M/$\text{E}_k$/1/$\infty$/$\infty$排队模型</h3>
+                    
+                    <p>本模型也是M/G/1/$\infty$/$\infty$的一种特殊情形，服务时间$v$服从$k$阶爱尔朗分布。其实际背景是服务机构由$k$个串联的服务台组成，顾客为接受服务须经过全部$k$个服务台。每个服务台的服务时间$v_i$均服从参数为$k\mu$的负指数分布，则总共的服务时间$v=\sum_{i=1}^kv_i$便服从$k$阶爱尔朗分布，且$E(v)=\frac{1}{\mu}$，$D(v)=\frac{1}{k\mu^2}$。由P-K公式有</p>
+                    
+                    <div class="formula-block">
+                        $$\lambda^2\left(\frac{1}{\mu^2}+\frac{1}{k\mu^2}\right)$$
+                        $$L_s=\rho+\frac{2\left(1-\frac{\lambda}{\mu}\right)}{=\rho+\frac{(k+1)\rho^2}{2k(1-\rho)},\rho=\frac{\lambda}{\mu}}$$
+                        $$L_q=L_s-\rho=\frac{(k+1)\rho^2}{2k(1-\rho)}$$
+                        $$W_s=\frac{L_s}{\lambda},W_q=\frac{L_q}{\lambda}$$
+                    </div>
+                    
+                    <div class="example">
+                        <div class="example-title">例 13.11</div>
+                        <p>某单人裁缝店做西服，每套需经过4个不同的工序，4个工序完成后才开始做另一套。每一工序的时间服从负指数分布，平均为2 h。顾客到来服从泊松分布，平均订货率为每周5.5套(设一周工作6天，每天8 h)。问一顾客为等到做好一套西服平均需多长时间？</p>
+                        
+                        <div class="solution">
+                            <p>此问题属于(M/$\text{E}_4$/1/$\infty$/$\infty$)类型，$\lambda=5.5$套/周，$\frac{1}{4\mu}=2$ h，$\mu=\frac{1}{8}$套/h$=6$套/周，$\rho=\frac{5.5}{6}$。因而有</p>
+                            
+                            <div class="formula-block">
+                                $$L_s=\frac{5.5}{6}+\frac{\left(\frac{5.5}{6}\right)^2+(5.5)^2\times\frac{4}{6^2}}{2\left(1-\frac{5.5}{6}\right)\times 4}=7.218\,8$$
+                            </div>
+                            
+                            <p>顾客为等到做好一套西服的平均时间</p>
+                            <div class="formula-block">
+                                $$W_s=\frac{L_s}{\lambda}=\frac{7.218\,8}{5.5}=1.3\text{周}$$
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p>在M/$\text{E}_k$/1/$\infty$/$\infty$中，当$k=1$时即为M/M/1/$\infty$/$\infty$，而当$k\rightarrow\infty$时，即化为M/D/1/$\infty$/$\infty$。</p>
+                    
+                    <p>本节讨论了服务时间服从一般分布的几种排队模型。对于到达和服务均为一般分布的情形，可采用随机模拟的方法求得近似解。</p>
+                </section>
+            </section>
+            
+            <!-- 13.6 排队系统的优化 -->
+            <section id="section-13-6">
+                <h2>13.6 排队系统的优化</h2>
+                
+                <p>排队系统的优化一般包括两方面的问题：一是系统设计优化，即如何设计一个排队系统可使总效益最优，这属于静态优化问题；二是系统控制优化，即对于一给定的排队系统如何运营可使某目标达到最优，这属于动态优化问题。本节只讨论前者，即系统设计优化问题，主要讨论M/M/1系统的最优服务率和M/M/C系统的最佳服务台数的确定。</p>
+                
+                <section id="section-13-6-1">
+                    <h3>13.6.1 M/M/1 系统的最优服务率 $\mu^*$</h3>
+                    
+                    <button class="collapsible">1. 标准的 M/M/1 系统</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>设$C_s$为系统对每位顾客的单位时间服务成本；$C_w$为每位顾客在系统停留单位时间的损失费用；$z$为总费用。$z$由来自系统的服务成本$C_s\mu$和来自顾客的等待损失$C_wL_s$构成，$L_s=\frac{\lambda}{\mu-\lambda}$也由$\mu$决定。费用曲线如图13.9所示。</p>
+                            
+                            <div class="image-placeholder">
+                                图13.9 费用曲线<br>
+                                [显示总费用z、服务成本$C_s\mu$和等待损失$C_wL_s$随μ变化的曲线，在μ*处总费用最小]
+                            </div>
+                            
+                            <p>目标是较小化总费用$z$，即</p>
+                            <div class="formula-block">
+                                $$\min z=C_s\mu+C_wL_s$$
+                            </div>
+                            
+                            <p>令</p>
+                            <div class="formula-block">
+                                $$\frac{dz}{d\mu}=C_s-C_w\lambda\frac{1}{(\mu-\lambda)^2}=0$$
+                            </div>
+                            
+                            <p>解得$\mu^*=\lambda+\sqrt{\frac{C_w}{C_s}\lambda}$。</p>
+                            
+                            <p>如果目标为系统的服务利润最大化，仍记$z$表示总利润，则表达式为</p>
+                            <div class="formula-block">
+                                $$\max z=\mu(1-P_0)G-C_s\mu$$
+                            </div>
+                            
+                            <p>其中$G$为单位时间对每位顾客服务的收入，$P_0=1-\frac{\lambda}{\mu}$。</p>
+                            
+                            <div class="example">
+                                <div class="example-title">例 13.12</div>
+                                <p>设货船按泊松流到达某一港口，平均到达率$\lambda=50$条/天，平均卸货率为$\mu$。又知船在港口停泊一天的费用为1货币单位，平均卸货费为$\mu C_s$，其中$C_s=2$货币单位，求使总费用最少的平均服务率$\mu^*$。</p>
+                                
+                                <div class="solution">
+                                    <p>此问题属于标准的M/M/1系统服务率优化问题，$\lambda=50$，$C_s=2$，$C_w=1$，最佳服务率为</p>
+                                    <div class="formula-block">
+                                        $$\mu^*=\lambda+\sqrt{\frac{C_w}{C_s}\lambda}=50+\sqrt{\frac{50}{2}}=55\text{条}$$
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="collapsible">2. 系统容量有限的 M/M/1 系统</button>
+                    <div class="collapsible-content">
+                        <div class="collapsible-content-inner">
+                            <p>设考虑的目标是系统的服务利润最大化。用$z$表示总利润，则有</p>
+                            <div class="formula-block">
+                                $$\max z=\lambda(1-P_N)G-C_s\mu$$
+                            </div>
+                            
+                            <p>其中$\lambda(1-P_N)$为顾客的有效到达率，即单位时间实际进入系统的顾客数(等于单位时间实际服务完的顾客数$\mu(1-P_0)$)；$\lambda(1-P_N)G$为单位时间的服务总收入。将$z$表示为</p>
+                            <div class="formula-block">
+                                $$z=\lambda G\frac{1-\rho^N}{1-\rho^{N+1}}-C_s\mu=\lambda\mu G\frac{\mu^N-\lambda^N}{\mu^{N+1}-\lambda^{N+1}}-C_s\mu$$
+                            </div>
+                            
+                            <p>令$\frac{dz}{d\mu}=0$，得</p>
+                            <div class="formula-block">
+                                $$\rho^{N+1}\left[\frac{N-(N+1)\rho+\rho^{N+1}}{(1-\rho^{N+1})^2}\right]=\frac{C_s}{G}$$
+                            </div>
+                            
+                            <p>当给定$N$和$\frac{C_s}{G}$后，即可由上式解得$\mu^*$。</p>
+                            
+                            <p>实际中还有一些其他形式的M/M/1系统服务优化问题，可根据具体情况处理。</p>
+                            
+                            <div class="example">
+                                <div class="example-title">例 13.13</div>
+                                <p>考虑一个M/M/1/$N$/$\infty$系统，设$\lambda=10$人/h，$\mu=30$人/h，$N=2$。管理者想改进服务机构，方案有两个：方案A是增加一个等待空间，即使$N=3$；方案B是提高平均服务率到$\mu=40$人/h。设每服务一个顾客的平均收入不变，问哪个方案将获得更大的收入？若$\lambda$增加到30人/h，又将得到什么结果？</p>
+                                
+                                <div class="solution">
+                                    <p>对于方案A，单位时间内实际进入系统的顾客平均数为</p>
+                                    <div class="formula-block">
+                                        $$\lambda_A=\lambda(1-P_3)=\lambda\left(\frac{1-\rho^3}{1-\rho^4}\right)=10\left[\frac{1-\left(\frac{1}{3}\right)^3}{1-\left(\frac{1}{3}\right)^4}\right]=9.75\text{人}$$
+                                    </div>
+                                    
+                                    <p>对于方案B，$\mu=40$人/h，单位时间内实际进入系统的顾客平均数为</p>
+                                    <div class="formula-block">
+                                        $$\lambda_B=\lambda(1-P_2)=\lambda\left(\frac{1-\rho^2}{1-\rho^3}\right)=10\left[\frac{1-\left(\frac{1}{4}\right)^2}{1-\left(\frac{1}{4}\right)^3}\right]=9.52\text{人}$$
+                                    </div>
+                                    
+                                    <p>由于收入由顾客数决定，故方案A(扩大等待空间)将获得更大的收入。</p>
+                                    
+                                    <p>若$\lambda$增加到30人/h，有</p>
+                                    <div class="formula-block">
+                                        $$\lambda_A=30\times\frac{3}{3+1}=22.5\text{人}$$
+                                        $$\lambda_B=30\times\frac{1-\left(\frac{3}{4}\right)^2}{1-\left(\frac{3}{4}\right)^3}=22.7\text{人}$$
+                                    </div>
+                                    
+                                    <p>故方案B(提高服务率)将获得更大的收入。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="section-13-6-2">
+                    <h3>13.6.2 M/M/C 系统的最佳服务台数$C^*$</h3>
+                    
+                    <p>这里仅讨论标准的M/M/C系统。设$C_s$为每个服务台的单位时间服务成本，$C_w$为每位顾客在系统停留单位时间的损失费用，$z$为总成本，目标为</p>
+                    <div class="formula-block">
+                        $$\min z=C_s\cdot C+C_wL_s$$
+                    </div>
+                    
+                    <p>这里$z=z(C)$是台数$C$的离散函数，不能采用求导的方法求极值点，可采用边际分析法。</p>
+                    
+                    <p>设$C^*$是$z(C)$的极小点，则$C^*$应满足</p>
+                    <div class="formula-block">
+                        $$\begin{cases}z(C^*)\leq z(C^*-1)\\z(C^*)\leq z(C^*+1)\end{cases}$$
+                    </div>
+                    
+                    <p>化简得</p>
+                    <div class="formula-block">
+                        $$L_s(C^*)-L_s(C^*+1)\leq\frac{C_s}{C_w}\leq L_s(C^*-1)-L_s(C^*)$$
+                    </div>
+                    
+                    <p>依次计算$L_s(1),L_s(2),L_s(3),\cdots$的相邻两项之差，看两数$\frac{C_s}{C_w}$落在哪二者之间，便可确定$C^*$。</p>
+                    
+                    <div class="example">
+                        <div class="example-title">例 13.1.4</div>
+                        <p>某检验中心为客工厂服务，要求做检验的工厂(顾客)的到来服从泊松流，平均到达率为每天48次，每次来检验由于停工等原因损失为6元。服务(做检验)时间服从负指数分布，平均服务率每天25次，每设置1个检验员的服务成本(工资及设备损耗)为每天4元，其他条件适合标准的M/M/C系统。问应设几个检验员可使总费用的平均值为最小？</p>
+                        
+                        <div class="solution">
+                            <p>$C_s=4$，$C_w=6$，$\lambda=48$，$\mu=25$，$\frac{\lambda}{\mu}=1.92$，设检验员数为$C$，根据标准的M/M/C模型的有关计算公式，有</p>
+                            <div class="formula-block">
+                                $$P_0=\left[\sum_{k=0}^{C-1}\frac{1}{k!}\left(\frac{\lambda}{\mu}\right)^k+\frac{1}{C!}\frac{1}{1-\rho}\left(\frac{\lambda}{\mu}\right)^C\right]^{-1}$$
+                                $$L_s=\frac{P_0(1.92)^{C+1}}{(C-1)!(C-1.92)^2}+1.92$$
+                            </div>
+                            
+                            <p>将$C=1,2,3,4,5$依次代入计算得到表13.6。</p>
+                            
+                            <table>
+                                <caption><strong>表13.6</strong></caption>
+                                <thead>
+                                    <tr>
+                                        <th>检验员数</th>
+                                        <th>平均顾客数</th>
+                                        <th>$L_s(C)-L_s(C+1)$~</th>
+                                        <th>总费用(元/天)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>$C$</td><td>$L_s(C)$</td><td>$L_s(C-1)-L_s(C)$</td><td>$z(C)$</td></tr>
+                                    <tr><td>1</td><td>$\infty$</td><td></td><td>$\infty$</td></tr>
+                                    <tr><td>2</td><td>24.49</td><td>$21.845-\infty$</td><td>154.94</td></tr>
+                                    <tr><td>3</td><td>2.645</td><td>$0.582-21.845$</td><td>27.87</td></tr>
+                                    <tr><td>4</td><td>2.063</td><td>$0.111-0.582$</td><td>28.38</td></tr>
+                                    <tr><td>5</td><td>1.952</td><td></td><td>31.71</td></tr>
+                                </tbody>
+                            </table>
+                            
+                            <p>由于$\frac{C_s}{C_w}=\frac{4}{6}=0.67$落在区间$(0.582,21.845)$内，故$C^*=3$，即当设3个检验员时可使总费用$z$最小。最小总费用</p>
+                            <div class="formula-block">
+                                $$z(C^*)=z(3)=27.87\text{元}。$$
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+            
+            <!-- 习题 -->
+            <section>
+                <h2>习题 13</h2>
+                
+                <div class="important">
+                    本章介绍了排队系统分析的基本概念、主要模型和优化方法。通过学习，应掌握：
+                    <ul>
+                        <li>排队系统的基本组成和Kendall记号</li>
+                        <li>泊松流和负指数分布的性质</li>
+                        <li>M/M/1、M/M/C等基本排队模型的运行指标计算</li>
+                        <li>排队系统的优化方法</li>
+                    </ul>
+                    练习以下习题可以巩固和加深对排队论的理解。
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- 返回顶部按钮 -->
+    <div class="back-to-top" id="backToTop">↑</div>
+    
+    <script>
+        // 折叠面板功能
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        });
+        
+        // 返回顶部按钮
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.style.display = 'flex';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+        
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+    
+    <!-- 
+    使用说明：
+    1. 保存此文件为 .html 格式（如 queuing_system.html）
+    2. 需要网络连接以加载 MathJax 和 Google Fonts
+    3. 在现代浏览器（Chrome, Firefox, Edge, Safari）中打开即可
+    4. 所有数学公式将自动渲染
+    5. 支持响应式设计，在移动设备上也能良好显示
+    -->
+</body>
+</html>

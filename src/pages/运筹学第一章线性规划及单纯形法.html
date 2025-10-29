@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第一章 线性规划及单纯形法 - 交互式教程</title>
+    
+    <!-- MathJax配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+            line-height: 1.8;
+            color: #343434;
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffffff;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .chapter-subtitle {
+            font-size: 1.5em;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #a6d6c9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        
+        nav h3 {
+            color: #343434;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        nav ul {
+            list-style: none;
+        }
+        
+        nav li {
+            margin: 8px 0;
+        }
+        
+        nav a {
+            color: #343434;
+            text-decoration: none;
+            padding: 8px 15px;
+            display: block;
+            border-radius: 5px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.5);
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            color: #ffffff;
+            transform: translateX(5px);
+        }
+        
+        section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 10px;
+            border-left: 5px solid #f27d00;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        h3 {
+            color: #f27d00;
+            font-size: 1.4em;
+            margin: 25px 0 15px 0;
+        }
+        
+        h4 {
+            color: #343434;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin: 15px 0;
+            text-align: justify;
+        }
+        
+        .example {
+            background: #f7f7f7;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #f7d117;
+        }
+        
+        .example-title {
+            font-weight: bold;
+            color: #f27d00;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #f27d00;
+            color: #ffffff;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        tr:hover {
+            background: #a6d6c9;
+            transition: all 0.3s;
+        }
+        
+        .formula {
+            background: #f0f8ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border: 1px solid #a6d6c9;
+            overflow-x: auto;
+        }
+        
+        .collapsible {
+            background: #a6d6c9;
+            color: #343434;
+            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 5px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        
+        .collapsible:hover {
+            background: #f27d00;
+            color: #ffffff;
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            color: #343434;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .content-inner {
+            padding: 20px;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #f7d117;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .important {
+            background: #f8d7da;
+            border-left: 4px solid #f27d00;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        footer {
+            background: #343434;
+            color: #ffffff;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            section {
+                padding: 15px;
+            }
+            
+            nav {
+                position: static;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+        
+        .exercise {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #a6d6c9;
+        }
+        
+        .exercise-title {
+            font-weight: bold;
+            color: #343434;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CHAPTER 1 第一章</h1>
+            <div class="chapter-subtitle">线性规划及单纯形法</div>
+        </header>
+        
+        <nav>
+            <h3>📚 目录导航</h3>
+            <ul>
+                <li><a href="#section1">第一节 线性规划问题及其数学模型</a></li>
+                <li><a href="#section2">第二节 图解法</a></li>
+                <li><a href="#section3">第三节 单纯形法原理</a></li>
+                <li><a href="#section4">第四节 单纯形法计算步骤</a></li>
+                <li><a href="#section5">第五节 单纯形法的进一步讨论</a></li>
+                <li><a href="#section6">第六节 数据包络分析</a></li>
+                <li><a href="#section7">第七节 其他应用例子</a></li>
+                <li><a href="#exercises">习题</a></li>
+            </ul>
+        </nav>
+        
+        <section id="section1">
+            <h2>第一节 线性规划问题及其数学模型</h2>
+            
+            <h3>一、问题的提出</h3>
+            <p>在生产和经营等管理工作中，需要经常进行计划或规划。虽然各行各业计划和规划的内容千差万别，但其共同点均可归结为：<span class="highlight">在现有各项资源条件的限制下，如何确定方案，使预期目标达到最优</span>；或为了达到预期目标，确定使资源消耗为最少的方案。</p>
+            
+            <button class="collapsible">例1：美佳公司家电生产问题</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="example">
+                        <div class="example-title">例1</div>
+                        <p>美佳公司计划制造Ⅰ、Ⅱ两种家电产品。已知各制造一件时分别占用的设备A、设备B的台时、调试工序时间及每天可用于这两种家电的能力、各售出一件时的获利情况，如表1-1所示。问该公司应制造两种家电各多少件，使获取的利润为最大。</p>
+                        
+                        <table>
+                            <tr>
+                                <th>项目</th>
+                                <th>Ⅰ</th>
+                                <th>Ⅱ</th>
+                                <th>每天可用能力</th>
+                            </tr>
+                            <tr>
+                                <td>设备A/h</td>
+                                <td>0</td>
+                                <td>5</td>
+                                <td>15</td>
+                            </tr>
+                            <tr>
+                                <td>设备B/h</td>
+                                <td>6</td>
+                                <td>2</td>
+                                <td>24</td>
+                            </tr>
+                            <tr>
+                                <td>调试工序/h</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td>利润/元</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">例2：捷运公司仓库租借问题</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="example">
+                        <div class="example-title">例2</div>
+                        <p>捷运公司在下一年度的1-4月的4个月内拟租用仓库堆放物资。已知各月份所需仓库面积列于表1-2。仓库租借费用随合同期限定，期限越长，折扣越大，具体数字见表1-3。租借仓库的合同每月初都可办理，每份合同具体规定租用面积和期限。因此该厂可根据需要，在任何一个月初办理租借合同。每次办理时可签一份合同，也可签若干份租用面积和租借期限不同的合同。试确定该公司签订租借合同的最优决策，目的是使所付租借费用最小。</p>
+                        
+                        <table>
+                            <caption>表1-2 (100m²)</caption>
+                            <tr>
+                                <th>月份</th>
+                                <th>1</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                            </tr>
+                            <tr>
+                                <td>所需仓库面积</td>
+                                <td>15</td>
+                                <td>10</td>
+                                <td>20</td>
+                                <td>12</td>
+                            </tr>
+                        </table>
+                        
+                        <table>
+                            <caption>表1-3 (元/100m²)</caption>
+                            <tr>
+                                <th>合同租借期限</th>
+                                <th>1个月</th>
+                                <th>2个月</th>
+                                <th>3个月</th>
+                                <th>4个月</th>
+                            </tr>
+                            <tr>
+                                <td>合同期内的租费</td>
+                                <td>2800</td>
+                                <td>4500</td>
+                                <td>6000</td>
+                                <td>7300</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>二、线性规划问题的数学模型</h3>
+            <p>用数学语言对例1和例2进行描述。</p>
+            
+            <div class="note">
+                <strong>例1的数学模型：</strong>
+                <div class="formula">
+                    <p>目标函数：$\max z = 2x_1 + x_2$</p>
+                    <p>约束条件：</p>
+                    $$\begin{cases}
+                    5x_2 \leq 15 \\
+                    6x_1 + 2x_2 \leq 24 \\
+                    x_1 + x_2 \leq 5 \\
+                    x_1, x_2 \geq 0
+                    \end{cases}$$
+                </div>
+            </div>
+            
+            <p>模型中式(1.1a)和式(1.1b)分别表示家电Ⅰ、Ⅱ的制造件数受设备A、B的能力限制，式(1.1c)表示受调试工序能力的限制；式(1.1d)称为变量的非负约束，表明家电Ⅰ、Ⅱ制造数量不可能为负值。</p>
+            
+            <p>上述两个例子表明，规划问题的数学模型由三个要素组成：</p>
+            <ul style="margin-left: 30px;">
+                <li><strong>(1) 变量</strong>，或称决策变量，是问题中要确定的未知量</li>
+                <li><strong>(2) 目标函数</strong>，它是决策变量的函数，按优化目标分别在这个函数前加上max或min</li>
+                <li><strong>(3) 约束条件</strong>，指决策变量取值时受到的各种资源条件的限制</li>
+            </ul>
+            
+            <div class="important">
+                <strong>线性规划定义：</strong>
+                <p>如果规划问题的数学模型中，决策变量的取值是连续的，目标函数是决策变量的线性函数，约束条件是含决策变量的线性等式或不等式，则该类规划问题的数学模型称为<span class="highlight">线性规划的数学模型</span>。</p>
+            </div>
+            
+            <h3>线性规划的一般形式</h3>
+            <div class="formula">
+                $$\max(\text{或} \min) z = \sum_{j=1}^{n} c_j x_j$$
+                
+                $$\text{s.t.} \begin{cases}
+                \sum_{j=1}^{n} a_{ij}x_j \leq (\text{或} =, \geq) b_i & (i=1,\cdots,m) \\
+                x_j \geq 0 & (j=1,\cdots,n)
+                \end{cases}$$
+            </div>
+            
+            <p>用向量形式表达时，上述模型可写为：</p>
+            <div class="formula">
+                $$\max(\text{或} \min) z = \mathbf{CX}$$
+                $$\text{s.t.} \begin{cases}
+                \mathbf{AX} \leq (\text{或} =, \geq) \mathbf{b} \\
+                \mathbf{X} \geq \mathbf{0}
+                \end{cases}$$
+            </div>
+        </section>
+        
+        <section id="section2">
+            <h2>第二节 图解法</h2>
+            
+            <p>对模型中只含2个变量的线性规划问题，可以通过在平面上作图的方法求解。</p>
+            
+            <h3>一、图解法的步骤</h3>
+            <ol style="margin-left: 30px;">
+                <li>以变量 $x_1$ 为横坐标轴，$x_2$ 为纵坐标轴画出直角平面坐标系</li>
+                <li>图示约束条件，找出可行域</li>
+                <li>图示目标函数和寻找最优解</li>
+            </ol>
+            
+            <div class="example">
+                <div class="example-title">图解法示例（例1）</div>
+                <p>重新列出例1的数学模型：</p>
+                <div class="formula">
+                    $$\max z = 2x_1 + x_2$$
+                    $$\text{s.t.} \begin{cases}
+                    5x_2 \leq 15 \\
+                    6x_1 + 2x_2 \leq 24 \\
+                    x_1 + x_2 \leq 5 \\
+                    x_1, x_2 \geq 0
+                    \end{cases}$$
+                </div>
+                
+                <p><strong>解题步骤：</strong></p>
+                <ol style="margin-left: 30px;">
+                    <li>约束条件 $5x_2 \leq 15$ 表示直线 $x_2=3$ 及其下方的半平面</li>
+                    <li>约束条件 $6x_1+2x_2 \leq 24$ 表示直线 $6x_1+2x_2=24$ 及其左下方的半平面</li>
+                    <li>约束条件 $x_1+x_2 \leq 5$ 表示直线 $x_1+x_2=5$ 及其左下方的半平面</li>
+                    <li>目标函数 $z=2x_1+x_2$ 是斜率为 $-2$ 的一族平行直线</li>
+                </ol>
+                
+                <p><strong>最优解：</strong>目标函数直线与可行域相切于点 $Q_2(3.5, 1.5)$，代入目标函数得 $z=8.5$。</p>
+                <p>即美佳公司每天制造3.5件家电Ⅰ，1.5件家电Ⅱ，能获利最大。</p>
+            </div>
+            
+            <h3>二、线性规划问题求解的几种可能结局</h3>
+            
+            <button class="collapsible">1. 无穷多最优解</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>如将例1中的目标函数改变为 $\max z = 3x_1 + x_2$，则表示目标函数的直线族恰好与约束条件 $6x_1+2x_2 \leq 24$ 平行。当目标函数向优化方向移动时，与可行域不是在一个点上，而是在 $Q_1Q_2$ 线段上相切。这时点 $Q_1$、$Q_2$ 及 $Q_1$ 与点 $Q_2$ 之间的所有点都使目标函数 $z$ 达到最大值，即有<span class="highlight">无穷多最优解</span>。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">2. 无界解</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>如果例1中只包含约束条件 $x_1+x_2 \leq 5$ 和 $x_1,x_2 \geq 0$，这时可行域可伸展到无穷，即变量 $x_j$ 的取值也可无限增大，不受限制，由此目标函数值也可增大至无穷。这种情况下问题的最优解无界。产生无界解的原因是由于在建立实际问题的数学模型时遗漏了某些必要的资源约束条件。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">3. 无解（无可行解）</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="example">
+                        <p>例如下述线性规划模型：</p>
+                        <div class="formula">
+                            $$\max z = 2x_1 + x_2$$
+                            $$\text{s.t.} \begin{cases}
+                            x_1 + x_2 \leq 2 \\
+                            2x_1 + 2x_2 \geq 6 \\
+                            x_1, x_2 \geq 0
+                            \end{cases}$$
+                        </div>
+                        <p>用图解法求解时看出不存在满足所有约束的公共区域（可行域），说明问题无解。其原因是模型的约束条件之间存在矛盾，建模时有错误。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>三、由图解法得到的启示</h3>
+            <div class="note">
+                <p><strong>重要结论：</strong></p>
+                <ol style="margin-left: 30px;">
+                    <li>求解线性规划问题时，解的情况有：唯一最优解；无穷多最优解；无界解；无可行解</li>
+                    <li>若线性规划问题的可行域存在，则可行域是一个<span class="highlight">凸集</span></li>
+                    <li>若线性规划问题的最优解存在，则最优解或最优解之一一定是可行域的凸集的某个<span class="highlight">顶点</span></li>
+                    <li><strong>解题思路：</strong>先找出凸集的任一顶点，计算在顶点处的目标函数值。比较周围相邻顶点的目标函数值是否比这个值大，如果为否，则该顶点就是最优解的点或最优解的点之一，否则转到比这个点的目标函数值更大的另一顶点，重复上述过程，一直到找出使目标函数值达到最大的顶点为止</li>
+                </ol>
+            </div>
+        </section>
+        
+        <section id="section3">
+            <h2>第三节 单纯形法原理</h2>
+            
+            <h3>一、线性规划问题的解的概念</h3>
+            
+            <p>给出标准形式的线性规划问题：</p>
+            <div class="formula">
+                $$\max z = \sum_{j=1}^{n} c_j x_j$$
+                $$\text{s.t.} \begin{cases}
+                \sum_{j=1}^{n} a_{ij}x_j = b_i & (i=1,\cdots,m) \\
+                x_j \geq 0 & (j=1,\cdots,n)
+                \end{cases}$$
+            </div>
+            
+            <button class="collapsible">基本概念定义</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p><strong>可行解：</strong>满足约束条件的解 $\mathbf{X}=(x_1,\cdots,x_n)^T$，称为线性规划问题的可行解。全部可行解的集合称为可行域。</p>
+                    
+                    <p><strong>最优解：</strong>使目标函数达到最大值的可行解称为最优解。</p>
+                    
+                    <p><strong>基：</strong>设 $\mathbf{A}$ 为约束方程组的 $m \times n$ 阶系数矩阵（设 $n>m$），其秩为 $m$，$\mathbf{B}$ 是矩阵 $\mathbf{A}$ 中的一个 $m \times m$ 阶的满秩子矩阵，称 $\mathbf{B}$ 是线性规划问题的一个基。</p>
+                    
+                    <p><strong>基变量与非基变量：</strong>$\mathbf{B}$ 中的每一个列向量 $\mathbf{P}_j$ 称为基向量，与基向量 $\mathbf{P}_j$ 对应的变量 $x_j$ 称为基变量。线性规划中除基变量以外的变量称为非基变量。</p>
+                    
+                    <p><strong>基解：</strong>在约束方程组中，令所有非基变量等于0，可解出 $m$ 个基变量的唯一解，称为线性规划问题的基解。</p>
+                    
+                    <p><strong>基可行解：</strong>满足变量非负约束条件的基解称为基可行解。</p>
+                    
+                    <p><strong>可行基：</strong>对应于基可行解的基称为可行基。</p>
+                </div>
+            </div>
+            
+            <h3>二、凸集及其顶点</h3>
+            
+            <div class="note">
+                <p><strong>凸集定义：</strong>如果集合 $C$ 中任意两个点 $\mathbf{x}_1, \mathbf{x}_2$，其连线上的所有点也都是集合 $C$ 中的点，称 $C$ 为凸集。数学表达式为：</p>
+                <div class="formula">
+                    $$\text{对任何 } \mathbf{x}_1 \in C, \mathbf{x}_2 \in C, \text{有 } \alpha\mathbf{x}_1 + (1-\alpha)\mathbf{x}_2 \in C \quad (0 < \alpha < 1)$$
+                </div>
+                
+                <p><strong>顶点定义：</strong>凸集 $C$ 中满足下述条件的点 $\mathbf{x}$ 称为顶点：如果 $C$ 中不存在任何两个不同的点 $\mathbf{x}_1, \mathbf{x}_2$，使 $\mathbf{x}$ 成为这两个点连线上的一个点。</p>
+            </div>
+            
+            <h3>三、几个基本定理的证明</h3>
+            
+            <button class="collapsible">定理1：若线性规划问题存在可行解，则问题的可行域是凸集</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p><strong>证明：</strong>设 $\mathbf{x}_1, \mathbf{x}_2$ 为可行域内任意两点，即 $\mathbf{x}_1 \in C, \mathbf{x}_2 \in C$。将 $\mathbf{x}_1, \mathbf{x}_2$ 代入约束条件有：</p>
+                    <div class="formula">
+                        $$\sum_{j=1}^{n} \mathbf{P}_j x_{1j} = \mathbf{b}, \quad \sum_{j=1}^{n} \mathbf{P}_j x_{2j} = \mathbf{b}$$
+                    </div>
+                    <p>$\mathbf{x}_1, \mathbf{x}_2$ 连线上任意一点可以表示为：</p>
+                    <div class="formula">
+                        $$\mathbf{X} = \alpha\mathbf{x}_1 + (1-\alpha)\mathbf{x}_2 \quad (0 < \alpha < 1)$$
+                    </div>
+                    <p>代入约束条件后可证明 $\mathbf{X} \in C$，所以 $C$ 为凸集。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">定理2：线性规划问题的基可行解对应线性规划问题可行域（凸集）的顶点</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>此定理说明基可行解与可行域的顶点是等价的概念。在几何上用顶点，在代数上用基可行解。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">定理3：若线性规划问题有最优解，一定存在一个基可行解是最优解</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>此定理表明，在求解线性规划问题时，只需在有限个基可行解（即可行域的顶点）中寻找最优解即可。</p>
+                </div>
+            </div>
+            
+            <h3>四、单纯形法迭代原理</h3>
+            
+            <p>单纯形法的基本思路是：</p>
+            <ol style="margin-left: 30px;">
+                <li><strong>确定初始基可行解</strong></li>
+                <li><strong>从一个基可行解转换为相邻的基可行解</strong></li>
+                <li><strong>最优性检验和解的判别</strong></li>
+            </ol>
+            
+            <div class="important">
+                <p><strong>检验数 $\sigma_j$ 的计算：</strong></p>
+                <div class="formula">
+                    $$\sigma_j = c_j - \sum_{i=1}^{m} c_i a_{ij}$$
+                </div>
+                
+                <p><strong>最优解判别准则：</strong></p>
+                <ul style="margin-left: 30px;">
+                    <li>当所有的 $\sigma_j \leq 0$ 时，表明现有顶点（基可行解）的目标函数值比起相邻各顶点的目标函数值都大，该顶点对应的基可行解即为最优解</li>
+                    <li>如果存在某个 $\sigma_k > 0$，又 $\mathbf{P}_k \leq \mathbf{0}$，则问题有无界解</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section id="section4">
+            <h2>第四节 单纯形法计算步骤</h2>
+            
+            <h3>单纯形法计算步骤概述</h3>
+            
+            <div class="note">
+                <p><strong>第1步：求初始基可行解，列出初始单纯形表</strong></p>
+                <p>对非标准型的线性规划问题首先要化成标准形式。由于总可以设法使约束方程的系数矩阵中包含一个单位矩阵，以此作为基求出问题的一个初始基可行解。</p>
+                
+                <p><strong>第2步：最优性检验</strong></p>
+                <p>如表中所有检验数 $c_j - z_j \leq 0$，且基变量中不含有人工变量时，表中的基可行解即为最优解，计算结束。</p>
+                
+                <p><strong>第3步：从一个基可行解转换到相邻的目标函数值更大的基可行解</strong></p>
+                <ul style="margin-left: 30px;">
+                    <li><strong>确定换入基的变量：</strong>只要有检验数 $\sigma_j > 0$，对应的变量 $x_j$ 就可作为换入基的变量。一般从中找出最大一个：$$\sigma_k = \max\{\sigma_j | \sigma_j > 0\}$$</li>
+                    <li><strong>确定换出基的变量：</strong>$$\theta = \min\left\{\frac{b_i}{a_{ik}} \bigg| a_{ik} > 0\right\} = \frac{b_l}{a_{lk}}$$</li>
+                    <li>元素 $a_{lk}$ 称为<span class="highlight">主元素</span></li>
+                </ul>
+                
+                <p><strong>第4步：重复第2、3两步，一直到计算结束为止</strong></p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">例5：用单纯形法求解线性规划问题</div>
+                <div class="formula">
+                    $$\max z = 2x_1 + x_2$$
+                    $$\text{s.t.} \begin{cases}
+                    5x_2 \leq 15 \\
+                    6x_1 + 2x_2 \leq 24 \\
+                    x_1 + x_2 \leq 5 \\
+                    x_1, x_2 \geq 0
+                    \end{cases}$$
+                </div>
+                
+                <p><strong>解：</strong>先将上述问题化成标准形式：</p>
+                <div class="formula">
+                    $$\max z = 2x_1 + x_2 + 0x_3 + 0x_4 + 0x_5$$
+                    $$\text{s.t.} \begin{cases}
+                    5x_2 + x_3 = 15 \\
+                    6x_1 + 2x_2 + x_4 = 24 \\
+                    x_1 + x_2 + x_5 = 5 \\
+                    x_1, x_2, x_3, x_4, x_5 \geq 0
+                    \end{cases}$$
+                </div>
+                
+                <p>从 $\mathbf{P}_3, \mathbf{P}_4, \mathbf{P}_5$ 是单位矩阵，构成一个基，对应变量 $x_3, x_4, x_5$ 是基变量。令非基变量 $x_1, x_2$ 等于零，即找到一个初始基可行解：</p>
+                <div class="formula">
+                    $$\mathbf{X} = (0, 0, 15, 24, 5)^T$$
+                </div>
+                
+                <p><strong>最优解：</strong>$x_1 = \frac{7}{2}, x_2 = \frac{3}{2}$，$z = 8\frac{1}{2}$</p>
+            </div>
+        </section>
+        
+        <section id="section5">
+            <h2>第五节 单纯形法的进一步讨论</h2>
+            
+            <h3>一、人工变量法</h3>
+            
+            <p>在上述例5中，化为标准形式后约束条件的系数矩阵中含有单位矩阵，以此作初始基，使求初始基可行解和建立初始单纯形表都十分方便。但在某些情况下，约束条件的系数矩阵中不存在单位矩阵。</p>
+            
+            <div class="note">
+                <p><strong>人工变量法（大M法）：</strong></p>
+                <p>这种情况可以添加单位向量构成单位矩阵。人工添加上去的变量称为<span class="highlight">人工变量</span>。为使这些等式得到满足，因此在最优解中人工变量取值必须为零。为此，令目标函数中人工变量的系数为任意大的负值，用 $-M$ 代表。$-M$ 称为<span class="highlight">罚因子</span>，即只要人工变量取值大于零，目标函数就不可能实现最优。</p>
+            </div>
+            
+            <h3>二、两阶段法</h3>
+            
+            <div class="note">
+                <p><strong>两阶段法原理：</strong></p>
+                <p><strong>第一阶段：</strong>先求解一个目标函数中只包含人工变量的线性规划问题，令目标函数中其他变量的系数取零，人工变量的系数取某个正的常数（一般取1），在保持原问题约束条件不变的情况下求这个目标函数极小化时的解。</p>
+                <ul style="margin-left: 30px;">
+                    <li>如果第一阶段求解结果最优解的目标函数值不为0，表明原线性规划问题<span class="highlight">无可行解</span></li>
+                    <li>如果第一阶段求解结果最优解的目标函数值为0，则进入第二阶段</li>
+                </ul>
+                
+                <p><strong>第二阶段：</strong>在原问题中去除人工变量，并从此可行解（即第一阶段的最优解）出发，继续寻找问题的最优解。</p>
+            </div>
+            
+            <h3>三、单纯形法计算中的几个问题</h3>
+            
+            <button class="collapsible">1. 目标函数极小化时解的最优性判别</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>有些书中规定求目标函数值的极小化作为线性规划的标准形式，这时只需以所有检验数 $\sigma_j \geq 0$ 作为判别表中解是否最优的标志。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">2. 退化</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>按最小比值 $\theta$ 来确定换出基的变量时，有时出现存在两个以上相同的最小比值，从而使下一个表的基可行解中出现一个或多个基变量等于零的退化解。退化解的出现原因是模型中存在多余的约束。</p>
+                    <p><strong>Bland规则：</strong></p>
+                    <ul style="margin-left: 30px;">
+                        <li>(1) 当存在多个 $\sigma_j > 0$ 时，始终选取下标值为最小的变量作为换入变量</li>
+                        <li>(2) 当计算 $\theta$ 值出现两个以上相同的最小比值时，始终选取下标值为最小的变量作为换出变量</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <button class="collapsible">3. 无可行解的判别</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>当线性规划问题中添加人工变量后，无论用人工变量法或两阶段法，初始单纯形表中的解因含非零人工变量，故实质上是非可行解。当求解结果出现所有 $\sigma_j \leq 0$ 时，如基变量中仍含有非零的人工变量（两阶段法求解时第一阶段目标函数值不等于零），表明问题<span class="highlight">无可行解</span>。</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section6">
+            <h2>第六节 数据包络分析</h2>
+            
+            <h3>一、有关概念</h3>
+            
+            <p><strong>数据包络分析</strong>（Data Envelopment Analysis, DEA）是一种基于线性规划的用于评价同类型组织工作绩效相对有效性的工具手段。这类组织例如学校、医院、银行的分支机构、超市的各营业部等，各自具有相同的投入和相同的产出。</p>
+            
+            <div class="note">
+                <p><strong>DEA有效：</strong>处于生产前沿面上的点称为DEA有效。生产前沿面是生产可行集的一条数据包络线，它是有现有绩效水平下举办相应规模组织需要投入的最低极限。</p>
+            </div>
+            
+            <h3>二、线性规划的数学模型</h3>
+            
+            <p>设有 $n$ 个决策单元（Decision Making Unit, DMU），每个决策单元有相同的 $m$ 项投入和相同的 $s$ 项产出。用 $x_{ij}$ 表示第 $j$ 决策单元的第 $i$ 项投入，用 $y_{rj}$ 表示第 $j$ 决策单元的第 $r$ 项产出。</p>
+            
+            <p>要衡量某一决策单元 $j_0$ 是否DEA有效，可以构造如下线性规划模型：</p>
+            
+            <div class="formula">
+                $$\min E$$
+                $$\text{s.t.} \begin{cases}
+                \sum_{j=1}^{n} \lambda_j y_{rj} \geq y_{rj_0} & (r=1,\cdots,s) \\
+                \sum_{j=1}^{n} \lambda_j x_{ij} \leq E \cdot x_{ij_0} & (i=1,\cdots,m) \\
+                \sum_{j=1}^{n} \lambda_j = 1, \quad \lambda_j \geq 0 & (j=1,\cdots,n)
+                \end{cases}$$
+            </div>
+            
+            <p>当求解结果有 $E < 1$ 时，则 $j_0$ 决策单元非DEA有效，否则 $j_0$ 决策单元DEA有效。</p>
+        </section>
+        
+        <section id="section7">
+            <h2>第七节 其他应用例子</h2>
+            
+            <p>应用线性规划解决经济、管理领域的实际问题，最重要的一步是建立实际问题的线性规划模型。一般来讲，一个经济、管理问题要满足下列条件，才能归结为线性规划的模型：</p>
+            
+            <ul style="margin-left: 30px;">
+                <li>① 要求解的问题的目标能用某种效益指标度量大小，并能用线性函数描述目标的要求</li>
+                <li>② 为达到这个目标存在多种方案</li>
+                <li>③ 要达到的目标是在一定约束条件下实现的，这些条件可用线性等式或不等式描述</li>
+                <li>④ 决策变量取值是连续的，可以是小数、分数或任意实数</li>
+            </ul>
+            
+            <button class="collapsible">例9：混合配料问题</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="example">
+                        <div class="example-title">例9：混合配料问题</div>
+                        <p>某糖果厂用原料A、B、C加工成三种不同牌号的糖果甲、乙、丙。已知各种牌号糖果中原料A、B、C含量、原料成本、各种原料的每月限制用量，三种牌号糖果的单位加工费及售价。问该厂每月生产这三种牌号糖果各多少kg，才能使其获利最大？</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">例10：产品计划问题</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="example">
+                        <div class="example-title">例10：产品计划问题</div>
+                        <p>某厂生产Ⅰ、Ⅱ、Ⅲ三种产品，都分别经A、B两道工序加工。设A工序可分别在设备A₁或A₂上完成，有B₁、B₂、B₃三种设备可用于完成B工序。试安排最优生产计划，使该厂获利最大。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="exercises">
+            <h2>习题</h2>
+            
+            <div class="exercise">
+                <div class="exercise-title">1.1 分别用图解法和单纯形法求解下列线性规划问题</div>
+                <p>(1) 指出问题具有唯一最优解、无穷多最优解、无界解还是无可行解</p>
+                <p>(2) 当只有唯一最优解时，指出单纯形表中的各基可行解对应图解法中可行域的哪一顶点</p>
+                
+                <div class="formula">
+                    <strong>(1)</strong> $\min z = 2x_1 + 3x_2$
+                    $$\text{s.t.} \begin{cases}
+                    4x_1 + 6x_2 \geq 6 \\
+                    3x_1 + 2x_2 \geq 4 \\
+                    x_1, x_2 \geq 0
+                    \end{cases}$$
+                </div>
+                
+                <div class="formula">
+                    <strong>(2)</strong> $\max z = 3x_1 + 2x_2$
+                    $$\text{s.t.} \begin{cases}
+                    2x_1 + x_2 \leq 2 \\
+                    3x_1 + 4x_2 \geq 12 \\
+                    x_1, x_2 \geq 0
+                    \end{cases}$$
+                </div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">1.2 将下述线性规划问题化成标准形式</div>
+                <div class="formula">
+                    <strong>(1)</strong> $\min z = -3x_1 + 4x_2 - 2x_3 + 5x_4$
+                    $$\text{s.t.} \begin{cases}
+                    4x_1 - x_2 + 2x_3 - x_4 = -2 \\
+                    x_1 + x_2 - x_3 + 2x_4 \leq 14 \\
+                    -2x_1 + 3x_2 + x_3 - x_4 \geq 2 \\
+                    x_1, x_2, x_3 \geq 0, x_4 \text{ 无约束}
+                    \end{cases}$$
+                </div>
+            </div>
+            
+            <p style="text-align: center; margin-top: 30px; font-style: italic; color: #666;">（更多习题请参考PDF文档第33-38页）</p>
+        </section>
+        
+        <footer>
+            <h3>📝 使用说明</h3>
+            <p style="margin: 10px 0;">
+                1. <strong>保存文件：</strong>将此页面保存为 .html 文件（文件 → 另存为 → 选择"网页，完整"）<br>
+                2. <strong>网络连接：</strong>需要连接互联网以加载MathJax数学公式渲染库<br>
+                3. <strong>浏览器支持：</strong>建议使用Chrome、Firefox、Edge等现代浏览器打开<br>
+                4. <strong>交互功能：</strong>点击章节标题可折叠/展开内容，点击导航链接可快速跳转
+            </p>
+            <p style="margin-top: 20px; opacity: 0.8;">
+                © 运筹学教程（第5版）| 本页面为学习材料，仅供参考
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        // 折叠/展开功能
+        const collapsibles = document.querySelectorAll('.collapsible');
+        
+        collapsibles.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 页面加载完成后的提示
+        window.addEventListener('load', function() {
+            console.log('线性规划教程已加载完成！');
+            console.log('注意：数学公式需要网络连接才能正确显示');
+        });
+    </script>
+</body>
+</html>

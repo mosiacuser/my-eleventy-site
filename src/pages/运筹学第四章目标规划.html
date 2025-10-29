@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第四章 目标规划 - 交互式教程</title>
+    
+    <!-- MathJax配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+            line-height: 1.8;
+            color: #343434;
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 50%, #f27d00 100%);
+            background-attachment: fixed;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            min-height: 100vh;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: #ffffff;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 5px solid #a6d6c9;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: #343434;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        nav li {
+            margin: 0;
+        }
+        
+        nav a {
+            display: block;
+            padding: 15px 25px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            border-bottom-color: #f7d117;
+        }
+        
+        main {
+            padding: 40px 30px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #f27d00;
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        h3 {
+            color: #343434;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid #f7d117;
+        }
+        
+        h4 {
+            color: #f27d00;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin: 15px 0;
+            text-align: justify;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .example-box {
+            background: #a6d6c9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 5px solid #f27d00;
+        }
+        
+        .example-box h4 {
+            color: #343434;
+            margin-top: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #f27d00;
+            color: #ffffff;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #a6d6c9;
+        }
+        
+        tr:nth-child(even) {
+            background: #f7f7f7;
+        }
+        
+        .formula {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #a6d6c9;
+            overflow-x: auto;
+        }
+        
+        .accordion {
+            margin: 20px 0;
+        }
+        
+        .accordion-header {
+            background: #343434;
+            color: #ffffff;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .accordion-header:hover {
+            background: #f27d00;
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border: 2px solid #a6d6c9;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .accordion-content.active {
+            max-height: 2000px;
+            padding: 20px;
+        }
+        
+        .arrow {
+            transition: transform 0.3s;
+        }
+        
+        .arrow.rotate {
+            transform: rotate(180deg);
+        }
+        
+        .btn {
+            background: #f27d00;
+            color: #ffffff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            background: #f7d117;
+            color: #343434;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .note {
+            background: #fff8e1;
+            border-left: 4px solid #f7d117;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .important {
+            background: #ffe5e5;
+            border-left: 4px solid #f27d00;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        footer {
+            background: #343434;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            main {
+                padding: 20px 15px;
+            }
+            
+            section {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CHAPTER 4 第四章</h1>
+            <p>目标规划 (Goal Programming)</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#section1">第一节 数学模型</a></li>
+                <li><a href="#section2">第二节 图解法</a></li>
+                <li><a href="#section3">第三节 单纯形法</a></li>
+                <li><a href="#section4">第四节 灵敏度分析</a></li>
+                <li><a href="#section5">第五节 应用举例</a></li>
+                <li><a href="#exercises">习题</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <section id="section1">
+                <h2>第一节 目标规划问题及其数学模型</h2>
+                
+                <h3>一、目标规划问题的提出</h3>
+                <p>应用线性规划，可以处理许多线性系统的最优化问题。但是，线性规划作为一种决策工具，在解决实际问题时，存在着一定的<span class="highlight">局限性</span>。</p>
+                
+                <div class="example-box">
+                    <h4>例1 生产计划问题</h4>
+                    <p>某工厂生产两种产品，受到原材料供应和设备工时的限制。在单件利润等有关数据已知的条件下，要求制订一个获利最大的生产计划。具体数据见表4-1。</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>产品</th>
+                                <th>I</th>
+                                <th>II</th>
+                                <th>限量/件</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>原材料（kg/件）</td>
+                                <td>5</td>
+                                <td>10</td>
+                                <td>60</td>
+                            </tr>
+                            <tr>
+                                <td>设备工时（h/件）</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td>40</td>
+                            </tr>
+                            <tr>
+                                <td>利润（元/件）</td>
+                                <td>6</td>
+                                <td>8</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>设产品I和产品II的产量分别为$x_1$和$x_2$，当用线性规划来描述和解决这个问题时，其数学模型为：</p>
+                    
+                    <div class="formula">
+                        $$\max z = 6x_1 + 8x_2$$
+                        $$\begin{cases}
+                        5x_1 + 10x_2 \leq 60 \\
+                        4x_1 + 4x_2 \leq 40 \\
+                        x_1, x_2 \geq 0
+                        \end{cases}$$
+                    </div>
+                    
+                    <p>其最优解，即最优生产计划为$x_1=8$（件），$x_2=2$（件），$\max z=64$（元）。</p>
+                </div>
+                
+                <p>从线性规划的角度来看，问题似乎已经得到了圆满的解决。但是，如果站在工厂领导的立场上对此进行评价的话，问题就不是这么简单了。</p>
+                
+                <div class="note">
+                    <strong>线性规划的局限性：</strong>
+                    <ul>
+                        <li><strong>第一</strong>，一般来说，一个计划问题要满足多方面的要求。例如，财务部门可能希望有尽可能大的利润；物资部门可能希望有尽可能小的物资消耗；销售部门可能希望产品品种多样；计划部门可能希望有尽可能大的产品批量。也就是说，一个计划问题实际上是一个<span class="highlight">多目标决策问题</span>。</li>
+                        
+                        <li><strong>第二</strong>，线性规划有最优解的必要条件是其可行解集非空，即各约束条件彼此相容。但是，实际问题有时不能满足这样的要求。当约束条件<span class="highlight">彼此互不相容</span>时，就会产生问题。</li>
+                        
+                        <li><strong>第三</strong>，线性规划解的可行性和最优性只有十分明确的意义，但那都是针对特定数学模型而言的。在实际问题中，决策者需要计划人员提供的不是严格的数学上的最优解，而是可以帮助作出最优决策的<span class="highlight">参考性的计划</span>。</li>
+                    </ul>
+                </div>
+                
+                <p>1961年，查恩斯（A. Charnes）和库伯（W. W. Cooper）提出<span class="highlight">目标规划</span>（goal programming），得到广泛重视和快速发展。目标规划在处理实际决策问题时，承认各项决策要求（即使是冲突的）的存在有其合理性；在做最终决策时，不强调其绝对意义上的最优性。由于目标规划在一定程度上弥补了线性规划的上述局限性，因此，目标规划被认为是一种较之线性规划<span class="highlight">更接近于实际决策过程</span>的决策工具。</p>
+                
+                <h3>二、目标规划的数学模型</h3>
+                
+                <div class="example-box">
+                    <h4>例2 多目标决策问题</h4>
+                    <p>假设在例1中，计划人员被要求考虑如下的意见：</p>
+                    <ol>
+                        <li>由于产品II销售疲软，故希望产品II的产量不超过产品I的一半；</li>
+                        <li>原材料严重短缺，生产中应避免过量消耗；</li>
+                        <li>最好能节约4h设备工时；</li>
+                        <li>计划利润不少于48元。</li>
+                    </ol>
+                    
+                    <p>面对这些意见，计划人员需要会同有关各方作进一步的协调，最后达成了一致意见：原材料使用限额不得突破；产品II产量要求必须优先考虑；设备工时问题其次考虑；最后考虑计划利润的要求。</p>
+                </div>
+                
+                <h4>目标规划数学模型涉及的基本概念：</h4>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>1. 偏差变量</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>对每一个决策目标，引入正、负偏差变量$d^+$和$d^-$，分别表示决策值超过或不足目标值的部分。按定义应有$d^+ \geq 0$，$d^- \geq 0$，$d^+ \cdot d^- = 0$。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>2. 绝对约束和目标约束</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>绝对约束</strong>是指必须严格满足的约束条件，如线性规划中的约束条件都是绝对约束。绝对约束是硬约束，对它的满足与否，决定了解的可行性。</p>
+                        <p><strong>目标约束</strong>是目标规划特有的概念，是一种软约束，目标约束中决策值和目标值之间的差异用偏差变量表示。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>3. 优先因子和权系数</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>不同目标的主次轻重有两种差别。一种差别是绝对的，可用<span class="highlight">优先因子$P_i$</span>来表示。只有在高级优先因子对应的目标已满足的基础上，才能考虑较低级优先因子对应的目标。</p>
+                        <p>优先因子间的关系为$P_i \gg P_{i+1}$，即$P_i$对应的目标比$P_{i+1}$对应的目标有绝对的优先性。</p>
+                        <p>另一种差别是相对的，这些目标具有相同的优先因子，它们的重要程度可用<span class="highlight">权系数</span>的不同来表示。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>4. 目标规划的目标函数</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>目标规划的目标函数（又称为准则函数或达成函数）由各目标约束的偏差变量及相应的优先因子和权系数构成。由于目标规划追求的是尽可能接近各既定目标值，也就是使各有关偏差变量尽可能小，所以其目标函数只能是<span class="highlight">极小化</span>。</p>
+                        
+                        <p><strong>应用时，有三种基本表达式：</strong></p>
+                        
+                        <p>(1) 要求恰好达到目标值。这时，决策值超过或不足目标值都是不希望的，因此有：</p>
+                        <div class="formula">$$\min \{f(d^+ + d^-)\}$$</div>
+                        
+                        <p>(2) 要求不超过目标值，但允许不足目标值。这时，不希望决策值超过目标值，因此有：</p>
+                        <div class="formula">$$\min \{f(d^+)\}$$</div>
+                        
+                        <p>(3) 要求不低于目标值，但允许超过目标值。这时，不希望决策值低于目标值，因此有：</p>
+                        <div class="formula">$$\min \{f(d^-)\}$$</div>
+                    </div>
+                </div>
+                
+                <div class="important">
+                    <h4>例2的目标规划数学模型：</h4>
+                    <div class="formula">
+                        $$\min \{P_1 d_1^-, P_2 d_2^+, P_3 d_3^-\}$$
+                        $$\begin{cases}
+                        5x_1 + 10x_2 \leq 60 & (4.1a) \\
+                        x_1 - 2x_2 + d_1^+ - d_1^- = 0 & (4.1b) \\
+                        4x_1 + 4x_2 + d_2^+ - d_2^- = 36 & (4.1c) \\
+                        6x_1 + 8x_2 + d_3^+ - d_3^- = 48 & (4.1d) \\
+                        x_1, x_2, d_i^-, d_i^+ \geq 0 \quad (i=1,2,3)
+                        \end{cases}$$
+                    </div>
+                    
+                    <p>其中，式(4.1a)为绝对约束，式(4.1b)、式(4.1c)、式(4.1d)为目标约束。根据题意，$P_1$为两种产品产量要求的优先因子；$P_2$为节约工时要求的优先因子；$P_3$为计划利润要求的优先因子，它们应满足$P_1 \gg P_2 \gg P_3$。</p>
+                </div>
+                
+                <h4>目标规划数学模型的一般形式：</h4>
+                <div class="formula">
+                    $$\min \left\{ P_l \left( \sum_{k=1}^{K} (W_{lk}^- d_k^- + W_{lk}^+ d_k^+) \right), l=1,2,\cdots,L \right\}$$
+                    $$\begin{cases}
+                    \sum_{j=1}^{n} c_{kj}x_j + d_k^+ - d_k^- = g_k & (k=1,2,\cdots,K) \\
+                    \sum_{j=1}^{n} a_{ij}x_j \leq (=, \geq) b_i & (i=1,2,\cdots,m) \\
+                    x_j \geq 0 & (j=1,2,\cdots,n) \\
+                    d_k^-, d_k^+ \geq 0 & (k=1,2,\cdots,K)
+                    \end{cases}$$
+                </div>
+                
+                <p>模型中$g_k$为第$k$个目标约束的预期目标值，$W_{lk}^-$和$W_{lk}^+$为$P_l$优先因子对应各目标的权系数。</p>
+                
+                <button class="btn" onclick="alert('在建立目标规划数学模型时，需要确定预期目标值、优先级和权系数等，应当综合运用各种决策技术，尽可能地减少主观片面性。')">查看建模要点</button>
+            </section>
+            
+            <section id="section2">
+                <h2>第二节 目标规划的图解法</h2>
+                
+                <p>对于只有两个决策变量的目标规划问题，可以用<span class="highlight">图解方法</span>来求解。</p>
+                
+                <p>在用图解法解目标规划时，首先必须满足所有绝对约束。在此基础上，再按照优先级从高到低的顺序，逐个地考虑各个目标约束。一般地，若优先因子$P_j$对应的解空间为$R_j$，则优先因子$P_{j+1}$对应的解空间只能在$R_j$中考虑，即$R_{j+1} \subseteq R_j$。若$R_j \neq \emptyset$，而$R_{j+1} = \emptyset$，则$R_j$中的解为目标规划的满意解，它只能保证满足$P_1, P_2, \cdots, P_j$级目标，而不保证满足其后的各级目标。</p>
+                
+                <div class="example-box">
+                    <h4>例3 用图解法解例2的目标规划模型</h4>
+                    
+                    <p><strong>解题步骤：</strong></p>
+                    <ol>
+                        <li>画出满足绝对约束$5x_1 + 10x_2 \leq 60$和非负条件的解空间$\triangle OAB$区域</li>
+                        <li>对于所有目标约束，去掉偏差变量，画出相应直线，然后标出偏差变量变化时直线平移方向</li>
+                        <li>按优先级高低，首先考虑$P_1$，此时要求$\min d_1^-$，因而解空间$R_1$为$\triangle OAC$区域</li>
+                        <li>再考虑$P_2$，此时要求$\min d_2^+$，因而解空间$R_2$为$\triangle ODC$区域</li>
+                        <li>最后考虑$P_3$，此时要求$\min d_3^-$，因而解空间$R_3$为四边形$EDCF$区域</li>
+                    </ol>
+                    
+                    <p class="note">容易求得$E, D, C, F$四点的坐标分别为$(8, 0)$、$(9, 0)$、$(6, 3)$、$(4.8, 2.4)$，故问题的解可表示为：</p>
+                    <div class="formula">
+                        $$\alpha_1(8, 0) + \alpha_2(9, 0) + \alpha_3(6, 3) + \alpha_4(4.8, 2.4)$$
+                        $$= (8\alpha_1 + 9\alpha_2 + 6\alpha_3 + 4.8\alpha_4, 3\alpha_3 + 2.4\alpha_4)$$
+                    </div>
+                    <p>其中：$\alpha_1, \alpha_2, \alpha_3, \alpha_4 \geq 0$，$\alpha_1 + \alpha_2 + \alpha_3 + \alpha_4 = 1$</p>
+                    
+                    <p><strong>结论：</strong>本题解能满足所有目标的要求，即能使$\min z = 0$，这种情况并不总是出现。</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例4 用图解法解下面的目标规划</h4>
+                    <div class="formula">
+                        $$\min \{P_1 d_1^+, P_2 d_2^+, P_3(5d_3^- + 3d_4^+), P_4 d_4^-\}$$
+                        $$\begin{cases}
+                        x_1 + 2x_2 + d_1^+ - d_1^- = 6 & (4.3a) \\
+                        x_1 + 2x_2 + d_2^+ - d_2^- = 9 & (4.3b) \\
+                        x_1 - 2x_2 + d_3^+ - d_3^- = 4 & (4.3c) \\
+                        x_2 + d_4^+ - d_4^- = 2 & (4.3d) \\
+                        x_1, x_2, d_i^-, d_i^+ \geq 0 \quad (i=1,2,3,4)
+                        \end{cases}$$
+                    </div>
+                    
+                    <p><strong>解题过程：</strong></p>
+                    <ol>
+                        <li>在考虑$P_1$和$P_2$的目标后，解空间$R_2$为四边形$ABCD$区域</li>
+                        <li>在考虑$P_3$的目标时，为使$d_3^-$尽可能小，应在$EF$右下方；为使$d_4^+$尽可能小，应在$GH$上方</li>
+                        <li>在四边形$ABCD$内两者无公共区域。比较两个最接近的点$G$和$E$</li>
+                        <li>解出$G$点坐标为$(5, 2)$，$E$点坐标为$(6.5, 1.25)$</li>
+                        <li>将其分别代入式(4.3c)和式(4.3d)，可得$G$点处$d_3^- = 1$，$d_4^+ = 0$，$5d_3^- + 3d_4^+ = 5$</li>
+                        <li>$E$点处$d_3^- = 0$，$d_4^+ = 0.75$，$5d_3^- + 3d_4^+ = 2.25$</li>
+                        <li>比较找出小者为点$E(6.5, 1.25)$</li>
+                    </ol>
+                    
+                    <p><strong>结论：</strong>问题的满意解为$x_1 = 6.5$，$x_2 = 1.25$</p>
+                </div>
+                
+                <div class="note">
+                    <h4>图解法可能遇到的两种情况：</h4>
+                    <ul>
+                        <li><strong>情况一</strong>（如例3）：最后一级目标的解空间非空。这时得到的解能满足所有目标的要求。当解不唯一时，决策者在作实际决策时究竟选择哪一个解，完全取决于决策者自身的考虑。</li>
+                        <li><strong>情况二</strong>（如例4）：得到的解不能满足所有目标。这时，我们要做的是寻找满意解，使已尽可能满足高级别的目标，同时又使它对那些不能满足的较低级别目标的偏离程度尽可能的小。</li>
+                    </ul>
+                    <p class="important">必须注意的是，在考虑低级别目标时，不能破坏已经满足的高级别目标，这是目标规划的基本原则。但是，也不能因此认为，当高级别目标不能满足时，其后的低级别目标也一定不能被满足。事实上，在有些目标规划中，当某一优先级的目标不能满足时，其后的某些低级别目标仍有可能被满足。</p>
+                </div>
+                
+                <button class="btn" onclick="showGraphicalMethod()">查看图解法详细步骤</button>
+            </section>
+            
+            <section id="section3">
+                <h2>第三节 解目标规划的单纯形法</h2>
+                
+                <p>目标规划的数学模型实际上是最小化型的线性规划，可以用<span class="highlight">单纯形法</span>求解，下面分三种不同方法求解。</p>
+                
+                <h3>一、检验数分列的单纯形法</h3>
+                
+                <p>因目标规划中的目标函数是各偏差变量乘上相应优先因子的线性组合。因此，在判别各检验数的正负及大小时，必须注意$P_1 \gg P_2 \gg P_3 \gg \cdots$。当所有检验数都已满足最优性条件($c_j - z_j \geq 0$)时，从最终单纯形表上就可以得到目标规划的解。</p>
+                
+                <div class="example-box">
+                    <h4>例5 用单纯形法解例2</h4>
+                    
+                    <p><strong>解：</strong>引入松弛变量$x_3$，将例2的目标规划模型化为线性规划标准形式：</p>
+                    <div class="formula">
+                        $$\min \{P_1 d_1^-, P_2 d_2^+, P_3 d_3^-\}$$
+                        $$\begin{cases}
+                        5x_1 + 10x_2 + x_3 = 60 \\
+                        x_1 - 2x_2 + d_1^+ - d_1^- = 0 \\
+                        4x_1 + 4x_2 + d_2^+ - d_2^- = 36 \\
+                        6x_1 + 8x_2 + d_3^+ - d_3^- = 48 \\
+                        x_1, x_2, x_3, d_i^+, d_i^- \geq 0 \quad (i=1,2,3)
+                        \end{cases}$$
+                    </div>
+                    
+                    <p class="note">用单纯形法解上面的标准形式。解题过程的单纯形表见详细计算（表4-2）。</p>
+                    
+                    <p><strong>求解步骤说明：</strong></p>
+                    <ol>
+                        <li>在单纯形表I（初始表）中，非基变量$x_1$的检验数$-P_1 - 6P_3 < 0$，其他非基变量检验数均非负，故确定$x_1$为换入变量</li>
+                        <li>按最小比值规则，确定基变量$d_1^+$为换出变量。经迭代变换得单纯形表II</li>
+                        <li>在单纯形表II中，非基变量$x_2$和$d_3^-$的检验数皆负，但$x_2$的检验数更小些，故确定$x_2$为换入变量</li>
+                        <li>按最小比值规则，$d_2^+$为换出变量。经迭代变换得单纯形表III</li>
+                        <li>由于单纯形表III中所有非基变量检验数皆非负，故单纯形表III为最终单纯形表</li>
+                    </ol>
+                    
+                    <p><strong>结论：</strong>从单纯形表III得例2的一个满意解$x_1 = 24/5 = 4.8$，$x_2 = 12/5 = 2.4$，此即图4-1中F点。</p>
+                    
+                    <div class="important">
+                        <p><strong>多重最优解：</strong>在单纯形表III中，由于非基变量$d_1^-$和$d_2^-$的检验数都是零，故知例2有多重最优解（满意解）。</p>
+                        <ul>
+                            <li>如以$d_3^-$为换入变量继续迭代，可得计算结果IV</li>
+                            <li>如以$d_2^-$为换入变量继续迭代，可得计算结果V</li>
+                            <li>再从IV或V的结果继续迭代可得结果VI</li>
+                        </ul>
+                        <p>综上所述，例2的解为以下四个满意解（即C, D, E, F四点）的凸组合。而且，由单纯形表III、IV、V、VI中可知，各非基变量检验数中三个优先因子的系数全部非负，这表示任何一个满意解都能满足所有目标的要求。单纯形法和图解法的解题结果完全一致。</p>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例6 用单纯形法解例4</h4>
+                    
+                    <p>解题过程见表4-4。表4-4给出了单纯形法求解时的初始单纯形表(I)和经5步迭代后的最终单纯形表(VI)。</p>
+                    
+                    <p><strong>分析结论：</strong></p>
+                    <ul>
+                        <li>从表4-4的最终单纯形表可以看到，所有非基变量的检验数都已非负</li>
+                        <li>从线性规划的角度看，该解为最优解，它对应图4-2中的E点</li>
+                        <li>但是，作为目标规划，该解只是一个<span class="highlight">满意解</span>，因为它并没有能满足所有的目标要求</li>
+                        <li>事实上在检验数$c_j - z_j$中，虽然优先因子$P_1$和$P_2$的系数为非负，但优先因子$P_3$和$P_4$的系数中还有负系数</li>
+                        <li>这表明，作为目标规划，$P_1$和$P_2$优先因子各目标皆已满足，但$P_3$和$P_4$优先因子各目标并未全部满足</li>
+                    </ul>
+                    
+                    <p class="note">对于$P_3$优先因子而言，由于$d_3^- = 0$和$d_4^+ = 3/4$，故它的两个目标中$d_3^- \to 0$已实现，但$d_4^+ \to 0$的目标未实现。对于$P_4$优先因子而言，由于$d_4^+ = 3$，故$d_4^+ \to 0$的目标并未实现。以上结果同图解法的结果(见图4-2)完全一致。</p>
+                </div>
+                
+                <h3>二、对优先因子给定权重的计算方法</h3>
+                
+                <p>由前述目标规划中的优先因子应满足$P_1 \gg P_2 \gg P_3 \cdots$，因此不妨在模型中假设优先因子$P_k$的权重等于$10^{k-1}$，由此本章例2的目标规划模型就可表示为：</p>
+                
+                <div class="formula">
+                    $$\min \{100d_1^- + 10d_2^+ + d_3^-\}$$
+                    $$\begin{cases}
+                    5x_1 + 10x_2 \leq 60 \\
+                    x_1 - 2x_2 + d_1^+ - d_1^- = 0 \\
+                    4x_1 + 4x_2 + d_2^+ - d_2^- = 36 \\
+                    6x_1 + 8x_2 + d_3^+ - d_3^- = 48 \\
+                    x_1, x_2, d_i^+, d_i^+ \geq 0 \quad (i=1,2,3)
+                    \end{cases}$$
+                </div>
+                
+                <p>这样就不需要在单纯形法计算中将优先级分列，只需按一般单纯形法进行计算即可。本题用单纯形法计算得到的最终表见表4-5。</p>
+                
+                <p class="important">表中结果对应图4-1的F点，因非基变量$d_1^+, d_2^+$的检验数均为零，故继续迭代，可找出图4-1中的$C, D, E$点。</p>
+                
+                <h3>三、优先级分层优化的计算方法</h3>
+                
+                <p>因目标规划求解时，遵循从高优先级到低优先级逐层优化的原则，故为保证较低层级的优化在较高层级优化的约束范围内进行，可将上一层级的目标优化值作为约束，加到下一层的模型中，这种方法也称为<span class="highlight">字典序计算法</span>，下面仍以本章例2用作说明。</p>
+                
+                <div class="example-box">
+                    <h4>优先级分层优化示例</h4>
+                    
+                    <p><strong>第一层级的优化模型：</strong></p>
+                    <div class="formula">
+                        $$\min d_1^-$$
+                        $$\begin{cases}
+                        5x_1 + 10x_2 + x_3 = 60 \\
+                        x_1 - 2x_2 + d_1^+ - d_1^- = 0 \\
+                        4x_1 + 4x_2 + d_2^+ - d_2^- = 36 \\
+                        6x_1 + 8x_2 + d_3^+ - d_3^- = 48 \\
+                        x_1, x_2, x_3 \geq 0, d_i^-, d_i^+ \geq 0 \quad (i=1,2,3)
+                        \end{cases}$$
+                    </div>
+                    <p>解得：$x_1 = 0, x_2 = 0, x_3 = 60, d_1^+ = 0, d_2^- = 0, d_2^+ = 36, d_3^- = 0, d_3^+ = 48, d_1^- = 0$。将$d_1^- = 0$加到第一层级的优化模型中，写出第二层级的优化模型。</p>
+                    
+                    <p><strong>第二层级的优化模型：</strong></p>
+                    <div class="formula">
+                        $$\min d_2^+$$
+                        $$\begin{cases}
+                        5x_1 + 10x_2 + x_3 = 60 \\
+                        x_1 - 2x_2 + d_1^+ - d_1^- = 0 \\
+                        4x_1 + 4x_2 + d_2^+ - d_2^- = 36 \\
+                        6x_1 + 8x_2 + d_3^+ - d_3^- = 48 \\
+                        d_1^- = 0 \\
+                        x_1, x_2, x_3 \geq 0, d_i^-, d_i^+ \geq 0 \quad (i=1,2,3)
+                        \end{cases}$$
+                    </div>
+                    <p>解得：$x_1 = 0, x_2 = 0, x_3 = 60, d_1^+ = 0, d_2^- = 0, d_2^+ = 36, d_3^- = 0, d_3^+ = 48, d_1^- = 0, d_2^+ = 0$。再将$d_2^+ = 0$加到第二层级的优化模型中，写出第三层级的优化模型。</p>
+                    
+                    <p><strong>第三层级的优化模型：</strong></p>
+                    <div class="formula">
+                        $$\min d_3^-$$
+                        $$\begin{cases}
+                        5x_1 + 10x_2 + x_3 = 60 \\
+                        x_1 - 2x_2 + d_1^+ - d_1^- = 0 \\
+                        4x_1 + 4x_2 + d_2^+ - d_2^- = 36 \\
+                        6x_1 + 8x_2 + d_3^+ - d_3^- = 48 \\
+                        d_1^- = 0 \\
+                        d_2^+ = 0 \\
+                        x_1, x_2, x_3 \geq 0, d_i^-, d_i^+ \geq 0 \quad (i=1,2,3)
+                        \end{cases}$$
+                    </div>
+                    <p>解得：$x_1 = 4.8, x_2 = 2.4, x_3 = 12, d_1^+ = 0, d_2^- = 0, d_2^+ = 7.2, d_3^- = 0, d_3^+ = 0, d_1^- = 0, d_2^+ = 0$。这个解对应图4-1中的F点或表4-2的计算结果III。</p>
+                </div>
+                
+                <button class="btn" onclick="alert('单纯形法的三种方法各有特点：\n1. 检验数分列法：直观清晰，但计算较繁琐\n2. 给定权重法：计算简便，但需选择合适的权重\n3. 分层优化法：逻辑严密，适合复杂问题')">比较三种方法</button>
+            </section>
+            
+            <section id="section4">
+                <h2>第四节 目标规划的灵敏度分析</h2>
+                
+                <p>在目标规划建模时，目标优先级和权系数的确定往往带有一定的主观性，因此，对它们的<span class="highlight">灵敏度分析</span>是目标规划灵敏度分析的主要内容。目标规划灵敏度分析的方法、原理同线性规划的灵敏度分析本质上相同，下面通过例子讲述。</p>
+                
+                <div class="example-box">
+                    <h4>例7 对例4的目标规划问题进行灵敏度分析</h4>
+                    
+                    <p>对例4的目标规划问题，已求得满意解为$x_1 = 13/2, x_2 = 5/4$（见表4-4）。现决策者想知道，目标函数中各目标的优先因子和权系数对最终解的影响。为此，提出了下面两个灵敏度分析问题，即目标函数分别变为：</p>
+                    
+                    <p><strong>(1) 交换第三和第四优先级目标</strong></p>
+                    <div class="formula">$$\min \{P_1 d_1^+, P_2 d_2^+, P_4 d_4^-, P_3(5d_3^- + 3d_4^+)\}$$</div>
+                    
+                    <p><strong>(2) 改变第三优先级中两目标的权系数</strong></p>
+                    <div class="formula">$$\min \{P_1 d_1^+, P_2 d_2^+, P_3(w_1 d_3^- + w_2 d_4^+), P_4 d_4^-\} \quad (w_1, w_2 > 0)$$</div>
+                    
+                    <p class="note"><strong>解：</strong>目标函数的变化仅影响原解的最优性，即各变量的检验数。因此，应当先考察检验数的变化，然后再作适当的处理。</p>
+                    
+                    <h4>1. 当目标函数变为(1)</h4>
+                    <p>就是要了解交换第三和第四优先级目标对原解的影响。此时，单纯形表变为表4-6。</p>
+                    
+                    <p>从表4-6可见，原解最优性已被破坏（$d_2^-$的检验数$-P_3 + \frac{3}{4}P_4 < 0$），故应用单纯形法继续求解。见表4-7。</p>
+                    
+                    <p><strong>结论：</strong>从表4-7可知，第三和第四优先级目标交换后，原满意解已失去了最优性。新的满意解为$x_1 = 5, x_2 = 1/2$，即图4-2中F点。</p>
+                    
+                    <h4>2. 当目标函数变为(2)</h4>
+                    <p>就是要了解第三优先级中两目标权系数取值对原解的影响。此时，单纯形表变为表4-8。</p>
+                    
+                    <div class="important">
+                        <p>从表4-8可知，原解是否改变取决于$d_3^-$的检验数$w_1 - w_2/4$。因此：</p>
+                        <ul>
+                            <li>当$w_1 - w_2/4 > 0$，即$w_1/w_2 > 1/4$时，原解不变，仍为$x_1 = 13/2, x_2 = 5/4$，即图4-2中E点；</li>
+                            <li>当$w_1/w_2 < 1/4$时，原解改变。用单纯形法继续求解，可得新的满意解$x_1 = 5, x_2 = 2$（此时，$d_3^- = 3, d_4^+ = 0$），即图4-2中G点；</li>
+                            <li>当$w_1/w_2 = 1/4$时，E点和G点皆为满意解。</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="note">
+                        <h4>分析总结：</h4>
+                        <p>从上面的分析可知，第三优先级两目标权系数的改变有可能会影响所得的满意解。解的变化取决于两目标权系数的比值$w_1/w_2$，其临界点为$1/4$。</p>
+                        <p>事实上，在前两优先级目标均已被满足的条件下，如满足$d_3^- = 0$，则使$d_4^+ = 3/4$；如满足$d_4^+ = 0$，则使$d_3^- = 3$。$d_4^+/d_3^- = 1/4$。如将$w_1/w_2$看作同一优先级下两目标重要程度的比较，而将$d_4^+/d_3^-$看作因此而引起的不满足程度的比较，则两者的一致恰好说明了目标规划中<span class="highlight">权系数的作用和意义</span>。</p>
+                        <p class="important">若用图解法作灵敏度分析，当$1/4 < w_1/w_2 < 1$时，因$w_1 < w_2$，我们会以为满意解是G点，这是错误的。图解法虽然有直观形象的优点，但不能识别权系数取值的微妙作用和意义，往往将目标权系数的大小差别混同于优先级的高低。</p>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="alert('灵敏度分析的重要性：\n1. 帮助决策者理解参数变化的影响\n2. 验证模型的稳定性和鲁棒性\n3. 为调整决策提供理论依据\n4. 揭示权系数和优先级的实际意义')">查看灵敏度分析要点</button>
+            </section>
+            
+            <section id="section5">
+                <h2>第五节 目标规划应用举例</h2>
+                
+                <p>目标规划是一种十分有用的多目标决策工具，有着广泛的实际应用。下面通过具体例子说明目标规划在实际问题中的应用。</p>
+                
+                <div class="example-box">
+                    <h4>例8 运输问题的目标规划模型</h4>
+                    
+                    <p>运输问题一章的例1中给出了产地$A_1, A_2, A_3$和销地$B_1, B_2, B_3, B_4$的各自产销量及各产销地之间的单位运价，见表4-9（同表3-2）。现假定：</p>
+                    
+                    <table>
+                        <caption><strong>表4-9 产销量和单位运价</strong></caption>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">产地\销地</th>
+                                <th>$B_1$</th>
+                                <th>$B_2$</th>
+                                <th>$B_3$</th>
+                                <th>$B_4$</th>
+                                <th rowspan="2">产量</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>$A_1$</td>
+                                <td>4</td>
+                                <td>12</td>
+                                <td>4</td>
+                                <td>11</td>
+                                <td>16</td>
+                            </tr>
+                            <tr>
+                                <td>$A_2$</td>
+                                <td>2</td>
+                                <td>10</td>
+                                <td>3</td>
+                                <td>9</td>
+                                <td>10</td>
+                            </tr>
+                            <tr>
+                                <td>$A_3$</td>
+                                <td>8</td>
+                                <td>5</td>
+                                <td>11</td>
+                                <td>6</td>
+                                <td>22</td>
+                            </tr>
+                            <tr>
+                                <td>销量</td>
+                                <td>8</td>
+                                <td>14</td>
+                                <td>12</td>
+                                <td>14</td>
+                                <td>48</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p><strong>决策目标：</strong></p>
+                    <ul>
+                        <li>$P_1$：$B_1$是重点单位，希望销量增至12单位，并尽量满足；</li>
+                        <li>$P_2$：$B_1$需求量中至少有6个单位来自$A_2$；</li>
+                        <li>$P_3$：$B_2, B_3, B_4$的需求量应均不少于90%得到满足；</li>
+                        <li>$P_4$：因路况较差，从$A_3$至$B_4$的运量不要超过8单位；</li>
+                        <li>$P_5$：使总运费尽可能节省。</li>
+                    </ul>
+                    
+                    <p class="note">原运输问题的最小运费为244。设从$A_i$运往$B_j$的物品数量为$x_{ij}$（$i=1,2,3$；$j=1,2,3,4$），问题的目标规划模型为：</p>
+                    
+                    <div class="formula">
+                        $$\min z = \{P_1 d_1^-, P_2 d_2^-, P_3(d_3^- + d_4^- + d_5^-), P_4 d_6^+, P_5 d_7^+\}$$
+                        
+                        $$\begin{cases}
+                        x_{11} + x_{12} + x_{13} + x_{14} \leq 16 & (4.4a) \\
+                        x_{21} + x_{22} + x_{23} + x_{24} \leq 10 & (4.4b) \\
+                        x_{31} + x_{32} + x_{33} + x_{34} \leq 22 & (4.4c) \\
+                        x_{11} + x_{21} + x_{31} + d_1^+ - d_1^- = 12 & (4.4d) \\
+                        x_{12} + x_{22} + x_{32} + d_2^+ - d_2^- = 12.6 & (4.4e) \\
+                        x_{13} + x_{23} + x_{33} + d_3^+ - d_3^- = 10.8 & (4.4f) \\
+                        x_{14} + x_{24} + x_{34} + d_4^+ - d_4^- = 12.6 & (4.4g) \\
+                        x_{21} + d_5^+ - d_5^- = 6 & (4.4h) \\
+                        x_{34} + d_6^+ - d_6^- = 8 & (4.4i) \\
+                        \sum_{i=1}^{3} \sum_{j=1}^{4} c_{ij}x_{ij} + d_7^+ - d_7^- = 244 & (4.4j) \\
+                        x_{ij}, d_k^+, d_k^- \geq 0 \quad (i=1,2,3; j=1,\cdots,4; k=1,\cdots,7)
+                        \end{cases}$$
+                    </div>
+                    
+                    <p><strong>模型中各约束的含义：</strong></p>
+                    <ul>
+                        <li>式(4.4a)至式(4.4c)是产量的约束；</li>
+                        <li>式(4.4d)至式(4.4g)是考虑了实际情况后的需求量约束；</li>
+                        <li>式(4.4h)为$B_1$由$A_2$供应量的目标约束；</li>
+                        <li>式(4.4i)为由$A_3$至$B_4$路况对运量的限制；</li>
+                        <li>式(4.4j)使运费尽可能节省的目标约束。</li>
+                    </ul>
+                    
+                    <p>目标函数则反映了使优先级各不相同的5项目标不被满足的程度尽可能小的总目标。</p>
+                    
+                    <p><strong>求解结果：</strong></p>
+                    <table>
+                        <caption><strong>表4-10 最优调运方案</strong></caption>
+                        <thead>
+                            <tr>
+                                <th>产地\销地</th>
+                                <th>$B_1$</th>
+                                <th>$B_2$</th>
+                                <th>$B_3$</th>
+                                <th>$B_4$</th>
+                                <th>合计</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>$A_1$</td>
+                                <td>0.6</td>
+                                <td></td>
+                                <td>10.8</td>
+                                <td>4.6</td>
+                                <td>16</td>
+                            </tr>
+                            <tr>
+                                <td>$A_2$</td>
+                                <td>10</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>10</td>
+                            </tr>
+                            <tr>
+                                <td>$A_3$</td>
+                                <td>1.4</td>
+                                <td>12.6</td>
+                                <td></td>
+                                <td>8.0</td>
+                                <td>22</td>
+                            </tr>
+                            <tr>
+                                <td>合计</td>
+                                <td>12</td>
+                                <td>12.6</td>
+                                <td>10.8</td>
+                                <td>12.6</td>
+                                <td>48</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p class="important">该调运方案满足$P_1, P_2, P_3, P_4, P_5$各优先级目标，总运费为238.4元。总运费的减少主要是因为$B_1$需求量的增加，而从$A_2$至$B_1$的单位运价又较低的原因。</p>
+                </div>
+                
+                <button class="btn" onclick="alert('目标规划应用领域：\n1. 生产计划与资源分配\n2. 运输与物流优化\n3. 投资组合与财务规划\n4. 营养配餐与饮食计划\n5. 人力资源管理\n6. 环境保护与可持续发展')">查看更多应用</button>
+            </section>
+            
+            <section id="exercises">
+                <h2>习题</h2>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>4.1 目标函数的表达式判断</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>题目：</strong>若用以下表达式作为目标规划的目标函数，其逻辑是否正确，为什么？</p>
+                        <ol>
+                            <li>$\max \{d^- + d^+\}$</li>
+                            <li>$\max \{d^- - d^+\}$</li>
+                            <li>$\min \{d^- + d^+\}$</li>
+                            <li>$\min \{d^- - d^+\}$</li>
+                        </ol>
+                        <p class="note"><strong>提示：</strong>目标规划的目标函数应该是极小化偏差变量，使决策值尽可能接近目标值。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>4.2 目标规划概念判断</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>题目：</strong>下列说法中正确的有：</p>
+                        <ol>
+                            <li>目标规划中正偏差变量应取正值，负偏差变量应取负值；</li>
+                            <li>目标规划的目标函数中含决策变量与偏差变量；</li>
+                            <li>同一目标约束中的一对偏差变量$d_i^+, d_i^-$至少一个取值为零；</li>
+                            <li>只含目标约束的目标规划模型一定存在满意解。</li>
+                        </ol>
+                        <p class="note"><strong>答案：</strong>(3)正确。根据偏差变量的定义，$d^+ \cdot d^- = 0$，即两者不能同时大于零。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>4.3 图解法练习题</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>题目(1)：</strong>用图解法解下列目标规划问题：</p>
+                        <div class="formula">
+                            $$\min \{P_1 d_1^+, P_2(2d_2^+ + d_3^+), P_3 d_1^-\}$$
+                            $$\begin{cases}
+                            2x_1 + x_2 + d_1^+ - d_1^- = 150 \\
+                            x_1 + d_2^+ - d_2^- = 40 \\
+                            x_2 + d_3^+ - d_3^- = 40 \\
+                            x_1, x_2, d_i^-, d_i^+ \geq 0 \quad (i=1,2,3)
+                            \end{cases}$$
+                        </div>
+                        
+                        <p><strong>题目(2)：</strong>用图解法解下列目标规划问题：</p>
+                        <div class="formula">
+                            $$\min \{P_1(d_4^+ + d_1^+), P_2 d_1^-, P_3 d_2^+, P_4(d_3^+ + 1.5d_5^-)\}$$
+                            $$\begin{cases}
+                            x_1 + x_2 + d_1^+ - d_1^- = 40 \\
+                            x_1 + x_2 + d_2^+ - d_2^- = 100 \\
+                            x_1 + d_3^+ - d_3^- = 30 \\
+                            x_2 + d_4^+ - d_4^- = 15 \\
+                            x_1, x_2, d_i^-, d_i^+ \geq 0 \quad (i=1,2,3,4)
+                            \end{cases}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>4.4 单纯形法练习题</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>题目(1)：</strong>用单纯形法解下列目标规划问题：</p>
+                        <div class="formula">
+                            $$\min \{P_1(d_1^- + d_1^+), P_2 d_2^-, P_3 d_2^+, P_4(5d_3^+ + 3d_3^-)\}$$
+                            $$\begin{cases}
+                            x_1 + x_2 + d_1^+ - d_1^- = 800 \\
+                            5x_1 + d_2^+ - d_2^- = 2500 \\
+                            3x_2 + d_3^+ - d_3^- = 1400 \\
+                            x_1, x_2, d_i^-, d_i^+ \geq 0 \quad (i=1,2,3)
+                            \end{cases}$$
+                        </div>
+                        
+                        <p><strong>题目(2)：</strong>对(1)作灵敏度分析，若目标函数改变为：</p>
+                        <div class="formula">
+                            $$\min \{P_1 d_2^-, P_2(d_1^- + d_1^+), P_3 d_2^+, P_4(5d_3^+ + 3d_3^-)\}$$
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>4.5 成品酒兑制问题</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>题目：</strong>某成品酒有三种商标（红、黄、蓝），都是由三种原料酒（等级I、II、III）兑制而成。三种等级的原料酒的日供应量和成本见表4-11，三种商标的成品酒的兑制要求和售价见表4-12。</p>
+                        
+                        <table>
+                            <caption><strong>表4-11 原料酒供应量和成本</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th>等级</th>
+                                    <th>日供应量/kg</th>
+                                    <th>成本/(元/kg)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>I</td><td>1500</td><td>6</td></tr>
+                                <tr><td>II</td><td>2000</td><td>4.5</td></tr>
+                                <tr><td>III</td><td>1000</td><td>3</td></tr>
+                            </tbody>
+                        </table>
+                        
+                        <table>
+                            <caption><strong>表4-12 成品酒兑制要求和售价</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th>商标</th>
+                                    <th>兑制要求/%</th>
+                                    <th>售价/(元/kg)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>红</td><td>III少于10<br>I多于50</td><td>5.5</td></tr>
+                                <tr><td>黄</td><td>III少于70<br>I多于20</td><td>5.0</td></tr>
+                                <tr><td>蓝</td><td>III少于50<br>I多于10</td><td>4.8</td></tr>
+                            </tbody>
+                        </table>
+                        
+                        <p>决策者规定：首先是必须严格按规定比例兑制各商标的酒；其次是获利最大；最后是红商标的酒每天至少生产2000kg。</p>
+                        <p><strong>要求：</strong>试列出该问题的数学模型。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>4.6 投资分配问题</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>题目：</strong>公司决定使用1000万元新产品开发基金开发A、B、C三种新产品。经预测估计，开发A、B、C三种新产品的投资利润率分别为5%、7%、10%。由于新产品开发有一定风险，公司研究后确定了下列优先顺序目标：</p>
+                        <ul>
+                            <li>第一，A产品至少投资300万元；</li>
+                            <li>第二，为分散投资风险，任何一种新产品的开发投资不超过开发基金总额的35%；</li>
+                            <li>第三，应至少留有10%的开发基金，以备急用；</li>
+                            <li>第四，使总的投资利润最大。</li>
+                        </ul>
+                        <p><strong>要求：</strong>试建立投资分配方案的目标规划模型。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>4.7 营养配餐问题</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>题目：</strong>已知单位牛奶、牛肉、鸡蛋中的维生素及胆固醇含量等有关数据见表4-13。如果只考虑这三种食物，并且设立了下列三个目标：</p>
+                        
+                        <table>
+                            <caption><strong>表4-13 食物营养成分</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th>项目</th>
+                                    <th>牛奶(500g)</th>
+                                    <th>牛肉(500g)</th>
+                                    <th>鸡蛋(500g)</th>
+                                    <th>每日最小需要量/mg</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>维生素A/mg</td><td>1</td><td>1</td><td>10</td><td>1</td></tr>
+                                <tr><td>维生素C/mg</td><td>100</td><td>10</td><td>10</td><td>30</td></tr>
+                                <tr><td>维生素D/mg</td><td>10</td><td>100</td><td>10</td><td>10</td></tr>
+                                <tr><td>胆固醇/单位</td><td>70</td><td>50</td><td>120</td><td></td></tr>
+                                <tr><td>费用/元</td><td>1.5</td><td>8</td><td>4</td><td></td></tr>
+                            </tbody>
+                        </table>
+                        
+                        <ul>
+                            <li>第一，满足三种维生素的每日最小需要量；</li>
+                            <li>第二，使每日摄入的胆固醇最少；</li>
+                            <li>第三，使每日购买食品的费用最少。</li>
+                        </ul>
+                        <p><strong>要求：</strong>建立问题的目标规划模型。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>4.8 生产计划问题</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>题目：</strong>金源公司生产三种产品，其整个计划期分为三个阶段。现需编制生产计划，确定各个阶段各种产品的生产数量。</p>
+                        
+                        <p>计划受市场需求、设备台时、财务资金等方面条件的约束，有关数据如表4-14和表4-15所示。假设计划期初及期末各种产品的库存量皆为零。</p>
+                        
+                        <table>
+                            <caption><strong>表4-14 各阶段市场需求（台）</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th>需求\产品<br>阶段</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>500</td><td>750</td><td>900</td></tr>
+                                <tr><td>2</td><td>680</td><td>800</td><td>800</td></tr>
+                                <tr><td>3</td><td>800</td><td>950</td><td>1000</td></tr>
+                            </tbody>
+                        </table>
+                        
+                        <table>
+                            <caption><strong>表4-15 每台产品资源消耗（占用）量</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th>产品</th>
+                                    <th>项目</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>每阶段资源消耗（占用）限额</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td rowspan="2">产品</td><td>设备工作台时/h</td><td>2.0</td><td>1.0</td><td>3.1</td><td>5000</td></tr>
+                                <tr><td>流动资金占用量/元</td><td>40</td><td>20</td><td>55</td><td>93000</td></tr>
+                            </tbody>
+                        </table>
+                        
+                        <p>公司设定以下三个优先等级的目标：</p>
+                        <ul>
+                            <li>$P_1$：及时供货，保证需求，尽量减少缺货，并且第三种产品及时供货的重要性相当于第一种、第二种产品的2倍；</li>
+                            <li>$P_2$：尽量使各阶段加工设备不超负荷；</li>
+                            <li>$P_3$：流动资金占用量不超过限额。</li>
+                        </ul>
+                        <p><strong>要求：</strong>建立目标规划的模型。</p>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="alert('完成习题有助于：\n1. 巩固目标规划的基本概念\n2. 掌握图解法和单纯形法的应用\n3. 理解灵敏度分析的方法\n4. 提高建模和求解实际问题的能力')">查看习题提示</button>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 运筹学教程 第四章 目标规划</p>
+            <p>本HTML文件基于PDF教程内容创建，使用MathJax渲染数学公式</p>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const arrow = header.querySelector('.arrow');
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                arrow.classList.remove('rotate');
+            } else {
+                content.classList.add('active');
+                arrow.classList.add('rotate');
+            }
+        }
+        
+        function showGraphicalMethod() {
+            alert('图解法步骤：\n\n1. 画出满足绝对约束的可行域\n2. 画出各目标约束对应的直线\n3. 标出偏差变量的方向\n4. 按优先级从高到低逐个考虑目标\n5. 确定各优先级对应的解空间\n6. 找出最终满意解\n\n注意：高优先级目标必须先满足！');
+        }
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 页面加载提示
+        window.addEventListener('load', function() {
+            console.log('页面已加载完成！');
+            console.log('注意：需要网络连接以加载MathJax库来渲染数学公式。');
+        });
+    </script>
+</body>
+</html>
+
+<!--
+使用说明：
+1. 保存为.html文件：将此代码保存为"goal_programming_tutorial.html"
+2. 网络连接：需要网络连接以加载MathJax（用于渲染数学公式）
+3. 浏览器打开：使用Chrome、Firefox、Safari等现代浏览器打开
+4. 交互功能：点击导航栏、折叠按钮、习题等进行交互
+5. 响应式设计：支持桌面和移动设备访问
+
+技术特点：
+- 完整的MathJax配置，正确渲染所有LaTeX数学公式
+- 使用指定配色方案（#f27d00, #a6d6c9, #f7d117, #ffffff, #343434）
+- 交互式折叠内容、导航菜单、平滑滚动
+- 语义化HTML5标签（header, nav, section, article, footer）
+- 响应式设计，适配各种屏幕尺寸
+- 所有数学公式使用正确的LaTeX格式
+-->

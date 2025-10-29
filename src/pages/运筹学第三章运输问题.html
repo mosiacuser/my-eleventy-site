@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第三章 运输问题 - 交互式教程</title>
+    
+    <!-- MathJax完整配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: #343434;
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: #ffffff;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #a6d6c9;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        nav a {
+            color: #343434;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #ffffff;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        h3 {
+            color: #f27d00;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+        }
+        
+        h4 {
+            color: #343434;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #f27d00;
+        }
+        
+        .definition {
+            background: #a6d6c9;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #f27d00;
+            color: #ffffff;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #a6d6c9;
+        }
+        
+        tr:nth-child(even) {
+            background: #f7f7f7;
+        }
+        
+        tr:hover {
+            background: #f7d117;
+            transition: all 0.3s;
+        }
+        
+        .collapsible {
+            background: #a6d6c9;
+            color: #343434;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .collapsible:hover {
+            background: #f27d00;
+            color: #ffffff;
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.active:after {
+            transform: rotate(-180deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .collapsible-content-inner {
+            padding: 20px;
+        }
+        
+        .formula-box {
+            background: #ffffff;
+            border: 2px solid #f27d00;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .example {
+            background: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .example-title {
+            color: #4caf50;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        
+        .back-to-top:hover {
+            background: #f7d117;
+            transform: translateY(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第三章 运输问题</h1>
+            <p class="subtitle">Transportation Problem - 运筹学教程</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#intro">引言</a></li>
+                <li><a href="#section1">数学模型</a></li>
+                <li><a href="#section2">表上作业法</a></li>
+                <li><a href="#section3">进一步讨论</a></li>
+                <li><a href="#section4">应用举例</a></li>
+                <li><a href="#exercises">习题</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <section id="intro">
+                <h2>引言</h2>
+                <div class="highlight">
+                    <p>在社会生产和消费过程中，离不开人员、物资、资金和信息的合理组织和流动，其中实体物品的流动一直受到人们特别的重视，并于20世纪50年代开始明确形成了<strong>物流</strong>的概念。</p>
+                </div>
+                
+                <p>物流包括物品的分拣、包装、搬运、装卸、仓储、运输、保管、信息联系与处理等各项基本活动。其中，<strong style="color: #f27d00;">运输是要改变物品的空间位置以创造其场所效用</strong>，它是物流活动中的一个不可或缺的重要环节。</p>
+                
+                <p>随着社会和经济的发展，运输变得越来越复杂，运输量有时非常庞大。科学组织运输可有效降低物流活动的成本，及时实现需要的物品空间位置的变动，以有效提升其空间价值。</p>
+            </section>
+            
+            <section id="section1">
+                <h2>第一节 运输问题及其数学模型</h2>
+                
+                <button class="collapsible">一、运输问题的数学模型</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>本章研究单一品种物资的运输调度问题。典型情况是：设某种物品有 $m$ 个产地 $A_1, A_2, \ldots, A_m$，各产地的产量分别是 $a_1, a_2, \ldots, a_m$；有 $n$ 个销地 $B_1, B_2, \ldots, B_n$，各销地的销量分别为 $b_1, b_2, \ldots, b_n$。</p>
+                        
+                        <p>假定从产地 $A_i$ ($i=1,2,\ldots,m$) 向销地 $B_j$ ($j=1,2,\ldots,n$) 运输单位物品的运价是 $c_{ij}$，问怎样调运这些物品才能使总运费最小？</p>
+                        
+                        <div class="definition">
+                            <h4>产销平衡条件</h4>
+                            <p>如果运输问题的总产量等于总销量，即有：</p>
+                            <div class="formula-box">
+                                $$\sum_{i=1}^{m} a_i = \sum_{j=1}^{n} b_j$$
+                            </div>
+                            <p>则称该运输问题为<strong style="color: #f27d00;">产销平衡运输问题</strong>；反之，称为<strong>产销不平衡运输问题</strong>。</p>
+                        </div>
+                        
+                        <h4>产销平衡运输问题的数学模型</h4>
+                        <div class="formula-box">
+                            $$\min z = \sum_{i=1}^{m} \sum_{j=1}^{n} c_{ij} x_{ij}$$
+                            
+                            $$\text{s.t.} \begin{cases}
+                            \sum_{j=1}^{n} x_{ij} = a_i, & (i=1,2,\ldots,m) \\
+                            \sum_{i=1}^{m} x_{ij} = b_j, & (j=1,2,\ldots,n) \\
+                            x_{ij} \geq 0, & (i=1,2,\ldots,m; j=1,2,\ldots,n)
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>其中：</p>
+                        <ul>
+                            <li>目标函数表示运输总费用，要求其极小化</li>
+                            <li>约束条件表示由某一产地运往各个销地的物品数量之和等于该产地的产量</li>
+                            <li>约束条件表示由各产地运往某一销地的物品数量之和等于该销地的销量</li>
+                            <li>约束条件为变量非负条件</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <button class="collapsible">二、产销平衡运输问题数学模型的特点</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h4>1. 运输问题有有限最优解</h4>
+                        <p>对运输问题，若令其变量：</p>
+                        <div class="formula-box">
+                            $$x_{ij} = \frac{a_i b_j}{Q}, \quad Q = \sum_{i=1}^{m} a_i = \sum_{j=1}^{n} b_j$$
+                        </div>
+                        <p>则上式就是运输问题的一个可行解，这说明运输问题的目标函数有下界，目标函数值不会趋于 $-\infty$。由此可知，运输问题必存在有限最优解。</p>
+                        
+                        <h4>2. 运输问题约束条件的系数矩阵</h4>
+                        <p>约束条件系数矩阵具有以下特点：</p>
+                        <ul>
+                            <li>约束条件系数矩阵的元素等于0或1</li>
+                            <li>约束条件系数矩阵的每一列有两个非零元素</li>
+                            <li>所有结构约束条件都是等式约束</li>
+                            <li>各产地产量之和等于各销地销量之和</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例1</div>
+                    <p>某部门有3个生产同类产品的工厂（产地），生产的产品由4个销售点（销地）出售。各工厂的生产量、各销售点的销售量（假定单位均为吨）以及各工厂到各销售点的单位运价（元/吨）示于表中。要求研究产品如何调运才能使总运费最小。</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">产地</th>
+                                <th colspan="4">销地</th>
+                                <th rowspan="2">产量</th>
+                            </tr>
+                            <tr>
+                                <th>$B_1$</th>
+                                <th>$B_2$</th>
+                                <th>$B_3$</th>
+                                <th>$B_4$</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>$A_1$</td>
+                                <td>4</td>
+                                <td>12</td>
+                                <td>4</td>
+                                <td>11</td>
+                                <td>16</td>
+                            </tr>
+                            <tr>
+                                <td>$A_2$</td>
+                                <td>2</td>
+                                <td>10</td>
+                                <td>3</td>
+                                <td>9</td>
+                                <td>10</td>
+                            </tr>
+                            <tr>
+                                <td>$A_3$</td>
+                                <td>8</td>
+                                <td>5</td>
+                                <td>11</td>
+                                <td>6</td>
+                                <td>22</td>
+                            </tr>
+                            <tr>
+                                <td><strong>销量</strong></td>
+                                <td>8</td>
+                                <td>14</td>
+                                <td>12</td>
+                                <td>14</td>
+                                <td>48</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>由于总产量和总销量均为48，故知这是一个产销平衡运输问题。用 $x_{ij}$ 表示由第 $i$ 个产地运往第 $j$ 个销地的产品数量，即可写出该问题的数学模型。</p>
+                </div>
+            </section>
+            
+            <section id="section2">
+                <h2>第二节 用表上作业法求解运输问题</h2>
+                
+                <p class="highlight">表上作业法是求解运输问题的一种简便而有效的方法，其求解工作在运输表上进行。它是一种迭代法，迭代步骤为：先按某种规则找出一个初始解（初始调运方案）；再对现行解作最优性判别；若这个解不是最优解，就在运输表上对它进行调整改进，得出一个新解；再判别，再改进；直至得到运输问题的最优解为止。</p>
+                
+                <button class="collapsible">一、给出运输问题的初始基可行解</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h4>1. 最小元素法</h4>
+                        <p>人们容易直观想到，为了减少运费，应优先考虑单位运价最小（或运距最短）的供销业务，最大限度地满足其供销量。即对所有 $i$ 和 $j$，找出 $c_{i_0j_0} = \min(c_{ij})$，并将 $x_{i_0j_0} = \min(a_{i_0}, b_{j_0})$ 的物品量由 $A_{i_0}$ 供应给 $B_{j_0}$。</p>
+                        
+                        <ul>
+                            <li>若 $x_{i_0j_0} = a_{i_0}$，则产地 $A_{i_0}$ 的可供物品已用完，以后不再继续考虑这个产地，且 $B_{j_0}$ 的需求量由 $b_{j_0}$ 减少为 $b_{j_0} - a_{i_0}$</li>
+                            <li>如果 $x_{i_0j_0} = b_{j_0}$，则销地 $B_{j_0}$ 的需求已全部得到满足，以后不再考虑这个销地，且 $A_{i_0}$ 的可供量由 $a_{i_0}$ 减少为 $a_{i_0} - b_{j_0}$</li>
+                        </ul>
+                        
+                        <p>然后，在余下的供、销地的供销关系中，继续按上述方法安排调运，直至安排完所有供销任务，得到一个完整的调运方案（完整的解）为止。</p>
+                        
+                        <h4>2. 沃格尔（Vogel）法</h4>
+                        <p>对每一个供应地或销售地，均可由它到各销售地或到各供应地的单位运价中找出最小单位运价和次小单位运价，并称这两个单位运价之差为该供应地或销售地的<strong style="color: #f27d00;">罚数</strong>。</p>
+                        
+                        <p>若罚数的值不大，当不能按最小单位运价安排运输时造成的运费损失不大；反之，如果罚数的值很大，不按最小运价组织运输就会造成很大损失，故应尽量按最小单位运价安排运输。</p>
+                        
+                        <div class="definition">
+                            <h4>沃格尔法的步骤</h4>
+                            <ol>
+                                <li>计算运输表中每一行和每一列的次小单位运价和最小单位运价之间的差值（罚数）</li>
+                                <li>在这些罚数中找出最大者</li>
+                                <li>在最大罚数对应的行或列中，找出最小单位运价，并在该格中填入尽可能大的运量</li>
+                                <li>划去已满足的行或列，重新计算罚数</li>
+                                <li>重复上述步骤，直至所有供销任务都得到安排</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">二、解的最优性检验</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <h4>1. 闭回路法（Cycle Method）</h4>
+                        <p>要判定运输问题的某个解是否为最优解，可仿照一般单纯形法，检验这个解的各非基变量（对应于运输表中的空格）的检验数。若有某空格 $(A_i, B_j)$ 的检验数为负，说明将它变为基变量将使运输费用减少，故当前这个解不是最优解。</p>
+                        
+                        <p>在运输表中，每一个空格总可以和一些填有数字的格用水平线段和垂直线段交替连在一闭合回路上。按照设想，由产地 $A_i$ 供给1个单位物品给销地 $B_j$，由此引起的总运费变化，正是非基变量 $x_{ij}$（或说空格 $(A_i, B_j)$）的检验数。</p>
+                        
+                        <h4>2. 对偶变量法（位势法）</h4>
+                        <p>用对偶变量 $u_1, u_2, \ldots, u_m$ 分别表示前 $m$ 个约束等式相应的对偶变量（或称行位势），用 $v_1, v_2, \ldots, v_n$ 分别表示后 $n$ 个等式约束相应的对偶变量（或称列位势）。</p>
+                        
+                        <div class="formula-box">
+                            <p>运输问题某变量 $x_{ij}$ 的检验数可表示为：</p>
+                            $$\sigma_{ij} = c_{ij} - (u_i + v_j)$$
+                        </div>
+                        
+                        <p>由于基变量的检验数等于零，故对基变量可写出方程组：</p>
+                        <div class="formula-box">
+                            $$\begin{cases}
+                            u_i + v_j = c_{ij} & \text{（对所有基变量 } x_{ij} \text{）}
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>这个方程组有 $(m+n-1)$ 个方程，含有全部 $(m+n)$ 个对偶变量。在求解时，可任意指定某一位势等于一个较小的整数或零，然后求解其他位势的值。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">三、解的改进</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>对运输问题的一个解来说，若最优性检验时某非基变量 $x_{ij}$（空格 $(A_i, B_j)$）的检验数 $\sigma_{ij}$ 为负，说明将这个非基变量变为基变量时运费会更小，因而这个解不是最优解，还可以进一步改进。</p>
+                        
+                        <h4>解改进的具体步骤</h4>
+                        <ol>
+                            <li>以 $x_{ij}$ 为换入变量，找出它在运输表中的闭回路</li>
+                            <li>以空格 $(A_i, B_j)$ 为第一个奇数顶点，沿闭回路的（顺或逆）时针方向前进，对闭回路上的顶点依次编号</li>
+                            <li>在闭回路上的所有偶数顶点集合 $L(e)$ 中，找出运输量最小（$\min_{L(e)} x_{ij}$）的顶点（格子），以该格中的变量为换出变量</li>
+                            <li>以 $\theta = \min_{L(e)} x_{ij}$ 为调整量，将该闭回路上所有奇数顶点处的运输量都增加这一数值，所有偶数顶点处的运输量都减去这一数值</li>
+                        </ol>
+                        
+                        <p>该运输方案的总运费比原运输方案减少，改变量等于 $\sigma_{ij} \cdot \theta$。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section3">
+                <h2>第三节 运输问题的进一步讨论</h2>
+                
+                <button class="collapsible">一、产销不平衡的运输问题</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>实际上，在很多实际运输问题中，总产量不等于总销量。这时，为了能使用前述表上作业法求解，就需将产销不平衡运输问题化为产销平衡运输问题。</p>
+                        
+                        <h4>情况一：总产量大于总销量</h4>
+                        <p>如果 $\sum_{i=1}^{m} a_i \gt \sum_{j=1}^{n} b_j$，可增加一个假想的销地 $B_{n+1}$，其销量为：</p>
+                        <div class="formula-box">
+                            $$b_{n+1} = \sum_{i=1}^{m} a_i - \sum_{j=1}^{n} b_j$$
+                        </div>
+                        <p>由于这个假想的销地并不存在，因而由产地 $A_i$ 调运到这个假想销地的物品数量 $x_{i,n+1}$，实际上是就地存储在 $A_i$ 的物品数量。就地存储的物品不经运输，故可令其单位运价 $c_{i,n+1} = 0$。</p>
+                        
+                        <h4>情况二：总销量大于总产量</h4>
+                        <p>可增加一个假想的产地 $A_{m+1}$，其产量等于：</p>
+                        <div class="formula-box">
+                            $$a_{m+1} = \sum_{j=1}^{n} b_j - \sum_{i=1}^{m} a_i$$
+                        </div>
+                        <p>由于这个假想的产地并不存在，求出由它发往各个销地的物品数量 $x_{m+1,j}$，实际上是各销地 $B_j$ 所需物品的欠缺额，显然有 $c_{m+1,j} = 0$。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">二、有转运的运输问题</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>在很多情况下，在决定运输方案时有必要把转运也考虑进去。假定 $m$ 个产地 $A_1, A_2, \ldots, A_m$ 和 $n$ 个销地 $B_1, B_2, \ldots, B_n$ 都可以作为中间转运站使用，从而发送物品的地点和接收物品的地点都有 $m+n$ 个。</p>
+                        
+                        <p>这样一来，我们就得到了一个扩大了的运输问题。令：</p>
+                        <ul>
+                            <li>$a_i$：第 $i$ 个产地的产量（净供应量）</li>
+                            <li>$b_j$：第 $j$ 个销地的销量（净需要量）</li>
+                            <li>$x_{ij}$：由第 $i$ 个发送地运到第 $j$ 个接收地的物品数量</li>
+                            <li>$c_{ij}$：由第 $i$ 个发送地到第 $j$ 个接收地的单位运价</li>
+                            <li>$c_i$：第 $i$ 个地点转运单位物品的费用</li>
+                        </ul>
+                        
+                        <p>若将产地和销地统一编号，并把产地排在前面，销地排在后面，则有：</p>
+                        <div class="formula-box">
+                            $$a_{m+1} = a_{m+2} = \cdots = a_{m+n} = 0$$
+                            $$b_1 = b_2 = \cdots = b_m = 0$$
+                        </div>
+                        
+                        <p>假定为产销平衡运输问题，即有：</p>
+                        <div class="formula-box">
+                            $$\sum_{i=1}^{m} a_i = \sum_{j=1}^{n} b_j = Q$$
+                        </div>
+                        
+                        <p>当不考虑转运费时，可令 $c_{ii} = 0$ ($i=1,2,\ldots,m+n$)。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section4">
+                <h2>第四节 应用问题举例</h2>
+                
+                <div class="example">
+                    <div class="example-title">例6 产量约束问题</div>
+                    <p>有三个产地 $A_1$、$A_2$ 和 $A_3$ 生产同一种物品，使用者为 $B_1$、$B_2$ 和 $B_3$。这三个使用者的需求量分别为10个单位、4个单位和6个单位。</p>
+                    
+                    <p>由于销售需要和客观条件的限制：</p>
+                    <ul>
+                        <li>产地 $A_1$ 至少要发出6个单位的产品，它最多只能生产11个单位的产品</li>
+                        <li>$A_2$ 必须发出7个单位的产品</li>
+                        <li>$A_3$ 至少要发出4个单位的产品</li>
+                    </ul>
+                    
+                    <p>试根据上述条件用表上作业法求该运输问题的最优运输方案。</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">生产</th>
+                                <th colspan="3">使用</th>
+                                <th rowspan="2">生产量</th>
+                            </tr>
+                            <tr>
+                                <th>$B_1$</th>
+                                <th>$B_2$</th>
+                                <th>$B_3$</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>$A_1$</td>
+                                <td>2</td>
+                                <td>4</td>
+                                <td>3</td>
+                                <td>$6 \leq a_1 \leq 11$</td>
+                            </tr>
+                            <tr>
+                                <td>$A_2$</td>
+                                <td>1</td>
+                                <td>5</td>
+                                <td>6</td>
+                                <td>$a_2 = 7$</td>
+                            </tr>
+                            <tr>
+                                <td>$A_3$</td>
+                                <td>3</td>
+                                <td>2</td>
+                                <td>4</td>
+                                <td>$a_3 \geq 4$</td>
+                            </tr>
+                            <tr>
+                                <td><strong>使用量</strong></td>
+                                <td>10</td>
+                                <td>4</td>
+                                <td>6</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例7 船只调度问题</div>
+                    <p>某公司承担4条航线的运输任务，已知：</p>
+                    <ol>
+                        <li>各条航线的起点城市和终点城市及每天的航班数</li>
+                        <li>各城市间的航行时间</li>
+                        <li>所有航线都使用同一种船只，每次装船和卸船时间均为1天</li>
+                    </ol>
+                    <p>问该公司至少应配备多少条船才能满足所有航线运输的需要？</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>航线</th>
+                                <th>起点城市</th>
+                                <th>终点城市</th>
+                                <th>每天航班数量</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>E</td><td>D</td><td>3</td></tr>
+                            <tr><td>2</td><td>B</td><td>C</td><td>2</td></tr>
+                            <tr><td>3</td><td>A</td><td>F</td><td>1</td></tr>
+                            <tr><td>4</td><td>D</td><td>B</td><td>1</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <p><strong>解题思路：</strong></p>
+                    <p>所需船只可分为两部分：</p>
+                    <ol>
+                        <li>各航线航行、装船、卸船所占用的船只</li>
+                        <li>各港口之间调度所需船只数量</li>
+                    </ol>
+                    <p>将船由多余船只的港口调往需用船只的港口为空船行驶，应采用合理的调度方案，以使"调运量×时间"最小。</p>
+                </div>
+            </section>
+            
+            <section id="exercises">
+                <h2>习题</h2>
+                
+                <button class="collapsible">3.1 理论题</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>下列说法中正确的有：</p>
+                        <ol>
+                            <li>运输问题是一类特殊的线性规划模型，因而对模型的求解结果可能有：唯一最优解、无穷多最优解、无界解、无可行解</li>
+                            <li>表上作业法实质上就是求解运输问题的单纯形法</li>
+                            <li>如果单位运价的某一行均加上常数 $k$，最优调运方案不会改变</li>
+                            <li>如果单位运价的某一行均乘上常数 $k$，最优调运方案不会改变</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <button class="collapsible">3.2 基可行解判别</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>运输问题的基可行解应满足什么条件？试判断给出的调运方案可否作为表上作业法迭代时的基可行解，为什么？</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">3.3 方法比较</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>试对给出运输问题初始基可行解的最小元素法和Vogel法进行比较，分析给出的解之质量不同的原因。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">3.4 位势法原理</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>简要说明用位势法（对偶变量法）求检验数的原理。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">3.5 退化解处理</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>用表上作业法求解运输问题时，在什么情况下会出现退化解？当出现退化解时应如何处理？</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <button class="back-to-top" onclick="scrollToTop()">↑</button>
+    
+    <script>
+        // 折叠功能
+        const collapsibles = document.getElementsByClassName("collapsible");
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+        
+        // 返回顶部按钮
+        window.onscroll = function() {
+            const backToTop = document.querySelector('.back-to-top');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTop.style.display = "block";
+            } else {
+                backToTop.style.display = "none";
+            }
+        };
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+    </script>
+    
+    <!-- 
+    使用说明：
+    1. 保存为 .html 文件（如：transportation-problem.html）
+    2. 需要网络连接以加载 MathJax 和 Google Fonts
+    3. 在浏览器中打开即可查看和测试
+    4. 所有数学公式使用 LaTeX 格式，通过 MathJax 渲染
+    5. 包含交互式折叠内容、平滑滚动导航和返回顶部功能
+    -->
+</body>
+</html>

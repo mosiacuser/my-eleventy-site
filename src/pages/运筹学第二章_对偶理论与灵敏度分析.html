@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第二章 线性规划的对偶理论与灵敏度分析 - 交互式教程</title>
+    
+    <!-- MathJax 配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --primary-green: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --white: #ffffff;
+            --dark: #343434;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--white) 50%, #fef5e7 100%);
+            color: var(--dark);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-orange), #ff9933);
+            color: var(--white);
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(242, 125, 0, 0.3);
+        }
+        
+        header h1 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        nav a {
+            color: var(--dark);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: var(--primary-green);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background: var(--primary-orange);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.3);
+        }
+        
+        section {
+            background: var(--white);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--primary-orange);
+        }
+        
+        h2 {
+            font-family: 'Noto Serif SC', serif;
+            color: var(--primary-orange);
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary-yellow);
+        }
+        
+        h3 {
+            color: var(--primary-orange);
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid var(--primary-green);
+        }
+        
+        h4 {
+            color: var(--dark);
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .highlight {
+            background: var(--primary-yellow);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        .formula-block {
+            background: #f8f9fa;
+            border-left: 4px solid var(--primary-orange);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: var(--primary-orange);
+            color: var(--white);
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tr:hover {
+            background: #fef5e7;
+            transition: background 0.3s ease;
+        }
+        
+        .example {
+            background: linear-gradient(135deg, #e3f2fd 0%, #fff9e6 100%);
+            border-left: 5px solid var(--primary-green);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .example-title {
+            color: var(--primary-orange);
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        .collapsible {
+            background: var(--primary-green);
+            color: var(--dark);
+            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .collapsible:hover {
+            background: var(--primary-orange);
+            color: var(--white);
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            color: var(--white);
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f8f9fa;
+            padding: 0 18px;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .content.show {
+            padding: 18px;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--primary-yellow);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .important {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        .theorem {
+            background: #d1ecf1;
+            border: 2px solid #bee5eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .theorem-title {
+            color: #0c5460;
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        footer {
+            background: var(--dark);
+            color: var(--white);
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-radius: 15px;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-orange);
+            color: var(--white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-to-top:hover {
+            background: var(--primary-green);
+            transform: translateY(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            section {
+                padding: 20px;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+        
+        .exercise {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .exercise-title {
+            color: #2e7d32;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第二章</h1>
+            <div class="subtitle">线性规划的对偶理论与灵敏度分析</div>
+            <div style="margin-top: 15px; font-size: 0.9em;">《运筹学教程》第5版 - 交互式学习版本</div>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#section1">对偶问题</a></li>
+                <li><a href="#section2">基本性质</a></li>
+                <li><a href="#section3">影子价格</a></li>
+                <li><a href="#section4">对偶单纯形法</a></li>
+                <li><a href="#section5">灵敏度分析</a></li>
+                <li><a href="#section6">参数线性规划</a></li>
+                <li><a href="#exercises">习题</a></li>
+            </ul>
+        </nav>
+        
+        <section id="section1">
+            <h2>第一节 线性规划的对偶问题</h2>
+            
+            <h3>一、对偶问题的提出</h3>
+            <p>
+                对偶理论是线性规划中的一个<span class="highlight">最重要和有趣的概念</span>。对偶理论的基本思想是，每一个线性规划问题都存在一个与其对偶的问题，在求出一个问题解的时候，也同时给出了另一问题的解。
+            </p>
+            
+            <div class="example">
+                <div class="example-title">例1 美佳公司生产问题</div>
+                <p>美佳公司利用该公司资源生产两种家电产品时，其线性规划问题为：</p>
+                <div class="formula-block">
+                    $$\max z = 2x_1 + x_2$$
+                    $$\begin{cases}
+                    5x_2 \leq 15 \\
+                    6x_1 + 2x_2 \leq 24 \\
+                    x_1 + x_2 \leq 5 \\
+                    x_1, x_2 \geq 0
+                    \end{cases}$$
+                </div>
+                
+                <p>现从另一角度提出问题：假定有某个公司想把美佳公司的资源收买过来，应至少付出多大代价？</p>
+                <p>设分别用 $y_1$、$y_2$ 和 $y_3$ 代表单位时间设备A、设备B和调试工序的收买价格。由此可得对偶问题：</p>
+                <div class="formula-block">
+                    $$\min w = 15y_1 + 24y_2 + 5y_3$$
+                    $$\begin{cases}
+                    6y_2 + y_3 \geq 2 \\
+                    5y_1 + 2y_2 + y_3 \geq 1 \\
+                    y_1, y_2, y_3 \geq 0
+                    \end{cases}$$
+                </div>
+            </div>
+            
+            <h3>二、对称形式下对偶问题的一般形式</h3>
+            <p><strong>定义：</strong>满足下列条件的线性规划问题称为具有<span class="highlight">对称形式</span>：</p>
+            <ul style="margin-left: 30px; margin-bottom: 15px;">
+                <li>其变量均具有非负约束</li>
+                <li>其约束条件当目标函数求极大时均取"$\leq$"号</li>
+                <li>当目标函数求极小时均取"$\geq$"号</li>
+            </ul>
+            
+            <button class="collapsible">对称形式的原问题与对偶问题（展开查看）</button>
+            <div class="content">
+                <h4>原问题：</h4>
+                <div class="formula-block">
+                    $$\max z = c_1x_1 + c_2x_2 + \cdots + c_nx_n$$
+                    $$\begin{cases}
+                    a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n \leq b_1 \\
+                    a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n \leq b_2 \\
+                    \vdots \\
+                    a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n \leq b_m \\
+                    x_j \geq 0 \quad (j=1,\ldots,n)
+                    \end{cases}$$
+                </div>
+                
+                <h4>对偶问题：</h4>
+                <div class="formula-block">
+                    $$\min w = b_1y_1 + b_2y_2 + \cdots + b_my_m$$
+                    $$\begin{cases}
+                    a_{11}y_1 + a_{21}y_2 + \cdots + a_{m1}y_m \geq c_1 \\
+                    a_{12}y_1 + a_{22}y_2 + \cdots + a_{m2}y_m \geq c_2 \\
+                    \vdots \\
+                    a_{1n}y_1 + a_{2n}y_2 + \cdots + a_{mn}y_m \geq c_n \\
+                    y_i \geq 0 \quad (i=1,\ldots,m)
+                    \end{cases}$$
+                </div>
+                
+                <h4>矩阵形式：</h4>
+                <div class="formula-block">
+                    <p>原问题：</p>
+                    $$\max z = \mathbf{CX}$$
+                    $$\begin{cases}
+                    \mathbf{AX} \leq \mathbf{b} \\
+                    \mathbf{X} \geq \mathbf{0}
+                    \end{cases}$$
+                    
+                    <p>对偶问题：</p>
+                    $$\min w = \mathbf{Y}^T\mathbf{b}$$
+                    $$\begin{cases}
+                    \mathbf{A}^T\mathbf{Y} \geq \mathbf{C}^T \\
+                    \mathbf{Y} \geq \mathbf{0}
+                    \end{cases}$$
+                </div>
+            </div>
+            
+            <h3>三、非对称形式的原-对偶问题关系</h3>
+            <p>并非所有线性规划问题都具有对称形式。下面通过例子说明一般形式下如何写出对偶问题。</p>
+            
+            <div class="note">
+                <strong>重要原则：</strong>对偶问题的对偶即原问题。对偶关系是相互的。
+            </div>
+            
+            <h4>原问题与对偶问题的对应关系（完整版）：</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>原问题（对偶问题）</th>
+                        <th>对偶问题（原问题）</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>约束系数矩阵 $\mathbf{A}$</td>
+                        <td>约束系数矩阵的转置 $\mathbf{A}^T$</td>
+                    </tr>
+                    <tr>
+                        <td>约束条件的右端项向量 $\mathbf{b}$</td>
+                        <td>目标函数中的价格系数向量</td>
+                    </tr>
+                    <tr>
+                        <td>目标函数中的价格系数向量 $\mathbf{C}$</td>
+                        <td>约束条件的右端项向量</td>
+                    </tr>
+                    <tr>
+                        <td>$\max z = \mathbf{CX}$</td>
+                        <td>$\min w = \mathbf{Y}^T\mathbf{b}$</td>
+                    </tr>
+                    <tr>
+                        <td>第 $i$ 个约束为 "$\leq$"</td>
+                        <td>$y_i \geq 0$</td>
+                    </tr>
+                    <tr>
+                        <td>第 $i$ 个约束为 "$\geq$"</td>
+                        <td>$y_i \leq 0$</td>
+                    </tr>
+                    <tr>
+                        <td>第 $i$ 个约束为 "$=$"</td>
+                        <td>$y_i$ 无约束</td>
+                    </tr>
+                    <tr>
+                        <td>$x_j \geq 0$</td>
+                        <td>第 $j$ 个约束为 "$\geq$"</td>
+                    </tr>
+                    <tr>
+                        <td>$x_j \leq 0$</td>
+                        <td>第 $j$ 个约束为 "$\leq$"</td>
+                    </tr>
+                    <tr>
+                        <td>$x_j$ 无约束</td>
+                        <td>第 $j$ 个约束为 "$=$"</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <section id="section2">
+            <h2>第二节 对偶问题的基本性质</h2>
+            
+            <p>本节讨论对偶问题的基本性质。设原问题为对称形式：</p>
+            <div class="formula-block">
+                $$\max z = \sum_{j=1}^{n} c_jx_j$$
+                $$\text{s.t.} \begin{cases}
+                \sum_{j=1}^{n} a_{ij}x_j \leq b_i \quad (i=1,\ldots,m) \\
+                x_j \geq 0 \quad (j=1,\ldots,n)
+                \end{cases}$$
+            </div>
+            
+            <p>其对偶问题为：</p>
+            <div class="formula-block">
+                $$\min w = \sum_{i=1}^{m} b_iy_i$$
+                $$\text{s.t.} \begin{cases}
+                \sum_{i=1}^{m} a_{ij}y_i \geq c_j \quad (j=1,\ldots,n) \\
+                y_i \geq 0 \quad (i=1,\ldots,m)
+                \end{cases}$$
+            </div>
+            
+            <div class="theorem">
+                <div class="theorem-title">性质1：弱对偶性</div>
+                <p>如果 $\bar{x}_j$ $(j=1,\ldots,n)$ 是原问题的可行解，$\bar{y}_i$ $(i=1,\ldots,m)$ 是对偶问题的可行解，则必有：</p>
+                <div class="formula-block">
+                    $$\sum_{j=1}^{n} c_j\bar{x}_j \leq \sum_{i=1}^{m} b_i\bar{y}_i$$
+                </div>
+                
+                <p><strong>推论：</strong></p>
+                <ol style="margin-left: 30px;">
+                    <li>原问题最优解的目标函数值是对偶问题目标函数值的<span class="highlight">下界</span>；反之对偶问题最优解的目标函数值是原问题目标函数值的<span class="highlight">上界</span></li>
+                    <li>如原问题有可行解且目标函数值无界，则其对偶问题无可行解</li>
+                    <li>若原问题有可行解而其对偶问题无可行解，则原问题目标函数值无界</li>
+                </ol>
+            </div>
+            
+            <div class="theorem">
+                <div class="theorem-title">性质2：最优性</div>
+                <p>如果 $\bar{x}_j$ $(j=1,\ldots,n)$ 是原问题的可行解，$\bar{y}_i$ $(i=1,\ldots,m)$ 是对偶问题的可行解，且有：</p>
+                <div class="formula-block">
+                    $$\sum_{j=1}^{n} c_j\bar{x}_j = \sum_{i=1}^{m} b_i\bar{y}_i$$
+                </div>
+                <p>则 $\bar{x}_j$ $(j=1,\ldots,n)$ 是原问题的最优解，$\bar{y}_i$ $(i=1,\ldots,m)$ 是对偶问题的最优解。</p>
+            </div>
+            
+            <div class="theorem">
+                <div class="theorem-title">性质3：强对偶性（对偶定理）</div>
+                <p>若原问题及其对偶问题均具有可行解，则两者均具有最优解，且它们最优解的目标函数值相等。</p>
+            </div>
+            
+            <div class="theorem">
+                <div class="theorem-title">性质4：互补松弛性</div>
+                <p>在线性规划问题的最优解中：</p>
+                <ul style="margin-left: 30px;">
+                    <li>如果对应某一约束条件的对偶变量值为非零，则该约束条件取<span class="highlight">严格等式</span></li>
+                    <li>反之如果约束条件取严格不等式，则其对应的对偶变量一定为零</li>
+                </ul>
+                <div class="formula-block">
+                    $$\text{若 } \bar{y}_i > 0, \text{ 则有 } \sum_{j=1}^{n} a_{ij}\bar{x}_j = b_i$$
+                    $$\text{若 } \sum_{j=1}^{n} a_{ij}\bar{x}_j < b_i, \text{ 则有 } \bar{y}_i = 0$$
+                </div>
+                <p class="highlight" style="text-align: center; margin-top: 15px;">因此一定有：$(b_i - \sum_{j=1}^{n} a_{ij}\bar{x}_j) \cdot \bar{y}_i = 0$</p>
+            </div>
+        </section>
+        
+        <section id="section3">
+            <h2>第三节 影子价格</h2>
+            
+            <p>从对偶问题的基本性质可以看出，当线性规划原问题求得最优解 $x_j^*$ $(j=1,\ldots,n)$ 时，其对偶问题也得到最优解 $y_i^*$ $(i=1,\ldots,m)$，且代入各自的目标函数后有：</p>
+            <div class="formula-block">
+                $$z^* = \sum_{j=1}^{n} c_jx_j^* = \sum_{i=1}^{m} b_iy_i^* = w^*$$
+            </div>
+            
+            <h3>影子价格的含义</h3>
+            <p>式中 $b_i$ 是线性规划原问题约束条件的右端项，它代表第 $i$ 种资源的拥有量；对偶变量 $y_i^*$ 的意义代表在资源最优利用条件下对单位第 $i$ 种资源的估价。这种估价不是资源的市场价格，而是单位第 $i$ 种资源在所给问题的最优方案中作出的贡献的估价，为区别起见，称为<span class="highlight">影子价格（Shadow Price）</span>。</p>
+            
+            <div class="note">
+                <h4>影子价格的重要特征：</h4>
+                <ol style="margin-left: 30px;">
+                    <li><strong>与市场价格的区别：</strong>资源的市场价格是其价值的客观体现，随供求关系变化；而影子价格有赖于资源的利用情况，因不同企业或同一企业生产任务、产品结构等情况变化而改变</li>
+                    <li><strong>边际价格：</strong>影子价格是一种边际价格。理论上相当于在资源得到最优利用的生产条件下，$b_i$ 每增加一个单位时目标函数 $z$ 的增量，即 $\frac{\partial z^*}{\partial b_i} = y_i^*$</li>
+                    <li><strong>机会成本：</strong>影子价格实际上又是一种机会成本。在完全市场经济条件下，当某种资源的市场价格低于资源成本加上影子价格时，可以买进这种资源；相反则可以卖出</li>
+                </ol>
+            </div>
+            
+            <div class="important">
+                <p><strong>互补松弛性质的经济意义：</strong></p>
+                <p>如果某种资源 $b_i$ 未得到充分利用时（$\sum_{j=1}^{n} a_{ij}x_j^* < b_i$），该种资源的影子价格为零（$y_i^* = 0$）；又当资源的影子价格不为零时（$y_i^* > 0$），表明该种资源在生产中已耗费完毕（$\sum_{j=1}^{n} a_{ij}x_j^* = b_i$）。</p>
+            </div>
+            
+            <h3>检验数的经济意义</h3>
+            <p>从影子价格的含义来考察单纯形表的计算。由单纯形表的计算公式可知：</p>
+            <div class="formula-block">
+                $$\sigma_j = c_j - z_j = c_j - \sum_{i=1}^{m} a_{ij}y_i$$
+            </div>
+            <p>式中 $c_j$ 代表第 $j$ 种产品的利润，$\sum_{i=1}^{m} a_{ij}y_i$ 是生产该种产品所消耗各项资源的影子价格的总和，即产品的<span class="highlight">隐含成本</span>。当产品利润大于各项资源隐含成本总和时，表明生产该项产品有利，可在计划中安排；否则用这些资源来生产别的产品更为有利，就不在生产计划中安排。</p>
+        </section>
+        
+        <section id="section4">
+            <h2>第四节 对偶单纯形法</h2>
+            
+            <h3>一、对偶单纯形法的基本思路</h3>
+            <p>对偶单纯形法是应用对偶理论求解线性规划问题的方法。其基本思路是：</p>
+            <ul style="margin-left: 30px; margin-bottom: 15px;">
+                <li>先找出一个对偶问题的可行基 $\mathbf{B}$</li>
+                <li>保持对偶问题为可行解，找出原问题的相邻基解</li>
+                <li>继续判别，一直到原问题也为可行解（即 $\mathbf{X_B} \geq \mathbf{0}$）</li>
+                <li>这时对偶问题与原问题均为可行解，即为最优解</li>
+            </ul>
+            
+            <div class="note">
+                <p><strong>对偶单纯形法的特点：</strong></p>
+                <p>当约束条件为"$\geq$"时，不必引进人工变量，使计算简化。但在初始单纯形表中其对偶问题应是基可行解。因此对偶单纯形法一般不单独使用，而主要应用于灵敏度分析及解整数规划的割平面法等。</p>
+            </div>
+            
+            <h3>二、对偶单纯形法的计算步骤</h3>
+            <p>设对某标准形式的线性规划问题：</p>
+            <div class="formula-block">
+                $$\max z = \mathbf{CX}$$
+                $$\text{s.t.} \begin{cases}
+                \mathbf{AX} = \mathbf{b} \\
+                \mathbf{X} \geq \mathbf{0}
+                \end{cases}$$
+            </div>
+            <p>存在一个对偶问题的可行基 $\mathbf{B}$。表中必须有 $c_j - z_j \leq 0$ $(j=1,\ldots,n)$，但 $\bar{b}_i$ $(i=1,\ldots,m)$ 的值不要求为正。</p>
+            
+            <button class="collapsible">对偶单纯形法详细步骤（展开查看）</button>
+            <div class="content">
+                <h4>步骤1：确定换出基的变量</h4>
+                <p>因为总存在 $\bar{b}_i < 0$，令 $\bar{b}_r = \min\{\bar{b}_i\}$，其对应变量 $x_r$ 为换出基的变量。</p>
+                
+                <h4>步骤2：确定换入基的变量</h4>
+                <p>为了使下一个表中对偶问题的解仍为可行解，令：</p>
+                <div class="formula-block">
+                    $$\theta = \min_j \left\{ \frac{c_j - z_j}{a_{rj}} \bigg| a_{rj} < 0 \right\} = \frac{c_s - z_s}{a_{rs}}$$
+                </div>
+                <p>称 $a_{rs}$ 为主元素，$x_s$ 为换入基的变量。</p>
+                
+                <h4>步骤3：用换入变量替换换出变量</h4>
+                <p>对新的基再检查是否所有 $\bar{b}_i$ $(i=1,\ldots,m) \geq 0$。如是，则找到了两者的最优解；如为否，则回到步骤1再循环进行。</p>
+                
+                <div class="important">
+                    <p><strong>无可行解的判断准则：</strong></p>
+                    <p>对 $\bar{b}_i < 0$，而对所有 $j=1,\ldots,n$ 有 $a_{rj} \geq 0$，则原问题无可行解，这时对偶问题的目标函数值无界。</p>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">例4 用对偶单纯形法求解</div>
+                <div class="formula-block">
+                    $$\min w = 15y_1 + 24y_2 + 5y_3$$
+                    $$\text{s.t.} \begin{cases}
+                    6y_2 + y_3 \geq 2 \\
+                    5y_1 + 2y_2 + y_3 \geq 1 \\
+                    y_1, y_2, y_3 \geq 0
+                    \end{cases}$$
+                </div>
+                
+                <p>先将问题改写为求极大形式，并添加剩余变量。然后列出单纯形表，并用对偶单纯形法求解。</p>
+                
+                <div class="note">
+                    <p>详细的迭代计算过程见教材表2-8。最终得到最优解：$y_2^* = \frac{1}{4}$，$y_3^* = \frac{1}{2}$，$w^* = \frac{15}{2}$。</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section5">
+            <h2>第五节 灵敏度分析</h2>
+            
+            <p>灵敏度分析一词的含义是指对系统或事物因周围条件变化显示出来的敏感程度的分析。</p>
+            
+            <p>在线性规划问题中，都假定问题中的 $a_{ij}$、$b_i$、$c_j$ 是已知常数。但实际上这些参数往往是一些估计和预测的数字。如随市场条件变化，$c_j$ 值就会变化；$a_{ij}$ 随工艺技术条件的改变而改变；而 $b_i$ 值则是根据资源投入后能产生多大经济效果来决定的一种决策选择。</p>
+            
+            <div class="note">
+                <p><strong>灵敏度分析要研究的问题：</strong></p>
+                <p>当这些参数中的一个或几个发生变化时，问题的最优解会有什么变化，或者这些参数在一个多大范围内变化时，问题的最优解或最优基不变。</p>
+            </div>
+            
+            <h3>灵敏度分析的步骤</h3>
+            <ol style="margin-left: 30px; margin-bottom: 15px;">
+                <li>将参数的改变通过计算反映到最终单纯形表上来</li>
+                <li>检查原问题是否仍为可行解</li>
+                <li>检查对偶问题是否仍为可行解</li>
+                <li>按下表所列情况得出结论或决定继续计算的步骤</li>
+            </ol>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>原问题</th>
+                        <th>对偶问题</th>
+                        <th>结论或继续计算的步骤</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>可行解</td>
+                        <td>可行解</td>
+                        <td>问题的最优解或最优基不变</td>
+                    </tr>
+                    <tr>
+                        <td>可行解</td>
+                        <td>非可行解</td>
+                        <td>用单纯形法继续迭代求最优解</td>
+                    </tr>
+                    <tr>
+                        <td>非可行解</td>
+                        <td>可行解</td>
+                        <td>用对偶单纯形法继续迭代求最优解</td>
+                    </tr>
+                    <tr>
+                        <td>非可行解</td>
+                        <td>非可行解</td>
+                        <td>引进人工变量，编制新的单纯形表重新计算</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <button class="collapsible">一、分析 $c_j$ 的变化</button>
+            <div class="content">
+                <p>线性规划目标函数中变量系数 $c_j$ 的变化仅仅影响到检验数 $(c_j - z_j)$ 的变化。所以将 $c_j$ 的变化直接反映到最终单纯形表中，只可能出现表中的前两种情况。</p>
+                
+                <div class="example">
+                    <div class="example-title">例5 美佳公司问题的 $c_j$ 变化分析</div>
+                    <p><strong>问题(1)：</strong>若家电I的利润降至1.5元/件，而家电II的利润增至2元/件时，美佳公司最优生产计划有何变化？</p>
+                    <p><strong>问题(2)：</strong>若家电I的利润不变，则家电II的利润在什么范围内变化时，该公司的最优生产计划将不发生变化？</p>
+                    
+                    <div class="note">
+                        <p>详细计算过程见教材表2-10至表2-12。通过分析可得：</p>
+                        <ul>
+                            <li>问题(1)：新的最优解为每天生产6件家电I</li>
+                            <li>问题(2)：家电II的利润变化范围应满足 $\frac{2}{3} \leq c_2 \leq 2$</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">二、分析 $b_i$ 的变化</button>
+            <div class="content">
+                <p>右端项 $b_i$ 的变化在实际问题中反映为可用资源数量的变化。由式 $\Delta \mathbf{b}' = \mathbf{B}^{-1}\Delta \mathbf{b}$ 可知，$b_i$ 的变化反映到最终单纯形表上将引起 $\mathbf{b}$ 列数字的变化，在表中可能出现第一或第三的两种情况。</p>
+                
+                <div class="example">
+                    <div class="example-title">例6 美佳公司资源变化分析</div>
+                    <p><strong>问题(1)：</strong>若设备A和调试工序的每天能力不变，而设备B每天的能力增加到32h，分析公司最优计划的变化。</p>
+                    <p><strong>问题(2)：</strong>若设备A和设备B每天可用能力不变，则调试工序能力在什么范围内变化时，问题的最优基不变。</p>
+                    
+                    <div class="note">
+                        <p>计算结果（见教材表2-13、表2-14）：</p>
+                        <ul>
+                            <li>问题(1)：最优计划改变为只生产5件家电I</li>
+                            <li>问题(2)：调试工序的能力应在 $4 \sim 6$h 之间</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">三、增加一个变量 $x_j$ 的分析</button>
+            <div class="content">
+                <p>增加一个变量在实际问题中反映为增加一种新的产品。分析步骤如下：</p>
+                <ol style="margin-left: 30px;">
+                    <li>计算 $\sigma_j' = c_j - z_j = c_j - \sum_{i=1}^{m} a_{ij}y_i^*$</li>
+                    <li>计算 $\mathbf{P}_j' = \mathbf{B}^{-1}\mathbf{P}_j$</li>
+                    <li>若 $\sigma_j' \leq 0$，原最优解不变，只需将计算得到的 $\mathbf{P}_j'$ 和 $\sigma_j'$ 直接写入最终单纯形表中</li>
+                    <li>若 $\sigma_j' > 0$，则按单纯形法继续迭代计算找出最优解</li>
+                </ol>
+                
+                <div class="example">
+                    <div class="example-title">例7 美佳公司新产品分析</div>
+                    <p>设该公司又计划推出新型号的家电III，生产一件所需设备A、设备B及调试工序的时间分别为3h、4h、2h，该产品的预期赢利为3元/件。试分析该种产品是否值得投产；如投产，对该公司的最优生产计划有何变化？</p>
+                    
+                    <div class="note">
+                        <p>经计算（见教材表2-15、表2-16），新产品值得投产，新的最优生产计划为每天生产 $\frac{7}{2}$ 件家电I，$\frac{51}{4}$ 件家电III。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">四、分析参数 $a_{ij}$ 的变化</button>
+            <div class="content">
+                <p>$a_{ij}$ 的变化使线性规划的约束系数矩阵 $\mathbf{A}$ 发生变化。若变量 $x_j$ 在最终单纯形表中为非基变量，其约束条件中系数 $a_{ij}$ 的变化分析步骤可参照"三、增加一个变量"；若变量 $x_j$ 在最终单纯形表中为基变量，则 $a_{ij}$ 的变化将使相应的 $\mathbf{B}$ 和 $\mathbf{B}^{-1}$ 发生变化。</p>
+                
+                <div class="example">
+                    <div class="example-title">例8 美佳公司产品系数变化分析</div>
+                    <p>若家电II每件需设备A、设备B和调试工时变为8h、4h、1h，该产品的利润变为3元/件，试重新确定该公司最优生产计划。</p>
+                    
+                    <div class="note">
+                        <p>详细计算过程见教材表2-17至表2-20。最终结果：最优生产计划为每天生产11/4件家电I，15/8件新家电II。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">五、增加一个约束条件的分析</button>
+            <div class="content">
+                <p>增加一个约束条件在实际问题中相当于增添一道工序。分析的方法是：</p>
+                <ol style="margin-left: 30px;">
+                    <li>先将原问题最优解的变量值代入新增的约束条件</li>
+                    <li>如满足，说明新增的约束未起到限制作用，原最优解不变</li>
+                    <li>否则，将新增的约束直接反映到最终单纯形表中再进一步分析</li>
+                </ol>
+                
+                <div class="example">
+                    <div class="example-title">例9 美佳公司增加工序分析</div>
+                    <p>设家电I、II经调试后，还需经过一道环境试验工序。家电I每件需环境试验3h，家电II每件需2h，又环境试验工序每天生产能力为12h。试分析增加该工序后的美佳公司最优生产计划。</p>
+                    
+                    <div class="note">
+                        <p>经计算（见教材表2-21至表2-23），添加环境试验工序后，美佳公司的最优生产计划为只生产4件家电I。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section6">
+            <h2>第六节 参数线性规划</h2>
+            
+            <p>灵敏度分析中研究 $c_j$、$b_i$ 等参数在保持最优解或最优基不变时的允许变化范围或改变到某一值时对问题最优解的影响。若 $\mathbf{C}$ 按 $(\mathbf{C} + \lambda\mathbf{C}^*)$ 或 $\mathbf{b}$ 按 $(\mathbf{b} + \lambda\mathbf{b}^*)$ 连续变化，而目标函数值 $z(\lambda)$ 是参数 $\lambda$ 的线性函数时，这类问题被称为<span class="highlight">参数线性规划</span>。</p>
+            
+            <h3>当目标函数中 $c_j$ 值连续变化时</h3>
+            <p>其参数线性规划的形式为：</p>
+            <div class="formula-block">
+                $$\max z(\lambda) = (\mathbf{C} + \lambda\mathbf{C}^*)\mathbf{X}$$
+                $$\text{s.t.} \begin{cases}
+                \mathbf{AX} = \mathbf{b} \\
+                \mathbf{X} \geq \mathbf{0}
+                \end{cases}$$
+            </div>
+            <p>式中 $\mathbf{C}$ 为原线性规划问题的价值向量，$\mathbf{C}^*$ 为变动向量，$\lambda$ 为参数。</p>
+            
+            <h3>当约束条件右端项连续变化时</h3>
+            <p>其参数线性规划的形式为：</p>
+            <div class="formula-block">
+                $$\max z(\lambda) = \mathbf{CX}$$
+                $$\text{s.t.} \begin{cases}
+                \mathbf{AX} = \mathbf{b} + \lambda\mathbf{b}^* \\
+                \mathbf{X} \geq \mathbf{0}
+                \end{cases}$$
+            </div>
+            <p>式中 $\mathbf{b}$ 为原线性规划问题的资源向量，$\mathbf{b}^*$ 为变动向量，$\lambda$ 为参数。</p>
+            
+            <h3>参数线性规划问题的分析步骤</h3>
+            <ol style="margin-left: 30px; margin-bottom: 15px;">
+                <li>令 $\lambda = 0$ 求解得最终单纯形表</li>
+                <li>将 $\lambda\mathbf{C}^*$ 或 $\lambda\mathbf{b}^*$ 项反映到最终单纯形表中去</li>
+                <li>随 $\lambda$ 值的增大或减小，观察原问题或对偶问题：
+                    <ul style="margin-left: 30px;">
+                        <li>确定表中现有解（基）允许 $\lambda$ 值的变动范围</li>
+                        <li>当 $\lambda$ 值的变动超出这个范围时，用单纯形法或对偶单纯形法求取新的解</li>
+                    </ul>
+                </li>
+                <li>重复步骤(3)，一直到 $\lambda$ 值继续增大或减小时，表中的解（基）不再出现变化时为止</li>
+            </ol>
+            
+            <div class="example">
+                <div class="example-title">例10 目标函数系数参数变化分析</div>
+                <p>分析 $\lambda$ 值变化时，下述参数线性规划问题最优解的变化：</p>
+                <div class="formula-block">
+                    $$\max z(\lambda) = (2+\lambda)x_1 + (1+2\lambda)x_2$$
+                    $$\text{s.t.} \begin{cases}
+                    5x_2 \leq 15 \\
+                    6x_1 + 2x_2 \leq 24 \\
+                    x_1 + x_2 \leq 5 \\
+                    x_1, x_2 \geq 0
+                    \end{cases}$$
+                </div>
+                
+                <div class="note">
+                    <p>详细分析过程见教材表2-24至表2-26。通过分析可得：</p>
+                    <ul>
+                        <li>当 $-\frac{1}{5} \leq \lambda \leq 1$ 时，$z = \frac{17}{2} + \frac{13}{2}\lambda$</li>
+                        <li>当 $\lambda \geq 1$ 时，$z = 7 + 8\lambda$</li>
+                        <li>当 $-2 \leq \lambda \leq -\frac{1}{5}$ 时，$z = 8 + 4\lambda$</li>
+                        <li>当 $\lambda \leq -2$ 时，$z = 0$</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="exercises">
+            <h2>习题</h2>
+            
+            <div class="exercise">
+                <div class="exercise-title">2.1 写出下列线性规划问题的对偶问题</div>
+                <p><strong>(1)</strong></p>
+                <div class="formula-block">
+                    $$\min z = 2x_1 + 2x_2 + 4x_3$$
+                    $$\text{s.t.} \begin{cases}
+                    2x_1 - 3x_2 + 4x_3 \geq 6 \\
+                    2x_1 + x_2 + x_3 = 1 \\
+                    -x_1 + 4x_2 + 3x_3 = 5 \\
+                    x_1, x_2 \geq 0, \quad x_3 \text{ 无约束}
+                    \end{cases}$$
+                </div>
+                
+                <p><strong>(2)</strong></p>
+                <div class="formula-block">
+                    $$\max z = 5x_1 + 6x_2 + 3x_3$$
+                    $$\text{s.t.} \begin{cases}
+                    x_1 + 2x_2 + 2x_3 \leq 5 \\
+                    -x_1 + 5x_2 - x_3 \geq 4 \\
+                    4x_1 + 7x_2 + 3x_3 \leq 8 \\
+                    x_1 \text{ 无约束}, \quad x_2 \geq 0, \quad x_3 \leq 0
+                    \end{cases}$$
+                </div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">2.2 判断下列说法是否正确，并说明为什么</div>
+                <ol style="margin-left: 30px;">
+                    <li>如果线性规划的原问题存在可行解，则其对偶问题也一定存在可行解</li>
+                    <li>如果线性规划的对偶问题无可行解，则原问题也一定无可行解</li>
+                    <li>在互为对偶的一对原问题与对偶问题中，不管原问题是求极大或极小，原问题可行解的目标函数值一定不超过其对偶问题可行解的目标函数值</li>
+                    <li>任何线性规划问题具有唯一的对偶问题</li>
+                </ol>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">2.5 已知某求极大化线性规划问题</div>
+                <p>用单纯形法求解时的初始单纯形表及最终单纯形表如下所示，求表中各括号内未知数 $(a) \sim (l)$ 的值。</p>
+                <div class="note">
+                    <p>（注：此题需要结合表格数据进行计算，详见原教材表2-30）</p>
+                </div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">2.11 用对偶单纯形法求解下列线性规划问题</div>
+                <p><strong>(1)</strong></p>
+                <div class="formula-block">
+                    $$\min z = 4x_1 + 12x_2 + 18x_3$$
+                    $$\text{s.t.} \begin{cases}
+                    x_1 + 3x_3 \geq 3 \\
+                    2x_2 + 2x_3 \geq 5 \\
+                    x_1, x_2, x_3 \geq 0
+                    \end{cases}$$
+                </div>
+                
+                <p><strong>(2)</strong></p>
+                <div class="formula-block">
+                    $$\min z = 5x_1 + 2x_2 + 4x_3$$
+                    $$\text{s.t.} \begin{cases}
+                    3x_1 + x_2 + 2x_3 \geq 4 \\
+                    6x_1 + 3x_2 + 5x_3 \geq 10 \\
+                    x_1, x_2, x_3 \geq 0
+                    \end{cases}$$
+                </div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">2.16 某厂生产问题</div>
+                <p>某厂生产A、B、C三种产品，其所需劳动力、材料等有关数据见下表：</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>消耗定额\产品</th>
+                            <th>A</th>
+                            <th>B</th>
+                            <th>C</th>
+                            <th>可用量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>劳动力/h</td>
+                            <td>6</td>
+                            <td>3</td>
+                            <td>5</td>
+                            <td>450</td>
+                        </tr>
+                        <tr>
+                            <td>材料/kg</td>
+                            <td>3</td>
+                            <td>4</td>
+                            <td>5</td>
+                            <td>300</td>
+                        </tr>
+                        <tr>
+                            <td>产品利润/(元/件)</td>
+                            <td>30</td>
+                            <td>10</td>
+                            <td>40</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>要求：</strong></p>
+                <ol style="margin-left: 30px;">
+                    <li>确定获利最大的产品生产计划</li>
+                    <li>产品A的利润在什么范围内变动时，上述最优计划不变</li>
+                    <li>如果设计一种新产品D，单件劳动力消耗为8h，材料消耗为2kg，每件可获利3元，问该种产品是否值得生产</li>
+                    <li>如果原材料数量不增，劳动力不足时可从市场购买，为1.8元/h。问：该厂要不要招收劳动力扩大生产，以购多少为宜</li>
+                </ol>
+            </div>
+            
+            <div class="note">
+                <p><strong>说明：</strong>完整的习题集包含2.1至2.19题，涉及对偶问题构造、对偶单纯形法、灵敏度分析、参数线性规划等各个方面。详细题目请参考原教材。</p>
+            </div>
+        </section>
+        
+        <footer>
+            <p>© 2024 运筹学教程 第5版 - 交互式学习版本</p>
+            <p>胡运权 郭耀煌 龚益鸣 程佳惠 陈秉正 编著</p>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                <strong>使用说明：</strong><br>
+                1. 保存此文件为 .html 格式<br>
+                2. 需要网络连接以加载 MathJax（数学公式渲染库）<br>
+                3. 在浏览器中打开即可学习<br>
+                4. 点击导航栏可快速跳转到相应章节<br>
+                5. 点击"展开查看"按钮可查看详细内容
+            </p>
+        </footer>
+        
+        <div class="back-to-top" id="backToTop">↑</div>
+    </div>
+    
+    <script>
+        // 折叠/展开功能
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    content.classList.remove("show");
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    content.classList.add("show");
+                }
+            });
+        }
+        
+        // 回到顶部按钮
+        var backToTopButton = document.getElementById("backToTop");
+        
+        window.onscroll = function() {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTopButton.style.display = "flex";
+            } else {
+                backToTopButton.style.display = "none";
+            }
+        };
+        
+        backToTopButton.onclick = function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        };
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 添加一些交互式提示
+        console.log("%c欢迎使用运筹学教程交互式学习版本！", "color: #f27d00; font-size: 20px; font-weight: bold;");
+        console.log("%c提示：点击橙色的折叠按钮可以展开更多内容", "color: #343434; font-size: 14px;");
+    </script>
+</body>
+</html>

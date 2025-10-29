@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理科学基础 - 第1章 绪论 | 交互式教程</title>
+    
+    <!-- MathJax 配置 - 完整版本 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true },
+                scale: 110
+            },
+            SVG: {
+                scale: 110
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-orange: #f27d00;
+            --secondary-green: #a6d6c9;
+            --accent-yellow: #f7d117;
+            --white: #ffffff;
+            --dark-gray: #343434;
+            --light-bg: #fafafa;
+            --shadow: rgba(52, 52, 52, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--dark-gray);
+            background: linear-gradient(135deg, #fafafa 0%, #e8f5f1 100%);
+            overflow-x: hidden;
+        }
+        
+        /* 导航栏 */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(90deg, var(--primary-orange), #ff9933);
+            color: var(--white);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px var(--shadow);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .nav-toggle {
+            background: var(--white);
+            color: var(--primary-orange);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .nav-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* 侧边栏 */
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 60px;
+            width: 280px;
+            height: calc(100vh - 60px);
+            background: var(--white);
+            box-shadow: 2px 0 10px var(--shadow);
+            transition: left 0.3s;
+            z-index: 999;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+        
+        .sidebar.active {
+            left: 0;
+        }
+        
+        .sidebar-item {
+            padding: 0.8rem 1rem;
+            margin: 0.5rem 0;
+            background: var(--light-bg);
+            border-left: 4px solid var(--secondary-green);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .sidebar-item:hover {
+            background: var(--secondary-green);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-item.level-2 {
+            margin-left: 1rem;
+            border-left-color: var(--accent-yellow);
+        }
+        
+        .sidebar-item.level-3 {
+            margin-left: 2rem;
+            font-size: 0.9rem;
+            border-left-color: var(--primary-orange);
+        }
+        
+        /* 主要内容区 */
+        .container {
+            max-width: 1200px;
+            margin: 80px auto 2rem;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px var(--shadow);
+        }
+        
+        /* 标题样式 */
+        h1, h2, h3, h4 {
+            font-family: 'Noto Serif SC', serif;
+            margin: 1.5rem 0 1rem;
+            color: var(--dark-gray);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            color: var(--primary-orange);
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--secondary-green), var(--accent-yellow));
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            color: var(--primary-orange);
+            border-bottom: 3px solid var(--secondary-green);
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            color: var(--dark-gray);
+            margin-left: 1rem;
+        }
+        
+        h4 {
+            font-size: 1.2rem;
+            color: var(--primary-orange);
+            margin-left: 2rem;
+        }
+        
+        /* 段落样式 */
+        p {
+            margin: 1rem 0;
+            text-align: justify;
+            text-indent: 2em;
+        }
+        
+        /* 可折叠章节 */
+        .collapsible {
+            background: linear-gradient(135deg, var(--secondary-green), #c0e8dc);
+            color: var(--dark-gray);
+            cursor: pointer;
+            padding: 1.2rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 1rem 0;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .collapsible:hover {
+            background: linear-gradient(135deg, #90d4bb, var(--secondary-green));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            font-size: 1rem;
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.active:after {
+            transform: rotate(-180deg);
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 1.5rem;
+            background: var(--light-bg);
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .content.active {
+            max-height: 5000px;
+            padding: 1.5rem;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+        
+        th {
+            background: var(--primary-orange);
+            color: var(--white);
+            padding: 1rem;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background: var(--light-bg);
+        }
+        
+        tr:hover {
+            background: var(--secondary-green);
+        }
+        
+        /* 图表容器 */
+        .diagram {
+            background: var(--white);
+            border: 2px solid var(--secondary-green);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+        
+        .diagram-title {
+            font-weight: 600;
+            color: var(--primary-orange);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .diagram-content {
+            color: var(--dark-gray);
+            font-style: italic;
+            padding: 1rem;
+            background: var(--light-bg);
+            border-radius: 5px;
+        }
+        
+        /* 强调框 */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--accent-yellow), #ffe066);
+            border-left: 5px solid var(--primary-orange);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px var(--shadow);
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, var(--secondary-green), #d0f0e4);
+            border-left: 5px solid var(--primary-orange);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        /* 数学公式样式增强 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        .formula-box {
+            background: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px dashed var(--secondary-green);
+            text-align: center;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin: 1rem 0 1rem 3rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+            line-height: 1.8;
+        }
+        
+        /* 时间线样式 */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding: 1rem 0 1rem 3rem;
+            border-left: 3px solid var(--primary-orange);
+            margin-left: 2rem;
+        }
+        
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 1.5rem;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary-orange);
+            border: 3px solid var(--white);
+        }
+        
+        .timeline-year {
+            font-weight: 700;
+            color: var(--primary-orange);
+            font-size: 1.2rem;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            background: var(--primary-orange);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            background: #d66d00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(242, 125, 0, 0.4);
+        }
+        
+        /* 练习题样式 */
+        .exercise {
+            background: var(--white);
+            border: 2px solid var(--accent-yellow);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .exercise-title {
+            color: var(--primary-orange);
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .exercise-item {
+            margin: 1rem 0;
+            padding: 0.5rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                margin: 70px 1rem 1rem;
+            }
+            
+            nav h1 {
+                font-size: 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.4rem;
+            }
+            
+            .sidebar {
+                width: 250px;
+            }
+        }
+        
+        /* 滚动到顶部按钮 */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-orange);
+            color: var(--white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px var(--shadow);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .scroll-top:hover {
+            background: #d66d00;
+            transform: translateY(-5px);
+        }
+        
+        .scroll-top.show {
+            display: flex;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <h1>📚 管理科学基础 - 第1章 绪论</h1>
+        <button class="nav-toggle" onclick="toggleSidebar()">☰ 目录</button>
+    </nav>
+    
+    <!-- 侧边栏 -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-item" onclick="scrollToSection('intro')">引论</div>
+        <div class="sidebar-item level-2" onclick="scrollToSection('section1-1')">1.1 管理与管理科学</div>
+        <div class="sidebar-item level-3" onclick="scrollToSection('section1-1-1')">1.1.1 管理与决策</div>
+        <div class="sidebar-item level-3" onclick="scrollToSection('section1-1-2')">1.1.2 管理科学及其发展简史</div>
+        <div class="sidebar-item level-3" onclick="scrollToSection('section1-1-3')">1.1.3 管理科学的基本特性</div>
+        <div class="sidebar-item level-2" onclick="scrollToSection('section1-2')">1.2 管理科学的工作程序</div>
+        <div class="sidebar-item level-3" onclick="scrollToSection('section1-2-1')">1.2.1 步骤1：明确问题</div>
+        <div class="sidebar-item level-3" onclick="scrollToSection('section1-2-2')">1.2.2 步骤2：将问题归类</div>
+        <div class="sidebar-item level-3" onclick="scrollToSection('section1-2-3')">1.2.3 步骤3：建立数学模型</div>
+        <div class="sidebar-item level-3" onclick="scrollToSection('section1-2-4')">1.2.4 步骤4：求解模型</div>
+        <div class="sidebar-item level-3" onclick="scrollToSection('section1-2-5')">1.2.5 步骤5：结果分析与模型检验</div>
+        <div class="sidebar-item level-3" onclick="scrollToSection('section1-2-6')">1.2.6 步骤6：实施</div>
+        <div class="sidebar-item level-2" onclick="scrollToSection('section1-3')">1.3 管理科学的主要内容及本书结构</div>
+        <div class="sidebar-item level-2" onclick="scrollToSection('exercises')">习题</div>
+    </div>
+    
+    <!-- 主要内容 -->
+    <div class="container">
+        <h1 id="intro" class="fade-in">Ⅰ 引 论</h1>
+        
+        <div class="highlight-box fade-in">
+            <strong>💡 核心提示：</strong>管理科学是应用科学方法为管理决策提供科学依据的学科，强调系统观点、数学模型和定量分析。
+        </div>
+        
+        <!-- 第1章 绪论 -->
+        <button class="collapsible" onclick="toggleContent(this)">
+            第1章 绪论
+        </button>
+        <div class="content">
+            <h2 id="section1-1">1.1 管理与管理科学</h2>
+            
+            <h3 id="section1-1-1">1.1.1 管理与决策</h3>
+            <p>随着现代科学技术和社会经济的不断发展，各个领域对管理的重视程度及对管理科学化的要求越来越高，各种组织（如企业）面对日趋复杂的生存环境，也必须更加精心地处理各种管理问题。</p>
+            
+            <p>那么，什么是管理？管理就是管理者运用各种资源达成某既定目标的过程。在这一过程中，管理者为了更有效地运用有限的资源以更高水平达到目标，必须不断地做出各种决策。可以说，管理的过程也就是不断地进行各种决策的过程。</p>
+            
+            <div class="info-box">
+                <strong>🎯 管理的本质：</strong>
+                <ul>
+                    <li>管理是运用资源达成目标的过程</li>
+                    <li>决策是管理的核心内容</li>
+                    <li>管理科学为决策提供科学方法</li>
+                </ul>
+            </div>
+            
+            <p>尽管决策的正确性不仅依靠科学而且还借助经验与艺术，但随着决策的难度以及决策失误后造成的损失程度的不断增大，那种仅凭经验和艺术的决策情形越来越少，即使是以往认为主要靠经验和艺术的那些非程序化或高层次决策，也往往要先经过一系列基于科学方法的信息处理和可行性研究。管理科学正是为管理决策提供科学方法的一门学科。随着信息化时代的到来，它必将在管理科学化的进程中发挥更大的作用。</p>
+            
+            <h3 id="section1-1-2">1.1.2 管理科学及其发展简史</h3>
+            
+            <h4>1. 管理科学及其在科学技术体系中的地位</h4>
+            <p>关于管理科学，可以有广义和狭义两种理解。广义的理解，认为管理科学（Management Sciences）是一门应用多学科与多领域理论、方法、技术和知识的综合性交叉学科，其目的是研究人类利用有限资源实现组织目标的管理活动方面的动态、复杂和创新的社会行为及其规律。</p>
+            
+            <p>按照广义的理解，管理科学实际上可以包含多门学科，其中既有以定性分析为主的组织行为学和企业战略管理，又有以定量分析为主的运筹学和计量经济学。而狭义的理解，则主要涉及广义范畴中的运筹学等定量部分，认为管理科学（Management Science）是一门应用科学，是定量的方法去分析和解决管理决策问题的技术科学，其目的是帮助管理者在有限的资源条件下最优地实现组织目标，并为决策提供依据。它在现代科学技术体系的4个层次中属于技术科学层次，和它相应的基础科学主要包括数学、管理学和经济学等，作为它的哲学指导观的主要是唯物论和系统观，而和它相应的工程技术主要是管理工程等，如图1.1所示。</p>
+            
+            <div class="diagram">
+                <div class="diagram-title">图1.1 科学技术体系层次结构</div>
+                <div class="diagram-content">
+                    <p><strong>哲学层次 → 基础科学层次 → 技术科学层次 → 工程技术层次</strong></p>
+                    <p>马克思主义哲学 → {自然辩证法 → 自然科学; 社会辩证法 → 社会科学} → {数学等 → 技术科学} → 工程技术</p>
+                    <p>系统观 → 数学等 → 管理科学 → 管理工程等</p>
+                </div>
+            </div>
+            
+            <p>本书是基于狭义的管理科学定义，定名为《管理科学基础》。这里面有两层含义：一是从狭义管理科学的角度，它包括了管理科学的基础内容；二是从广义管理科学的角度，它是基于系统观的整体优化思想和基于问题导向的科学方法论，以及基于数学模型的定量分析工具等一整套内容体系构成整个广义管理科学的重要基础。</p>
+            
+            <h4>2. 管理科学的发展简史</h4>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">19世纪末-20世纪初</div>
+                    <p>管理科学的萌芽，可以追溯到19世纪末至20世纪初。这一时期代表性的工作有二：一是泰勒（Taylor）提出了著名的科学管理理论；二是产生了若干将数学模型应用于管理的成果，如爱尔朗（Erlang）提出的排队模型和哈瑞斯（Harris）提出的EOQ存贮模型等。</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-year">20世纪40年代</div>
+                    <p>作为一门独立的学科，管理科学产生于20世纪40年代。首先是在40年代初期的二次世界大战中，英国为了解决雷达站同将个防空作战系统的协调配合问题，成立了由多学科的科学家组成的研究工作小组。工作小组卓有成效的工作使得在英军每个指挥部都成立了这样的小组。随后在美国军队中也建立了类似的组织。这些小组在确定扩展舰队规模、开展反潜艇战的侦察和组织有效的对敌轰炸等方面做了大量研究，为取得反法西斯战争的胜利及管理科学各有关分支的建立作出了贡献。</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-year">1950年代</div>
+                    <p>1950年，英国伯明翰大学正式开设了运筹学课程，同年，第一本运筹学杂志《运筹学季刊》（O.R. Quarterly）于英国创刊。1951年，美国的莫尔斯（P.M. Morse）和金博尔（G.E. Kimball）合著的《运筹学方法》一书正式出版。1952年，美国运筹学会成立，并于同年出版了《运筹学杂志》（Journal of ORSA）。</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-year">1950年代后期</div>
+                    <p>随着电子计算机技术的迅速发展，运筹学中的很多方法，如线性规划、动态规划等由于能够更加方便地求解而被进一步应用于实际管理系统的优化问题中。至50年代末，美国已有约半数的大公司在自己的经营管理中应用了运筹学，主要用于生产计划、物资储备、资源分配、设备更新等方面的管理决策。</p>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <p><strong>📜 中国的发展：</strong>我国从50年代中期开始研究这门学科以来，也取得了许多令世人瞩目的研究成果。全国各高等院校的经济管理类专业均普遍把这门学科作为主干课程列入教学计划，工商管理硕士（MBA）的教学计划中也把这门学科定为核心课程。我国还于1999年8月在北京成功地举办了第15届国际运筹学联合会学术大会。相信这门学科必将在21世纪的知识经济与信息时代中进一步展现其生命力并不断得到发展。</p>
+            </div>
+            
+            <div class="diagram">
+                <div class="diagram-title">图1.2 管理科学发展年代图</div>
+                <div class="diagram-content">
+                    <p><strong>时间线：</strong></p>
+                    <p>1910-1920：排队模型、存贮模型</p>
+                    <p>1920-1930：指派模型</p>
+                    <p>1930-1940：运输模型</p>
+                    <p>1940-1950：对策论、线性规划、非线性规划</p>
+                    <p>1950-1960：动态规划、网络模型</p>
+                    <p>1960-1970：风险决策、目标规划</p>
+                </div>
+            </div>
+            
+            <h3 id="section1-1-3">1.1.3 管理科学的基本特性</h3>
+            <p>管理科学具有以下的一些基本特性。</p>
+            
+            <h4>1. 以管理决策为基点</h4>
+            <p>管理科学是一门为管理决策提供科学方法的学科。管理决策中的实际问题，既是管理科学产生的源泉，又是管理科学的应用对象。表1.1列举出管理科学方法直接应用于企业管理决策问题的例子。</p>
+            
+            <table>
+                <caption><strong>表1.1 管理科学方法应用举例</strong></caption>
+                <thead>
+                    <tr>
+                        <th>管理科学方法</th>
+                        <th>应用于企业管理决策的典型例子</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>线性规划</td>
+                        <td>生产结构优化</td>
+                    </tr>
+                    <tr>
+                        <td>非线性规划</td>
+                        <td>投资组合优化</td>
+                    </tr>
+                    <tr>
+                        <td>0-1规划</td>
+                        <td>选址问题</td>
+                    </tr>
+                    <tr>
+                        <td>动态规划</td>
+                        <td>资源分配问题</td>
+                    </tr>
+                    <tr>
+                        <td>网络计划</td>
+                        <td>工程计划优化</td>
+                    </tr>
+                    <tr>
+                        <td>排队论</td>
+                        <td>服务系统优化</td>
+                    </tr>
+                    <tr>
+                        <td>存贮论</td>
+                        <td>订货库存管理</td>
+                    </tr>
+                    <tr>
+                        <td>风险型决策</td>
+                        <td>机会选择</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4>2. 以科学方法论为依据</h4>
+            <p>管理科学是一门将"科学"方法论应用于管理决策的学科。所谓科学方法论是指进行科学研究的一般程序与方法，一般步骤如图1.3。</p>
+            
+            <div class="diagram">
+                <div class="diagram-title">图1.3 科学方法论流程</div>
+                <div class="diagram-content">
+                    <p><strong>明确问题 → 观察 → 提出假设 → 设计试验 → 完成试验 → 接受或拒绝假设</strong></p>
+                </div>
+            </div>
+            
+            <p>应用管理科学方法解决管理决策中实际问题的一般程序也可分为类似的6个步骤，即明确问题、将问题归类、建立数学模型、求解模型、结果分析与模型检验、实施。这将在本章下一节详细阐述。</p>
+            
+            <h4>3. 以系统观点为指导</h4>
+            <p>管理科学是以系统观为指导的一门技术科学。系统观对管理科学有两方面指导作用。一方面是用系统的观点看问题，将所研究的事物看做一个系统，看做一个具有特定目标、功能、结构和环境的系统，且系统与环境之间还应有输入和输出。图1.4给出了一个企业系统的例子。另一方面是对系统的"整体优化"。如果把管理科学多分支的丰富内容体系比作一棵大树，那么大树的主干就是"最优化"，大树的分支就是最优化在各个角度上的表现，大树的树根扎根于基础科学的土壤，而大树的果实则表示在各管理决策领域中的应用成果。可以说，整个管理科学方法的核心思想就是"整体优化"，而这正是系统观的精髓之一。</p>
+            
+            <div class="diagram">
+                <div class="diagram-title">图1.4 企业系统示意图</div>
+                <div class="diagram-content">
+                    <p><strong>环境因素：</strong>经济、技术、社会文化、法律、市场、竞争者、供应商</p>
+                    <p><strong>系统内部：</strong>输入各种资源 → 过程管理（工具、行动、决策）→ 输出产品/服务/业绩 → 决策者 → 反馈</p>
+                </div>
+            </div>
+            
+            <h4>4. 以数学模型为主要工具</h4>
+            <p>管理科学是一门以定量分析为主、以各种数学模型为主要工具的学科。数学模型是现实系统的一种简明映象，以数学模型为主要工具的定量分析方式不仅能够使人们对系统的认识更加深刻，而且便于使用计算机，从而能够节约费用和时间。管理科学的每一个分支都有自已特定的数学模型和基于模型计算的分析方法。因此，学习管理科学方法以及学会运用管理科学方法去解决实际问题的一个关键是学会建立各种数学模型。这将在本章下一节中阐述。</p>
+        </div>
+        
+        <!-- 1.2 管理科学的工作程序 -->
+        <button class="collapsible" onclick="toggleContent(this)">
+            1.2 管理科学的工作程序
+        </button>
+        <div class="content">
+            <h2 id="section1-2">1.2 管理科学的工作程序</h2>
+            <p>应用管理科学方法去解决管理决策中实际问题的一般工作程序可分为6个步骤，如图1.5所示。</p>
+            
+            <div class="diagram">
+                <div class="diagram-title">图1.5 管理科学工作程序流程图</div>
+                <div class="diagram-content">
+                    <p><strong>管理决策者 ←→ 管理科学工作者</strong></p>
+                    <p>现实世界中的问题 ⊙</p>
+                    <p>↓</p>
+                    <p>步骤1：明确问题</p>
+                    <p>↓</p>
+                    <p>步骤2：将问题归类，使概念化</p>
+                    <p>↓</p>
+                    <p>步骤3：建立数学模型 ← 反馈</p>
+                    <p>↓</p>
+                    <p>步骤4：求解模型</p>
+                    <p>↓</p>
+                    <p>步骤5：结果分析与模型检验</p>
+                    <p>↓</p>
+                    <p>是否可以实施？ → 步骤6：实施 ⊙</p>
+                </div>
+            </div>
+            
+            <h3 id="section1-2-1">1.2.1 步骤1：明确问题</h3>
+            <p>运用管理科学方法去解决管理决策实际问题的首要步骤是明确"问题是什么"，从而正确地定义问题。这就需要与管理决策者进行沟通，对他提供的问题状况进行认真研究和系统分析。要明确究竟要解决什么事情，为此必须做出什么决策，最终要达到什么目标，有哪些不可控的重要影响因素等等。</p>
+            
+            <h3 id="section1-2-2">1.2.2 步骤2：将问题归类，使概念化</h3>
+            <p>问题明确以后，还要对其做类型判别，即先看它是否属于能用管理科学方法解决的问题。如果是，再看它是属于哪一类管理科学问题，或者说它适合于用哪一类管理科学方法解决。下面列举了一些典型的管理科学问题类型。</p>
+            
+            <div class="highlight-box">
+                <strong>🔍 管理科学典型问题分类：</strong>
+                <ul>
+                    <li><strong>1) 分配问题：</strong>这类问题产生于：①存在若干要完成的任务；②存在两个以上完成这些任务的方案；③为完成任务所需的资源是稀缺的。问题是寻求资源的最佳利用方案，以使总效益最大。</li>
+                    <li><strong>2) 竞争问题：</strong>这类问题产生于：决策行动的结局不仅依赖于决策者自己，而且依赖于竞争对手的行动，每个竞争者都想取胜。问题是寻求使每个竞争者都能接受的总损失最小的行动方案。</li>
+                    <li><strong>3) 运输与指派问题：</strong>运输问题产生于：将某种物品（如矿产品或粮食）由若干产地运往若干需求地，问题是寻求使总运输成本最小的调运方案。还有一些问题（如生产安排问题）也可归为运输问题。指派问题是一种特殊的运输问题。它产生于：将若干项任务分派给若干人，每项任务由一个人完成，每个人也只能完成一项任务，问题是寻求使总效率最高的分派方案。</li>
+                    <li><strong>4) 库存控制问题：</strong>原材料、资金、成品、人才等的适当储存或储备水平，在任何一个主要问题。尽管储存需要付出成本，但却可以从防止缺货损失及大批量购买的价格折扣中获益。库存控制问题是确定适当的订货间隔和订货数量，以使总的费用最低。</li>
+                    <li><strong>5) 网络与工程计划问题：</strong>网络问题的种类很多，如寻求网络中两点的最短路径和合理安排网络上的流量使总的通过量最大。复杂工程项目的计划与控制也可化为网络问题，求得工程的最小工期和关键工序。</li>
+                    <li><strong>6) 排队与服务系统优化问题：</strong>当顾客为寻求某种服务而到达服务系统时，往往会产生排队现象，服务系统为减少排队现象而提高服务速率或增加系统容量付出各种成本，一旦系统空闲又将受到损失。问题是如何合理地设置系统的服务速率及容量，以兼顾系统与顾客双方的利益。</li>
+                    <li><strong>7) 预测问题：</strong>这是管理中经常遇到的问题，即希望知道在不同条件下系统将产生怎样的行为状态。</li>
+                </ul>
+            </div>
+            
+            <p>每一类管理科学问题中都包含着十分丰富的内容或可再划分为各种类型。根据问题的类型，可选择适当的管理科学方法来解决。当方法选定后，还要将问题概念化，即用所选定方法中的术语重新描述问题，或者说将方法中的要素与问题对号，为建立数学模型做准备。</p>
+            
+            <h3 id="section1-2-3">1.2.3 步骤3：建立数学模型</h3>
+            <p>建立数学模型是管理科学方法的关键步骤，具体内容主要是在问题概念化的基础上进一步确定模型的构成要素以及它们之间的联系，用变量和数学关系式表达出来，形成数学模型。</p>
+            
+            <h4>1. 模型的构成要素</h4>
+            <p>一般来说，模型的最基本构成要素由三部分组成，即结果变量、决策变量和不可控变量。</p>
+            
+            <div class="info-box">
+                <p><strong>📐 模型的三种变量：</strong></p>
+                <ul>
+                    <li><strong>结果变量</strong>反映了系统达成目标的有效性程度，它依赖于决策变量的取值，是一种相依变量。</li>
+                    <li><strong>决策变量</strong>描述了决策问题中必须作出选择的要素，是一种可控的独立变量。</li>
+                    <li><strong>不可控变量</strong>是指系统环境中对决策有重要影响但不可控的因素，它也是独立变量。</li>
+                </ul>
+            </div>
+            
+            <p>表1.2给出这三种变量的实际例子。</p>
+            
+            <table>
+                <caption><strong>表1.2 模型变量分类举例</strong></caption>
+                <thead>
+                    <tr>
+                        <th>领域</th>
+                        <th>决策变量</th>
+                        <th>结果变量</th>
+                        <th>不可控变量</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>金融投资</td>
+                        <td>投资数量<br>投资期限<br>投资时机</td>
+                        <td>总利润<br>收益率<br>每股净利</td>
+                        <td>通货膨胀率<br>贷款利率<br>竞争</td>
+                    </tr>
+                    <tr>
+                        <td>市场<br>生产</td>
+                        <td>广告预算<br>产量<br>库存水平</td>
+                        <td>市场份额<br>总收入<br>质量水平</td>
+                        <td>可支配收入<br>市场价格<br>技术</td>
+                    </tr>
+                    <tr>
+                        <td>财会</td>
+                        <td>审计计划<br>计算机使用</td>
+                        <td>数据处理成本<br>错误率</td>
+                        <td>法规要求<br>计算机技术</td>
+                    </tr>
+                    <tr>
+                        <td>运输</td>
+                        <td>装运量</td>
+                        <td>运输总成本</td>
+                        <td>运送距离规定</td>
+                    </tr>
+                    <tr>
+                        <td>服务</td>
+                        <td>服务员数量</td>
+                        <td>顾客的满意度</td>
+                        <td>服务需求</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4>2. 模型的结构</h4>
+            <p>模型的基本构成要素由数学关系式联系在一起，便形成数学模型。模型的一般结构如图1.6所示。</p>
+            
+            <div class="diagram">
+                <div class="diagram-title">图1.6 数学模型结构</div>
+                <div class="diagram-content">
+                    <p><strong>不可控变量 → </strong></p>
+                    <p><strong>决策变量 → 数学关系式 → 结果变量</strong></p>
+                    <p>管理科学的分支不同，模型的具体表现形式也不尽相同，其中最有代表性的是数学规划模型。</p>
+                </div>
+            </div>
+            
+            <div class="formula-box">
+                <p><strong>线性规划模型示例：</strong></p>
+                <p>构优化问题为例，它的目标函数表达式为</p>
+                <p>$$R = p_1x_1 + p_2x_2$$</p>
+                <p>式中，$R$ 表示生产总收入；$x_1$ 和 $x_2$ 表示两种产品的产量；$p_1, p_2$ 表示两种产品的价格。目标是极大化总收入。为达成目标要受到来自各方面的约束，如市场需求量的约束，表示为</p>
+                <p>$$x_1 + x_2 \leqslant 50$$</p>
+                <p>这里，50是两种产品的总需求量上限。此模型的结构如图1.7所示。</p>
+            </div>
+            
+            <div class="diagram">
+                <div class="diagram-title">图1.7 线性规划模型结构示例</div>
+                <div class="diagram-content">
+                    <p><strong>决策变量：</strong>$x_1, x_2$（产品的产量）</p>
+                    <p>↓</p>
+                    <p><strong>数学关系式：</strong>max $R$（目标函数）+ $x_1 + x_2 \leqslant 50$（约束条件）</p>
+                    <p>↓</p>
+                    <p><strong>结果变量：</strong>$R = p_1x_1 + p_2x_2$（总收入）</p>
+                    <p>↑</p>
+                    <p><strong>不可控变量：</strong>$p_1, p_2$ 和 50（市场价格、需求）</p>
+                </div>
+            </div>
+            
+            <h3 id="section1-2-4">1.2.4 步骤4：求解模型</h3>
+            <p>管理科学的模型种类很多，解的性质及其求解方法各异。"最优解"是解的主流类型，它是在模型的所有可行解中寻找出最优的一个。除了"最优解"之外，还有其他一些解的类型，如"满意解"和"描述性的解"。"满意解"是指在模型的众多解或"各有所长"的一组解中使决策者满意的解；"描述性的解"相应于描述性的模型，该类模型的目的主要是描述系统在不同条件下的状态，可用于预测和分析系统的行为特征。相对于"最优解"，这些其他类型的解不妨称为"非最优的解"。</p>
+            
+            <p>求解方法可分为"数值的"和"分析的"两种类型。数值方法一般是通过某种模式一步一步搜寻并不断改进解的过程来求解，而分析方法是由数学公式一步求出解。图1.8给出管理科学主要分支模型的解及其解法的例子。</p>
+            
+            <div class="diagram">
+                <div class="diagram-title">图1.8 模型求解方法分类</div>
+                <div class="diagram-content">
+                    <p><strong>求解技术</strong></p>
+                    <p>├─ <strong>数值的</strong></p>
+                    <p>│   ├─ <strong>最优的解</strong></p>
+                    <p>│   │   ├─ 数学规划</p>
+                    <p>│   │   ├─ 动态规划</p>
+                    <p>│   │   └─ 网络分析</p>
+                    <p>│   └─ <strong>非最优的解</strong> ─ 随机模拟</p>
+                    <p>└─ <strong>分析的</strong></p>
+                    <p>    ├─ <strong>最优的解</strong></p>
+                    <p>    │   ├─ 对策论</p>
+                    <p>    │   └─ 存贮论</p>
+                    <p>    └─ <strong>非最优的解</strong></p>
+                    <p>        ├─ 马尔可夫分析</p>
+                    <p>        └─ 排队论</p>
+                </div>
+            </div>
+            
+            <h3 id="section1-2-5">1.2.5 步骤5：结果分析与模型检验</h3>
+            <p>求得模型解以后，还要对它进行分析，同时要检验模型的正确性。分析和检验的内容首先是看结果与实际情况是否相符，模型是否能够正确地反映实际问题，具体方法是将不同时期的数据（如不同时期的数据）代入模型看有相应的解是否符合实际。其次要分析模型中的参数发生小范围变化时对解的影响。这一分析称做灵敏度分析。如果解对参数变化的反应不过于灵敏，则在实际中可能会更容易应用。</p>
+            
+            <p>经过结果分析与模型检验，如果认为模型不能很好地反映实际问题，则要重新对问题进行分析并适当修改模型。</p>
+            
+            <h3 id="section1-2-6">1.2.6 步骤6：实施</h3>
+            <p>对模型及其解分析和检验后，还要对其实际意义给以解释并将其提交给管理决策者。如果管理决策者认为可以实施，则管理科学的分析结果得以实现；如果认为仍不能实施，则要再次对问题进行分析并适当修改模型。</p>
+        </div>
+        
+        <!-- 1.3 管理科学的主要内容及本书结构 -->
+        <button class="collapsible" onclick="toggleContent(this)">
+            1.3 管理科学的主要内容及本书结构
+        </button>
+        <div class="content">
+            <h2 id="section1-3">1.3 管理科学的主要内容及本书结构</h2>
+            
+            <h3 id="section1-3-1">1.3.1 管理科学的主要内容</h3>
+            <p>管理科学是一门具有多分支内容的较其丰富的学科，主要内容可归纳成下面的几大部分。</p>
+            
+            <div class="highlight-box">
+                <strong>📚 管理科学主要内容分类：</strong>
+                <ul>
+                    <li><strong>1. 规划技术</strong> - 规划技术主要是指数学规划技术，包括线性规划、非线性规划、整数规划和多目标规划等，是管理科学中最有代表性的主体内容。数学规划是在一定约束条件下寻求使目标极大化或极小化的最优解或满意解，其实际背景是在有限的资源条件下通过合理计划而实现总效益的最大化。</li>
+                    
+                    <li><strong>2. 图与网络技术</strong> - 图与网络技术包括图与网络分析以及网络计划，是研究图与网络问题的分析与优化的管理科学分支。主要方法是基于图的基本理论对网络问题进行分析，求得使网络效益最大（如最短路、最大流、最短的项目工期、成本最低的项目工期）的最优解。</li>
+                    
+                    <li><strong>3. 决策技术</strong> - 决策技术包括风险型决策、库存决策、多阶段决策和多目标决策等。其中风险型决策是研究在不确定条件下进行方案选择问题的管理科学分支，主要方法是基于收益或效用以及概率的基本理论，对方案的平均效益进行比较，求出最优方案。库存决策是研究库存计划与订货策略的管理科学分支，主要方法是建立各种类型的存贮模型，求得使总成本最少的最优解。多阶段决策又称动态规划，是研究多阶段决策问题的管理科学分支，主要方法是通过将问题划分阶段并逐段递推求解，最终求得使总效益最大的各阶段最优解。多目标决策是研究多准则评价与决策问题的管理科学分支，从各种不同的角度，采用定性与定量相结合的分析方法，对系统进行综合评价或排序。</li>
+                    
+                    <li><strong>4. 对策分析技术</strong> - 对策分析技术是研究在对抗与竞争条件下的决策问题的管理科学分支，主要方法是建立各种类型的对策模型，求得使双方或多方达到平衡的最优解。其基本类型是二人有限零和对策及对策及二人有限非零和对策。</li>
+                    
+                    <li><strong>5. 随机运筹技术</strong> - 随机运筹技术包括排队系统分析、马尔可夫分析和随机模拟技术等。排队系统分析又称排队论，是研究随机服务系统的性能、状态及优化问题的管理科学分支，主要方法是建立各种类型的排队模型，求得在各种条件下反映系统性态的描述性的解。马尔可夫分析是研究由随机变量现时的运动状况来分析预测该变量未来运动状况的管理科学分支，主要方法是基于概率和随机过程的理论，通过系统状态和转移规律求得未来的状态。随机模拟技术又称系统仿真，是研究对静态离散的随机系统进行模拟分析的管理科学分支，主要方法是通过随机数和系统的有关概率分布对系统进行状态模拟。</li>
+                </ul>
+            </div>
+            
+            <h3 id="section1-3-2">1.3.2 本书的结构</h3>
+            <p>本书由引论、规划技术、图与网络技术、决策技术、对策分析技术和随机运筹技术6部分组成，共15章，结构如图1.9所示。</p>
+            
+            <div class="diagram">
+                <div class="diagram-title">图1.9 本书结构图</div>
+                <div class="diagram-content">
+                    <p><strong>管理科学基础</strong></p>
+                    <p>├─ <strong>引论</strong> ─ 第1章 绪论</p>
+                    <p>├─ <strong>规划技术</strong></p>
+                    <p>│   ├─ 第2章 线性规划</p>
+                    <p>│   ├─ 第3章 非线性规划</p>
+                    <p>│   └─ 第4章 多目标规划</p>
+                    <p>├─ <strong>图与网络技术</strong></p>
+                    <p>│   ├─ 第5章 图与网络分析</p>
+                    <p>│   └─ 第6章 网络计划</p>
+                    <p>├─ <strong>决策技术</strong></p>
+                    <p>│   ├─ 第7章 风险型决策</p>
+                    <p>│   ├─ 第8章 库存决策</p>
+                    <p>│   ├─ 第9章 多阶段决策（动态规划）</p>
+                    <p>│   └─ 第10章 多目标决策</p>
+                    <p>├─ <strong>对策分析技术</strong></p>
+                    <p>│   ├─ 第11章 二人有限零和对策</p>
+                    <p>│   └─ 第12章 二人有限非零和对策</p>
+                    <p>└─ <strong>随机运筹技术</strong></p>
+                    <p>    ├─ 第13章 排队系统分析</p>
+                    <p>    ├─ 第14章 马尔可夫分析</p>
+                    <p>    └─ 第15章 随机模拟技术</p>
+                </div>
+            </div>
+            
+            <div class="diagram">
+                <div class="diagram-title">图1.10 本书阅读顺序图</div>
+                <div class="diagram-content">
+                    <p><strong>1. 绪论</strong></p>
+                    <p>↓</p>
+                    <p><strong>2. 线性规划 →</strong></p>
+                    <p>├─ 11. 二人有限零和对策 → 12. 二人有限非零和对策</p>
+                    <p>├─ 3. 非线性规划 → 4. 多目标规划</p>
+                    <p>├─ 5. 图与网络分析 → 6. 网络计划</p>
+                    <p>├─ 8. 库存决策</p>
+                    <p>├─ 9. 动态规划</p>
+                    <p>├─ 10. 多目标决策</p>
+                    <p>├─ 7. 风险型决策</p>
+                    <p>└─ 13. 排队系统分析 → 15. 随机模拟技术</p>
+                    <p>    └─ 14. 马尔可夫分析</p>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <p><strong>📖 本书特点：</strong></p>
+                <p>本书与一般运筹学教材相比有若干特色。一是有更多的管理背景和更丰富的管理科学方法，包括优化、评价、预测、决策等；二是内容比较全面，有更宽的适用面；三是书后附有习题解答和计算软件EXCEL介绍，便于自学和应用；四是基于作者多年在天津大学从事运筹学教学的经验，体现了简明和深入浅出的风格。</p>
+            </div>
+        </div>
+        
+        <!-- 习题部分 -->
+        <button class="collapsible" onclick="toggleContent(this)">
+            📝 习题
+        </button>
+        <div class="content">
+            <h2 id="exercises">习题 1</h2>
+            
+            <div class="exercise">
+                <div class="exercise-item">
+                    <strong>1.1</strong> 什么是管理科学（运筹学）？它作为一门学科产生于什么年代？它在科学技术体系中的地位如何？
+                </div>
+                
+                <div class="exercise-item">
+                    <strong>1.2</strong> 管理科学有何基本特性？管理科学方法的核心思想是什么？
+                </div>
+                
+                <div class="exercise-item">
+                    <strong>1.3</strong> 应用管理科学方法解决管理决策实际问题的一般步骤有哪些？
+                </div>
+            </div>
+            
+            <button class="btn" onclick="alert('💡 提示：这些问题的答案都可以在本章内容中找到。建议先独立思考，再回顾相应章节进行验证。')">查看提示</button>
+        </div>
+        
+        <!-- 总结 -->
+        <div class="highlight-box fade-in" style="margin-top: 3rem;">
+            <h3>🎯 本章总结</h3>
+            <p>本章介绍了管理科学的基本概念、历史发展、基本特性和工作程序。管理科学是一门以管理决策为基点、以科学方法论为依据、以系统观点为指导、以数学模型为主要工具的应用科学。</p>
+            <p><strong>核心要点：</strong></p>
+            <ul>
+                <li>管理的本质是决策，管理科学为决策提供科学方法</li>
+                <li>管理科学起源于二战，经过70多年发展已形成完整体系</li>
+                <li>应用管理科学方法的6个步骤：明确问题→归类概念化→建立模型→求解→分析检验→实施</li>
+                <li>数学模型包含三类变量：决策变量、结果变量和不可控变量</li>
+                <li>管理科学包括规划技术、网络技术、决策技术、对策分析和随机运筹等五大分支</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 返回顶部按钮 -->
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
+    
+    <script>
+        // 侧边栏切换
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+        
+        // 折叠内容切换
+        function toggleContent(element) {
+            element.classList.toggle('active');
+            const content = element.nextElementSibling;
+            content.classList.toggle('active');
+        }
+        
+        // 滚动到指定部分
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // 关闭侧边栏
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        }
+        
+        // 返回顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 监听滚动，显示/隐藏返回顶部按钮
+        window.onscroll = function() {
+            const scrollTop = document.getElementById('scrollTop');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollTop.classList.add('show');
+            } else {
+                scrollTop.classList.remove('show');
+            }
+        };
+        
+        // 点击侧边栏外部关闭侧边栏
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const navToggle = document.querySelector('.nav-toggle');
+            
+            if (!sidebar.contains(event.target) && !navToggle.contains(event.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+        
+        // 页面加载时的欢迎提示
+        window.addEventListener('load', function() {
+            console.log('%c欢迎学习管理科学基础！', 'color: #f27d00; font-size: 20px; font-weight: bold;');
+            console.log('%c本页面包含交互式内容，请点击章节标题展开阅读', 'color: #a6d6c9; font-size: 14px;');
+        });
+        
+        // 自动展开第一个章节
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstCollapsible = document.querySelector('.collapsible');
+            if (firstCollapsible) {
+                setTimeout(() => {
+                    firstCollapsible.click();
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>

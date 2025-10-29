@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第7章 风险型决策 - 交互式教程</title>
+    
+    <!-- MathJax 配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --primary-teal: #a6d6c9;
+            --primary-yellow: #f7d117;
+            --primary-white: #ffffff;
+            --primary-dark: #343434;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--primary-white) 100%);
+            color: var(--primary-dark);
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #d96c00 100%);
+            color: var(--primary-white);
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(242, 125, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: var(--primary-white);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        
+        nav h3 {
+            color: var(--primary-orange);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        nav ul {
+            list-style: none;
+        }
+        
+        nav li {
+            margin: 8px 0;
+        }
+        
+        nav a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            padding: 8px 15px;
+            display: block;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        nav a:hover {
+            background: var(--primary-teal);
+            border-left-color: var(--primary-orange);
+            padding-left: 20px;
+        }
+        
+        section {
+            background: var(--primary-white);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: var(--primary-orange);
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary-teal);
+        }
+        
+        h3 {
+            color: var(--primary-orange);
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+        
+        h4 {
+            color: var(--primary-dark);
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+            font-weight: 600;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, #ffe68a 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid var(--primary-orange);
+            box-shadow: 0 3px 10px rgba(247, 209, 23, 0.3);
+        }
+        
+        .example {
+            background: var(--primary-teal);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid var(--primary-orange);
+        }
+        
+        .example-title {
+            color: var(--primary-dark);
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        
+        .formula-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid var(--primary-teal);
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tr:hover {
+            background: var(--primary-teal);
+            transition: background 0.3s;
+        }
+        
+        .collapsible {
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .collapsible:hover {
+            background: #d96c00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.3);
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.active:after {
+            transform: rotate(180deg);
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .content-inner {
+            padding: 20px;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .key-point {
+            background: var(--primary-yellow);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .note {
+            background: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196f3;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            nav {
+                position: static;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-orange);
+            color: var(--primary-white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.4);
+            transition: all 0.3s;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(242, 125, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第7章 风险型决策</h1>
+            <p class="subtitle">IV 决策技术 - 管理科学基础</p>
+        </header>
+        
+        <nav>
+            <h3>📋 目录导航</h3>
+            <ul>
+                <li><a href="#section-1">7.1 决策问题的基本要素及分类</a></li>
+                <li><a href="#section-2">7.2 风险型决策</a></li>
+                <li><a href="#section-3">7.3 完全不确定情况下的决策</a></li>
+                <li><a href="#exercises">习题</a></li>
+            </ul>
+        </nav>
+        
+        <section id="section-1">
+            <h2>7.1 决策问题的基本要素及分类</h2>
+            
+            <p>决策这个词起源于英语中的 Decision Making。中文中，"决策"一词应理解为"决定策略"。这里策略是广义的，可以是重大问题的决策，也可以指日常工作、生产中的行动方案。人类在生产、生活中总是不断地遇到问题，决策就是人们为了解决当前或未来可能发生的问题而选择最佳方案的过程。</p>
+            
+            <p>一般来讲，决策理论是一个比较广义的概念。它涉及经济理论、组织理论、行为理论等多种学科。本章只介绍决策过程中的数量分析方法，即通常称为"决策分析"的内容。</p>
+            
+            <h3>7.1.1 决策的基本要素</h3>
+            
+            <div class="highlight-box">
+                <p>一般来说，任何决策问题都由下面几个基本要素组成：</p>
+                <ol>
+                    <li><span class="key-point">决策者</span>，指在决策中有决定权的人；</li>
+                    <li><span class="key-point">可供选择的方案</span>，用 $d_j$ 表示（$j = 1, 2, \cdots, n$），方案可以是有限个，也可以是无限多个；</li>
+                    <li><span class="key-point">准则或目标</span>，用以评价方案的优劣，可以是单个的，即单目标决策；也可以是多个，即多目标决策；</li>
+                    <li><span class="key-point">自然状态</span>，用 $\theta_i$ 表示（$i = 1, 2, \cdots, m$）；</li>
+                    <li><span class="key-point">结局</span>，即各方案在各种可能的自然状态下产生的结果。</li>
+                </ol>
+            </div>
+            
+            <p>当选用 $d_j$ 方案，自然状态为 $\theta_i$ 时，产生的结局用 $R(\theta_i, d_j)$ 表示。</p>
+            
+            <p>在一个决策问题中，至少要有两个以上可供选择的方案。自然状态是指在决策过程中可能出现的情况。自然状态的出现是不以决策者的意志为转移的，是不可控制的。决策分析中结局经常用利润值和损失值表示，如</p>
+            
+            <div class="formula-box">
+                $$R(\theta_i, d_j) = \begin{cases}
+                u_{ij}, & d_j \text{ 方案在 } \theta_i \text{ 状态下产生的利润值} \\
+                l_{ij}, & d_j \text{ 方案在 } \theta_i \text{ 状态下产生的损失值}
+                \end{cases}$$
+            </div>
+            
+            <p>通常结局可用决策损益表表示（表 7.1、表 7.2）。</p>
+            
+            <table>
+                <caption><strong>表 7.1 利润表</strong></caption>
+                <thead>
+                    <tr>
+                        <th rowspan="2">利润 \ 方案</th>
+                        <th>$d_1$</th>
+                        <th>$d_2$</th>
+                        <th>⋯</th>
+                        <th>$d_n$</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>$P(\theta_1)$ = $\theta_1$</td>
+                        <td>$u_{11}$</td>
+                        <td>$u_{12}$</td>
+                        <td>⋯</td>
+                        <td>$u_{1n}$</td>
+                    </tr>
+                    <tr>
+                        <td>$P(\theta_2)$ = $\theta_2$</td>
+                        <td>$u_{21}$</td>
+                        <td>$u_{22}$</td>
+                        <td>⋯</td>
+                        <td>$u_{2n}$</td>
+                    </tr>
+                    <tr>
+                        <td>⋯</td>
+                        <td>⋯</td>
+                        <td>⋯</td>
+                        <td>⋯</td>
+                        <td>⋯</td>
+                    </tr>
+                    <tr>
+                        <td>$P(\theta_m)$ = $\theta_m$</td>
+                        <td>$u_{m1}$</td>
+                        <td>$u_{m2}$</td>
+                        <td>⋯</td>
+                        <td>$u_{mn}$</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="example">
+                <div class="example-title">例 7.1</div>
+                <p>某磁片盘带公司为了适应市场需求欲扩大生产，计划部门提出三种方案可供公司考虑：①扩大现有工厂；②建立一个新工厂；③将部分产量转包给其他渠道工厂生产。对公司来说，最大的不肯定性是未来市场对产品的需求量。经市场预测分析，需求量可能会以如下的可能性出现下面四种状态：①高需求量，出现的可能为 0.2；②中等需求量，出现的可能为 0.5；③低需求量，出现的可能为 0.2；④失败（无需求），出现的可能为 0.1。</p>
+                
+                <p>根据以往历史资料分析，预计三种方案在各种市场需求状态下，公司能获得的利润值见表 7.3。</p>
+                
+                <table>
+                    <caption><strong>表 7.3</strong></caption>
+                    <thead>
+                        <tr>
+                            <th colspan="2">结局(收益)（百万元）\ 方案</th>
+                            <th>扩大 $d_1$</th>
+                            <th>新建 $d_2$</th>
+                            <th>转包 $d_3$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>$P(\theta_1) = 0.2$</td>
+                            <td>高需求 $\theta_1$</td>
+                            <td>500</td>
+                            <td>700</td>
+                            <td>300</td>
+                        </tr>
+                        <tr>
+                            <td>$P(\theta_2) = 0.5$</td>
+                            <td>中需求 $\theta_2$</td>
+                            <td>250</td>
+                            <td>300</td>
+                            <td>150</td>
+                        </tr>
+                        <tr>
+                            <td>$P(\theta_3) = 0.2$</td>
+                            <td>低需求 $\theta_3$</td>
+                            <td>-250</td>
+                            <td>-400</td>
+                            <td>-10</td>
+                        </tr>
+                        <tr>
+                            <td>$P(\theta_4) = 0.1$</td>
+                            <td>无需求 $\theta_4$</td>
+                            <td>-450</td>
+                            <td>-800</td>
+                            <td>-100</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p>问题是在这些数据资料下，公司应选择什么方案最为有利？</p>
+                
+                <p>上述决策问题中，决策的基本要素如下：</p>
+                <ul>
+                    <li>①决策者是公司经理；</li>
+                    <li>②备选方案是：$d_1$ 为扩大现有工厂，$d_2$ 为建一个新工厂，$d_3$ 为将部分产量转包给其他工厂；</li>
+                    <li>③目标是期望效益（见 7.2.2）最大；</li>
+                    <li>④自然状态指市场可能出现状态，即 $\theta_1$ 表示需求量高，$\theta_2$ 表示需求量中等，$\theta_3$ 表示需求量低，$\theta_4$ 表示无需求量；自然状态概率是指市场各种状态出现的可能性，即 $P(\theta_1) = 0.2, P(\theta_2) = 0.5, P(\theta_3) = 0.2, P(\theta_4) = 0.1$。</li>
+                    <li>⑤结局是指各方案在各种可能市场状态下的获利值，由表 7.3 给出。</li>
+                </ul>
+            </div>
+            
+            <h3>7.1.2 决策分类</h3>
+            
+            <p>按照决策的自然状态可将决策分为三类。</p>
+            
+            <button class="collapsible">1. 确定型决策</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>这类决策问题只可能出现一种确定的自然状态，每个行动方案在这唯一的自然状态下的结局是可以计算出来的。当决策的目标是单一目标时，确定型决策问题是一种逻辑上比较简单的决策，只需从所有备选方案中，根据每个方案结局，选择出一个最好的即可。例如，第 2 章问题 1 所述线性规划问题就是一个确定型决策问题，其中：</p>
+                    
+                    <div class="formula-box">
+                        $$\mathbf{X} = \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}^T \text{——决策方案}$$
+                        $$\max z = 7x_1 + 12x_2 \text{——目标函数}$$
+                        $$\begin{cases}
+                        9x_1 + 4x_2 \leq 360 \\
+                        4x_1 + 5x_2 \leq 200 \\
+                        3x_1 + 10x_2 \leq 300 \\
+                        x_1, x_2 \geq 0
+                        \end{cases} \text{ 可行方案必须满足的条件，隐含着无限多的方案}$$
+                    </div>
+                    
+                    <p>这是一个确定型决策问题，可根据各个方案的产值（结局）大小去选择最佳的生产方案。用单纯形法可求得最优解 $x_1 = 20, x_2 = 24$，最优值为 428。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">2. 风险型决策</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>这类决策问题在决策过程中可以出现多种自然状态 $\theta_i (i = 1, 2, \cdots, m)$，每一个行动方案在不同自然状态下有不同的结局，且能预先估计出各个自然状态出现的概率 $P(\theta_i)(i = 1, 2, \cdots, m)$。决策分析的主要讨论对象是风险型决策。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">3. 完全不确定型决策</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>这类决策与风险型决策一样，在决策过程中可以出现多种自然状态，每一行动方案在不同的自然状态下有不同的结局，但在这类决策问题中，不能预先估计出各自然状态出现的概率，所以称之为完全不确定型决策。</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section-2">
+            <h2>7.2 风险型决策</h2>
+            
+            <h3>7.2.1 风险型决策的特征</h3>
+            
+            <div class="highlight-box">
+                <p>风险型决策有如下特征：</p>
+                <ol>
+                    <li>决策过程中存在两个以上的自然状态 $\theta_i (i = 1, 2, \cdots, m)$，但究竟会出现哪一种自然状态，决策者是不能控制的，但可以事先估计各种自然状态出现的概率 $P(\theta_i)(i = 1, 2, \cdots, m)$；</li>
+                    <li>存在决策希望达到的明确目标，例如收益最大或损失最小；</li>
+                    <li>存在多个可供决策者选择的方案；</li>
+                    <li>各个方案在不同自然状态下的结局（收益值或损失值）可以计算出来。</li>
+                </ol>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">例 7.2</div>
+                <p>为了开发某种新产品，某厂需要对生产设备的投资规模作一次决策。设计部门提出三种可供选择的方案：$d_1$ 购买大型设备；$d_2$ 购买中型设备；$d_3$ 购买小型设备。预计新产品投放市场后，市场对这种产品的需求情况可能有三种，即有三种可能发生的自然状态：$\theta_1$ 需求量较大；$\theta_2$ 需求量中等；$\theta_3$ 需求量较小。厂方经销部门根据有关资料与信息预测出市场三种需求情况出现的概率 $P(\theta_1) = 0.3, P(\theta_2) = 0.4, P(\theta_3) = 0.3$。厂方的决策目标是使开发新产品的收益最大。厂方估计三种方案 $d_1, d_2, d_3$ 在各种市场状态下的收益用表 7.4 表示。</p>
+                
+                <table>
+                    <caption><strong>表 7.4</strong></caption>
+                    <thead>
+                        <tr>
+                            <th colspan="2">收益（万元）\ 方案</th>
+                            <th>$d_1$</th>
+                            <th>$d_2$</th>
+                            <th>$d_3$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>$P(\theta_1) = 0.3$</td>
+                            <td>$\theta_1$</td>
+                            <td>50</td>
+                            <td>30</td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td>$P(\theta_2) = 0.4$</td>
+                            <td>$\theta_2$</td>
+                            <td>20</td>
+                            <td>25</td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td>$P(\theta_3) = 0.3$</td>
+                            <td>$\theta_3$</td>
+                            <td>-20</td>
+                            <td>-10</td>
+                            <td>10</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p>试问在上述情况下厂方应选择何方案最有利？</p>
+                <p>显然，例 7.2 是典型的风险型决策问题。</p>
+            </div>
+            
+            <h3>7.2.2 期望值准则</h3>
+            
+            <p>决策问题的关键是如何去选择行动方案。一般来讲，首先要对每一个方案作出评价，然后根据这些评价去选择最佳或满意的方案。这种评价在决策分析中是以数量化形式表现的，即对每一个方案作出一个数量化评价值：</p>
+            
+            <div class="formula-box">
+                $$d_j(\text{方案}) \leftarrow f(d_j)(\text{方案的数量化评价值})$$
+            </div>
+            
+            <p>于是问题归结为确定方案评价值的准则是什么？也就是决策准则是什么？在风险型决策中，经常采用"期望值准则"。它把一个方案在各种状态下的收益（或损失）的期望值作为这方案的评价值，即有</p>
+            
+            <div class="formula-box">
+                $$d_j(\text{方案}) \leftarrow f(d_j) = E(d_j) = \sum_{i=1}^{m} P(\theta_i)u_{ij} \text{（收益期望值）}$$
+            </div>
+            
+            <p>其中 $u_{ij}$ 是 $d_j$ 方案在出现自然状态 $\theta_i$ 时的收益值。然后根据各方案评价值——收益（或损失）期望值的大小去选择方案，即有</p>
+            
+            <div class="formula-box">
+                $$\max E(d_j) = E^*(d_k), d_k \text{ 为最优方案（损失的期望值取 min）}$$
+            </div>
+            
+            <div class="example">
+                <div class="example-title">求解例 7.2</div>
+                <p>上述例 7.2 问题中，先计算三个方案的收益期望值：</p>
+                
+                <div class="formula-box">
+                    $$E(d_1) = P(\theta_1)u_{11} + P(\theta_2)u_{21} + P(\theta_3)u_{31}$$
+                    $$= 0.3 \times 50 + 0.4 \times 20 + 0.3 \times (-20) = 17$$
+                    
+                    $$E(d_2) = P(\theta_1)u_{12} + P(\theta_2)u_{22} + P(\theta_3)u_{32}$$
+                    $$= 0.3 \times 30 + 0.4 \times 25 + 0.3 \times (-10) = 16$$
+                    
+                    $$E(d_3) = P(\theta_1)u_{13} + P(\theta_2)u_{23} + P(\theta_3)u_{33}$$
+                    $$= 0.3 \times 10 + 0.4 \times 10 + 0.3 \times 10 = 10$$
+                </div>
+                
+                <p>根据"收益期望值最大准则"得</p>
+                
+                <div class="formula-box">
+                    $$\max E(d_j) = \max\{17, 16, 10\} = 17$$
+                </div>
+                
+                <p>应选择 $d_1$ 方案，即采用购买大型设备方案最为有利。</p>
+            </div>
+            
+            <div class="note">
+                <strong>📌 重要说明：</strong>必须指出，在使用期望值准则决策时，期望值并不代表必然能实现的数值。因此，在一次性决策中按期望值准则选择的方案，也不一定就是效果最好的方案。从统计学角度来看，以期望值作为评选方案优劣的数量标准还是合理的，即如果这类决策问题重复出现多次，并以平均收益衡量方案的优劣，则收益期望值大的方案优于收益期望值小的方案。
+            </div>
+            
+            <h3>7.2.3 决策树</h3>
+            
+            <p>风险型决策可以借助于一种名为"决策树"的图形做出。它不仅可以处理单阶段决策问题，而且可以有效地解决一些多阶段决策问题。</p>
+            
+            <h4>1. 决策树的结构</h4>
+            
+            <p>决策树是一种由结点和分支构成的由左向右横向展开的树状图形。</p>
+            
+            <div class="highlight-box">
+                <p><strong>（1）结点</strong></p>
+                <p>决策树中的结点可分为下列三种。</p>
+                <ul>
+                    <li><strong>1）决策结点</strong>：通常用方块□表示。由决策结点引出若干分支，每个分支表示一个方案，称方案分支。</li>
+                    <li><strong>2）状态结点</strong>：用圆圈○表示。由状态结点引出若干分支，每个分支表示一个自然状态，称为状态分支或概率分支。</li>
+                    <li><strong>3）结局结点</strong>：通常用三角形△表示。它表示一个方案在一个自然状态下的结局。</li>
+                </ul>
+                
+                <p><strong>（3）分支</strong></p>
+                <p>决策树中的边称为分支，分支分为两类。</p>
+                <ul>
+                    <li><strong>1）方案分支</strong>：由决策结点引出的分支，每一分支表示一个方案。</li>
+                    <li><strong>2）概率分支</strong>：由状态结点引出的分支，每个分支表示一种自然状态。每个概率分支上标明它表示的自然状态及自然状态概率。</li>
+                </ul>
+            </div>
+            
+            <h4>2. 利用决策树进行决策的步骤</h4>
+            
+            <ol>
+                <li>①绘制决策树。</li>
+                <li>②自右至左计算各个方案的期望值，将计算结果标在方案分支右端状态结点旁。</li>
+                <li>③根据各方案期望值大小进行选择，将在收益期望值小的方案分支上画上删除号，表示应删去。这个过程称为"剪支"，所保留下来的分支即为最优方案。</li>
+            </ol>
+            
+            <h4>3. 实例</h4>
+            
+            <button class="collapsible">（1）单阶段决策问题</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>以例 7.2 为例，画出决策树进行决策，如图所示。</p>
+                    
+                    <p>方案分支 $d_1$ 的期望值即右端状态结点 1 的期望值，记为</p>
+                    
+                    <div class="formula-box">
+                        $$E(1) = 0.3 \times 50 + 0.4 \times 20 + 0.3 \times (-20) = 17$$
+                    </div>
+                    
+                    <p>同理可得</p>
+                    
+                    <div class="formula-box">
+                        $$E(2) = 0.3 \times 30 + 0.4 \times 25 + 0.3 \times (-10) = 16$$
+                        $$E(3) = 0.3 \times 10 + 0.4 \times 10 + 0.3 \times 10 = 10$$
+                    </div>
+                    
+                    <p>根据期望值准则，将 $d_2$ 和 $d_3$ 分支画上删除号表示剪去，剩余 $d_1$ 分支即为最优方案。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">（2）多阶段决策问题</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="example">
+                        <div class="example-title">例 7.4</div>
+                        <p>有一个化工原料厂，由于某项工艺不够好，产品成本较高，现在计划将该项工艺加以改进。取得新工艺有两条途径：一是自行研究、估计成功的可能性是 0.6；二是从国外引进，估计谈判成功的可能性是 0.8。不论研究成功还是谈判成功，生产规模都要考虑两种方案，一是产量不变，一是增加产量。如果自行研究和谈判都失败，则仍采用原工艺进行生产，并保持原产量不变。</p>
+                        
+                        <p>根据市场预测，估计今后 5 年内这种产品跌价的可能性是 0.1，保持中等价的可能性是 0.5，涨价的可能性是 0.4，各状态下的收益值见表 7.8，试用决策树法进行决策。</p>
+                        
+                        <table>
+                            <caption><strong>表 7.8</strong></caption>
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" colspan="2">益损值 \ 方案</th>
+                                    <th>按原工艺生产</th>
+                                    <th colspan="2">引进技术成功(0.8)</th>
+                                    <th colspan="2">自行研究成功(0.6)</th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <th>产量不变</th>
+                                    <th>增加产量</th>
+                                    <th>产量不变</th>
+                                    <th>增加产量</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="2">价格低落(0.1)</td>
+                                    <td>-100</td>
+                                    <td>-200</td>
+                                    <td>-300</td>
+                                    <td>-200</td>
+                                    <td>-300</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">价格中等(0.5)</td>
+                                    <td>0</td>
+                                    <td>50</td>
+                                    <td>50</td>
+                                    <td>0</td>
+                                    <td>-250</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">价格高涨(0.4)</td>
+                                    <td>100</td>
+                                    <td>150</td>
+                                    <td>250</td>
+                                    <td>200</td>
+                                    <td>600</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p><strong>解</strong>：从图 7.3 看出，例 7.4 问题中的决策有两级。第一级要作产量不变和增加产量两个方案的选择和决策，第二级作出引进技术和自行研究这两个方案间的选择和决策。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section-3">
+            <h2>7.3 完全不确定情况下的决策</h2>
+            
+            <p>在风险型决策问题中，虽然预先不知道会发生哪种自然状态，但是可以通过历史资料或主观估计的方法得到每种自然状态发生的概率。在许多实际决策问题中，对自然状态的信息掌握很少，不足以估算出自然状态的概率，这种决策称为完全不确定型决策。在这种情况下，只知道几种自然状态可能发生，但并不知道这些状态发生的概率，因而不能运用风险型决策模型，这时很大程度上要依靠决策者的决策偏好进行决策。</p>
+            
+            <p>下面介绍几种常用的完全不确定型决策方法。</p>
+            
+            <h3>7.3.1 悲观法——小中取大原则</h3>
+            
+            <p>这是用保守观点分析和决定问题，决策者对客观情况总是悲观态度，总觉得不会万事如意。所以为了保险起见，总是把事情的结果估计得不利。决策者认为目失的行动容易造成重大失误，最好还是从最不利的情况出发，向最好的方向努力，力求做到有备无患。他是在各种最坏的结果中找出一个好一点的方案，因此又叫小中取大决策法。根据这种思想，决策者用一个方案在各种自然状态下最小的收益值作为这个方案的评价值，即有</p>
+            
+            <div class="formula-box">
+                $$\text{方案 } d_j \leftarrow \text{评价值 } f(d_j) = \min u_{ij}$$
+            </div>
+            
+            <p>然后根据每个方案的评价值去选择最优方案，即根据</p>
+            
+            <div class="formula-box">
+                $$\max f(d_j) = \max\min u_{ij}$$
+            </div>
+            
+            <p>选择评价值最大的方案为最优方案。</p>
+            
+            <div class="example">
+                <div class="example-title">例 7.11</div>
+                <p>现有三个行动方案 $d_1, d_2, d_3$，三个自然状态 $\theta_1, \theta_2, \theta_3$，不知道自然状态发生的概率，相应决策收益表由表 7.21 给出。试用悲观法求最优方案。</p>
+                
+                <table>
+                    <caption><strong>表 7.21</strong></caption>
+                    <thead>
+                        <tr>
+                            <th rowspan="2">收益 \ 方案</th>
+                            <th>$d_1$</th>
+                            <th>$d_2$</th>
+                            <th>$d_3$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>$\theta_1$</td>
+                            <td>50</td>
+                            <td>30</td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td>$\theta_2$</td>
+                            <td>20</td>
+                            <td>25</td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td>$\theta_3$</td>
+                            <td>-20</td>
+                            <td>-10</td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td>评价值 $f(d_j)$</td>
+                            <td>-20</td>
+                            <td>-10</td>
+                            <td>(10)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>解</strong>：悲观法基本步骤如下。</p>
+                
+                <p>①计算每个方案的评价值 $f(d_j)$，即为每个方案在各自然状态下的最小收益值：</p>
+                
+                <div class="formula-box">
+                    $$f(d_1) = \min\{50, 20, -20\} = -20$$
+                    $$f(d_2) = \min\{30, 25, -10\} = -10$$
+                    $$f(d_3) = \min\{10, 10, 10\} = 10$$
+                </div>
+                
+                <p>②根据方案评价值选择最优方案，即从各最小收益值中求最大值：</p>
+                
+                <div class="formula-box">
+                    $$\max\{f(d_1), f(d_2), f(d_3)\} = \max\{-20, -10, 10\} = 10$$
+                </div>
+                
+                <p>则应选择方案 $d_3$ 为最优方案。</p>
+            </div>
+            
+            <h3>7.3.2 乐观法——大中取大原则</h3>
+            
+            <p>这种方法的基本思想是对客观情况总抱乐观态度。一些决策者认为，即使出现不利情况也未必会有多大损失，而一旦出现最有利的情况却能得到很大的收益，由此产生大中取大的原则。决策者用一个方案在各种自然状态下最大的收益值作为这个方案的评价值，即有</p>
+            
+            <div class="formula-box">
+                $$\text{方案 } d_j \leftarrow \text{评价值 } f(d_j) = \max u_{ij}$$
+            </div>
+            
+            <p>然后选最大评价值的方案为最优方案，即根据</p>
+            
+            <div class="formula-box">
+                $$\max f(d_j) = \max\max u_{ij}$$
+            </div>
+            
+            <p>选择最优方案。</p>
+            
+            <div class="example">
+                <div class="example-title">例 7.12</div>
+                <p>用乐观法求解例 7.11。</p>
+                
+                <p><strong>解</strong>：乐观法基本步骤如下。</p>
+                
+                <p>①计算各方案评价值 $f(d_j)$，即计算各方案在各自然状态下最大收益值</p>
+                
+                <div class="formula-box">
+                    $$f(d_1) = \max\{50, 20, -20\} = 50$$
+                    $$f(d_2) = \max\{30, 25, -10\} = 30$$
+                    $$f(d_3) = \max\{10, 10, 10\} = 10$$
+                </div>
+                
+                <p>②根据各方案评价值，选择评价值最大的方案为最优方案，即有</p>
+                
+                <div class="formula-box">
+                    $$\max\{f(d_1), f(d_2), f(d_3)\} = \max\{50, 30, 10\} = 50$$
+                </div>
+                
+                <p>则应选择方案 $d_1$ 为最优方案。其决策过程见表 7.22。</p>
+            </div>
+            
+            <h3>7.3.3 乐观系数法</h3>
+            
+            <p>这种方法的基本想法是认为悲观法太保守而乐观法太冒险，主张折中考虑。确定一个数字表示乐观程度，称为乐观系数，用 $\alpha$ 表示，并规定 $0 \leq \alpha \leq 1$。决策者用一个方案在各自然状态下最大收益值乘以 $\alpha$ 加上最小收益值乘以 $(1 - \alpha)$ 的和，作为该方案的评价值，即有</p>
+            
+            <div class="formula-box">
+                $$\text{方案 } d_j \leftarrow \text{评价值 } f(d_j) = \alpha \cdot \max u_{ij} + (1 - \alpha)\min u_{ij}$$
+            </div>
+            
+            <p>然后再选择评价值大的方案为最优方案，即根据</p>
+            
+            <div class="formula-box">
+                $$\max|f(d_j)| = \max|\alpha \cdot \max u_{ij} + (1 - \alpha)\min u_{ij}|$$
+            </div>
+            
+            <p>选择最优方案。</p>
+            
+            <div class="example">
+                <div class="example-title">例 7.13</div>
+                <p>用乐观系数法求解例 7.11。</p>
+                
+                <p><strong>解</strong>：选择乐观系数为 $\alpha = 0.4$，计算各方案之评价值</p>
+                
+                <div class="formula-box">
+                    $$f(d_1) = 0.4 \times 50 + 0.6 \times (-20) = 8$$
+                    $$f(d_2) = 0.4 \times 30 + 0.6 \times (-10) = 6$$
+                    $$f(d_3) = 0.4 \times 10 + 0.6 \times 10 = 10$$
+                </div>
+                
+                <p>根据</p>
+                
+                <div class="formula-box">
+                    $$\max\{f(d_1), f(d_2), f(d_3)\} = \max\{8, 6, 10\} = 10$$
+                </div>
+                
+                <p>则应选择方案 $d_3$ 为最优方案。整个决策过程由表 7.23 所示。</p>
+            </div>
+            
+            <h3>7.3.4 最小后悔值法——大中取小原则</h3>
+            
+            <p>当某一种自然状态出现时，决策者必然选择收益值最大的方案。如果决策者事先未选取这一方案，而选择了其他方案，事后就会后悔。某一自然状态下，最大收益值与其他收益值之差描绘了后悔程度，称为后悔值，也称机会损失。这个方法要在决策时考虑减少将来的后悔。它的计算方法首先是在各种自然状态下，以最大收益值减去其他收益值得到这自然状态下各方案的后悔值。在 $\theta_i$ 状态下，选择 $d_j$ 方案的后悔值为</p>
+            
+            <div class="formula-box">
+                $$r_{ij} = \max u_{ij} - u_{ij}$$
+            </div>
+            
+            <p>所有后悔值构成后悔值矩阵 $[r_{ij}]_{m \times n}$。</p>
+            
+            <p>在后悔值方法中，决策者用一个方案在各自然状态下最大的后悔值作为这个方案的评价值，即有</p>
+            
+            <div class="formula-box">
+                $$\text{方案 } d_j \leftarrow f(d_j) = \max r_{ij}$$
+            </div>
+            
+            <p>然后选择评价值最小的方案为最优方案，即根据</p>
+            
+            <div class="formula-box">
+                $$\min f(d_j) = \min\max r_{ij}$$
+            </div>
+            
+            <p>选择最优方案，所以也称为最小后悔值方法。</p>
+            
+            <h3>7.3.5 等可能性方法——平均原则</h3>
+            
+            <p>这种方法的基本思想是：在一些决策问题中，决策者既不能估计出各自然状态出现的概率，又不能认为某一自然状态比其他状态出现可能性大，就只好认为每种情况出现的可能性一样，如有 $n$ 种自然状态出现，则认为每种自然状态出现概率为 $p(\theta_i) = \frac{1}{n}$ ($i = 1, 2, \cdots, n$)。这样就把完全不确定型决策问题化为风险型决策问题解决。</p>
+            
+            <div class="note">
+                <strong>📌 注意：</strong>对于一个完全不确定型问题，使用不同的方法，可能会得出不同的最优方案。实际决策问题是很复杂的，究竟应选用什么方法，应视具体问题而定。比如对待灾难性事件，应考虑最不利情况，使遭到损失最小。在其他情况下应有不同考虑，通常可根据具体情况选用几种不同的方法，然后将所得结果进行分析和比较，从而作出最后的选择。
+            </div>
+        </section>
+        
+        <section id="exercises">
+            <h2>习题 7</h2>
+            
+            <div class="highlight-box">
+                <p><strong>7.1</strong> 某地方书店希望订购新出版的畅销书。根据以往经验，新书的销售量可能为 50、100、150 或 200 本。假定每本新书的订购价为 4 元，销售价为 6 元，剩余的处理价为每本 2 元。要求：</p>
+                <ol>
+                    <li>（1）建立损益矩阵；</li>
+                    <li>（2）分别用悲观法、乐观法及等可能法决定该书店应订购的新书数量；</li>
+                    <li>（3）建立后悔矩阵，并用后悔值法决定书店应订购的新书数。</li>
+                </ol>
+            </div>
+            
+            <div class="highlight-box">
+                <p><strong>7.2</strong> 上题中如书店都以往统计资料预计新书销售量的规律见表 7.25。（1）分别用期望值法和后悔值法决定订购数量；（2）如果市场调查部门能够帮助书店调查销售量的确切数字，该书店愿意付出多大的调查费用？</p>
+                
+                <table>
+                    <caption><strong>表 7.25</strong></caption>
+                    <thead>
+                        <tr>
+                            <th>需求数</th>
+                            <th>50</th>
+                            <th>100</th>
+                            <th>150</th>
+                            <th>200</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>占的比例</td>
+                            <td>20%</td>
+                            <td>40%</td>
+                            <td>30%</td>
+                            <td>10%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="highlight-box">
+                <p><strong>7.3</strong> 题 7.1 中，如果该地方书店货币（$M$）的效用函数数</p>
+                
+                <div class="formula-box">
+                    $$U(M) = \sqrt{\frac{M + 1000}{1000}}$$
+                </div>
+                
+                <ol>
+                    <li>（1）建立效用值表；</li>
+                    <li>（2）利用题 7.2 中给出的各种需求量的比例数字重新决定该书店应当订购新书的最佳数量。</li>
+                </ol>
+            </div>
+        </section>
+        
+        <div class="back-to-top" id="backToTop">↑</div>
+    </div>
+    
+    <script>
+        // 折叠功能
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 返回顶部按钮
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+        
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 高亮当前部分的导航链接
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.style.backgroundColor = '';
+                if (link.getAttribute('href') === '#' + current) {
+                    link.style.backgroundColor = 'var(--primary-teal)';
+                    link.style.borderLeftColor = 'var(--primary-orange)';
+                }
+            });
+        });
+    </script>
+    
+    <!-- 使用说明 -->
+    <!--
+    使用说明：
+    1. 保存此文件为 .html 格式（例如：risk-decision-tutorial.html）
+    2. 需要网络连接以加载 MathJax 数学公式渲染库和 Google Fonts 字体
+    3. 直接在现代浏览器（Chrome、Firefox、Safari、Edge）中打开即可
+    4. 所有数学公式使用 LaTeX 格式，通过 MathJax 自动渲染
+    5. 支持响应式设计，在手机和平板上也能良好显示
+    6. 点击可折叠按钮查看详细内容
+    7. 使用导航菜单快速跳转到各章节
+    8. 右下角的返回顶部按钮方便快速回到页面顶部
+    -->
+</body>
+</html>
