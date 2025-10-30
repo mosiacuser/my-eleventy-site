@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第十四章 运筹学中的启发式方法 - 交互式教程</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- MathJax 配置 - 完整版本 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            },
+            displayAlign: "center",
+            displayIndent: "0em"
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <style>
+        :root {
+            --primary-orange: #f27d00;
+            --secondary-mint: #a6d6c9;
+            --accent-yellow: #f7d117;
+            --white: #ffffff;
+            --dark-gray: #343434;
+            --light-bg: #f9f9f9;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Roboto', sans-serif;
+            line-height: 1.8;
+            color: var(--dark-gray);
+            background: linear-gradient(135deg, var(--secondary-mint) 0%, var(--white) 50%, #ffeaa7 100%);
+            min-height: 100vh;
+        }
+        
+        /* 导航栏 */
+        nav {
+            background: linear-gradient(90deg, var(--primary-orange), #e67e00);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+        
+        nav h1 {
+            color: var(--white);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            background: var(--accent-yellow);
+            color: var(--dark-gray);
+            transform: translateY(-2px);
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* 章节样式 */
+        section {
+            background: var(--white);
+            margin: 2rem 0;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* 标题样式 */
+        h2 {
+            color: var(--primary-orange);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--accent-yellow);
+        }
+        
+        h3 {
+            color: var(--primary-orange);
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            padding-left: 1rem;
+            border-left: 4px solid var(--secondary-mint);
+        }
+        
+        h4 {
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+        
+        /* 段落样式 */
+        p {
+            margin: 1rem 0;
+            text-align: justify;
+            text-indent: 2em;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+            padding-left: 1.5rem;
+        }
+        
+        li {
+            margin: 0.8rem 0;
+            line-height: 1.8;
+        }
+        
+        /* 重点提示框 */
+        .highlight-box {
+            background: linear-gradient(135deg, #fff9e6, #fffef0);
+            border-left: 5px solid var(--accent-yellow);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(242, 125, 0, 0.1);
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #e8f8f5, #f0fdf9);
+            border-left: 5px solid var(--secondary-mint);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        /* 折叠面板 */
+        details {
+            background: var(--light-bg);
+            border: 2px solid var(--secondary-mint);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        details:hover {
+            border-color: var(--primary-orange);
+        }
+        
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--primary-orange);
+            padding: 0.5rem;
+            user-select: none;
+            font-size: 1.1rem;
+        }
+        
+        summary:hover {
+            color: #d66d00;
+        }
+        
+        details[open] {
+            background: linear-gradient(135deg, #fff, #f9f9f9);
+        }
+        
+        details[open] summary {
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--secondary-mint);
+            padding-bottom: 0.8rem;
+        }
+        
+        /* 表格样式 */
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px var(--shadow);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+        }
+        
+        th {
+            background: linear-gradient(135deg, var(--primary-orange), #e67e00);
+            color: var(--white);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 0.8rem;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+        
+        tr:hover {
+            background: #fff9e6;
+        }
+        
+        /* 公式样式增强 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        .formula-block {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            border: 2px solid var(--secondary-mint);
+            overflow-x: auto;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary-orange);
+            color: var(--white);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(242, 125, 0, 0.3);
+        }
+        
+        .btn:hover {
+            background: #d66d00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.4);
+        }
+        
+        /* 示例框 */
+        .example {
+            background: linear-gradient(135deg, #fff, #fafafa);
+            border: 2px solid var(--accent-yellow);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .example-title {
+            color: var(--primary-orange);
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .example-title:before {
+            content: "📝";
+            margin-right: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        /* 算法步骤 */
+        .algorithm {
+            background: linear-gradient(135deg, #f0fdf9, #e8f8f5);
+            border-left: 5px solid var(--secondary-mint);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        .algorithm-step {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            nav h1 {
+                font-size: 1.5rem;
+            }
+            
+            .nav-links {
+                gap: 0.5rem;
+            }
+            
+            .nav-links a {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            section {
+                padding: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.6rem;
+            }
+            
+            h3 {
+                font-size: 1.3rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+        }
+        
+        /* 滚动效果 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* 返回顶部按钮 */
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-orange);
+            color: var(--white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(242, 125, 0, 0.4);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        #backToTop:hover {
+            background: #d66d00;
+            transform: translateY(-5px);
+        }
+        
+        #backToTop.show {
+            display: flex;
+        }
+        
+        /* 特殊符号 */
+        .math-var {
+            font-style: italic;
+            color: var(--primary-orange);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <h1>📚 运筹学教程 第5版 - 第十四章</h1>
+        <div class="nav-links">
+            <a href="#section1">启发式方法概念</a>
+            <a href="#section2">应用问题举例</a>
+            <a href="#section3">排序问题</a>
+            <a href="#section4">货郎担问题</a>
+            <a href="#section5">车辆调度问题</a>
+            <a href="#exercises">习题</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 章节标题 -->
+        <section style="background: linear-gradient(135deg, var(--primary-orange), #ff9a3d); color: white; text-align: center;">
+            <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; color: white;">CHAPTER 14</h1>
+            <h1 style="font-size: 2.8rem; color: white; border: none;">第十四章</h1>
+            <h2 style="font-size: 2rem; margin-top: 1rem; color: white; border: none;">运筹学中的启发式方法</h2>
+        </section>
+
+        <!-- 第一节：启发式方法的概念 -->
+        <section id="section1">
+            <h2>第一节 启发式方法的概念</h2>
+            
+            <h3>一、启发式方法的提出</h3>
+            
+            <p>本书前面各章讨论了一些常用的优化模型，研究了相应的求解算法，运用这些模型和算法能有效地解决很多实际问题，得出问题的最优解。但这些标准的模型和算法在应用上常受到很大局限，它们主要适用于解决只有良性结构的问题，即问题的结构比较清晰，所含各元素之间的关系明确，边界清楚，容易为人们所认识，能够比较方便地通过建模和使用一定的算法求得解决。</p>
+            
+            <div class="highlight-box">
+                <h4>良性结构问题具有以下特征：</h4>
+                <ol>
+                    <li>能建立起反映该问题性质的一种"可接受"模型，与问题有关的主要信息可纳入模型之中；</li>
+                    <li>模型所需要的数据能够获取；</li>
+                    <li>有判定解的可行性和最优性（或满意性）的明确准则；</li>
+                    <li>模型可解，能拟订出求解模型的程序性步骤，而且得出的解能反映解决问题的可行方案；</li>
+                    <li>求解工作所需的计算量不过大，所需费用不过多。</li>
+                </ol>
+            </div>
+            
+            <p>很多实际问题不具有良性结构，当套用传统的运筹学方法去处理时，就难以得到满意的效果。这时，与其偏离事实，忽略或修正某些重要的条件，勉强使用某种标准模型而使问题得到简化以易于求解，还不如保持问题的本来面目，建立基本符合问题实际情况的非标准模型。前者虽可用已有的标准算法求解，但由于问题的模型失真，得到的解通常难以付诸实施；后者由于模型涉及因素多，结构复杂，而与传统的标准模型相去甚远，难以套用已有的标准算法。</p>
+            
+            <div class="info-box">
+                <p style="text-indent: 0;"><strong>启发式方法的定义：</strong>在后面这种情况下，为得到可用的近似解，分析人员必须运用自己的感知和洞察力，从与其有关而较基本的模型及算法中寻求其中的联系，从中得到启发，去发现和构想可用于解决该问题的思路和途径。人们称这种方法为<span style="color: var(--primary-orange); font-weight: 700;">启发式方法</span>，用这种方法建立的算法为<span style="color: var(--primary-orange); font-weight: 700;">启发式算法（heuristic algorithm）</span>。</p>
+            </div>
+
+            <h3>二、启发式方法的特点</h3>
+            
+            <p>由上可知，启发式方法是寻求解决问题的一种适宜方法和策略；当然，它也可以是面向某种具体问题的一种求解手段。启发式方法建立在经验、比较和判断的基础上，体现了人的主观能动作用和创造力。</p>
+            
+            <p>用启发式方法解决问题时强调"满意"，常常是得到"满意解"，决策者就认为可以了，而不去苛求最优性和探求最优解。之所以如此，其原因主要是：</p>
+            
+            <details>
+                <summary>点击展开：为什么强调"满意解"而非"最优解"？</summary>
+                <div style="padding: 1rem;">
+                    <ol>
+                        <li><strong>不存在严格最优解：</strong>有很多问题不存在严格意义下的最优解（例如目标之间相互矛盾的多目标决策问题、一般的多属性评价问题、群决策问题等），这时，对目标和属性的满意性已能足够准确地描述人们的意愿和选择行为；</li>
+                        <li><strong>代价过大：</strong>对有些问题，要得到最优解需花费过大的代价，既难以做到，也不合算；</li>
+                        <li><strong>实际不需要：</strong>从决策的实际需要出发，有时不必要求解具有过高的精度。</li>
+                    </ol>
+                </div>
+            </details>
+            
+            <div class="highlight-box">
+                <h4>多项式算法的定义</h4>
+                <p style="text-indent: 0;">假定为解决某类问题设计了一个算法，它能用于求解所有这类问题，而且获得最优（或满意）解的计算工作量可表示为这类问题"大小"的多项式函数，就称这个算法是<strong>确定型的多项式算法</strong>，简称为<strong>多项式算法</strong>或<strong>有效算法</strong>。</p>
+                <p style="text-indent: 0;">很多"组合优化"问题（如设施定位问题、货郎担问题、多个工件在多台设备上的加工排序问题等）不存在多项式算法，欲求其最优解需要花费巨大的代价。</p>
+            </div>
+            
+            <p>用启发式方法解决问题是通过迭代过程实现的，因而需拟订出一套科学的解的搜索规则。为能得到满意的解，在整个迭代过程中要不断吸收出现的新信息，考察采用的求解策略，必要时改变原来拟订的不合适的策略，建立新的搜索规则，注意从失败中吸取教训，并逐步缩小搜索范围。</p>
+            
+            <details>
+                <summary>启发式方法的优点</summary>
+                <div style="padding: 1rem;">
+                    <ol>
+                        <li>计算步骤简单，易于实施；</li>
+                        <li>不需要高深和复杂的理论知识，因而可由未经高级训练的人员实现；</li>
+                        <li>与应用优化方法相比，可以减少大量的计算工作量，从而显著节约开支和节省时间；</li>
+                        <li>易于将定量分析与定性分析相结合。</li>
+                    </ol>
+                    <p style="text-indent: 0; margin-top: 1rem;"><strong>应用领域：</strong>启发式方法在解决农业、商业、社会、管理、工程等方面的很多复杂实际问题时常具有重要的作用。</p>
+                </div>
+            </details>
+
+            <h3>三、启发式方法的策略</h3>
+            
+            <p>用启发式方法解决问题时，首先应认真归纳问题的条件和正确确定问题的目标和要解决的关键问题，建立能恰当反映问题性质、条件、要求、结构和目标的模型，防止问题扭曲和表述失真。其次还要采用一定的策略，以便得出理想的结果。下面举出几种常用的策略，在使用时可根据问题的性质和要求选用其中之一，或将几个策略结合起来综合运用。</p>
+            
+            <details>
+                <summary>策略1：逐步构解策略</summary>
+                <div style="padding: 1rem;">
+                    <p>一般来说，实际中面临的问题都是多维问题，它的解是由多个分量组成的。当使用该策略时，应建立某种规则，求解时按一定次序每次确定解的一个分量，逐步进行，直至得到一个完整的解为止。</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>策略2：分解合成策略</summary>
+                <div style="padding: 1rem;">
+                    <p>在解决一个复杂的大问题时，可首先将其分解为若干个小的子问题（分解方法视问题而定），再选用合适的方法（包括优化方法、启发式方法、模拟方法等）按一定顺序求解每个子问题，根据子问题之间以及各子问题与总问题之间的关系（例如递阶关系、包含关系、平行关系等），将子问题的解作为下一阶子问题的输入，或在某种相容原则下进行综合，最后得出合乎总问题要求的解。</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>策略3：改进策略</summary>
+                <div style="padding: 1rem;">
+                    <p>在运用这一策略时，首先从问题的一个解决方案或初始解（初始解不一定要求为可行解）出发，然后对方案或解的质量（包括其可行性、可接受程度、目标函数值的优劣、对环境的适应性、可靠性等）进行评价，并采用某种启发式方法设计改进规则，对解决方案或初始解进行改进，直至满意为止。</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>策略4：搜索学习策略</summary>
+                <div style="padding: 1rem;">
+                    <p>本策略包括确定搜索方向，拟订搜索方法，建立发现和收集在搜索过程中出现的新信息的机制，并根据对新信息的分析结果，重新确认或改变原来的搜索方向和搜索方法，修正搜索参数，消去不必要的搜索范围。其目的在于提高搜索效率，加快搜索速度，尽快获得合乎要求的解决方案（问题的解）。</p>
+                </div>
+            </details>
+        </section>
+
+        <!-- 第二节：应用问题举例 -->
+        <section id="section2">
+            <h2>第二节 应用问题举例</h2>
+            <p>下面结合例子说明如何使用启发式方法解决实际问题。</p>
+        </section>
+
+        <!-- 多个工件在设备上加工的排序问题 -->
+        <section id="section3">
+            <h3>一、多个工件在设备上加工的排序问题</h3>
+            
+            <p><span class="math-var">n</span>个工件在<span class="math-var">m</span>台设备上加工的最优顺序问题，目前尚无多项式算法。为便于说明如何用启发式方法解决这种问题，此处仅考虑两台设备A和B，研究在这两台设备上顺序加工<span class="math-var">n</span>个工件（工件$j = 1, 2, \ldots, n$）时，应如何排列这些工件的顺序，才能使总加工时间（从在A上开始加工第一个工件起，到在B上加工完最后一个工件止）尽可能短。此处要求每个工件都先在A上加工，然后再在B上加工。</p>
+            
+            <div class="info-box">
+                <p style="text-indent: 0;"><strong>问题说明：</strong>如果在A上加工各工件的顺序与在B上加工的顺序不同，这就要增加等待时间，从而使总加工时间延长，因此，在研究该问题时对这种情况可不予考虑。即使如此，本问题可能的排序方案仍有$n!$个之多，随着工件数$n$的增多，其计算工作量增加很快。下面寻求用启发式方法的解决途径。</p>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">例1</div>
+                <p style="text-indent: 0;">表14-1中列出了6个工件分别在设备A和设备B上的加工时间$A_j$(min)和$B_j$(min)，所有工件都先在A上加工，再在B上加工。要求确定使总加工时间最短的工件加工顺序。</p>
+                
+                <div class="table-container">
+                    <table>
+                        <caption style="padding: 1rem; font-weight: 600; color: var(--primary-orange);">表14-1 工件加工时间</caption>
+                        <thead>
+                            <tr>
+                                <th>设备/工件</th>
+                                <th>1</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                                <th>6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>A</strong></td>
+                                <td>30</td>
+                                <td>60</td>
+                                <td>60</td>
+                                <td>20</td>
+                                <td>80</td>
+                                <td>90</td>
+                            </tr>
+                            <tr>
+                                <td><strong>B</strong></td>
+                                <td>70</td>
+                                <td>70</td>
+                                <td>50</td>
+                                <td>60</td>
+                                <td>30</td>
+                                <td>40</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <p style="text-indent: 0; margin-top: 1.5rem;"><strong>分析过程：</strong></p>
+                <p>为得出这一类问题的启发式算法，首先考虑工件1和工件2，其可能的排序方案共有两个：$1 \to 2$和$2 \to 1$。在本例中由于$B_1 = B_2$，$A_1 \lt A_2$，故将工件1排在前面进行加工所需的总加工时间较少。</p>
+                <p>现再看工件2和工件3，由于$A_2 = A_3$，$B_3 \lt B_2$，故将工件3排在工件2的后面加工所需的总加工时间较少。</p>
+                
+                <div class="algorithm">
+                    <h4>多工件在两台设备上加工排序的启发式迭代步骤</h4>
+                    <div class="algorithm-step">
+                        <p><strong>(1)</strong> 令$i = 1$，$k = 0$；</p>
+                        <p><strong>(2)</strong> 找出最小加工时间：</p>
+                        <div class="formula-block">
+                            $$t_r = \min\{A_1, A_2, \ldots, A_n, B_1, B_2, \ldots, B_n\}$$
+                        </div>
+                        <p><strong>(3)</strong> 若$t_r = A_j$，则将工件$j$安排为第$i$个加工工件，并置$i := i+1$；若$t_r = B_j$，则把工件$j$安排为第$(n-k)$个加工工件，并置$k := k+1$；</p>
+                        <p><strong>(4)</strong> 将$A_j$和$B_j$从式中的工件加工时间表中删去，即不再考虑已排好加工顺序的工件$j$；</p>
+                        <p><strong>(5)</strong> 返回步骤(2)，直至式中的工件加工时间表变成空集。</p>
+                    </div>
+                </div>
+                
+                <p><strong>求解过程：</strong></p>
+                <p>在本例中$n = 6$。开始迭代时，$i = 1$，$k = 0$。由上述步骤，$t_r = 20 = A_4$，故将工件4排为第1，删去$A_4$和$B_4$，并置$i = 1+1 = 2$。</p>
+                <p>此时$t_r = 30 = A_1 = B_5$，将工件1排为第2，工件5排为第6（$n-k = 6-0 = 6$），删去$A_1$，$B_1$，$A_5$和$B_5$，置$i = 2+1 = 3$，$k = 0+1 = 1$。如此继续，可得所有6个工件的加工顺序为：</p>
+                <div class="formula-block" style="text-align: center; font-size: 1.2rem;">
+                    $$4 \to 1 \to 2 \to 3 \to 6 \to 5$$
+                </div>
+                <p>本例的总加工时间等于<strong>370 min</strong>。</p>
+            </div>
+            
+            <div class="highlight-box">
+                <p style="text-indent: 0;"><strong>重要结论：</strong>对在两台设备上加工$n$个工件的问题来说，用上述方法求得的解为<strong>最优解</strong>。但是，如将这种思想扩展应用到在$m$台设备上加工$n$个工件的一般加工顺序问题，所得结果一般就不再是最优的了。然而用这种方法却常常可以得到较好的解。</p>
+            </div>
+        </section>
+
+        <!-- 货郎担问题 -->
+        <section id="section4">
+            <h3>二、货郎担问题</h3>
+            
+            <p>货郎担问题也称<strong>旅行售货员问题</strong>（Traveling Salesman Problem，TSP），它指的是：一个售货员从某一城市出发，为售货访问$n$个城市各一次且仅一次，然后回到原城市，问他走什么样的路线才能使走过的总路程最短（或旅行费用最低）。这个问题就是寻求总权最小的汉密尔顿（Hamilton）回路问题。到目前为止，对TSP问题还没有提出多项式算法，对于较大的这种问题（例如$n$大于40）常需借助于启发式算法求解。</p>
+            
+            <p>下面介绍较典型的两种启发式算法。</p>
+            
+            <h4>1. CW节约算法</h4>
+            
+            <p>该方法由Clarke和Wright提出，其基本思想和迭代步骤说明如下。</p>
+            
+            <p>假定有$n$个需要访问的地方（例如城市），把每个访问地看成一个点，并取其中的一个点作为基点（起点），例如以点1为基点。首先将每个点与基点相连接，构成子回路$1 \to j \to 1$（$j = 2, 3, \ldots, n$），这样就得到了一个具有$n-1$条子回路的图（这时尚未形成汉密尔顿回路）。旅行者按此线路访问$n$个点所走的路程总和等于</p>
+            
+            <div class="formula-block">
+                $$z = 2\sum_{j=2}^{n}c_{1j}$$
+            </div>
+            
+            <p>其中，$c_{1j}$为由点1到点$j$（$j = 2, 3, \ldots, n$）的路段长度，这里假定$c_{ij} = c_{ji}$（对所有点$j$）。</p>
+            
+            <p>若连接点$i$和点$j$（$i, j \neq 1$），即令旅行者走弧$(i, j)$时（这时当然就不再经过弧$(i, 1)$和$(1, j)$），所引起的路程节约值$s(i, j)$可计算如下：</p>
+            
+            <div class="formula-block">
+                $$s(i, j) = 2c_{1i} + 2c_{1j} - (c_{1i} + c_{1j} + c_{ij}) = c_{1i} + c_{1j} - c_{ij}$$
+            </div>
+            
+            <p>对不同的点对$(i, j)$，$s(i, j)$越大，旅行者通过弧$(i, j)$所节约的路程越多，因而应优先将这段弧插入到旅行线路中去。</p>
+            
+            <div class="algorithm">
+                <h4>CW节约算法的迭代步骤</h4>
+                <div class="algorithm-step">
+                    <p><strong>(1)</strong> 选取基点，例如选取点1为基点。将基点与其他各点连接，得到$n-1$条子回路$1 \to j \to 1$（$j = 2, 3, \ldots, n$）；</p>
+                    <p><strong>(2)</strong> 对不违背限制条件的所有可连接点对$(i, j)$计算其节约值（$i, j$不为基点）：</p>
+                    <div class="formula-block">
+                        $$s(i, j) = c_{1i} + c_{1j} - c_{ij}$$
+                    </div>
+                    <p><strong>(3)</strong> 将所有$s(i, j)$按其值由大到小排列；</p>
+                    <p><strong>(4)</strong> 按$s(i, j)$的上述顺序，逐个考察其端点$i$和$j$，若满足以下条件，就将弧$(i, j)$插入到旅行线路中。其条件是：</p>
+                    <ul>
+                        <li>① 点$i$和点$j$不在一条线路上；</li>
+                        <li>② 点$i$和点$j$均与基点相邻。</li>
+                    </ul>
+                    <p><strong>(5)</strong> 返回步骤(4)，直至考察完所有可插入弧$(i, j)$为止。</p>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="example-title">例2</div>
+                <p style="text-indent: 0;">用CW节约算法求解下述货郎担问题，已知各访问点的位置如图14-4中所示。</p>
+                
+                <p><strong>解：</strong>先按图14-4给出的数据计算各点之间的欧氏距离$c_{ij}$，计算结果列入距离表（表14-2）中。由于已假设$c_{ij} = c_{ji}$，故该表中各元素的值以主对角线成对称。</p>
+                
+                <div class="table-container">
+                    <table>
+                        <caption style="padding: 1rem; font-weight: 600; color: var(--primary-orange);">表14-2 距离矩阵</caption>
+                        <thead>
+                            <tr>
+                                <th>起点/终点</th>
+                                <th>A</th>
+                                <th>B</th>
+                                <th>C</th>
+                                <th>D</th>
+                                <th>E</th>
+                                <th>F</th>
+                                <th>G</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>A</strong></td>
+                                <td>0</td>
+                                <td>14.14</td>
+                                <td>24.70</td>
+                                <td>23.71</td>
+                                <td>19.24</td>
+                                <td>17.03</td>
+                                <td>13.00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>B</strong></td>
+                                <td>14.14</td>
+                                <td>0</td>
+                                <td>13.04</td>
+                                <td>23.71</td>
+                                <td>15.81</td>
+                                <td>13.04</td>
+                                <td>10.44</td>
+                            </tr>
+                            <tr>
+                                <td><strong>C</strong></td>
+                                <td>24.70</td>
+                                <td>13.04</td>
+                                <td>0</td>
+                                <td>20.10</td>
+                                <td>12.65</td>
+                                <td>11.66</td>
+                                <td>13.45</td>
+                            </tr>
+                            <tr>
+                                <td><strong>D</strong></td>
+                                <td>23.71</td>
+                                <td>23.71</td>
+                                <td>20.10</td>
+                                <td>0</td>
+                                <td>8.25</td>
+                                <td>10.77</td>
+                                <td>13.60</td>
+                            </tr>
+                            <tr>
+                                <td><strong>E</strong></td>
+                                <td>19.24</td>
+                                <td>15.81</td>
+                                <td>12.65</td>
+                                <td>8.25</td>
+                                <td>0</td>
+                                <td>2.83</td>
+                                <td>6.71</td>
+                            </tr>
+                            <tr>
+                                <td><strong>F</strong></td>
+                                <td>17.03</td>
+                                <td>13.04</td>
+                                <td>11.66</td>
+                                <td>10.77</td>
+                                <td>2.83</td>
+                                <td>0</td>
+                                <td>4.12</td>
+                            </tr>
+                            <tr>
+                                <td><strong>G</strong></td>
+                                <td>13.00</td>
+                                <td>10.44</td>
+                                <td>13.45</td>
+                                <td>13.60</td>
+                                <td>6.71</td>
+                                <td>4.12</td>
+                                <td>0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <p>取A为基点，构成初始旅行线路图。再用节约公式计算将弧$(i, j)$（$i, j \neq A$）插入到线路中时引起的路程节约值，并按节约值由大到小的顺序将它们填入表14-3中。</p>
+                
+                <p>依节约值从大到小的次序，对每条弧加以考察，看是否应将其插入线路中去。若将其插入，就要对线路作相应的改变。当插入弧$(D, G)$之后，线路已包含所有要访问的点，算法终止。</p>
+                
+                <p><strong>用该方法得到的线路是：</strong></p>
+                <div class="formula-block" style="text-align: center; font-size: 1.3rem;">
+                    $$A \to G \to D \to E \to F \to C \to B \to A$$
+                </div>
+                
+                <p>该线路的总长度为：</p>
+                <div class="formula-block">
+                    $$\begin{aligned}
+                    z &= 2 \times (14.14 + 24.70 + 23.71 + 19.24 + 17.03 + 13.00) \\
+                    &\quad - (34.70 + 33.44 + 30.07 + 25.80 + 23.11) \\
+                    &= 76.52
+                    \end{aligned}$$
+                </div>
+            </div>
+            
+            <h4>2. 几何法</h4>
+            
+            <p>这种方法由J.P. Norback和R.F. Love提出，它基于对各访问点构成的几何图形的分析，以此确定初始线路和不在初始线路上的各点的插入顺序和插入位置。</p>
+            
+            <p>根据对一般几何图形的观察可知，最短访问线路应具有以下直观性质：(1)线路自身不相交；(2)各段线路应处于由所有访问点形成的凸包上或其凸包内部（这里所说的<strong>凸包（convex hull）</strong>是包含所有访问点的最小凸集）。</p>
+            
+            <div class="algorithm">
+                <h4>几何法的迭代步骤</h4>
+                <div class="algorithm-step">
+                    <p><strong>(1)</strong> 找出由欲访问各点构成的凸包；</p>
+                    <p><strong>(2)</strong> 在凸包上的点，按其出现的自然顺序访问（不要使访问线路自交），从而形成一初始访问线路；</p>
+                    <p><strong>(3)</strong> 将不在初始访问线路上的各个点$I$（位于凸包内的访问点），与已在访问线路上的所有点相连。设$P$与$Q$为已在访问线路上的任两个相邻点，$\angle P_0IQ_0$为所有$\angle PIQ$角度中的最大者，则将$I_0$插入到$P_0$和$Q_0$之间；</p>
+                    <p><strong>(4)</strong> 重复进行步骤(3)，每次在访问线路上增加一个新点，直至所有欲访问点都被引入到访问线路中为止。这时就构成了一条汉密尔顿回路。</p>
+                </div>
+            </div>
+            
+            <p>该问题的最优解线路总长度为<strong>75.48</strong>。它可以通过交换线路中两个相邻点E和D的连接顺序而得到。</p>
+            
+            <div class="info-box">
+                <p style="text-indent: 0;"><strong>精度评价：</strong>在本例中，用几何法虽然未得到其最优解，但它的精确度仍然是很高的，在一般情况下用这种方法常可以得到较为满意的结果。</p>
+            </div>
+        </section>
+
+        <!-- 车辆调度问题 -->
+        <section id="section5">
+            <h3>三、车辆调度问题</h3>
+            
+            <p>车辆调度问题（Vehicle Scheduling Problem，VSP）是由Dantzig和Ramser于1959年提出来的，后来虽经过多人的潜心研究，但由于其复杂性大，目前仍未找到多项式算法。</p>
+            
+            <p>所谓VSP问题，一般指的是：对一系列发货点和收货点，组织调用一定的车辆，安排适当的行车路线，使车辆有序地通过它们，在满足指定的约束条件下（例如：货物的需求量与发货量，交发货时间，车辆可载量限制，行驶里程限制，行驶时间限制等），力争实现一定的目标（如车辆空驶总里程最短，运输总费用最低，车辆按一定时间到达，使用的车辆数最小等）。</p>
+            
+            <div class="highlight-box">
+                <h4>车辆调度问题的分类</h4>
+                <ul>
+                    <li>根据车辆满载程度分为：<strong>满载问题</strong>与<strong>非满载问题</strong></li>
+                    <li>根据可使用的车场数目分为：<strong>单车场问题</strong>与<strong>多车场问题</strong></li>
+                    <li>根据可用车辆的车型数分为：<strong>单车型问题</strong>与<strong>多车型问题</strong></li>
+                    <li>根据决策者的要求分为：<strong>单目标问题</strong>与<strong>多目标问题</strong></li>
+                </ul>
+            </div>
+            
+            <p>下面研究单车型、多车场运输问题的一种启发式算法，并考虑使总空驶里程极小化这一目标（它对运输企业的运输效益有极大影响）。</p>
+            
+            <h4>1. 问题说明</h4>
+            
+            <p>设某运输企业要完成的货运业务（例如指某一天或某半天）有$m$项：$A_1, A_2, \ldots, A_m$，其货运量分别是$g_1, g_2, \ldots, g_m$，完成各项运输业务所需的车辆数（根据货物类型和车辆状况而定）分别为$a_1, a_2, \ldots, a_m$；此外，该企业有$n$个车场可以使用，即可从车场$A_{m+1}, A_{m+2}, \ldots, A_{m+n}$发出空车和接收空车，这些车场与各货运业务的发货点和收货点位于同一个连通道路网上，各车场可派出的空车数分别是$b_{m+1}, b_{m+2}, \ldots, b_{m+n}$，可接收的空车数分别是$b'_{m+1}, b'_{m+2}, \ldots, b'_{m+n}$。</p>
+            
+            <h4>2. 数学模型</h4>
+            
+            <p>按照每项运输业务的要求将货物由发货点运送到收货点，这显然均为重车行驶，且必须完成，在分析使总空驶里程极小化这一问题时，它的安排对目标函数值不产生影响，可不予考虑。因此，可将每一项货运业务（即从其发货点$i'$将货物运送到收货点$i''$）看成一个压缩了的点——<strong>重载点$i$</strong>。</p>
+            
+            <p>对于每一个重载点$i$，为运出其货物量$g_i$需要$a_i$辆空车，它们将货物运抵目的地卸车后，又提供出$a_i$辆空车，然后这些空车驶向其他货运业务的发点（这时为空车行驶），继续装货执行运输任务。由此可以看出，执行运输任务的每辆货车都如此交替地进行空驶和重载，直至完成一个时间单元（一天或半天）的货物运输任务，返回某一车场为止。</p>
+            
+            <p>设由点$i$发往点$j$（$i, j$为车场或重载点）的空车数为$x_{ij}$，其空驶里程为$c_{ij}$，则使总空驶里程极小化的空车调度问题的数学模型可描述如下：</p>
+            
+            <div class="formula-block">
+                $$\begin{cases}
+                \min z = \sum_{i=1}^{m+n}\sum_{j=1}^{m+n} c_{ij}x_{ij} \\
+                \\
+                \sum_{j=1}^{m+n} x_{ij} = a_i \quad (i = 1, 2, \ldots, m) \\
+                \\
+                \sum_{j=1}^{m+n} x_{ij} \leq b_i \quad (i = m+1, m+2, \ldots, m+n) \\
+                \\
+                \sum_{i=1}^{m+n} x_{ij} = a_j \quad (j = 1, 2, \ldots, m) \\
+                \\
+                \sum_{i=1}^{m+n} x_{ij} \leq b'_j \quad (j = m+1, m+2, \ldots, m+n) \\
+                \\
+                x_{ij} \geq 0 \text{ 且为整数}
+                \end{cases}$$
+            </div>
+            
+            <p>此处$a_i$（或$a_j$）可由下式得到：</p>
+            
+            <div class="formula-block">
+                $$a_i = \begin{cases}
+                g_i / Q & \text{若 } g_i/Q \text{ 为整数} \\
+                [g_i / Q] + 1 & \text{若 } g_i/Q \text{ 不为整数}
+                \end{cases}$$
+            </div>
+            
+            <p>上式中，$[x]$为数值上大于$x$的最小整数，$Q$为一辆车的可载量。</p>
+            
+            <p>价值系数$c_{ij}$根据实际情况，可取为点$i$到点$j$的广义最短距离（或运费）。为避免由车场发出的空车不经重载点直接驶向车场，令</p>
+            
+            <div class="formula-block">
+                $$c_{ij} = M \quad i, j = m+1, m+2, \ldots, m+n$$
+            </div>
+            
+            <p>其中，$M$为一足够大的正数。</p>
+            
+            <p>运输问题的运输表将重载点和车场分开，形成了4个区域：$C-C$、$C-F$、$F-C$和$F-F$。</p>
+            
+            <h4>3. 算法</h4>
+            
+            <p>众所周知，表上作业法是求解运输问题的一种很有效的标准算法，而且能很方便地得出整数最优解，这正符合本问题的要求。因而，在构造求解问题的启发式算法时，应尽量设法利用表上作业法的优点。</p>
+            
+            <div class="algorithm">
+                <h4>算法步骤概述</h4>
+                <div class="algorithm-step">
+                    <p><strong>步骤1：解的扩展</strong></p>
+                    <p>首先仅考虑重载点部分，用表上作业法求解运输问题，得到最优解$X^{(0)} = (x_{ij}^{(0)})$。</p>
+                    <p>对解$X^{(0)}$中的每一个非零分量$x_{ij}^{(0)} > 0$（$i, j = 1, 2, \ldots, m$），计算：</p>
+                    <div class="formula-block">
+                        $$\delta_{ij} = \min_{m+1 \leq k \leq m+n}\{c_{ki} - c_{kj} \mid \bar{b}_k > 0\} + \min_{m+1 \leq l \leq m+n}\{c_{il} - c_{jl} \mid \bar{b}'_l > 0\} - c_{ij}$$
+                    </div>
+                    <p>其中：</p>
+                    <div class="formula-block">
+                        $$\bar{b}_i = b_i - \sum_{j=1}^{m} x_{ij}^{(0)} \quad (i = m+1, \ldots, m+n)$$
+                        $$\bar{b}'_j = b'_j - \sum_{i=1}^{m} x_{ij}^{(0)} \quad (j = m+1, \ldots, m+n)$$
+                    </div>
+                    <p>若$\delta_{ij} < 0$，按此方法调整得到的解$X^{(1)}$优于解$X^{(0)}$。</p>
+                    
+                    <p><strong>步骤2：解的收缩</strong></p>
+                    <p>当$C-F$区或$F-C$区的非零解分量之值的和比派车数要大时，需将解的非零分量的值由$C-F$区和$F-C$区向$C-C$区收缩。</p>
+                    
+                    <p><strong>步骤3：安排行车路线</strong></p>
+                    <p>经上述调整得到的解是模型的可接受可行解，可以它作为安排行车路线的依据。在非零分量中寻求序列，依据解的序列，得到初始行车路线，再根据具体约束条件对行车路线进行调整。</p>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <p style="text-indent: 0;"><strong>实践证明：</strong>这种启发式算法的运算速度快、精度高，对城市货运汽车科学调度产生了很好的效果。需要指出，解的调整工作（扩展、收缩）应和行车路线安排结合进行。</p>
+            </div>
+        </section>
+
+        <!-- 习题部分 -->
+        <section id="exercises">
+            <h2>习题</h2>
+            
+            <details>
+                <summary>14.1 什么是启发式方法？试说明用启发式方法解决实际问题的过程和步骤。</summary>
+                <div style="padding: 1rem;">
+                    <p>启发式方法是寻求解决问题的一种适宜方法和策略，建立在经验、比较和判断的基础上，体现了人的主观能动作用和创造力。其主要特点是强调"满意解"而非"最优解"。</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>14.2 在解决实际问题时如何运用启发式策略？除本书上列出的几个启发式策略之外，你认为还有什么样的有用策略？</summary>
+                <div style="padding: 1rem;">
+                    <p>本书介绍的主要策略包括：逐步构解策略、分解合成策略、改进策略、搜索学习策略。这些策略可以单独使用或综合运用。</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>14.3 对在多台设备上加工多个工件的工件排序问题来说，你认为应如何衡量不同排序方案的优劣？需考虑哪些准则？这些准则的适用条件如何？并举出两个实例加以详细说明。</summary>
+                <div style="padding: 1rem;">
+                    <p>主要准则包括：总加工时间、设备利用率、工件等待时间、交货期满足率等。具体准则的选择取决于实际生产需求和约束条件。</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>14.4 说明CW节约算法的基本思想，你认为还可用它解决哪些方面的问题？举例加以说明。</summary>
+                <div style="padding: 1rem;">
+                    <p>CW节约算法的基本思想是通过计算节约值来确定最优连接顺序，优先选择节约值大的连接。该算法除了可以解决TSP问题，还可以应用于物流配送、网络设计等领域。</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>14.5 说明本书所述货运车辆优化调度算法的原理和求解步骤，并绘出求解过程框图。</summary>
+                <div style="padding: 1rem;">
+                    <p>该算法基于运输问题的表上作业法，通过解的扩展和收缩步骤，结合行车路线安排，最终得到满意的可接受可行解。</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>14.6 表14-6给出了12个工件在设备A和设备B上的加工时间，要求安排使总加工时间最短的工件加工顺序。</summary>
+                <div style="padding: 1rem;">
+                    <div class="table-container">
+                        <table>
+                            <caption>表14-6 工件加工时间</caption>
+                            <thead>
+                                <tr>
+                                    <th>设备/工件</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th>6</th>
+                                    <th>7</th>
+                                    <th>8</th>
+                                    <th>9</th>
+                                    <th>10</th>
+                                    <th>11</th>
+                                    <th>12</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>A</strong></td>
+                                    <td>5</td>
+                                    <td>8</td>
+                                    <td>11</td>
+                                    <td>2</td>
+                                    <td>4</td>
+                                    <td>7</td>
+                                    <td>12</td>
+                                    <td>3</td>
+                                    <td>9</td>
+                                    <td>3</td>
+                                    <td>6</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>B</strong></td>
+                                    <td>5</td>
+                                    <td>9</td>
+                                    <td>4</td>
+                                    <td>3</td>
+                                    <td>7</td>
+                                    <td>6</td>
+                                    <td>9</td>
+                                    <td>4</td>
+                                    <td>5</td>
+                                    <td>8</td>
+                                    <td>9</td>
+                                    <td>4</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p style="margin-top: 1rem;">运用本章介绍的启发式算法，可以求得最优或近似最优的工件加工顺序。</p>
+                </div>
+            </details>
+        </section>
+
+        <!-- 总结与提示 -->
+        <section style="background: linear-gradient(135deg, var(--accent-yellow), #f9e84d); border: 3px solid var(--primary-orange);">
+            <h2 style="color: var(--dark-gray);">💡 学习总结</h2>
+            <div class="highlight-box" style="background: white;">
+                <h4>本章要点</h4>
+                <ul>
+                    <li>启发式方法强调"满意解"而非"最优解"，适用于复杂的实际问题</li>
+                    <li>主要策略包括：逐步构解、分解合成、改进策略、搜索学习</li>
+                    <li>排序问题、TSP问题和VSP问题是典型的应用领域</li>
+                    <li>CW节约算法和几何法是求解TSP问题的有效方法</li>
+                    <li>车辆调度问题需要综合考虑多种约束和目标</li>
+                </ul>
+            </div>
+            
+            <div class="info-box" style="background: white; margin-top: 1.5rem;">
+                <h4>数学公式说明</h4>
+                <p style="text-indent: 0;">本教程使用MathJax渲染数学公式，确保您的网络连接正常以便公式正确显示。行内公式使用$...$标记，独立公式使用$$...$$标记。所有希腊字母、求和、积分等数学符号都遵循LaTeX语法。</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" title="返回顶部">↑</button>
+
+    <!-- JavaScript 交互功能 -->
+    <script>
+        // 返回顶部按钮功能
+        window.addEventListener('scroll', function() {
+            const backToTopBtn = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+
+        document.getElementById('backToTop').addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 导航链接平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 为所有section添加淡入效果
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '0';
+                    entry.target.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        entry.target.style.transition = 'all 0.6s ease';
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, 100);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // details元素动画效果
+        document.querySelectorAll('details').forEach(detail => {
+            detail.addEventListener('toggle', function() {
+                if (this.open) {
+                    this.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 200);
+                }
+            });
+        });
+
+        // 控制台输出提示
+        console.log('%c📚 运筹学启发式方法交互式教程', 'color: #f27d00; font-size: 20px; font-weight: bold;');
+        console.log('%c本教程使用MathJax渲染数学公式，请确保网络连接正常', 'color: #343434; font-size: 14px;');
+        console.log('%c所有数学公式均遵循LaTeX语法规范', 'color: #a6d6c9; font-size: 14px;');
+    </script>
+
+    <!-- 
+    ==========================================
+    使用说明：
+    1. 保存为 .html 文件
+       - 将此文件保存为 "运筹学启发式方法教程.html"
+    
+    2. 网络要求
+       - 需要网络连接以加载 MathJax、Google Fonts
+       - 如果离线使用，部分功能可能受限
+    
+    3. 浏览器兼容性
+       - 推荐使用现代浏览器（Chrome、Firefox、Edge、Safari）
+       - 支持响应式设计，可在移动设备上查看
+    
+    4. 交互功能
+       - 点击导航栏快速跳转到各章节
+       - 使用折叠面板查看详细内容
+       - 返回顶部按钮在滚动时自动显示
+       - 所有数学公式使用LaTeX格式，由MathJax渲染
+    
+    5. 自定义
+       - 可以修改CSS变量调整颜色方案
+       - 可以添加更多交互功能
+       - 可以扩展内容或添加练习题
+    
+    技术栈：
+    - HTML5 语义化标签
+    - CSS3 渐变、动画、响应式设计
+    - JavaScript ES6+ 交互功能
+    - MathJax 2.7.7 数学公式渲染
+    - Google Fonts 字体优化
+    ==========================================
+    -->
+</body>
+</html>

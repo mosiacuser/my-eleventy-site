@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运筹学中的启发式方法 - 交互式教程</title>
+    
+    <!-- Google Fonts: Roboto 和 Open Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- MathJax 配置 (严格按照要求) -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+    <!-- 内联 CSS 样式 -->
+    <style>
+        /* CSS 变量定义 - 颜色主题 */
+        :root {
+            --color-primary: #f27d00; /* 橙色 */
+            --color-secondary: #a6d6c9; /* 薄荷绿 */
+            --color-highlight: #f7d117; /* 黄色 */
+            --color-text: #343434; /* 深灰 */
+            --color-bg: #ffffff; /* 白色 */
+            --color-bg-light: #f7fdfb; /* 极浅的薄荷绿 */
+            --color-code-bg: #f4f4f4; /* 代码背景 */
+        }
+
+        /* 全局样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.7;
+            color: var(--color-text);
+            background-image: linear-gradient(to bottom, var(--color-bg), var(--color-bg-light));
+            padding-top: 80px; /* 为固定导航栏留出空间 */
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background-color: var(--color-bg);
+            border-bottom: 3px solid var(--color-primary);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            height: 70px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .navbar-logo {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .navbar-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .navbar-links li {
+            margin-left: 1.5rem;
+        }
+
+        .navbar-links a {
+            text-decoration: none;
+            color: var(--color-text);
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .navbar-links a:hover,
+        .navbar-links a:focus {
+            background-color: var(--color-primary);
+            color: var(--color-bg);
+        }
+
+        /* 汉堡菜单 (移动端) */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 2rem;
+            color: var(--color-primary);
+        }
+
+        /* 主要内容区域 */
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        header h1 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 2.8rem;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        section {
+            background-color: var(--color-bg);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden; /* 配合圆角 */
+        }
+
+        /* 可折叠区域 */
+        details {
+            width: 100%;
+        }
+
+        summary {
+            cursor: pointer;
+            padding: 1.5rem;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #eee;
+            list-style: none; /* 移除默认箭头 */
+            position: relative;
+            transition: background-color 0.3s;
+        }
+
+        summary:hover {
+            background-color: #f0f0f0;
+        }
+
+        summary::-webkit-details-marker {
+            display: none; /* 移除 Safari 箭头 */
+        }
+
+        summary::after {
+            /* 自定义箭头 */
+            content: '▼';
+            font-size: 0.8em;
+            color: var(--color-primary);
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s;
+        }
+
+        details[open] > summary::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        article {
+            padding: 1.5rem 2rem;
+        }
+
+        /* 内容排版 */
+        h2 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 2rem;
+            color: var(--color-text);
+            margin: 0;
+        }
+
+        h3 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.6rem;
+            color: var(--color-text);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--color-secondary);
+            padding-bottom: 5px;
+        }
+        
+        h4 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.3rem;
+            color: var(--color-text);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* 引用/提示块 */
+        blockquote {
+            background-color: #fffbeb;
+            border-left: 5px solid var(--color-highlight);
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            font-style: italic;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* 代码/算法块 */
+        pre {
+            background-color: var(--color-code-bg);
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        code {
+            background-color: var(--color-code-bg);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #fdfdfd;
+        }
+
+        /* 图像占位符/SVG */
+        .image-placeholder {
+            max-width: 100%;
+            height: auto;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 1rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #777;
+            font-style: italic;
+        }
+
+        /* 交互式测验 */
+        .quiz-container {
+            padding: 1.5rem 2rem;
+        }
+
+        .quiz-container button {
+            background-color: var(--color-primary);
+            color: var(--color-bg);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+
+        .quiz-container button:hover {
+            background-color: #e06f00;
+        }
+
+        #answer {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+            color: #777;
+            border-top: 1px solid #eee;
+        }
+
+        /* MathJax 字体大小调整 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .navbar {
+                padding: 0 1rem;
+            }
+
+            .navbar-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                background-color: var(--color-bg);
+                width: 100%;
+                flex-direction: column;
+                text-align: center;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            }
+
+            .navbar-links.active {
+                display: flex;
+            }
+
+            .navbar-links li {
+                margin: 0;
+            }
+
+            .navbar-links a {
+                display: block;
+                padding: 1rem;
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            header h1 {
+                font-size: 2.2rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            h3 {
+                font-size: 1.4rem;
+            }
+            
+            article {
+                padding: 1rem 1.2rem;
+            }
+            
+            summary {
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部固定导航栏 -->
+    <nav class="navbar">
+        <a href="#" class="navbar-logo">运筹学教程</a>
+        <div class="hamburger" id="hamburger-menu">
+            &#9776; <!-- 汉堡图标 -->
+        </div>
+        <ul class="navbar-links" id="navbar-links">
+            <li><a href="#s1">概念</a></li>
+            <li><a href="#s2">应用举例</a></li>
+            <li><a href="#quiz">即练即测</a></li>
+            <li><a href="#exercises">习题</a></li>
+        </ul>
+    </nav>
+
+    <!-- 页面主内容 -->
+    <div class="container">
+        
+        <header>
+            <h1>第十四章 运筹学中的启发式方法</h1>
+        </header>
+
+        <main>
+            <!-- 第一节: 概念 -->
+            <section id="s1">
+                <details open>
+                    <summary><h2>第一节 启发式方法的概念</h2></summary>
+                    <article>
+                        <h3>一、启发式方法的提出</h3>
+                        <p>本书前面各章讨论了一些常用的优化模型,研究了相应的求解算法,运用这些模型和算法能有效地解决很多实际问题,得出问题的最优解。但这些标准的模型和算法在应用上常受到很大局限,它们主要适用于解决具有良性结构的问题,即问题的结构比较清晰,所含各元素之间的关系明确,边界清楚,容易为人们所认识,能够比较方便地通过建模和使用一定的算法求得解决。</p>
+                        <p>良性结构问题具有以下特征:</p>
+                        <ol>
+                            <li>能建立起反映该问题性质的一种“可接受”模型,与问题有关的主要信息可纳入模型之中;</li>
+                            <li>模型所需要的数据能够获取;</li>
+                            <li>有判定解的可行性和最优性(或满意性)的明确准则;</li>
+                            <li>模型可解,能拟订出求解模型的程序性步骤,而且得出的解能反映解决问题的可行方案;</li>
+                            <li>求解工作所需的计算量不过大,所需费用不过多。</li>
+                        </ol>
+                        <p>很多实际问题不具有良性结构,当套用传统的运筹学方法去处理时,就难以得到满意的效果。这时,与其偏离事实,忽略或修正某些重要的条件,勉强使用某种标准模型而使问题得到简化以易于求解,还不如保持问题的本来面目,建立基本符合问题实际情况的非标准模型。前者虽可用已有的标准算法求解,但由于问题的模型失真,得到的解通常难以付诸实施;后者由于模型涉及因素多,结构复杂,而与传统的标准模型相去甚远,难以套用已有的标准算法。在后面这种情况下,为得到可用的近似解,分析人员必须运用自己的感知和洞察力,从与其有关而较基本的模型及算法中寻求其中的联系,从中得到启发,去发现和构想可用于解决该问题的思路和途径,人们称这种方法为启发式方法,用这种方法建立的算法为启发式算法(heuristic algorithm)。</p>
+
+                        <h3>二、启发式方法的特点</h3>
+                        <p>由上可知,启发式方法是寻求解决问题的一种适宜方法和策略;当然,它也可以是面向某种具体问题的一种求解手段。启发式方法建立在经验、比较和判断的基础上,体现了人的主观能动作用和创造力。</p>
+                        <p>用启发式方法解决问题时强调“满意”,常常是得到“满意解”,决策者就认为可以了,而不去苛求最优性和探求最优解。之所以如此,其原因主要是:</p>
+                        <ul>
+                            <li>有很多问题不存在严格意义下的最优解(例如目标之间相互矛盾的多目标决策问题、一般的多属性评价问题、群决策问题等),这时,对目标和属性的满意性已能足够准确地描述人们的意愿和选择行为;</li>
+                            <li>对有些问题,要得到最优解需花费过大的代价,既难以做到,也不合算;</li>
+                            <li>从决策的实际需要出发,有时不必要求解具有过高的精度。</li>
+                        </ul>
+                        <p>假定为解决某类问题设计了一个算法,它能用于求解所有这类问题,而且获得最优(或满意)解的计算工作量可表示为这类问题“大小”的多项式函数,就称这个算法是确定型的多项式算法,简称为多项式算法或有效算法。很多“组合优化”问题(如设施定位问题、货郎担问题、多个工件在多台设备上的加工排序问题等)不存在多项式算法,欲求其最优解需要花费巨大的代价。</p>
+                        <p>用启发式方法解决问题是通过迭代过程实现的,因而需拟订出一套科学的解的搜索规则。为能得到满意的解,在整个迭代过程中要不断吸收出现的新信息,考察采用的求解策略,必要时改变原来拟订的不合适的策略,建立新的搜索规则,注意从失败中吸取教训,并逐步缩小搜索范围。</p>
+                        <p>启发式方法有下述优点:</p>
+                        <ol>
+                            <li>计算步骤简单,易于实施;</li>
+                            <li>不需要高深和复杂的理论知识,因而可由未经高级训练的人员实现;</li>
+                            <li>与应用优化方法相比,可以减少大量的计算工作量,从而显著节约开支和节省时间;</li>
+                            <li>易于将定量分析与定性分析相结合。</li>
+                        </ol>
+                        <p>启发式方法在解决工农业、商业、社会、管理、工程等方面的很多复杂实际问题时常具有重要的作用。</p>
+
+                        <h3>三、启发式方法的策略</h3>
+                        <p>用启发式方法解决问题时,首先应认真归纳问题的条件和正确确定问题的目标和要解决的关键问题,建立能恰当反映问题性质、条件、要求、结构和目标的模型,防止问题扭曲和表述失真。其次还要采用一定的策略,以便得出理想的结果。下面举出几种常用的策略,在使用时可根据问题的性质和要求选用其中之一,或将几个策略结合起来综合运用。</p>
+                        <ol>
+                            <li><strong>逐步构解策略</strong>: 一般来说,实际中面临的问题都是多维问题,它的解是由多个分量组成的。当使用该策略时,应建立某种规则,求解时按一定次序每次确定解的一个分量,逐步进行,直至得到一个完整的解为止。</li>
+                            <li><strong>分解合成策略</strong>: 在解决一个复杂的大问题时,可首先将其分解为若干个小的子问题(分解方法视问题而定),再选用合适的方法(包括优化方法、启发式方法、模拟方法等)按一定顺序求解每个子问题,根据子问题之间以及各子问题与总问题之间的关系(例如递阶关系、包含关系、平行关系等),将子问题的解作为下一阶子问题的输入,或在某种相容原则下进行综合,最后得出合乎总问题要求的解。</li>
+li>
+                            <li><strong>改进策略</strong>: 在运用这一策略时,首先从问题的一个解决方案或初始解(初始解不一定要求为可行解)出发,然后对方案或解的质量(包括其可行性、可接受程度、目标函数值的优劣、对环境的适应性、可靠性等)进行评价,并采用某种启发式方法设计改进规则,对解决方案或初始解进行改进,直至满意为止。</li>
+                            <li><strong>搜索学习策略</strong>: 本策略包括确定搜索方向,拟订搜索方法,建立发现和收集在搜索过程中出现的新信息的机制,并根据对新信息的分析结果,重新确认或改变原来的搜索方向和搜索方法,修正搜索参数,消去不必要的搜索范围。其目的在于提高搜索效率,加快搜索速度,尽快获得合乎要求的解决方案(问题的解)。</li>
+                        </ol>
+                    </article>
+                </details>
+            </section>
+
+            <!-- 第二节: 应用举例 -->
+            <section id="s2">
+                <details open>
+                    <summary><h2>第二节 应用问题举例</h2></summary>
+                    <article>
+                        <p>下面结合例子说明如何使用启发式方法解决实际问题。</p>
+
+                        <h3>一、多个工件在设备上加工的排序问题</h3>
+                        <p>$n$个工件在$m$台设备上加工的最优顺序问题,目前尚无多项式算法。为便于说明如何用启发式方法解决这种问题,此处仅考虑两台设备A和B。研究在这两台设备上顺序加工$n$个工件(工件 $j=1, 2, \cdot\cdot\cdot, n$)时,应如何排列这些工件的顺序,才能使总加工时间(从在A上开始加工第一个工件起到在B上加工完最后一个工件止)尽可能短。此处要求每个工件都先在A上加工,然后再在B上加工。</p>
+                        <p>如果在A上加工各工件的顺序与在B上加工的顺序不同,这就要增加等待时间,从而使总加工时间延长,因此,在研究该问题时对这种情况可不予考虑。即使如此,本问题可能的排序方案仍有$n!$个之多,随着工件数的增多,其计算工作量增加很快。下面寻求用启发式方法的解决途径。</p>
+                        
+                        <blockquote>
+                            <strong>例1</strong>: 表14-1中列出了6个工件分别在设备A和设备B上的加工时间 $A_j(\min)$ 和 $B_j(\min)$,所有工件都先在A上加工,再在B上加工。要求确定使总加工时间最短的工件加工顺序。
+                        </blockquote>
+
+                        <table>
+                            <caption>表14-1 工件加工时间</caption>
+                            <thead>
+                                <tr>
+                                    <th>工时<br>工件</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th>6</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>设备A</strong></td>
+                                    <td>30</td>
+                                    <td>60</td>
+                                    <td>60</td>
+                                    <td>20</td>
+                                    <td>80</td>
+                                    <td>90</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>设备B</strong></td>
+                                    <td>70</td>
+                                    <td>70</td>
+                                    <td>50</td>
+                                    <td>60</td>
+                                    <td>30</td>
+                                    <td>40</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p>为得出这一类问题的启发式算法,下面运用逐步构解策略。首先考虑工件1和工件2,其可能的排序方案共有两个: $1 \to 2$ 和 $2 \to 1$。在本例中由于 $B_1 = B_2$, $A_1 < A_2$, 故将工件1排在前面进行加工所需的总加工时间较少。现再看工件2和工件3, 由于 $A_2 = A_3$, $B_3 < B_2$, 故将工件3排在工件2的后面加工所需的总加工时间较少。</p>
+                        
+                        <img src="https://placehold.co/800x250/f0f0f0/343434?text=图+14-1+和+14-2+工件排序比较示意图" alt="图 14-1 和 14-2 工件排序比较" class="image-placeholder">
+
+                        <p>虽然上面只分别比较了两个工件的不同加工顺序,且依据的是一些特定情况,但可由此得到启发,将其推广应用到几个工件在两台设备上的一般加工顺序问题,并制定出有关的启发式规则。</p>
+
+                        <h4>多工件在两台设备上加工排序的启发式迭代步骤如下:</h4>
+                        <ol>
+                            <li>令 $i=1, k=0$;</li>
+                            <li>找出最小加工时间:
+                                $$ l_r = \min\{A_1, A_2, \cdot\cdot\cdot, A_n, B_1, B_2, \cdot\cdot\cdot, B_n\} \quad (14.1) $$
+                            </li>
+                            <li>若 $l_r = A_j$, 则将工件 $j$ 安排为第 $i$ 个加工工件, 并置 $i := i+1$; 若 $l_r = B_j$, 则把工件 $j$ 安排为第 $(n-k)$ 个加工工件, 并置 $k := k+1$;</li>
+                            <li>将 $A_j$ 和 $B_j$ 从式(14.1)表示的工件加工时间表中删去, 即不再考虑已排好加工顺序的工件 $j$;</li>
+                            <li>返回步骤(2), 直至式(14.1)中的工件加工时间表变成空集。</li>
+                        </ol>
+
+                        <h4>现用上述迭代步骤求解例1:</h4>
+                        <p>在本例中 $n=6$。开始迭代时 $i=1, k=0$。由式(14.1), $l_r = 20 = A_4$, 故将工件4排为第1。删去 $A_4$ 和 $B_4$ 并置 $i = 1+1 = 2$。此时 $l_r = 30 = A_1 = B_5$, 将工件1排为第2, 工件5排为第 $6 (n-k = 6-0 = 6)$。删去 $A_1, B_1, A_5$ 和 $B_5$, 置 $i = 2+1 = 3, k = 0+1 = 1$。如此继续,可得所有6个工件的加工顺序为:</p>
+                        <pre>$ 4 \to 1 \to 2 \to 3 \to 6 \to 5 $</pre>
+                        <p>本例的总加工时间等于370min。</p>
+                        <img src="https://placehold.co/800x150/f0f0f0/343434?text=图+14-3+最优加工顺序甘特图" alt="图 14-3 最优加工顺序" class="image-placeholder">
+                        <p>需要指出,对在两台设备上加工几个工件的问题来说,用上述方法求得的解为最优解。但是,如将这种思想扩展应用到在$m$台设备上加工$n$个工件的一般加工顺序问题,所得结果一般就不再是最优的了。然而用这种方法却常常可以得到较好的解。</p>
+
+                        <hr style="margin: 2rem 0;">
+
+                        <h3>二、货郎担问题</h3>
+                        <p>货郎担问题也称旅行售货员问题(traveling salesman problem, TSP), 它指的是: 一个售货员从某一城市出发, 为售货访问$n$个城市各一次且仅一次, 然后回到原城市, 问他走什么样的路线才能使走过的总路程最短(或旅行费用最低)。这个问题就是寻求总权最小的汉密尔顿(Hamilton)回路问题。到目前为止, 对TSP问题还没有提出多项式算法, 对于较大的这种问题(例如大于40)常需借助于启发式算法求解。</p>
+                        <p>下面介绍较典型的两种启发式算法。</p>
+                        
+                        <h4>1. C-W 节约算法</h4>
+                        <p>该方法由 Clarke 和 Wright 提出, 其基本思想和迭代步骤说明如下。</p>
+                        <p>假定有$n$个需要访问的地方(例如城市), 把每个访问地看成一个点, 并取其中的一个点作为基点(起点), 例如以点1为基点。首先将每个点与基点相连接, 构成子回路 $1 \to j \to 1$ ($j=2, 3, \cdot\cdot\cdot, n$), 这样就得到了一个具有 $n-1$ 条子回路的图(这时尚未形成汉密尔顿回路)。旅行者按此线路访问$n$个点所走的路程总和等于:</p>
+                        $$ z = 2 \sum_{j=2}^{n} c_{1j} \quad (14.2) $$
+                        <p>其中 $c_{1j}$ 为由点1到点 $j$ ($j=2, 3, \cdot\cdot\cdot, n$) 的路段长度, 这里假定 $c_{1j} = c_{j1}$ (对所有点 $j$ )。</p>
+                        <p>若连接点 $i$ 和点 $j$ ($i, j \neq 1$), 即令旅行者走弧 $(i, j)$ 时(这时当然就不再经过弧 $(1, i)$ 和 $(1, j)$), 所引起的路程节约值 $s(i, j)$ 可计算如下:</p>
+                        $$ s(i, j) = 2c_{1i} + 2c_{1j} - (c_{1i} + c_{1j} + c_{ij}) $$
+                        $$ s(i, j) = c_{1i} + c_{1j} - c_{ij} \quad (14.3) $$
+                        <p>对不同的点对 $(i, j)$, $s(i, j)$ 越大, 旅行者通过弧 $(i, j)$ 所节约的路程越多, 因而应优先将这段弧插入到旅行线路中去。</p>
+                        <p>在具体应用该方法时, 可按以下迭代步骤进行:</p>
+                        <ol>
+                            <li>选取基点, 例如选取点1为基点。将基点与其他各点连接, 得到 $n-1$ 条子回路 $1 \to j \to 1$ ($j=2, 3, \cdot\cdot\cdot, n$);</li>
+                            <li>对不违背限制条件的所有可连接点对 $(i, j)$ 计算其节约值 ($i, j$ 不为基点)
+                                $$ s(i, j) = c_{1i} + c_{1j} - c_{ij} $$
+                            </li>
+                            <li>将所有 $s(i, j)$ 按其值由大到小排列;</li>
+                            <li>按 $s(i, j)$ 的上述顺序, 逐个考察其端点 $i$ 和 $j$, 若满足以下条件, 就将弧 $(i, j)$ 插入到旅行线路中。其条件是:
+                                <br>① 点 $i$ 和点 $j$ 不在一条线路上;
+                                <br>② 点 $i$ 和点 $j$ 均与基点相邻。
+                            </li>
+                            <li>返回步骤(4), 直至考察完所有可插入弧 $(i, j)$ 为止。</li>
+                        </ol>
+                        <p>通过以上迭代步骤, 可使问题的解逐步得到改善, 最后达到满意解(也有可能是最优解)。</p>
+
+                        <blockquote>
+                            <strong>例2</strong>: 用C-W节约算法求解下述货郎担问题, 已知各访问点的位置如图14-4中所示。
+                        </blockquote>
+
+                        <!-- SVG 绘制 图 14-4 -->
+                        <svg viewBox="-2 -2 30 30" width="400" height="400" class="image-placeholder" style="max-width: 400px; margin: 1rem auto; display: block;">
+                            <title>图14-4 各访问点位置</title>
+                            <!-- 坐标轴 -->
+                            <line x1="0" y1="0" x1="0" y2="25" stroke="#343434" stroke-width="0.2"/>
+                            <line x1="0" y1="25" x1="25" y2="25" stroke="#343434" stroke-width="0.2"/>
+                            <text x="0" y="27" font-size="1" fill="#343434">O</text>
+                            <text x="25" y="26" font-size="1" fill="#343434">x</text>
+                            <text x="-1" y="0" font-size="1" fill="#343434">y</text>
+                            
+                            <!-- 绘制点 -->
+                            <circle cx="10" cy="2" r="0.3" fill="var(--color-primary)"/>
+                            <text x="10.5" y="2" font-size="1" fill="#343434">A (10, 23)</text>
+                            
+                            <circle cx="0" cy="12" r="0.3" fill="var(--color-primary)"/>
+                            <text x="0.5" y="12" font-size="1" fill="#343434">B (0, 13)</text>
+                            
+                            <circle cx="1" cy="25" r="0.3" fill="var(--color-primary)"/>
+                            <text x="1.5" y="25" font-size="1" fill="#343434">C (1, 0)</text>
+
+                            <circle cx="21" cy="23" r="0.3" fill="var(--color-primary)"/>
+                            <text x="21.5" y="23" font-size="1" fill="#343434">D (21, 2)</text>
+
+                            <circle cx="13" cy="21" r="0.3" fill="var(--color-primary)"/>
+                            <text x="13.5" y="21" font-size="1" fill="#343434">E (13, 4)</text>
+
+                            <circle cx="11" cy="19" r="0.3" fill="var(--color-primary)"/>
+                            <text x="11.5" y="19" font-size="1" fill="#343434">F (11, 6)</text>
+
+                            <circle cx="10" cy="15" r="0.3" fill="var(--color-primary)"/>
+                            <text x="10.5" y="15" font-size="1" fill="#343434">G (10, 10)</text>
+                        </svg>
+
+                        <p><strong>解</strong>: 先按图14-4给出的数据计算各点之间的欧氏距离 $c(i, j)$, 计算结果列入距离表(表14-2)中。由于已假设 $c_{ij} = c_{ji}$, 故该表中各元素的值以主对角线成对称。</p>
+                        
+                        <table>
+                            <caption>表14-2 距离表</caption>
+                            <thead>
+                                <tr>
+                                    <th>始点 \ 终点</th>
+                                    <th>A</th>
+                                    <th>B</th>
+                                    <th>C</th>
+                                    <th>D</th>
+                                    <th>E</th>
+                                    <th>F</th>
+                                    <th>G</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>A</strong></td><td>0</td><td>14.14</td><td>24.70</td><td>23.71</td><td>19.24</td><td>17.03</td><td>13.00</td></tr>
+                                <tr><td><strong>B</strong></td><td>14.14</td><td>0</td><td>13.04</td><td>23.71</td><td>15.81</td><td>13.04</td><td>10.44</td></tr>
+                                <tr><td><strong>C</strong></td><td>24.70</td><td>13.04</td><td>0</td><td>20.10</td><td>12.65</td><td>11.66</td><td>13.45</td></tr>
+                                <tr><td><strong>D</strong></td><td>23.71</td><td>23.71</td><td>20.10</td><td>0</td><td>8.25</td><td>10.77</td><td>13.60</td></tr>
+                                <tr><td><strong>E</strong></td><td>19.24</td><td>15.81</td><td>12.65</td><td>8.25</td><td>0</td><td>2.83</td><td>6.71</td></tr>
+                                <tr><td><strong>F</strong></td><td>17.03</td><td>13.04</td><td>11.66</td><td>10.77</td><td>2.83</td><td>0</td><td>4.12</td></tr>
+                                <tr><td><strong>G</strong></td><td>13.00</td><td>10.44</td><td>13.45</td><td>13.60</td><td>6.71</td><td>4.12</td><td>0</td></tr>
+                            </tbody>
+                        </table>
+                        
+                        <p>取A为基点, 构成初始旅行线路图(图14-5)。再用式(14.3)计算将弧 $(i, j)$ ($i, j \neq A$) 插入到线路中时引起的路程节约值, 并按节约值由大到小的顺序将它们填入表14-3中。</p>
+
+                        <img src="https://placehold.co/600x300/f0f0f0/343434?text=图+14-5+初始旅行线路图" alt="图 14-5 初始旅行线路" class="image-placeholder">
+
+                        <table>
+                            <caption>表14-3 节约值表 (由大到小)</caption>
+                            <thead>
+                                <tr><th>序号</th><th>弧</th><th>节约值</th><th>序号</th><th>弧</th><th>节约值</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>(D, E)</td><td>34.70</td><td>9</td><td>(E, G)</td><td>25.53</td></tr>
+                                <tr><td>2</td><td>(E, F)</td><td>33.44</td><td>10</td><td>(C, G)</td><td>24.25</td></tr>
+                                <tr><td>3</td><td>(C, E)</td><td>31.29</td><td>11</td><td>(D, G)</td><td>23.11</td></tr>
+                                <tr><td>4</td><td>(C, F)</td><td>30.07</td><td>12</td><td>(B, F)</td><td>18.13</td></tr>
+                                <tr><td>5</td><td>(D, F)</td><td>29.97</td><td>13</td><td>(B, E)</td><td>17.57</td></tr>
+                                <tr><td>6</td><td>(C, D)</td><td>28.31</td><td>14</td><td>(B, G)</td><td>16.70</td></tr>
+                                <tr><td>7</td><td>(F, G)</td><td>25.91</td><td>15</td><td>(B, D)</td><td>14.14</td></tr>
+                                <tr><td>8</td><td>(B, C)</td><td>25.80</td><td></td><td></td><td></td></tr>
+                            </tbody>
+                        </table>
+
+                        <p>依节约值从大到小的次序, 对每条弧加以考察, 看是否应将其插入线路中去。若将其插入, 就要对线路作相应的改变。整个过程示于表14-4中。</p>
+                        
+                        <table>
+                            <caption>表14-4 C-W算法迭代过程</caption>
+                            <thead>
+                                <tr><th>序号</th><th>弧</th><th>线路及说明</th><th>插入该弧的节约值</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>0</td><td>-</td><td>A→B→A, A→C→A, A→D→A, A→E→A, A→F→A, A→G→A</td><td>-</td></tr>
+                                <tr><td>1</td><td>(D, E)</td><td>A→B→A, A→C→A, A→D→E→A, A→F→A, A→G→A</td><td>34.70</td></tr>
+                                <tr><td>2</td><td>(E, F)</td><td>A→B→A, A→C→A, A→D→E→F→A, A→G→A</td><td>33.44</td></tr>
+                                <tr><td>3</td><td>(C, E)</td><td>E点与基点不相邻, 不插入</td><td>0</td></tr>
+                                <tr><td>4</td><td>(C, F)</td><td>A→B→A, A→D→E→F→C→A, A→G→A</td><td>30.07</td></tr>
+                                <tr><td>5, 6</td><td>(D, F), (C, D)</td><td>这些点已在同一条线路上</td><td>0</td></tr>
+                                <tr><td>7</td><td>(F, G)</td><td>F点与基点不相邻, 不插入</td><td>0</td></tr>
+                                <tr><td>8</td><td>(B, C)</td><td>A→D→E→F→C→B→A, A→G→A</td><td>25.80</td></tr>
+                                <tr><td>9, 10</td><td>(E, G), (C, G)</td><td>E点, C点与基点A不相邻, 不插入</td><td>0</td></tr>
+                                <tr><td>11</td><td>(D, G)</td><td>A→G→D→E→F→C→B→A</td><td>23.11</td></tr>
+                            </tbody>
+                        </table>
+
+                        <p>当插入弧(D, G)之后, 线路已包含所有要访问的点, 算法终止。用该方法得到的线路(参看图14-6)是:</p>
+                        <pre>$ A \to G \to D \to E \to F \to C \to B \to A $</pre>
+                        <p>该线路的总长度 $z = 76.52$。</p>
+
+                        <img src="https://placehold.co/600x400/f0f0f0/343434?text=图+14-6+C-W算法结果线路图" alt="图 14-6 C-W算法结果" class="image-placeholder">
+
+                        <h4>2. 几何法</h4>
+                        <p>这种方法由 J. P. Norback 和 R. F. Love 提出, 它基于对各访问点构成的几何图形的分析, 以此确定初始线路和不在初始线路上的各点的插入顺序和插入位置。</p>
+                        <p>根据对一般几何图形的观察可知, 最短访问线路应具有以下直观性质: (1) 线路自身不相交; (2) 各段线路应处于由所有访问点形成的凸包上或其凸包内部 (这里所说的凸包(convex hull)是包含所有访问点的最小凸集)。</p>
+                        
+                        <img src="https://placehold.co/400x300/f0f0f0/343434?text=图+14-7+自相交与不自交线路比较" alt="图 14-7 线路比较" class="image-placeholder" style="max-width: 400px;">
+
+                        <p>根据上述观察和分析的启发, 可拟订出求解旅行售货员问题的下述迭代步骤:</p>
+                        <ol>
+                            <li>找出由欲访问各点构成的凸包;</li>
+                            <li>在凸包上的点, 按其出现的自然顺序访问(不要使访问线路自交), 从而形成一初始访问线路;</li>
+                            <li>将不在初始访问线路上的各个点 $I$ (位于凸包内的访问点), 与已在访问线路上的所有点相连。设 $P_0$ 与 $Q_0$ 为已在访问线路上的任两个相邻点, $\angle P_0 I Q_0$ 为所有 $\angle PIQ$ 角度中的最大者, 则将 $I$ 插入到 $P_0$ 和 $Q_0$ 之间;</li>
+                            <li>重复进行步骤(3), 每次在访问线路上增加一个新点, 直至所有欲访问点都被引入到访问线路中为止。这时就构成了一条汉密尔顿回路。</li>
+                        </ol>
+                        <p>下面用这种方法求解例2。其迭代过程示于图14-8中。开始时构成凸包 ABCDA (图14-8(a)), 以它为初始访问线路, 然后将不在初始访问线路上的E、F和G三点分别与A、B、C、D四点相连(图14-8(b)), 考查以E、F和G为角顶, 分别以AB、BC、CD和DA为对边形成的各个角度, 其中以 $\angle CED$ 为最大, 故将点E插入在C和D两点之间, 形成新的访问线路 ABCEDA (图14-8(c))。现不在访问线路上的点为F和G, 连接 EF 和 EG, 考察以F和G为角顶的各角, 以 $\angle DGA$ 为最大, 将G点插入D点和A点之间, 这时的访问线路变为 ABCEDGA (图14-8(d))。如上继续进行, 将点F插入到D点和G点之间 (注：PDF原文此处似有误，从图e看F应插入E, G之间，但图f最优解F在E,D之间。按原文插入D,G之间), 这就得到了本问题的汉密尔顿回路 $A \to B \to C \to E \to D \to F \to G \to A$ (图14-8(e)), 其线路总长等于 $75.97$。</p>
+                        <p>该问题的最优解示于图14-8(f)中, 其线路总长度为 $75.48$。它可以通过交换线路中两个相邻点E和D的连接顺序而得到。</p>
+                        
+                        <img src="https://placehold.co/800x300/f0f0f0/343434?text=图+14-8+几何法迭代过程" alt="图 14-8 几何法" class="image-placeholder">
+
+                        <p>在本例中, 用几何法虽然未得到其最优解, 但它的精确度仍然是很高的, 在一般情况下用这种方法常可以得到较为满意的结果。</p>
+
+                        <hr style="margin: 2rem 0;">
+
+                        <h3>三、车辆调度问题</h3>
+                        <p>车辆调度问题(vehicle scheduling problem, VSP)是由 Dantzig 和 Ramser 于1959年提出来的, 后来虽经过多人的潜心研究, 但由于其复杂性大, 目前仍未找到多项式算法。</p>
+                        <p>所谓VSP问题, 一般指的是: 对一系列发货点和收货点, 组织调用一定的车辆, 安排适当的行车路线, 使车辆有序地通过它们, 在满足指定的约束条件下(例如: 货物的需求量与发货量, 交发货时间, 车辆可载量限制, 行驶里程限制, 行驶时间限制等), 力争实现一定的目标(如车辆空驶总里程最短, 运输总费用最低, 车辆按一定时间到达, 使用的车辆数最小等)。</p>
+                        
+                        <h4>1. 问题说明</h4>
+                        <p>设某运输企业要完成的货运业务有 $m$ 项: $A_1, A_2, \cdot\cdot\cdot, A_m$, 其货运量分别是 $g_1, g_2, \cdot\cdot\cdot, g_m$; 完成各项运输业务所需的车辆数(根据货物类型和车辆状况而定)分别为 $a_1, a_2, \cdot\cdot\cdot, a_m$; 此外, 该企业有 $n$ 个车场可以使用, 即可从车场 $A_{m+1}, A_{m+2}, \cdot\cdot\cdot, A_{m+n}$ 发出空车和接收空车, ... 各车场可派出的空车数分别是 $b_{m+1}, \cdot\cdot\cdot, b_{m+n}$。可接收的空车数分别是 $b'_{m+1}, \cdot\cdot\cdot, b'_{m+n}$。</p>
+
+                        <h4>2. 数学模型</h4>
+                        <p>...可将每一项货运业务工作, 即“从其发货点将货物运送到收货点”, 看成一个压缩了的点——重载点(图14-9)。</p>
+                        
+                        <img src="https://placehold.co/600x150/f0f0f0/343434?text=图+14-9+重载点示意图" alt="图 14-9 重载点" class="image-placeholder">
+                        
+                        <p>对于每一个重载点 $i$, 为运出其货物量 $g_i$ 需要 $a_i$ 辆空车, 它们将货物运抵目的地卸车后, 又提供出 $a_i$ 辆空车...</p>
+                        <p>设由点 $i$ 发往点 $j$ ($i, j$ 为车场或重载点)的空车数为 $x_{ij}$, 其空驶里程为 $c_{ij}$, 则使总空驶里程极小化的空车调度问题的数学模型可描述如下:</p>
+                        
+                        <pre>
+$$ \min z = \sum_{i=1}^{m+n} \sum_{j=1}^{m+n} c_{ij} x_{ij} \quad (14.4) $$
+s.t.
+$$
+\begin{cases}
+\sum_{j=1}^{m+n} x_{ij} = a_i & (i=1, 2, \cdot\cdot\cdot, m) \\
+\sum_{j=1}^{m+n} x_{ij} \le b_i & (i=m+1, \cdot\cdot\cdot, m+n) \\
+\sum_{i=1}^{m+n} x_{ij} = a_j & (j=1, 2, \cdot\cdot\cdot, m) \\
+\sum_{i=1}^{m+n} x_{ij} \le b'_j & (j=m+1, \cdot\cdot\cdot, m+n) \\
+x_{ij} \ge 0 \text{ 且为整数}
+\end{cases}
+$$
+</pre>
+                        <p>此处 $a_i$ (或 $a_j$) 可由式(14.5)得:</p>
+                        $$
+a_i = 
+\begin{cases} 
+g_i / Q & \text{若 } g_i / Q \text{ 为整数} \\
+\lfloor g_i / Q \rfloor + 1 & \text{若 } g_i / Q \text{ 不为整数} 
+\end{cases}
+\quad (14.5)
+$$
+                        <p>上式中, $\lfloor g_i / Q \rfloor$ 为数值不大于 $g_i / Q$ 的最大整数 ($Q$ 为一辆车的可载量)。</p>
+                        <p>...为避免由车场发出的空车不经重载点直接驶向车场, 令 $c_{ij} = M \quad (i, j = m+1, \cdot\cdot\cdot, m+n)$, 其中 $M$ 为一足够大的正数。</p>
+                        <p>运输问题式(14.4)的运输表如表14-5所示。</p>
+                        
+                        <table>
+                            <caption>表14-5 VSP运输表</caption>
+                            <thead>
+                                <tr>
+                                    <th>收空车 $\to$<br>发空车 $\downarrow$</th>
+                                    <th colspan="3">重载点 ($A_1 \cdot\cdot\cdot A_m$)</th>
+                                    <th colspan="3">车场 ($A_{m+1} \cdot\cdot\cdot A_{m+n}$)</th>
+                                    <th>发车数</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>重载点 ($A_1 \cdot\cdot\cdot A_m$)</strong></td>
+                                    <td colspan="3">$C-C$</td>
+                                    <td colspan="3">$C-F$</td>
+                                    <td>$a_1 \cdot\cdot\cdot a_m$</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>车场 ($A_{m+1} \cdot\cdot\cdot A_{m+n}$)</strong></td>
+                                    <td colspan="3">$F-C$</td>
+                                    <td colspan="3">$F-F$</td>
+                                    <td>$b_{m+1} \cdot\cdot\cdot b_{m+n}$</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>收车数</strong></td>
+                                    <td colspan="3">$a_1 \cdot\cdot\cdot a_m$</td>
+                                    <td colspan="3">$b'_{m+1} \cdot\cdot\cdot b'_{m+n}$</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>3. 算法</h4>
+                        <p>...首先仅考虑重载点部分, 由式(14.4)得到:</p>
+                        $$ \min z = \sum_{i=1}^{m} \sum_{j=1}^{m} c_{ij} x_{ij} \quad (14.6) $$
+                        s.t.
+                        $$
+                        \begin{cases}
+                        \sum_{j=1}^{m} x_{ij} = a_i & (i=1, 2, \cdot\cdot\cdot, m) \\
+                        \sum_{i=1}^{m} x_{ij} = a_j & (j=1, 2, \cdot\cdot\cdot, m) \\
+                        x_{ij} \ge 0 \text{ 且为整数}
+                        \end{cases}
+                        $$
+                        <p>显然, 这是一个一般的产销平衡运输问题, 可直接用表上作业法求解, 设求出的最优解为 $X^{(0)} = (x_{ij}^{(0)})$。...</p>
+                        
+                        <p><strong>(1) 解的扩展</strong></p>
+                        <p>对解 $X^{(0)}$ 中的每一个非零分量 $x_{ij}^{(0)} > 0$ ($i, j = 1, \cdot\cdot\cdot, m$), 计算</p>
+                        $$ \delta_{ij} = \min_{m+1 \le k \le m+n} \{c_{kj} | \bar{b}_k > 0\} + \min_{m+1 \le l \le m+n} \{c_{il} | \bar{b}'_l > 0\} - c_{ij} \quad (14.7) $$
+                        <p>式中</p>
+                        $$ \bar{b}_k = b_k - \sum_{j=1}^{m} x_{kj}^{(0)} \quad (i=m+1, \cdot\cdot\cdot, m+n) \quad (14.8) $$
+                        $$ \bar{b}'_l = b'_l - \sum_{i=1}^{m} x_{il}^{(0)} \quad (j=m+1, \cdot\cdot\cdot, m+n) \quad (14.9) $$
+                        <p>...若由式(14.7)得出的 $\delta_{ij}$ 来自 $k$ 行和 $l$ 列 ($k, l \in [m+1, m+n]$), 则把 $x_{ij}^{(0)}$ 扩展至 $x_{kj}^{(0)}$ 和 $x_{il}^{(0)}$, 这时将 $x_{ij}^{(0)}, x_{kj}^{(0)}, x_{il}^{(0)}$ 三个变量的值分别调整为:</p>
+                        $$
+                        \begin{cases}
+                        x_{ij} := x_{ij}^{(0)} - \min\{x_{ij}^{(0)}, \bar{b}_k, \bar{b}'_l\} \\
+                        x_{kj} := x_{kj}^{(0)} + \min\{x_{ij}^{(0)}, \bar{b}_k, \bar{b}'_l\} \\
+                        x_{il} := x_{il}^{(0)} + \min\{x_{ij}^{(0)}, \bar{b}_k, \bar{b}'_l\}
+                        \end{cases}
+                        \quad (14.10)
+                        $$
+
+                        <p><strong>(2) 解的收缩</strong></p>
+                        <p>本步骤是步骤(1)的逆过程。 ...对每一对 $x_{kj}^{(1)} > 0$ 和 $x_{il}^{(1)} > 0$ ($k, l \in [m+1, m+n]; i, j \in [1, m]$), 计算</p>
+                        $$ \delta'_{ij} = \min \{c_{ij} - c_{kj} - c_{il} | x_{kj}^{(1)} > 0, x_{il}^{(1)} > 0\} \quad (14.11) $$
+                        <p>并以此为依据进行下述解的调整:</p>
+                        $$
+                        \begin{cases}
+                        x_{kj} := x_{kj}^{(1)} - \min\{x_{kj}^{(1)}, x_{il}^{(1)}\} \\
+                        x_{il} := x_{il}^{(1)} - \min\{x_{kj}^{(1)}, x_{il}^{(1)}\} \\
+                        x_{ij} := x_{ij}^{(1)} + \min\{x_{kj}^{(1)}, x_{il}^{(1)}\}
+                        \end{cases}
+                        \quad (14.12)
+                        $$
+
+                        <h4>4. 安排行车路线</h4>
+                        <p>...寻求下述序列:</p>
+                        $$ x_{k_1 k_2} > 0, x_{k_2 k_3} > 0, x_{k_3 k_4} > 0, \cdot\cdot\cdot, x_{k_p k_q} > 0 \quad (14.13) $$
+                        <p>在该序列中变量的下标 $k_1, k_q \in [m+1, m+n]$ ... 依据解的序列式(14.13), 可得到某条初始行车路线如下:</p>
+                        <pre>
+车场 ($A_{k_1}$) $\to$ 重载点 ($A_{k_2}$) $\to$ ... $\to$ 重载点 ($A_{k_p}$) $\to$ 车场 ($A_{k_q}$)
+</pre>
+                        <p>...实践证明, 这种启发式算法的运算速度快、精度高, 对城市货运汽车科学调度产生了很好的效果。</p>
+                    </article>
+                </details>
+            </section>
+
+            <!-- 即练即测 -->
+            <section id="quiz">
+                <div class="quiz-container">
+                    <h2>即练即测</h2>
+                    <p>由本章上面的论述可知, 启发式方法的范畴不存在严格的理论限定性, 它着重于对相关理论和方法的借鉴以及对已有方法的改进, 着眼于实施的可行、方便和效果的提高, 从而可为人们解决复杂实际问题提供新的思路和途径。</p>
+                    
+                    <button onclick="toggleAnswer()">显示/隐藏思考提示</button>
+                    
+                    <div id="answer" style="display:none;">
+                        <p><strong>思考提示:</strong> 这段话总结了启发式方法的核心精神。请思考：为什么启发式方法在解决复杂实际问题时常常比传统优化方法更有效？它强调的“满意解”与“最优解”有何区别？</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 习题 -->
+            <section id="exercises">
+                <details>
+                    <summary><h2>习题 14</h2></summary>
+                    <article>
+                        <ol>
+                            <li>什么是启发式方法? 试说明用启发式方法解决实际问题的过程和步骤。</li>
+                            <li>在解决实际问题时如何运用启发式策略? 除本书上列出的几个启发式策略之外, 你认为还有什么样的有用策略?</li>
+                            <li>对在多台设备上加工多个工件的工件排序问题来说, 你认为应如何衡量不同排序方案的优劣? 需考虑哪些准则? 这些准则的适用条件如何? 并举出两个实例加以详细说明。</li>
+                            <li>说明 C-W 节约算法的基本思想, 你认为还可用它解决哪些方面的问题? 举例加以说明。</li>
+                            <li>说明本书所述货运车辆优化调度算法的原理和求解步骤, 并绘出求解过程框图。请简要回答以下问题:
+                                <br>(1) 若有两种车型的车可用, 书中提出的模型应怎样修改? 在书中所提算法的启发下, 试拟订一套求解的迭代步骤。
+                                <br>(2) 如何将书中提出的模型和算法推广到多目标的情形?
+                            </li>
+                            <li>表14-6给出了12个工件在设备A和设备B上的加工时间, 要求:
+                                <br>(1) 若所有工件都先在设备A上加工, 再在设备B上加工, 试安排使总加工时间最短的工件加工顺序, 并计算总加工时间。
+                                <br>(2) 若工件8~12先在设备B上加工, 再在设备A上加工, 其他条件同上, 请设计一启发式算法, 以确定尽可能小的总加工时间和安排相应的工件加工顺序。
+                                <br><em>(表14-6 数据...）</em>
+                            </li>
+                            <li>有4个工件 $J_1, J_2, J_3, J_4$ 在三台设备A、B、C上顺次加工, 各工件在各设备上的加工时间示于表14-7中, 试构造一启发式算法, 用于寻求使总加工时间最短的工件加工顺序。
+                                <br><em>(表14-7 数据...）</em>
+                            </li>
+                            <li>有10个城市, 它们在坐标系中的位置如表14-8所示, 试完成以下工作:
+                                <br>(1) 用C-W节约算法求出经过每个城市一次且仅一次的一条最短线路。
+                                <br>(2) 用 Norback 和 Love 提出的几何法, 求出经过上述城市一次而且仅一次的最短线路。
+                                <br>(3) 上述两种方法得出的结果有无改进的余地? 如果有, 你认为可通过什么方法加以改进? 试写出改进的结果。
+                                <br><em>(表14-8 数据...）</em>
+                            </li>
+                            <li>有一具有3个重载点和2个车场的运输问题, 其运输表如表14-9所示。 ...试用本章给出的车辆优化调度启发式算法, 求出满意的可接受可行解。
+                                <br><em>(表14-9 数据...）</em>
+                            </li>
+                        </ol>
+                    </article>
+                </details>
+            </section>
+
+        </main>
+        
+        <!-- 页脚 -->
+        <footer>
+            <p>运筹学教程交互版 | 内容基于《运筹学教程》（第5版）第14章</p>
+        </footer>
+
+    </div> <!--! end .container -->
+
+    <!-- 内联 JavaScript -->
+    <script>
+        // 汉堡菜单切换
+        const hamburger = document.getElementById('hamburger-menu');
+        const navLinks = document.getElementById('navbar-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // 点击导航链接后关闭移动端菜单
+        navLinks.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                navLinks.classList.remove('active');
+            }
+        });
+
+        // 测验答案切换
+        function toggleAnswer() {
+            const answerDiv = document.getElementById('answer');
+            if (answerDiv.style.display === 'none') {
+                answerDiv.style.display = 'block';
+            } else {
+                answerDiv.style.display = 'none';
+            }
+        }
+        
+        /*
+         * --- 开发者注释 ---
+         * 1. 如何使用:
+         * - 将此代码另存为 .html 文件 (例如: or_tutorial.html)。
+         * - 在现代浏览器 (如 Chrome, Firefox, Safari) 中打开该文件。
+         *
+         * 2. MathJax 加载:
+         * - 本页面需要有效的互联网连接, 以便从 cdnjs.cloudflare.com 加载 MathJax 库。
+         * - 如果网络连接失败, 数学公式将显示为原始的 LaTeX 源代码 (例如 $x^2 + y^2$)。
+         *
+         * 3. 交互功能:
+         * - 顶部的导航栏链接可以平滑滚动到相应章节。
+         * - 在移动设备上(宽度小于768px), 导航栏将折叠为汉堡菜单。
+         * - 每个主要章节 (如 "第一节", "第二节") 都可以点击标题栏进行折叠或展开。
+         * - "即练即测" 部分的按钮可以切换提示信息的显示与隐藏。
+         */
+    </script>
+</body>
+</html>

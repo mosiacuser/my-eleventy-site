@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第十三章 决策分析 - 运筹学教程（第5版）交互式教程</title>
+    
+    <!-- MathJax 配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, sans-serif;
+            line-height: 1.8;
+            color: #343434;
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        
+        nav h3 {
+            color: #f27d00;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        nav ul {
+            list-style: none;
+        }
+        
+        nav li {
+            margin: 8px 0;
+        }
+        
+        nav a {
+            color: #343434;
+            text-decoration: none;
+            padding: 8px 15px;
+            display: block;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        nav a:hover {
+            background: #a6d6c9;
+            color: #ffffff;
+            transform: translateX(5px);
+        }
+        
+        .content {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        .subsection-title {
+            color: #f27d00;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+        
+        .collapsible {
+            background: #a6d6c9;
+            color: #343434;
+            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            border-radius: 5px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .collapsible:hover {
+            background: #f27d00;
+            color: #ffffff;
+        }
+        
+        .collapsible.active {
+            background: #f27d00;
+            color: #ffffff;
+        }
+        
+        .collapsible::after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .collapsible-content-inner {
+            padding: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #f27d00;
+            color: #ffffff;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        tr:hover {
+            background: #a6d6c9;
+            transition: all 0.3s;
+        }
+        
+        .example {
+            background: linear-gradient(135deg, #f7d117 0%, #ffffff 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #f27d00;
+        }
+        
+        .example-title {
+            color: #f27d00;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        .formula {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #a6d6c9;
+            overflow-x: auto;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .note {
+            background: #a6d6c9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #f27d00;
+        }
+        
+        .note::before {
+            content: '📌 注意：';
+            font-weight: bold;
+            color: #f27d00;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        footer {
+            background: #343434;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            nav {
+                position: relative;
+                top: 0;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: #ffffff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .back-to-top:hover {
+            background: #f7d117;
+            transform: translateY(-5px);
+        }
+        
+        .back-to-top.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第十三章 决策分析</h1>
+            <p class="subtitle">运筹学教程（第5版）| 交互式学习版</p>
+        </header>
+        
+        <nav>
+            <h3>📚 章节导航</h3>
+            <ul>
+                <li><a href="#section1">第一节 决策分析的基本问题</a></li>
+                <li><a href="#section2">第二节 风险型决策方法</a></li>
+                <li><a href="#section3">第三节 不确定型决策方法</a></li>
+                <li><a href="#section4">第四节 效用函数方法</a></li>
+                <li><a href="#section5">第五节 层次分析法</a></li>
+                <li><a href="#section6">第六节 多目标决策分析简介</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <section id="section1" class="section">
+                <h2 class="section-title">第一节 决策分析的基本问题</h2>
+                
+                <button class="collapsible">一、决策分析概述</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p><strong>决策</strong>是为达到预期的目的，从所有可供选择的方案中，找出最满意的一个方案的行为。从政治、经济、技术到日常生活，从微观到宏观，决策贯穿于管理工作的各个环节。</p>
+                        
+                        <p>朴素的决策思想自古就有，在中外历史上不乏有名的决策案例。但在落后的生产方式下，决策主要凭借个人的知识、智慧和经验。随着生产和科学技术的发展，要求决策者在瞬息多变的条件下，对复杂的问题迅速作出决断，这就要求对不同类型的决策问题，有一套科学的决策原则、程序和相应的机构、方法。</p>
+                        
+                        <h3 class="subsection-title">1. 决策的类型</h3>
+                        
+                        <ul>
+                            <li><strong>(1) 按内容和层次</strong>：可分为战略决策和战术决策。战略决策涉及全局和长远方针性问题，而战术决策是战略决策的延伸，着眼于方针执行中的中短期的具体问题。</li>
+                            
+                            <li><strong>(2) 按重复程度</strong>：可分为程序性决策和非程序性决策。程序性决策指常规的、反复发生的决策，通常已形成一套固定的程序规则；非程序性决策不经常重复发生，通常包含很多不确定的偶然因素。</li>
+                            
+                            <li><strong>(3) 按问题性质和条件</strong>：可分为<span class="highlight">确定型、不确定型和风险型决策</span>。
+                                <ul>
+                                    <li><strong>确定型决策</strong>：作出一项抉择时，只有一种肯定的结局</li>
+                                    <li><strong>不确定型决策</strong>：每项抉择将可能导出若干个可能结局，并且每个结局出现的可能性是未知的</li>
+                                    <li><strong>风险型决策</strong>：作出每项抉择时，可能有若干结局，但可以有根据地对各结局确定其出现的概率</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        
+                        <p>此外，按时间长短可分为长期决策、中期决策和短期决策；按要达到的目标，可分为单目标决策和多目标决策；按决策的阶段分为单阶段决策和多阶段决策，等等。</p>
+                        
+                        <h3 class="subsection-title">2. 决策的原则</h3>
+                        
+                        <p>现代决策问题具有系统化、综合化、定量化等特点，决策过程必须遵循科学原则，并按严格程序进行。</p>
+                        
+                        <ul>
+                            <li><strong>(1) 信息原则</strong>：指决策中要尽可能调查、收集、整理一切有关信息，这是决策的基础。</li>
+                            <li><strong>(2) 预测原则</strong>：即通过预测，为决策提供有关发展方向和趋势的信息。</li>
+                            <li><strong>(3) 可行性原则</strong>：任何决策方案在政策、资源、技术、经济方面都要合理可行。</li>
+                            <li><strong>(4) 系统原则</strong>：决策时要考虑与问题有关的各子系统，要符合全局利益。</li>
+                            <li><strong>(5) 反馈原则</strong>：将实际情况的变化和决策付诸行动后的效果，及时反馈给决策者，以便对方案及时调整。</li>
+                        </ul>
+                        
+                        <h3 class="subsection-title">3. 决策的程序</h3>
+                        
+                        <p>决策的过程和程序大致分为以下4个步骤：</p>
+                        
+                        <ol>
+                            <li>形成决策问题，包括提出各种方案、确定目标及各方案结果的度量等</li>
+                            <li>对各方案出现不同结果的可能性进行判断，这种可能性一般是用概率来描述的</li>
+                            <li>利用各方案结果的度量值（如效益值、效用值、损失值等）给出对各方案的偏好</li>
+                            <li>综合前面得到的信息，选择最为偏好的方案，必要时可作一些灵敏度分析</li>
+                        </ol>
+                        
+                        <h3 class="subsection-title">4. 决策系统</h3>
+                        
+                        <p>包括信息机构、研究智囊机构、决策机构与执行机构，特别是智囊机构在现代决策中的作用日趋重要。</p>
+                        
+                        <div class="note">
+                            一个完整的决策应包括决策者；至少有两个可供选择的方案；存在决策者无法控制的若干状态；可以测知各个方案与可能出现的自然状态相对应的结果；衡量各种结果的价值标准。
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">二、决策分析研究的特征</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>决策分析将有助于对一般决策问题中可能出现的下面一些典型特征进行分析。</p>
+                        
+                        <h3 class="subsection-title">1. 不确定性</h3>
+                        
+                        <p>许多复杂的决策问题都具有一定程度的不确定性。从范围来看，包括决策方案结果的不确定性，即一个方案可能出现多种结果；约束条件的不确定性；技术参数的不确定性；等等。</p>
+                        
+                        <p>从性质上看，包括概率意义下的不确定性和区间意义下的不确定性：</p>
+                        
+                        <ul>
+                            <li><strong>概率意义下的不确定性</strong>：
+                                <ul>
+                                    <li><strong>主观概率意义</strong>（可能性）：人们对可能发生事件的概率分布的一个主观估计</li>
+                                    <li><strong>客观概率意义</strong>（随机性）：利用已有的历史数据对未来可能发生事件概率分布的一个客观估计</li>
+                                </ul>
+                            </li>
+                            <li><strong>区间意义下的不确定性</strong>：人们不能给出可能发生事件的概率分布，只能对有关量取值的区间给出一个估计</li>
+                        </ul>
+                        
+                        <h3 class="subsection-title">2. 动态性</h3>
+                        
+                        <p>很多问题由于其本身具有的阶段性，往往需要进行多次决策，且后面的决策依赖于前面决策的结果。</p>
+                        
+                        <h3 class="subsection-title">3. 多目标性</h3>
+                        
+                        <p>对许多复杂问题来说，往往有多个具有不同度量单位的决策目标，且这些目标通常具有冲突性，即一个目标值的改进会导致其他目标值的劣化。因此，决策者必须考虑如何在这些目标间进行折中，从而达到一个满意解（注意不是最优解）。</p>
+                        
+                        <h3 class="subsection-title">4. 模糊性</h3>
+                        
+                        <p>模糊性是指人们对客观事物概念描述上的不确定性，这种不确定性一般是由于事物无法（或无必要）进行精确定义和度量而造成的，如"社会效益""满意程度"等概念在不同具体问题中均具有一定的模糊性。</p>
+                        
+                        <h3 class="subsection-title">5. 群体性</h3>
+                        
+                        <p>群体性包括两方面的含义：</p>
+                        
+                        <ul>
+                            <li><strong>(1)</strong> 一个决策方案的选择可能会对其他群体的决策行为产生影响，特别像政府决策，会对各层次的行为主体产生影响；企业一级的决策也会对其他企业产生影响。</li>
+                            <li><strong>(2)</strong> 决策是由一个集体共同制定的，这一集体中的每一成员都是一个决策者，他们的利益、观点、偏好有所不同，这就产生了如何建立有效的群体决策体制和实施方法的问题。</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section2" class="section">
+                <h2 class="section-title">第二节 风险型决策方法</h2>
+                
+                <button class="collapsible">一、风险型决策的期望值法</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <div class="example-title">例1 石油公司决策问题</div>
+                            <p>某石油公司拥有一块可能有油的土地，根据可能出油的多少，该块土地具有4种状态：可产油50万桶、20万桶、5万桶、无油。公司目前有3个方案可供选择：自行钻井；无条件地将该块土地出租给其他生产者；有条件地租给其他生产者。</p>
+                            
+                            <p><strong>具体数据：</strong></p>
+                            <ul>
+                                <li>自行钻井：打出一口有油井的费用是10万元，打出一口无油井的费用是7.5万元，每一桶油的利润是1.5元</li>
+                                <li>无条件出租：不管出油多少，公司收取固定租金4.5万元</li>
+                                <li>有条件出租：公司不收取租金，但当产量为20万桶至50万桶时，每桶公司收取0.5元</li>
+                            </ul>
+                            
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>项目</th>
+                                        <th>50万桶($S_1$)</th>
+                                        <th>20万桶($S_2$)</th>
+                                        <th>5万桶($S_3$)</th>
+                                        <th>无油($S_4$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>自行钻井($A_1$)</td>
+                                        <td>650,000</td>
+                                        <td>200,000</td>
+                                        <td>-25,000</td>
+                                        <td>-75,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>无条件出租($A_2$)</td>
+                                        <td>45,000</td>
+                                        <td>45,000</td>
+                                        <td>45,000</td>
+                                        <td>45,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>有条件出租($A_3$)</td>
+                                        <td>250,000</td>
+                                        <td>100,000</td>
+                                        <td>0</td>
+                                        <td>0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <p>按过去的经验，该块土地具有上面4种状态的可能性分别为10%、15%、25%和50%。问题是：该公司应选择哪种方案，可获得最大利润？</p>
+                        </div>
+                        
+                        <p>处理风险型决策问题时常用的方法是根据<strong>期望收益最大原则</strong>进行分析，即根据每个方案的期望收益（或损失）来对方案进行比较，从中选择期望收益最大（或期望损失最小）的方案。</p>
+                        
+                        <div class="formula">
+                            <p><strong>期望收益计算公式：</strong></p>
+                            $$E(A_i) = \sum_{j=1}^{n} P_j a_{ij} \quad (i = 1,\cdots,m)$$
+                        </div>
+                        
+                        <p>然后选取$A^*$，使得：</p>
+                        
+                        <div class="formula">
+                            $$E(A^*) = \max_{1 \leq i \leq m} E(A_i)$$
+                        </div>
+                        
+                        <p><strong>对于例1的计算：</strong></p>
+                        
+                        <div class="formula">
+                            $$\begin{align}
+                            E(A_1) &= 0.10 \times 650000 + 0.15 \times 200000 + 0.25 \times (-25000) + 0.50 \times (-75000) \\
+                            &= 51250 \text{（元）}
+                            \end{align}$$
+                            
+                            $$E(A_2) = 0.10 \times 45000 + 0.15 \times 45000 + 0.25 \times 45000 + 0.50 \times 45000 = 45000 \text{（元）}$$
+                            
+                            $$E(A_3) = 0.10 \times 250000 + 0.15 \times 100000 + 0.25 \times 0 + 0.5 \times 0 = 40000 \text{（元）}$$
+                        </div>
+                        
+                        <div class="note">
+                            根据期望收益最大原则，应选择方案$A_1$，即自行钻井。
+                        </div>
+                        
+                        <h3 class="subsection-title">灵敏度分析</h3>
+                        
+                        <p>上例中若4种状态的可能性分别变为8%、15%、25%和52%，则采用不同方案时的收益分别为：$E(A_1) = 39350$（元），$E(A_2) = 45000$（元），$E(A_3) = 30000$（元），因而改为选择方案$A_2$。</p>
+                        
+                        <p>这说明状态概率的变化会导致决策的变化。设$\alpha$为出现状态$S_1$的概率，$S_2$和$S_3$的概率不变，状态$S_4$的出现概率变为$(0.6-\alpha)$，可计算得：</p>
+                        
+                        <div class="formula">
+                            $$E(A_1) = 65000\alpha + 30000 - 6500 - 70000(0.6-\alpha)$$
+                            $$E(A_2) = 45000$$
+                        </div>
+                        
+                        <p>令$E(A_1) = E(A_2)$，则可解得$\alpha^* = 0.08784$，称$\alpha^*$为<strong>转折概率</strong>。当$\alpha > 0.08784$时，选择方案$A_1$，否则选择方案$A_2$。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">二、利用后验概率的方法及信息价值</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>在处理风险型决策问题的期望值方法中，需要知道各种状态出现的概率$P(S_1), \ldots, P(S_n)$，这些概率通常为<strong>先验概率</strong>。</p>
+                        
+                        <p>因为不确定性经常是由于信息的不完备造成的，决策的过程实际上是一个不断收集信息的过程。当收集到一些有关决策的进一步信息$B$后，对原有各种状态出现概率的估计可能会发生变化。变化后的概率记为$P(S_j|B)$，这是一个条件概率，表示在得到追加信息$B$后对原概率$P(S_j)$的修正，故称为<strong>后验概率</strong>。</p>
+                        
+                        <div class="example">
+                            <div class="example-title">例2 地震实验决策问题（接例1）</div>
+                            <p>假设该石油公司在决策前希望进行一次地震实验，以进一步弄清该地区的地质构造。已知地震实验的费用是12,000元，地震实验可能的结果是：构造很好($I_1$)、构造较好($I_2$)、构造一般($I_3$)和构造较差($I_4$)。</p>
+                            
+                            <p>根据过去的经验，可知地质构造与油井出油量的关系见下表：</p>
+                            
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>$P(I_j|S_i)$</th>
+                                        <th>构造很好($I_1$)</th>
+                                        <th>构造较好($I_2$)</th>
+                                        <th>构造一般($I_3$)</th>
+                                        <th>构造较差($I_4$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>50万桶($S_1$)</td>
+                                        <td>0.58</td>
+                                        <td>0.33</td>
+                                        <td>0.09</td>
+                                        <td>0.0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>20万桶($S_2$)</td>
+                                        <td>0.56</td>
+                                        <td>0.19</td>
+                                        <td>0.125</td>
+                                        <td>0.125</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5万桶($S_3$)</td>
+                                        <td>0.46</td>
+                                        <td>0.25</td>
+                                        <td>0.125</td>
+                                        <td>0.165</td>
+                                    </tr>
+                                    <tr>
+                                        <td>无油($S_4$)</td>
+                                        <td>0.19</td>
+                                        <td>0.27</td>
+                                        <td>0.31</td>
+                                        <td>0.23</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <p><strong>问题：</strong>(1) 是否需要做地震实验？ (2) 如何根据地震实验的结果进行决策？</p>
+                        </div>
+                        
+                        <h3 class="subsection-title">解答步骤</h3>
+                        
+                        <p><strong>第一步：计算各种地震实验结果出现的概率</strong></p>
+                        
+                        <div class="formula">
+                            $$\begin{align}
+                            P(I_1) &= P(S_1)P(I_1|S_1) + P(S_2)P(I_1|S_2) + P(S_3)P(I_1|S_3) + P(S_4)P(I_1|S_4) \\
+                            &= 0.10 \times 0.58 + 0.15 \times 0.56 + 0.25 \times 0.46 + 0.50 \times 0.19 = 0.352
+                            \end{align}$$
+                        </div>
+                        
+                        <p>类似地计算得：$P(I_2) = 0.259$，$P(I_3) = 0.214$，$P(I_4) = 0.175$</p>
+                        
+                        <p><strong>第二步：由条件概率公式计算后验概率</strong></p>
+                        
+                        <div class="formula">
+                            $$P(S_i|I_j) = \frac{P(S_i)P(I_j|S_i)}{P(I_j)} \quad (i=1,\ldots,4; j=1,\ldots,4)$$
+                        </div>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>$P(S_i|I_j)$</th>
+                                    <th>构造很好($I_1$)</th>
+                                    <th>构造较好($I_2$)</th>
+                                    <th>构造一般($I_3$)</th>
+                                    <th>构造较差($I_4$)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>50万桶($S_1$)</td>
+                                    <td>0.165</td>
+                                    <td>0.127</td>
+                                    <td>0.042</td>
+                                    <td>0.000</td>
+                                </tr>
+                                <tr>
+                                    <td>20万桶($S_2$)</td>
+                                    <td>0.240</td>
+                                    <td>0.110</td>
+                                    <td>0.088</td>
+                                    <td>0.107</td>
+                                </tr>
+                                <tr>
+                                    <td>5万桶($S_3$)</td>
+                                    <td>0.325</td>
+                                    <td>0.241</td>
+                                    <td>0.147</td>
+                                    <td>0.236</td>
+                                </tr>
+                                <tr>
+                                    <td>无油($S_4$)</td>
+                                    <td>0.270</td>
+                                    <td>0.522</td>
+                                    <td>0.723</td>
+                                    <td>0.657</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p><strong>第三步：用后验概率进行分析</strong></p>
+                        
+                        <p>如果地震实验得到的结果为"构造很好"，各方案的期望收益为：</p>
+                        
+                        <div class="formula">
+                            $$E(A_1) = 0.165 \times 650000 + 0.24 \times 200000 + 0.325 \times (-25000) + 0.270 \times (-75000) = 126825 \text{（元）}$$
+                            $$E(A_2) = 45000 \text{（元）}$$
+                            $$E(A_3) = 65250 \text{（元）}$$
+                        </div>
+                        
+                        <p>应选择方案$A_1$。</p>
+                        
+                        <p><strong>根据后验概率进行决策的期望收益为：</strong></p>
+                        
+                        <div class="formula">
+                            $$0.352 \times 126825 + 0.259 \times 59450 + 0.213 \times 45000 + 0.175 \times 45000 = 77500 \text{（元）}$$
+                        </div>
+                        
+                        <p>由例1已知，不做地震实验时的期望收益为51,250元，实验后可增加期望收益，也就是<strong>地震实验信息的价值</strong>为 $77500 - 51250 = 26250$（元），大于地震实验的费用12,000元，因而进行地震实验是合算的。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">三、决策树方法</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>上文讨论的风险型决策问题是一步决策问题，实际当中很多决策往往是多步决策问题，每走一步选择一个决策方案，下一步的决策取决于上一步的决策及其结果，因而是个多阶段决策问题。这类决策问题一般不便用决策表来表示，常用的方法是<strong>决策树法</strong>。</p>
+                        
+                        <div class="example">
+                            <div class="example-title">例3 开发公司投标决策问题</div>
+                            <p>某开发公司拟为一企业承包新产品的研制与开发任务，但为得到合同必须参加投标。已知投标的准备费用为40,000元，中标的可能性是40%。如果不中标，准备费用得不到补偿。</p>
+                            
+                            <p>如果中标，可采用两种方法进行研制开发：</p>
+                            <ul>
+                                <li><strong>方法1</strong>：成功的可能性为80%，费用为260,000元</li>
+                                <li><strong>方法2</strong>：成功的可能性为50%，费用为160,000元</li>
+                            </ul>
+                            
+                            <p>如果研制开发成功，该开发公司可得到600,000元。如果合同中标，但未研制开发成功，则开发公司需赔偿100,000元。</p>
+                            
+                            <p><strong>问题是要决策：</strong>(1) 是否参加投标？(2) 若中标了，采用哪种方法研制开发？</p>
+                        </div>
+                        
+                        <h3 class="subsection-title">决策树的基本组成部分</h3>
+                        
+                        <ul>
+                            <li><strong>(1) 决策点</strong>：一般用方形节点表示，从这类节点引出的边表示不同的决策方案，边下数字为进行该项决策时的费用支出。</li>
+                            <li><strong>(2) 状态点</strong>：一般用圆形节点表示，从这类节点引出的边表示不同的状态，边下的数字表示对应状态出现的概率。</li>
+                            <li><strong>(3) 结果点</strong>：一般用有圆圈的圆形节点表示，位于树的末梢处，并在这类节点旁注明各种结果的益损值。</li>
+                        </ul>
+                        
+                        <h3 class="subsection-title">决策树分析方法</h3>
+                        
+                        <p>利用决策树对多阶段风险型决策问题进行分析通常也是依据期望值准则，具体做法是：先从树的末梢开始，计算出每个状态点上的期望收益，然后将其中的最大值标在相应的决策点旁。决策时，根据期望收益最大的原则从后向前进行"剪枝"，直到最开始的决策点，从而得到一个由多阶段决策构成的完整的决策方案。</p>
+                        
+                        <p><strong>对例3的分析：</strong></p>
+                        
+                        <ul>
+                            <li>$D$点处的值为：$0.8 \times 600000 + 0.2 \times (-100000) = 460000$</li>
+                            <li>$E$点处的值为：$0.5 \times 600000 + 0.5 \times (-100000) = 250000$</li>
+                            <li>由于 $460000 - 260000 > 250000 - 160000$，故在$C$点处的决策为选择方法1，划去方法2的边，并将费用值200,000注在$C$点上边</li>
+                            <li>$B$点处的值为：$0.4 \times 200000 + 0.6 \times 0 = 80000$</li>
+                            <li>又因 $80000 - 40000 = 40000$，故在$A$点处的决策为选择投标，划去代表不投标的边，并将费用值40,000注在$A$点上边</li>
+                        </ul>
+                        
+                        <div class="note">
+                            计算结果表明该开发公司首先应参加投标，在中标的条件下应采用方法1进行开发研制，总期望收益为40,000元。
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section3" class="section">
+                <h2 class="section-title">第三节 不确定型决策方法</h2>
+                
+                <p>不确定型决策的基本特征是无法确切知道哪种自然状态将出现，而且对各种状态出现的概率（主观的或客观的）也不清楚，这种情况下的决策主要取决于决策者的素质和要求。下面介绍几种常用的处理不确定型决策问题的方法，实际上是几种常用的原则。以下均假设决策矩阵中的元素$a_{ij}$为收益值。</p>
+                
+                <button class="collapsible">一、悲观准则（max-min准则）</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>这种方法的基本思想是假定决策者从每一个决策方案可能出现的最差结果出发，且最佳选择是从最不利的结果中选择最有利的结果。记</p>
+                        
+                        <div class="formula">
+                            $$u(A_i) = \min_{1 \leq j \leq n} a_{ij} \quad (i = 1,\cdots,m)$$
+                        </div>
+                        
+                        <p>则最优方案$A^*$应满足</p>
+                        
+                        <div class="formula">
+                            $$u(A^*) = \max_{1 \leq i \leq m} u(A_i) = \max_{1 \leq i \leq m} \min_{1 \leq j \leq n} a_{ij}$$
+                        </div>
+                        
+                        <div class="example">
+                            <div class="example-title">例4 决策问题</div>
+                            
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>方案</th>
+                                        <th>$S_1$</th>
+                                        <th>$S_2$</th>
+                                        <th>$S_3$</th>
+                                        <th>$S_4$</th>
+                                        <th>$\min a_{ij}$</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>$A_1$</td>
+                                        <td>4</td>
+                                        <td>5</td>
+                                        <td>6</td>
+                                        <td>7</td>
+                                        <td>4</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$A_2$</td>
+                                        <td>2</td>
+                                        <td>4</td>
+                                        <td>6</td>
+                                        <td>9</td>
+                                        <td>2</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$A_3$</td>
+                                        <td>5</td>
+                                        <td>7</td>
+                                        <td>3</td>
+                                        <td>5</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$A_4$</td>
+                                        <td>3</td>
+                                        <td>5</td>
+                                        <td>6</td>
+                                        <td>8</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$A_5$</td>
+                                        <td>3</td>
+                                        <td>5</td>
+                                        <td>5</td>
+                                        <td>5</td>
+                                        <td>3</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <p>由悲观准则得：$$u(A^*) = \max_{1 \leq i \leq 5} u(A_i) = 4$$</p>
+                            
+                            <div class="note">
+                                因此，$A_1$为最优方案
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">二、乐观准则（max-max准则）</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>这种准则的出发点是假定决策者对未来的结果持乐观的态度，总是假设出现对自己最有利的状态。记</p>
+                        
+                        <div class="formula">
+                            $$u(A_i) = \max_{1 \leq j \leq n} a_{ij} \quad (i = 1,\cdots,m)$$
+                        </div>
+                        
+                        <p>则最优方案$A^*$应满足</p>
+                        
+                        <div class="formula">
+                            $$u(A^*) = \max_{1 \leq i \leq m} u(A_i) = \max_{1 \leq i \leq m} \max_{1 \leq j \leq n} a_{ij}$$
+                        </div>
+                        
+                        <p>仍以例4为例，有$u(A_1) = 7$，$u(A_2) = 9$，$u(A_3) = 7$，$u(A_4) = 8$，$u(A_5) = 5$</p>
+                        
+                        <div class="note">
+                            得到最优方案为$A_2$，因为$u(A_2) = \max_{1 \leq i \leq 5} u(A_i) = 9$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">三、折中准则</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>折中准则是介于悲观准则和乐观准则之间的一个准则，其特点是对客观状态的估计既不完全乐观，也不完全悲观，而是采用一个乐观系数$\alpha$来反映决策者对状态估计的乐观程度。具体计算方法是：取$\alpha \in [0,1]$，令</p>
+                        
+                        <div class="formula">
+                            $$u(A_i) = \alpha \max_{1 \leq j \leq n} a_{ij} + (1-\alpha) \min_{1 \leq j \leq n} a_{ij} \quad (i = 1,\cdots,m)$$
+                        </div>
+                        
+                        <p>然后，从$u(A_i)$中选择最大者为最优方案，即</p>
+                        
+                        <div class="formula">
+                            $$u(A^*) = \max_{1 \leq i \leq m} \left[ \alpha \max_{1 \leq j \leq n} a_{ij} + (1-\alpha) \min_{1 \leq j \leq n} a_{ij} \right]$$
+                        </div>
+                        
+                        <p>显然，当$\alpha = 1$时，即为乐观准则的结果；当$\alpha = 0$时，即为悲观准则的结果。</p>
+                        
+                        <p><strong>现取$\alpha = 0.8$，则$1-\alpha = 0.2$，对例4有：</strong></p>
+                        
+                        <div class="formula">
+                            $$\begin{align}
+                            u(A_1) &= 0.8 \times 7 + 0.2 \times 4 = 6.4 \\
+                            u(A_2) &= 0.8 \times 9 + 0.2 \times 2 = 7.6 \\
+                            u(A_3) &= 0.8 \times 7 + 0.2 \times 3 = 6.2 \\
+                            u(A_4) &= 0.8 \times 8 + 0.2 \times 3 = 7.0 \\
+                            u(A_5) &= 0.8 \times 5 + 0.2 \times 3 = 4.6
+                            \end{align}$$
+                        </div>
+                        
+                        <div class="note">
+                            可知，最优方案为$A_2$。一般地，当条件比较乐观时，$\alpha$取得大些；反之，$\alpha$应取得小些。
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">四、等可能准则（Laplace准则）</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>这种准则的思想在于对各种可能出现的状态"一视同仁"，即认为它们出现的可能性都是相等的，均为$\frac{1}{n}$（有$n$个状态）。然后，再按照期望收益最大的原则选择最优方案。</p>
+                        
+                        <p>仍以例4来说明如下：根据等可能准则，有</p>
+                        
+                        <div class="formula">
+                            $$\begin{align}
+                            u(A_1) &= \frac{1}{4}(4+5+6+7) = 5.50 \\
+                            u(A_2) &= \frac{1}{4}(2+4+6+9) = 5.25 \\
+                            u(A_3) &= \frac{1}{4}(5+7+3+5) = 5.00 \\
+                            u(A_4) &= \frac{1}{4}(3+5+6+8) = 5.50 \\
+                            u(A_5) &= \frac{1}{4}(3+5+5+5) = 4.50
+                            \end{align}$$
+                        </div>
+                        
+                        <p>又由 $u(A_1) = u(A_4) = \max_{1 \leq i \leq 5} u(A_i) = 5.50$</p>
+                        
+                        <div class="note">
+                            可知最优方案为$A_1$或$A_4$
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">五、遗憾准则（min-max准则）</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>在决策过程中，当某一种状态可能出现时，决策者必然要选择使收益最大的方案。但如果决策者由于决策失误而没有选择使收益最大的方案，则会感到遗憾或后悔。遗憾准则的基本思想就在于尽量减少决策后的遗憾，使决策者不后悔或少后悔。</p>
+                        
+                        <p>具体计算时，首先要根据收益矩阵算出决策者的"后悔矩阵"，该矩阵的元素（称为后悔值）$b_{ij}$的计算公式为</p>
+                        
+                        <div class="formula">
+                            $$b_{ij} = \max_{1 \leq k \leq m} a_{kj} - a_{ij} \quad (i = 1,\cdots,m; j = 1,\cdots,n)$$
+                        </div>
+                        
+                        <p>然后，记</p>
+                        
+                        <div class="formula">
+                            $$r(A_i) = \max_{1 \leq j \leq n} b_{ij} \quad (i = 1,\cdots,m)$$
+                        </div>
+                        
+                        <p>所选的最优方案应使</p>
+                        
+                        <div class="formula">
+                            $$r(A^*) = \min_{1 \leq i \leq m} r(A_i) = \min_{1 \leq i \leq m} \max_{1 \leq j \leq n} b_{ij}$$
+                        </div>
+                        
+                        <p>仍以例4为例，计算出的后悔矩阵如下表所示，最优方案为$A_1$或$A_4$。</p>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>方案</th>
+                                    <th>$S_1$</th>
+                                    <th>$S_2$</th>
+                                    <th>$S_3$</th>
+                                    <th>$S_4$</th>
+                                    <th>$\max b_{ij}$</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>$A_1$</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>$A_2$</td>
+                                    <td>3</td>
+                                    <td>3</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>3</td>
+                                </tr>
+                                <tr>
+                                    <td>$A_3$</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>3</td>
+                                    <td>4</td>
+                                    <td>4</td>
+                                </tr>
+                                <tr>
+                                    <td>$A_4$</td>
+                                    <td>2</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>$A_5$</td>
+                                    <td>2</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>4</td>
+                                    <td>4</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="note">
+                            综上所述，根据不同决策准则得到的结果并不完全一致，处理实际问题时可同时采用几个准则来进行分析和比较。到底采用哪个方案，需视具体情况和决策者对自然状态所持的态度而定。
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section4" class="section">
+                <h2 class="section-title">第四节 效用函数方法</h2>
+                
+                <button class="collapsible">一、效用的概念</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>本章前面介绍风险型决策方法时，提到了可根据期望收益最大（或期望损失最小）原则选择最优方案，但这样做有时并不一定合理，下面来看几个例子。</p>
+                        
+                        <div class="example">
+                            <div class="example-title">例5</div>
+                            <p>设有决策问题：</p>
+                            <ul>
+                                <li><strong>方案A</strong>：稳获100元</li>
+                                <li><strong>方案B</strong>：获250元和0元的机会各为41%和59%</li>
+                            </ul>
+                            
+                            <p>从直观上看，大多数人可能会选择方案A。但我们不妨计算一下方案B的期望收益：</p>
+                            
+                            <div class="formula">
+                                $$E(B) = 0.41 \times 250 + 0.59 \times 0 = 102.5 > 100 = E(A)$$
+                            </div>
+                            
+                            <p>于是，根据期望收益最大原则，一个理性的决策者应该选择方案B，这一结果恐怕令实际中的决策者很难接受。这说明，完全根据期望收益作为评价方案的准则往往是不尽合理的。</p>
+                        </div>
+                        
+                        <div class="example">
+                            <div class="example-title">例6</div>
+                            <p>有甲、乙二人，甲提出请乙掷硬币，并约定：如果出现正面，乙可获得40元；如果出现反面，乙要向甲支付10元。现在，乙有两个选择：</p>
+                            <ul>
+                                <li>接受甲的建议（掷硬币，记为方案A）</li>
+                                <li>不接受甲的建议（不掷硬币，记为方案B）</li>
+                            </ul>
+                            
+                            <p>如果乙不接受甲的建议，其期望收益为$E(B) = 0$；如果接受甲的建议，其期望收益为$E(A) = 0.5 \times 40 - 0.5 \times 10 = 15$。</p>
+                            
+                            <p>根据期望收益最大化原则，乙应该接受甲的建议。现在假设乙是个穷人，10元钱是他一家三天的口粮钱，而且假定乙手头现在仅有10元钱。这时，乙对甲的建议的态度很可能会发生变化，很可能宁愿用这10元钱来买个家三天的口粮，不致挨饿，而不会去冒投机的风险。</p>
+                        </div>
+                        
+                        <p>上述两个例子说明：同一笔货币量在不同场合下给决策者带来的主观上的满足程度是不一样的，或者说，决策者在更多的场合下是根据不同结果或方案对其需求欲望的满足程度来进行决策的，而不仅仅是依据期望收益最大进行决策。</p>
+                        
+                        <p>为了衡量或比较不同的商品、劳务满足人的主观愿望的程度，经济学家和社会学家们提出了<strong>效用</strong>这个概念，并在此基础上建立了效用理论。</p>
+                        
+                        <div class="note">
+                            所谓货币的效用值就是指人们主观上对货币价值的衡量。一般来说，效用是一个属于主观范畴的概念，这也正是其能较好地解释现实中某些决策行为的原因所在。另外，效用是因人、因时、因地而变化的，同样的商品或劳务对不同人，在不同时间或不同地点具有不同的效用。
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">二、效用曲线的确定及分类</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>如前所述，可以用效用来量化决策者对风险的态度。对每一个决策者来说，都可以测定反映他对风险态度的效用曲线。通常假定效用值是一个相对值，如假定决策者最偏好、最倾向、最愿意事物（方案）的效用值为1；而最不喜欢、最不倾向、最不愿意的事物的效用值为0。</p>
+                        
+                        <h3 class="subsection-title">确定效用曲线的方法</h3>
+                        
+                        <p>确定效用曲线的方法主要是<strong>对比提问法</strong>。</p>
+                        
+                        <p>设决策者面临两个可选择的方案$A_1$和$A_2$，其中$A_1$表示他可无风险地得到一笔收益$x$，$A_2$表示他可以概率$p$得到收益$y$，以概率$1-p$得到收益$z$，其中$z > x > y$或$y > x > z$。设$U(x)$表示收益$x$的效用值，则当决策者认为方案$A_1$和$A_2$等价时，应有</p>
+                        
+                        <div class="formula">
+                            $$pU(y) + (1-p)U(z) = U(x)$$
+                        </div>
+                        
+                        <p>实际计算中，经常取$p = 0.5$，固定$y$、$z$的值，利用下式求得$x$的值：</p>
+                        
+                        <div class="formula">
+                            $$0.5U(y) + 0.5U(z) = U(x)$$
+                        </div>
+                        
+                        <div class="example">
+                            <div class="example-title">例7 构造效用函数</div>
+                            <p>已知所有可能收益的区间为[-100元，200元]，即$x^* = 200$，$x^0 = -100$，故$u(200) = 1$，$u(-100) = 0$。现用"五点法"确定效用曲线上其他3个点。</p>
+                            
+                            <p><strong>(1)</strong> 请决策者在"$A_1$：稳获$x$元"和"$A_2$：以50%的机会得到200元，50%的机会损失100元"这两个方案间进行比较。</p>
+                            
+                            <p>假设当$x = 0$时决策者认为方案$A_1$和$A_2$等价，则有</p>
+                            
+                            <div class="formula">
+                                $$U(0) = 0.5 \times U(200) + 0.5 \times U(-100) = 0.5 \times 1 + 0.5 \times 0 = 0.5$$
+                            </div>
+                            
+                            <p><strong>(2)</strong> 请决策者在"$A_1$：稳获$x$元"和"$A_2$：以50%的机会得到0元，50%的机会损失100元"这两个方案间进行比较。</p>
+                            
+                            <p>假设当$x = -60$时决策者认为方案$A_1$和$A_2$等价，则有</p>
+                            
+                            <div class="formula">
+                                $$U(-60) = 0.5 \times U(0) + 0.5 \times U(-100) = 0.5 \times 0.5 + 0.5 \times 0 = 0.25$$
+                            </div>
+                            
+                            <p><strong>(3)</strong> 请决策者在"$A_1$：稳获$x$元"和"$A_2$：以50%的机会得到0元，50%的机会得到200元"这两个方案间进行比较。</p>
+                            
+                            <p>假设当$x = 80$时决策者认为方案$A_1$和$A_2$等价，则有</p>
+                            
+                            <div class="formula">
+                                $$U(80) = 0.5 \times U(0) + 0.5 \times U(200) = 0.5 \times 0.5 + 0.5 \times 1 = 0.75$$
+                            </div>
+                            
+                            <p>这样便确定了当收益为-100元、-60元、0元、80元和200元时的效用值分别为0，0.25，0.5，0.75和1，据此可画出该效用曲线的大致图形。</p>
+                        </div>
+                        
+                        <h3 class="subsection-title">效用曲线的类型</h3>
+                        
+                        <p>从以上向决策者的提问及其回答的情况来看，不同的决策者的选择是不同的，这样可得到不同形状的效用曲线，表示决策者对风险的态度不同。效用曲线的形状大体可分为保守型、中间型、冒险型3种：</p>
+                        
+                        <ul>
+                            <li><strong>中间型</strong>：决策者认为他的实际收入和效用值的增长成等比关系</li>
+                            <li><strong>保守型</strong>：决策者对实际收入的增加的反应比较迟钝，即认为实际收入的增加比例小于效用值的增加比例</li>
+                            <li><strong>冒险型</strong>：决策者对实际收入的增加的反应比较敏感，认为实际收入的增加比例大于效用值增加的比例</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <button class="collapsible">三、风险规避度的衡量</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>如前所述，消费者在具有风险的环境下进行决策时，通常会表现出对风险的不同态度，称之为<strong>风险规避度</strong>。消费者的风险规避程度与他的效用函数$u(\cdot)$的曲率相关。效用函数越弯曲，风险规避程度越高。</p>
+                        
+                        <h3 class="subsection-title">1. 局部风险规避度</h3>
+                        
+                        <p>阿罗（Kenneth Arrow）和普拉特（John Pratt）给出了一种应用广泛的衡量消费者风险规避度的方法，称为<strong>阿罗-普拉特风险规避度</strong>，其定义为</p>
+                        
+                        <div class="formula">
+                            $$r(\cdot) = -\frac{u''(\cdot)}{u'(\cdot)}$$
+                        </div>
+                        
+                        <p>对风险规避型（risk averse）消费者来说，$u'(\cdot) > 0$，且$r(\cdot)$值越大，表示消费者对风险越厌恶。</p>
+                        
+                        <h3 class="subsection-title">2. 全局风险规避度</h3>
+                        
+                        <p>阿罗-普拉特风险规避度仅仅是对消费者在某一局部对风险规避程度的解释。然而在很多情况下，我们需要了解消费者在全局意义下对风险规避的程度。</p>
+                        
+                        <p>一般说来，可以用三种方式来表示这种全局意义下的风险规避度：</p>
+                        
+                        <ul>
+                            <li><strong>第一种方式</strong>：用阿罗-普拉特风险规避度来对全局风险规避度进行描述</li>
+                            <li><strong>第二种方式</strong>：比较两个消费者的效用函数曲线弯曲（凹）的程度</li>
+                            <li><strong>第三种方式</strong>：比较两个消费者对所有风险行动愿意付出的风险金的大小</li>
+                        </ul>
+                        
+                        <h3 class="subsection-title">3. 相对风险规避度</h3>
+                        
+                        <p>前面定义的风险规避度为<strong>绝对风险规避度</strong>（absolute risk aversion），衡量的是消费者在财富水平为$x$或收入水平为$y$的情况下，愿意持有风险资产的态度。</p>
+                        
+                        <p>但实际当中我们经常会看到，消费者的风险收入和财富水平成一定的比例。例如有一个赌博，参赌者以概率$p$获得现有财富水平$x$的$a$倍，以概率$1-p$获得现有收入水平$x$的$b$倍。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section5" class="section">
+                <h2 class="section-title">第五节 层次分析法</h2>
+                
+                <button class="collapsible">层次分析法概述</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p><strong>层次分析法</strong>（Analytic Hierarchy Process，AHP）是国外20世纪70年代末提出的一种新的系统分析方法。这种方法适用于结构较为复杂、决策准则较多而且不易量化的决策问题。由于其思路简单明了，尤其是紧密地和决策者的主观判断和推理联系起来，对决策者的推理过程进行量化的描述，可以避免决策者在结构复杂和方案较多时逻辑推理上的失误，使得这种方法近年来在国内外得到广泛的应用。</p>
+                        
+                        <h3 class="subsection-title">层次分析法的基本步骤</h3>
+                        
+                        <p><strong>第1步</strong>：明确问题，提出总目标</p>
+                        
+                        <p><strong>第2步</strong>：建立层次结构，把问题分解成若干层次。第一层为总目标；中间层可根据问题的性质分成目标层（准则层）、部门层（子准则层）等；最低层一般为方案层或措施层。层次的正确划分和各因素间关系的正确描述是层次分析法的关键，需慎重对待。</p>
+                        
+                        <p><strong>第3步</strong>：求同一层次上的权系数（从高层到低层）。假设当前层次上的因素为$A_1, \ldots, A_n$，相关的上一层因素为$C$（可以不止一个），则可针对因素$C$，对所有因素$A_1, \ldots, A_n$进行两两比较，得到数值$a_{ij}$。</p>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>相对重要程度$a_{ij}$</th>
+                                    <th>定义</th>
+                                    <th>解释</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>同等重要</td>
+                                    <td>目标$i$和目标$j$同样重要</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>略微重要</td>
+                                    <td>目标$i$比目标$j$略微重要</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>相当重要</td>
+                                    <td>目标$i$比目标$j$重要</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>明显重要</td>
+                                    <td>目标$i$比目标$j$明显重要</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>绝对重要</td>
+                                    <td>目标$i$比目标$j$绝对重要</td>
+                                </tr>
+                                <tr>
+                                    <td>2, 4, 6, 8</td>
+                                    <td colspan="2">介于两相邻重要程度间</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p><strong>第4步</strong>：求同一层次上的组合权系数</p>
+                        
+                        <p><strong>第5步</strong>：一致性检验。在得到判断矩阵$A$时，有时免不了会出现判断上的不一致性，因而需要利用一致性指标来进行检验。作为度量判断矩阵偏离一致性的指标，可以用</p>
+                        
+                        <div class="formula">
+                            $$CI = \frac{\lambda_{max} - n}{n - 1}$$
+                        </div>
+                        
+                        <p>来检查决策者判断思维的一致性。对于1阶到9阶的判断矩阵，RI的值分别为：</p>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>阶数</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th>6</th>
+                                    <th>7</th>
+                                    <th>8</th>
+                                    <th>9</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>RI</td>
+                                    <td>0.00</td>
+                                    <td>0.00</td>
+                                    <td>0.58</td>
+                                    <td>0.90</td>
+                                    <td>1.12</td>
+                                    <td>1.24</td>
+                                    <td>1.32</td>
+                                    <td>1.41</td>
+                                    <td>1.45</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p>判断矩阵的一致性指标CI与同阶平均随机一致性指标RI之比，称为<strong>随机一致性比率</strong>，记为</p>
+                        
+                        <div class="formula">
+                            $$CR = \frac{CI}{RI}$$
+                        </div>
+                        
+                        <div class="note">
+                            通常要求$CR \leq 0.1$，此时可以认为判断矩阵具有满意的一致性，否则需要对判断矩阵进行调整。
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">层次分析法应用示例</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="example">
+                            <div class="example-title">例9 干部选拔问题</div>
+                            <p>某单位拟从3名干部中选拔1人担任领导职务，选拔的标准有政策水平、工作作风、业务知识、口才、写作能力和健康状况。把这6个标准进行成对比较后，得到判断矩阵$A$如下：</p>
+                            
+                            <div class="formula">
+                                $$A = \begin{pmatrix}
+                                1 & 1 & 1 & 4 & 1 & 1/2 \\
+                                1 & 1 & 2 & 4 & 1 & 1/2 \\
+                                1 & 1/2 & 1 & 5 & 3 & 1/2 \\
+                                1/4 & 1/4 & 1/5 & 1 & 1/3 & 1/3 \\
+                                1 & 1 & 1/3 & 3 & 1 & 1 \\
+                                2 & 2 & 2 & 3 & 1 & 1
+                                \end{pmatrix}$$
+                            </div>
+                            
+                            <p>矩阵$A$表明，这个单位选拔干部时最重视工作作风，而最不重视口才。$A$的最大特征值为6.35，相应的特征向量为：</p>
+                            
+                            <div class="formula">
+                                $$B_2 = (0.16, 0.19, 0.19, 0.05, 0.12, 0.30)^T$$
+                            </div>
+                            
+                            <p>类似地可用特征向量法去求3个干部相对于上述6个标准中每一个的权系数。用A、B、C表示3个干部，最终得到3个干部的综合权系数为：</p>
+                            
+                            <div class="formula">
+                                $$w^3 = B_3 B_2 = (0.40, 0.34, 0.26)^T$$
+                            </div>
+                            
+                            <div class="note">
+                                即在3人中应选拔A担任领导职务
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section6" class="section">
+                <h2 class="section-title">第六节 多目标决策分析简介</h2>
+                
+                <button class="collapsible">一、多目标决策问题的提出</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>客观世界的多维性使得人类需求具有多重性，从而导致了为满足这些需求所进行的社会经济活动的多准则性（多目标性、多目的性）。例如，在经济管理工作中，往往要考虑"费用""质量"和"利润"等评价准则，并依据这些准则建立管理工作的目标，如"费用最少""质量最好"和"利润最大"等。</p>
+                        
+                        <p>如果客观环境可以满足所有的目标，这当然是理想的状态。然而这种"理想状态"一般说来是不可能达到的，或者说人类社会活动的多重目标之间一般是具有冲突性的，经常是一个目标的改进会导致另一些目标的下降。正是由于这种多目标间的冲突性，才使得人们去认真研究科学的决策理论和方法。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">二、多目标规划的基本概念</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>多目标规划是多目标决策的重要内容之一，在进行多目标决策时，当希望每个目标都尽可能的大（或尽可能的小）时，就形成了一个多目标规划问题，其一般形式为：</p>
+                        
+                        <div class="formula">
+                            $$(VP) \begin{cases}
+                            V = \min [f_1(x), \ldots, f_p(x)] \\
+                            g_i(x) \geq 0 \quad (i = 1, \ldots, m)
+                            \end{cases}$$
+                        </div>
+                        
+                        <p>其中$f_1(x), \ldots, f_p(x)$为目标函数，$g_i(x) \geq 0, i = 1, \ldots, m$为约束条件，$x$为决策变量。记$R = \{x | g_i(x) \geq 0, i = 1, \ldots, m, x \in E^n\}$，称$R$为问题(VP)的可行解集（决策空间），$F(R) = \{f(x) | x \in R\}$为问题(VP)的像集（目标空间）。</p>
+                        
+                        <h3 class="subsection-title">定义1 绝对最优解</h3>
+                        
+                        <p>设$\bar{x} \in R$，若对任意$i = 1, \ldots, p$，及任意$x \in R$，均有</p>
+                        
+                        <div class="formula">
+                            $$f_i(\bar{x}) \leq f_i(x)$$
+                        </div>
+                        
+                        <p>则称$\bar{x}$为问题(VP)的绝对最优解。</p>
+                        
+                        <p>一般来说，多目标规划问题(VP)的绝对最优解是不常见的，当绝对最优解不存在时，需要引入新的"解"的概念。多目标规划中最常用的解为<strong>非劣解</strong>或<strong>有效解</strong>，也称为<strong>Pareto最优解</strong>。</p>
+                        
+                        <h3 class="subsection-title">定义2 Pareto最优解（有效解）</h3>
+                        
+                        <p>考虑多目标规划问题(VP)，设$\bar{x} \in R$，若不存在$x \in R$，使得</p>
+                        
+                        <div class="formula">
+                            $$f_i(x) \leq f_i(\bar{x}) \quad (i = 1, \ldots, p)$$
+                        </div>
+                        
+                        <p>且至少有一个</p>
+                        
+                        <div class="formula">
+                            $$f_j(x) < f_j(\bar{x})$$
+                        </div>
+                        
+                        <p>则称$\bar{x}$为问题(VP)的有效解（或Pareto最优解），$f(\bar{x})$为有效点。</p>
+                        
+                        <div class="note">
+                            不难看出，若$\bar{x} \in R_E^*$，即找不到可行解$x$，使得$f_1(x), \ldots, f_p(x)$中的每一个值都比$\bar{x}$相应的目标值$f_1(\bar{x}), \ldots, f_p(\bar{x})$要坏，且至少在一个目标上，$x$比$\bar{x}$要好。
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">三、权系数的确定</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>在多目标决策问题中，一般可用每个目标的权系数来反映各目标间的相对重要性，越重要的目标，相应的权系数就越大。在许多具体问题中，决策的基本问题实际上可归结为权系数的确定问题。</p>
+                        
+                        <p>例如，不妨假设决策者是根据综合效用（即效用函数）最大来进行决策，而且假定决策者的效用函数具有可加性，即</p>
+                        
+                        <div class="formula">
+                            $$u(x) = \sum_{j=1}^{p} \lambda_j f_j(x)$$
+                        </div>
+                        
+                        <p>其中，$f_j$为每个属性的效用函数，是可测算出来的。因此，如果能确定效用函数$u(x)$中的权系数$\lambda_1, \ldots, \lambda_p$，则令$u(x) \to \max$，即可求出决策者最满意的方案。</p>
+                        
+                        <p>确定权系数的方法也大致可分为两类：一类是非交互式的，另一类是交互式的。所谓非交互式方法，一般是在决策前通过分析人员和决策者进行协商对话，给出一个权系数的分布，然后，据此进行决策。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">四、有限方案多目标决策方法</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>从数学模型上看，有限方案的多目标决策问题是一类较为简单、特殊的问题。而从实际应用上看，这类问题显然具有重要的意义。这类问题的特点是：可行方案只有有限个，评价准则（或目标）多于一个。</p>
+                        
+                        <h3 class="subsection-title">1. 决策矩阵及其规范化</h3>
+                        
+                        <p>对有限方案的多目标决策问题，可以把不同方案相对于不同属性（准则）的结果用一个矩阵来表示，这个矩阵称为<strong>决策矩阵</strong>。</p>
+                        
+                        <p>设$X = \{X_1, \ldots, X_m\}$为多目标决策问题的可行方案集，$Y = \{y_1, \ldots, y_n\}$为属性集，每个方案$x_i$关于属性$y_j$的结果记为</p>
+                        
+                        <div class="formula">
+                            $$y_{ij} = f_j(x_i) \quad (i = 1, \ldots, m; j = 1, \ldots, n)$$
+                        </div>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>方案</th>
+                                    <th>$y_1$</th>
+                                    <th>$y_2$</th>
+                                    <th>$\cdots$</th>
+                                    <th>$y_n$</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>$X_1$</td>
+                                    <td>$y_{11}$</td>
+                                    <td>$y_{12}$</td>
+                                    <td>$\cdots$</td>
+                                    <td>$y_{1n}$</td>
+                                </tr>
+                                <tr>
+                                    <td>$X_2$</td>
+                                    <td>$y_{21}$</td>
+                                    <td>$y_{22}$</td>
+                                    <td>$\cdots$</td>
+                                    <td>$y_{2n}$</td>
+                                </tr>
+                                <tr>
+                                    <td>$\vdots$</td>
+                                    <td>$\vdots$</td>
+                                    <td>$\vdots$</td>
+                                    <td></td>
+                                    <td>$\vdots$</td>
+                                </tr>
+                                <tr>
+                                    <td>$X_m$</td>
+                                    <td>$y_{m1}$</td>
+                                    <td>$y_{m2}$</td>
+                                    <td>$\cdots$</td>
+                                    <td>$y_{mn}$</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p>由于实际问题中各种属性值的背景和量纲往往是不一致的，因而不易进行方案间的比较。所以，需要将各属性值规范化，例如限制在[0,1]内。</p>
+                        
+                        <h3 class="subsection-title">2. 简单线性加权法</h3>
+                        
+                        <p>这是一种形式上最简单的方法，不仅适用于有限方案，而且也适用于无限方案及连续情况下的多目标决策问题。其基本内容是：设$R$为可行方案集（有限或无限），$u_j(\cdot)$为第$j$个目标（或属性）的效用值，$\lambda_1, \ldots, \lambda_n$为反映各目标间相对重要性的权系数。然后，通过求解问题：</p>
+                        
+                        <div class="formula">
+                            $$\max_{x \in R} u = \sum_{j=1}^{p} \lambda_j u_j(x)$$
+                        </div>
+                        
+                        <p>选择使综合效用值$u$最大的方案作为最优方案。</p>
+                        
+                        <div class="example">
+                            <div class="example-title">例13 购房决策问题</div>
+                            <p>某人拟购买一套住房，有四处地点（方案）可供选择，有关信息如下表所示：</p>
+                            
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>方案（地点）</th>
+                                        <th>价格/万元</th>
+                                        <th>使用面积/m²</th>
+                                        <th>距工作地点距离/km</th>
+                                        <th>设备</th>
+                                        <th>环境</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>$X_1$</td>
+                                        <td>150</td>
+                                        <td>100</td>
+                                        <td>10</td>
+                                        <td>7</td>
+                                        <td>7</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$X_2$</td>
+                                        <td>125</td>
+                                        <td>80</td>
+                                        <td>8</td>
+                                        <td>3</td>
+                                        <td>5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$X_3$</td>
+                                        <td>90</td>
+                                        <td>50</td>
+                                        <td>20</td>
+                                        <td>5</td>
+                                        <td>11</td>
+                                    </tr>
+                                    <tr>
+                                        <td>$X_4$</td>
+                                        <td>110</td>
+                                        <td>70</td>
+                                        <td>12</td>
+                                        <td>5</td>
+                                        <td>9</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <p>这是一个具有5个目标的决策问题，其中：使用面积、设备和环境为效益型目标，越大越好；价格、距工作地点距离为成本型目标，越小越好。</p>
+                            
+                            <p>设决策人对各属性作成对比较后的判断矩阵，权系数为$\lambda = (0.0598, 0.1942, 0.1181, 0.2363, 0.3916)^T$。</p>
+                            
+                            <p>分别根据相应公式把表中的数据规范化，得到规范化矩阵。然后计算出每个方案$X_i$的综合效用$u(X_i) = \sum \lambda_j z_{ij}$，得到</p>
+                            
+                            <div class="formula">
+                                $$\begin{align}
+                                u(X_1) &= 0.659 \\
+                                u(X_2) &= 0.260 \\
+                                u(X_3) &= 0.570 \\
+                                u(X_4) &= 0.576
+                                \end{align}$$
+                            </div>
+                            
+                            <div class="note">
+                                因此，根据简单线性加权法，第1个方案$X_1$为最优
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>&copy; 2025 运筹学教程交互式学习版 | 基于《运筹学教程（第5版）》胡运权等编著</p>
+            <p>本网页仅供学习参考使用 | 请确保网络连接以加载MathJax数学公式</p>
+        </footer>
+    </div>
+    
+    <div class="back-to-top" id="backToTop">
+        ↑
+    </div>
+    
+    <script>
+        // 折叠/展开功能
+        const collapsibles = document.querySelectorAll('.collapsible');
+        
+        collapsibles.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 返回顶部按钮
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+        
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 页面加载完成后的提示
+        window.addEventListener('load', () => {
+            console.log('运筹学决策分析交互式教程已加载完成！');
+            console.log('提示：点击章节标题可以展开/折叠内容');
+            console.log('确保网络连接正常以加载MathJax数学公式');
+        });
+    </script>
+</body>
+</html>

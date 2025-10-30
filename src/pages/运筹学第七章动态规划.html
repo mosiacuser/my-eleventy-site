@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第七章 动态规划 - 交互式教程</title>
+    
+    <!-- MathJax完整配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+            line-height: 1.8;
+            background: linear-gradient(135deg, #a6d6c9 0%, #f7d117 100%);
+            color: #343434;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00, #f7d117);
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        nav a {
+            color: #f27d00;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            background: #a6d6c9;
+            font-weight: bold;
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+        
+        section {
+            background: #ffffff;
+            padding: 30px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        
+        h2 {
+            color: #f27d00;
+            border-bottom: 3px solid #a6d6c9;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        h3 {
+            color: #343434;
+            margin: 20px 0 10px 0;
+            font-size: 1.4em;
+            background: #f7d117;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        
+        .example {
+            background: #a6d6c9;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 5px solid #f27d00;
+        }
+        
+        .example-title {
+            font-weight: bold;
+            color: #f27d00;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #f27d00;
+            color: #ffffff;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        td {
+            border: 1px solid #a6d6c9;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        tr:nth-child(even) {
+            background: #f7f7f7;
+        }
+        
+        .formula {
+            background: #f7d117;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            overflow-x: auto;
+            text-align: center;
+        }
+        
+        details {
+            background: #ffffff;
+            border: 2px solid #a6d6c9;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            cursor: pointer;
+        }
+        
+        summary {
+            font-weight: bold;
+            color: #f27d00;
+            font-size: 1.1em;
+            padding: 5px;
+            user-select: none;
+        }
+        
+        summary:hover {
+            background: #f7d117;
+            border-radius: 5px;
+        }
+        
+        .key-point {
+            background: linear-gradient(90deg, #f7d117, #a6d6c9);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 5px solid #f27d00;
+            font-weight: bold;
+        }
+        
+        code {
+            background: #343434;
+            color: #f7d117;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            section {
+                padding: 20px;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        footer {
+            background: #343434;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            background: #f27d00;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #a6d6c9;
+            color: #343434;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第七章 动态规划</h1>
+            <p>Dynamic Programming - 多阶段决策问题的最优化方法</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#intro">简介</a></li>
+                <li><a href="#basic">基本概念</a></li>
+                <li><a href="#principle">基本原理</a></li>
+                <li><a href="#modeling">建模求解</a></li>
+                <li><a href="#applications">应用实例</a></li>
+                <li><a href="#exercises">习题</a></li>
+            </ul>
+        </nav>
+        
+        <section id="intro">
+            <h2>一、动态规划简介</h2>
+            
+            <p>动态规划是解决<span class="highlight">多阶段决策过程最优化问题</span>的一种方法，该方法由美国数学家<strong>贝尔曼（R. Bellman）</strong>等人在20世纪50年代初提出。1957年，R. Bellman发表了该分支领域的第一本专著《动态规划》（Dynamic Programming）。</p>
+            
+            <div class="key-point">
+                ✨ 核心思想：将复杂问题分解为若干相互联系的阶段，在每一个阶段都做出决策，从而使整个过程的总体效果最优。
+            </div>
+            
+            <h3>动态规划的分类</h3>
+            <ul>
+                <li>① 离散确定型</li>
+                <li>② 离散随机型</li>
+                <li>③ 连续确定型</li>
+                <li>④ 连续随机型</li>
+            </ul>
+            
+            <p>其中<strong>离散确定型</strong>是最基本的，本章主要针对这种类型的问题介绍动态规划的基本思想、原理和方法。</p>
+            
+            <details>
+                <summary>📖 应用领域</summary>
+                <ul>
+                    <li>最优路径问题</li>
+                    <li>资源分配问题</li>
+                    <li>生产计划与库存</li>
+                    <li>投资决策</li>
+                    <li>装载问题</li>
+                    <li>排序问题</li>
+                    <li>生产过程的最优控制</li>
+                </ul>
+            </details>
+        </section>
+        
+        <section id="basic">
+            <h2>二、动态规划的基本概念</h2>
+            
+            <h3>1. 阶段（Stage）</h3>
+            <p>将所给问题的过程，按时间或空间特征分解成若干互相联系的阶段，以便按次序去求每阶段的解。常用字母 $k$ 表示阶段变量。</p>
+            
+            <h3>2. 状态（State）</h3>
+            <p>各阶段开始时的客观条件叫作状态。描述各阶段状态的变量称为<span class="highlight">状态变量</span>，常用 $s_k$ 表示第 $k$ 阶段的状态变量。</p>
+            
+            <div class="key-point">
+                ⚡ 无后效性：当某阶段状态给定以后，在这阶段以后过程的发展不受这段以前各段状态的影响。
+            </div>
+            
+            <h3>3. 决策和策略</h3>
+            <p>当各段的状态取定以后，就可以做出不同的决策，从而确定下一阶段的状态。表示决策的变量称为<span class="highlight">决策变量</span>，常用 $u_k(s_k)$ 表示。</p>
+            
+            <p><strong>策略</strong>：各段决策确定后，整个问题的决策序列构成一个策略，用 $p=\{u_1(s_1), u_2(s_2), \ldots, u_n(s_n)\}$ 表示。</p>
+            
+            <h3>4. 状态转移方程</h3>
+            <p>第 $k$ 段的状态 $s_k$ 和决策 $u_k(s_k)$ 确定后，第 $k+1$ 段的状态 $s_{k+1}$ 也就完全确定：</p>
+            
+            <div class="formula">
+                $$s_{k+1} = T_k(s_k, u_k)$$
+            </div>
+            
+            <h3>5. 指标函数</h3>
+            <p>用于衡量所选定策略优劣的数量指标。包括：</p>
+            <ul>
+                <li><strong>阶段指标函数</strong> $d_k(s_k, u_k)$：第 $k$ 段从状态 $s_k$ 出发，采取决策 $u_k$ 时的效益</li>
+                <li><strong>最优指标函数</strong> $f_k(s_k)$：从第 $k$ 段状态 $s_k$ 采用最优策略到过程终止时的最佳效益值</li>
+            </ul>
+            
+            <div class="formula">
+                $$f_k(s_k) = V_k(s_k, p_k^*) = \max_{p_k \in P_k} V_k(s_k, p_k)$$
+            </div>
+        </section>
+        
+        <section id="principle">
+            <h2>三、动态规划的基本思想与最优化原理</h2>
+            
+            <div class="example">
+                <div class="example-title">例1：最短路线问题</div>
+                <p>如图所示，给定一个线路网络图，要从A地向F地铺设一条输油管道，各点间连线上的数字表示距离，问应选择什么路线，可使总距离最短？</p>
+                <p><em>（这是一个多阶段的决策问题）</em></p>
+            </div>
+            
+            <h3>动态规划的求解思路</h3>
+            <p>采用<strong>逆序递推方法</strong>求解，从过程的最后一段开始，用逆序递推方法求解，逐步求出各段各点到终点的最短路线，最后求得起点到终点的最短路线。</p>
+            
+            <details>
+                <summary>🔍 求解步骤（以5阶段问题为例）</summary>
+                <div style="padding: 15px;">
+                    <p><strong>第1步（k=5）：</strong>从最后一段开始</p>
+                    <div class="formula">
+                        $$f_5(E_1) = 4, \quad f_5(E_2) = 3$$
+                    </div>
+                    
+                    <p><strong>第2步（k=4）：</strong>计算到终点F的最短距离</p>
+                    <div class="formula">
+                        $$f_4(D_1) = \min\{d(D_1, E_1) + f_5(E_1), d(D_1, E_2) + f_5(E_2)\}$$
+                        $$= \min\{3+4, 6+3\} = 7$$
+                    </div>
+                    
+                    <p><strong>依次类推</strong>，直到求出 $f_1(A)$ 即为所求最短距离。</p>
+                </div>
+            </details>
+            
+            <h3>最优化原理（Bellman原理）</h3>
+            <div class="key-point">
+                📌 一个过程的最优策略具有这样的性质：即无论初始状态及初始决策如何，对于先前决策所形成的状态而言，其以后的所有决策应构成最优策略。
+            </div>
+            
+            <h3>基本方程（递推关系式）</h3>
+            <div class="formula">
+                $$f_k(s_k) = \max_{u_k} \{d_k(s_k, u_k) + f_{k+1}(s_{k+1})\} \quad k=n,n-1,\ldots,2,1$$
+                $$f_{n+1}(s_{n+1}) = 0$$
+            </div>
+            
+            <p>式中 $\max$ 可根据题意取 $\min$ 或 $\max$。</p>
+        </section>
+        
+        <section id="modeling">
+            <h2>四、动态规划模型的建立与求解</h2>
+            
+            <h3>建立动态规划模型的要点</h3>
+            <ol>
+                <li><strong>分析题意，识别多阶段特性</strong>：按时间或空间先后顺序适当地划分为满足递推关系的若干阶段</li>
+                <li><strong>正确选择状态变量</strong>：必须具备两个特征：
+                    <ul>
+                        <li>可知性：过程演变的各阶段状态变量的取值能直接或间接地确定</li>
+                        <li>无后效性：由第 $k$ 阶段的状态 $s_k$ 出发的后部子过程可以看作是一个以 $s_k$ 为初始状态的独立过程</li>
+                    </ul>
+                </li>
+                <li><strong>写出状态转移方程</strong>：$s_{k+1} = T_k(s_k, u_k)$</li>
+                <li><strong>列出基本方程及边界条件</strong></li>
+            </ol>
+            
+            <div class="example">
+                <div class="example-title">例2：投资决策问题</div>
+                <p>某公司有资金10万元，若投资于项目 $i$ $(i=1,2,3)$ 的投资额为 $x_i$ 时，其收益分别为：</p>
+                <div class="formula">
+                    $$g_1(x_1) = 4x_1, \quad g_2(x_2) = 9x_2, \quad g_3(x_3) = 2x_3^2$$
+                </div>
+                <p>问应如何分配投资数额才能使总收益最大？</p>
+                
+                <details>
+                    <summary>💡 建模过程</summary>
+                    <div style="padding: 15px;">
+                        <p><strong>阶段：</strong>$k = 1, 2, 3$</p>
+                        <p><strong>状态变量：</strong>$s_k$ 为第 $k$ 段可以投资于第 $k$ 项到第3个项目的资金</p>
+                        <p><strong>决策变量：</strong>$x_k$ 为决定给第 $k$ 个项目投资的资金</p>
+                        <p><strong>状态转移方程：</strong>$s_{k+1} = s_k - x_k$</p>
+                        <p><strong>基本方程：</strong></p>
+                        <div class="formula">
+                            $$f_k(s_k) = \max_{0 \leq x_k \leq s_k} \{g_k(x_k) + f_{k+1}(s_{k+1})\} \quad k=3,2,1$$
+                            $$f_4(s_4) = 0$$
+                        </div>
+                    </div>
+                </details>
+            </div>
+            
+            <h3>求解方法</h3>
+            
+            <details>
+                <summary>📊 1. 离散变量的分段穷举算法</summary>
+                <p style="padding: 15px;">当状态变量与决策变量被限定只能取离散值时，可采用分段穷举法。每段的状态变量和决策变量离散取值个数较少，所以动态规划的穷举法要比一般的穷举法有效。</p>
+            </details>
+            
+            <details>
+                <summary>📈 2. 连续变量的解法</summary>
+                <p style="padding: 15px;">当动态规划模型中状态变量与决策变量为连续变量时，可根据方程的具体情况灵活选取求解方法，如经典解析方法、线性规划方法、非线性规划法或其他数值计算方法等。</p>
+            </details>
+            
+            <details>
+                <summary>🔢 3. 连续变量的离散化解法</summary>
+                <div style="padding: 15px;">
+                    <p>将区间 $[0, a]$ 进行分割：$s_k = 0, \Delta, 2\Delta, \ldots, m\Delta = a$</p>
+                    <p>规定状态变量 $s_k$ 及决策变量 $x_k$ 只在离散点上取值，相应的指标函数就被定义在这些离散值上。</p>
+                    <p><em>注意：这种方法有可能丢失最优解，一般得到原问题的近似解。</em></p>
+                </div>
+            </details>
+        </section>
+        
+        <section id="applications">
+            <h2>五、动态规划在经济管理中的应用</h2>
+            
+            <h3>1. 背包问题（装载问题）</h3>
+            <div class="example">
+                <div class="example-title">问题描述</div>
+                <p>一位旅行者携带背包去登山，已知他所能承受的背包重量限度为 $a$ kg，现有 $n$ 种物品可供他选择装入背包，第 $i$ 种物品的单件重量为 $a_i$ kg，其价值是携带数量 $x_i$ 的函数 $c_i(x_i)$，问旅行者应如何选择携带各种物品的件数，以使总价值最大？</p>
+                
+                <p><strong>数学模型：</strong></p>
+                <div class="formula">
+                    $$\max z = \sum_{i=1}^{n} c_i(x_i)$$
+                    $$\text{s.t. } \sum_{i=1}^{n} a_i x_i \leq a$$
+                    $$x_i \geq 0 \text{ 且为整数} \quad (i=1,2,\ldots,n)$$
+                </div>
+            </div>
+            
+            <h3>2. 生产与存储问题</h3>
+            <div class="example">
+                <div class="example-title">例7：生产与存储问题</div>
+                <p>某工厂生产并销售某种产品，已知今后四个月市场需求预测，又每月生产 $x$ 单位产品费用为：</p>
+                <div class="formula">
+                    $$C(x) = \begin{cases} 0 & x=0 \\ 3+x^2 & x=1,2,\ldots,6 \end{cases} \text{（千元）}$$
+                </div>
+                <p>每月库存 $x$ 单位产品的费用为 $E(x) = 0.5x$（千元）</p>
+                
+                <table>
+                    <tr>
+                        <th>月份</th>
+                        <th>1</th>
+                        <th>2</th>
+                        <th>3</th>
+                        <th>4</th>
+                    </tr>
+                    <tr>
+                        <td>需求量</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>2</td>
+                        <td>4</td>
+                    </tr>
+                </table>
+                
+                <p>试制订四个月的生产计划，在满足用户需求条件下总费用最小。</p>
+            </div>
+            
+            <h3>3. 设备更新问题</h3>
+            <p>企业在使用设备时都要考虑设备的更新问题，因为设备越陈旧所需的维修费用越多，但购买新设备则要一次性支出较大的费用。</p>
+            
+            <p><strong>基本方程：</strong></p>
+            <div class="formula">
+                $$f_k(s_k) = \max \begin{cases}
+                r_k(s_k) - u_k(s_k) + \alpha f_{k+1}(s_k+1) & \text{保留(K)} \\
+                r_k(0) - u_k(0) - c_k(s_k) + \alpha f_{k+1}(1) & \text{更新(R)}
+                \end{cases}$$
+            </div>
+            
+            <h3>4. 复合系统工作可靠性问题</h3>
+            <p>某种机器的工作系统由 $n$ 个部件串联组成，只要有一个部件失灵，整个系统就不能正常工作。为提高系统工作的可靠性，在每个部件上均装有主要元件的备用件。</p>
+            
+            <p><strong>数学模型：</strong></p>
+            <div class="formula">
+                $$\max P = \prod_{i=1}^{n} p_i(x_i)$$
+                $$\text{s.t. } \sum_{i=1}^{n} c_i x_i \leq C, \quad \sum_{i=1}^{n} w_i x_i \leq W$$
+                $$x_i \geq 0 \text{ 且为整数}$$
+            </div>
+            
+            <h3>5. 货郎担问题（旅行商问题）</h3>
+            <p>一个货郎从某城镇出发，经过若干个城镇一次且仅一次，最后仍回到原出发的城镇，问应如何选择行走路线可使总行程最短？</p>
+            
+            <div class="key-point">
+                💡 特点：需要特殊的状态变量定义方法，状态变量为集合 $(i, S)$，表示从点 $i$ 出发，经过集合 $S$ 中所有点到达终点的最短距离。
+            </div>
+        </section>
+        
+        <section id="exercises">
+            <h2>六、习题精选</h2>
+            
+            <details>
+                <summary>习题 7.1：管道敷设最短路线</summary>
+                <div style="padding: 15px;">
+                    <p>现有天然气站A，需敷设管道到用气单位E，可以选择的设计路线中途需经过加压站。试设计费用最低的路线。要求分别用动态规划的逆序和顺序算法求解。</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>习题 7.2：货轮最短航运路线</summary>
+                <div style="padding: 15px;">
+                    <p>一艘货轮在A港装货后驶往F港，中途需靠港加油、淡水三次，F港有3个码头。试求最合理停靠的码头及航线，使总路程最短。</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>习题 7.3：生产与存储</summary>
+                <div style="padding: 15px;">
+                    <p>某厂每月生产某种产品最多600件，当月生产的产品若未销出，就需存储。已知每100件产品的生产费为5千元，在进行生产的月份工厂要支出经营费4千元。市场需求已给定，假定1月初及4月底库存量为零，试问每月应生产多少产品，才能在满足需求条件下，使总生产及存储费用之和最小？</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>习题 7.4：资金分配</summary>
+                <div style="padding: 15px;">
+                    <p>某公司有资金4万元，可向A、B、C三个项目投资。已知各项目不同投资额的相应效益值，问如何分配资金可使总效益最大。列出动态规划模型，并分别用逆序和顺序解法求解。</p>
+                </div>
+            </details>
+            
+            <details>
+                <summary>习题 7.5：设备可靠性优化</summary>
+                <div style="padding: 15px;">
+                    <p>为保证某设备正常运转，需对串联工作的三种不同零件分别确定备件数量。若增加备用零件的数量，可提高设备正常运转的可靠性，但费用要增加，而总投资额为8千元。已知备用零件数与可靠性和费用关系，求备用零件数量各为多少时，可使设备运转的可靠性最高。</p>
+                </div>
+            </details>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="alert('更多习题请参考教材完整版！')">查看更多习题</button>
+                <button class="btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">返回顶部 ↑</button>
+            </div>
+        </section>
+        
+        <footer>
+            <h3>使用说明</h3>
+            <p>✅ 本HTML文件为独立文件，包含完整的内容和样式</p>
+            <p>🌐 需要网络连接以加载MathJax数学公式渲染库</p>
+            <p>💻 建议使用现代浏览器（Chrome, Firefox, Edge等）打开</p>
+            <p>📱 支持响应式设计，可在手机和平板上浏览</p>
+            <hr style="margin: 20px 0; border-color: #a6d6c9;">
+            <p style="margin-top: 20px;">
+                <strong>如何保存：</strong><br>
+                1. 将此HTML代码保存为 <code>.html</code> 文件<br>
+                2. 使用浏览器打开即可查看<br>
+                3. 可以打印或保存为PDF（浏览器打印功能）
+            </p>
+            <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.8;">
+                © 运筹学教程（第5版）第七章 - 动态规划交互式教程
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 添加加载动画
+        window.addEventListener('load', function() {
+            document.querySelectorAll('section').forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    section.style.transition = 'all 0.5s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+        
+        // 提示MathJax加载状态
+        console.log('MathJax正在加载数学公式，请稍候...');
+    </script>
+</body>
+</html>

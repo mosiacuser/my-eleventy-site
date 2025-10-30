@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第十一章 存储论 - 交互式教程</title>
+    
+    <!-- MathJax配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #343434;
+            background: linear-gradient(135deg, #f7f7f7 0%, #e8e8e8 100%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        nav {
+            background: #343434;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        nav li {
+            margin: 0;
+        }
+        
+        nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        nav a:hover {
+            background: #f27d00;
+            border-bottom-color: #f7d117;
+        }
+        
+        main {
+            padding: 40px 30px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+            position: relative;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: #f7d117;
+        }
+        
+        h3 {
+            color: #343434;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid #f27d00;
+        }
+        
+        h4 {
+            color: #f27d00;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .concept-box {
+            background: linear-gradient(135deg, #a6d6c9 0%, #d4ebe4 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #f27d00;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .formula-box {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border: 2px solid #f7d117;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .example-box {
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe6cc 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #f27d00;
+        }
+        
+        .example-box h4 {
+            color: #f27d00;
+            margin-top: 0;
+        }
+        
+        .collapsible {
+            background: #343434;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            border-radius: 5px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .collapsible:hover {
+            background: #f27d00;
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            color: #f7d117;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+            font-size: 1.3em;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f9f9f9;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .content-inner {
+            padding: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #f27d00 0%, #ff9933 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        tr:hover {
+            background: #a6d6c9;
+            transition: all 0.3s;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #f7d117;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .note strong {
+            color: #f27d00;
+        }
+        
+        footer {
+            background: #343434;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 999;
+        }
+        
+        .scroll-top:hover {
+            background: #ff9933;
+            transform: translateY(-5px);
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+            }
+            
+            nav a {
+                border-bottom: 1px solid #555;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            main {
+                padding: 20px 15px;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第十一章 存储论</h1>
+            <p class="subtitle">Inventory Theory - 运筹学教程第5版</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#section1">基本概念</a></li>
+                <li><a href="#section2">确定型模型</a></li>
+                <li><a href="#section3">单周期随机型</a></li>
+                <li><a href="#section4">其他随机型</a></li>
+                <li><a href="#section5">应用研究</a></li>
+                <li><a href="#exercises">习题</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <section id="section1">
+                <h2>第一节 存储问题及其基本概念</h2>
+                
+                <h3>一、存储问题</h3>
+                <p>存储问题是人们最熟悉又最需要研究的问题之一。例如工厂储存的原材料、在制品等，存储太少，不足以满足生产的需要，将使生产过程中断；存储太多，超过了生产的需要，将造成资金及资源的积压浪费。商店储存商品，存储太少，造成商品脱销，将影响销售利润和竞争能力；存储太多，将影响资金周转并带来积压商品的有形或无形损失。</p>
+                
+                <div class="concept-box">
+                    <p><strong>核心思想：</strong>存储是协调供需关系的常用手段。存储由于需求（输出）而减少，通过补充（输入）而增加。存储论研究的基本问题是，对于特定的需求类型，以怎样的方式进行补充，才能最好地实现存储管理的目标。</p>
+                </div>
+                
+                <h3>二、存储模型中的基本要素</h3>
+                
+                <button class="collapsible">1. 需求</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>存储的目的是为了满足需求。随着需求的发生，存储将减少。根据需求的时间特征，可将需求分为：</p>
+                        <ul>
+                            <li><strong>连续性需求：</strong>随着时间的变化，需求连续地发生，因而存储也连续地减少</li>
+                            <li><strong>间断性需求：</strong>需求发生的时间极短，可以看作瞬时发生，因而存储的变化是跳跃式地减少</li>
+                        </ul>
+                        <p>根据需求的数量特征，可将需求分为：</p>
+                        <ul>
+                            <li><strong>确定性需求：</strong>需求发生的时间和数量是确定的（如生产中对各种物料的需求）</li>
+                            <li><strong>随机性需求：</strong>需求发生的时间或数量是不确定的（需要了解统计规律性）</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <button class="collapsible">2. 补充</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>通过补充来弥补因需求而减少的存储。从开始订货到存储的实现需要经历一段时间，这段时间可分为两部分：</p>
+                        <div class="formula-box">
+                            <p><strong>① 拖后时间（提前时间）：</strong>从开始订货到开始补充为止的时间</p>
+                            <p><strong>② 入库时间（生产时间）：</strong>从开始补充到补充完毕为止的时间</p>
+                        </div>
+                        <p>这两部分时间可能很短（可以忽略），也可能很长；可能是确定的，也可能是随机的。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">3. 存储策略</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>存储策略是指决定什么情况下对存储进行补充，以及补充数量的多少。常见的存储策略有：</p>
+                        <table>
+                            <tr>
+                                <th>策略类型</th>
+                                <th>说明</th>
+                            </tr>
+                            <tr>
+                                <td><strong>$(t, Q)$策略</strong></td>
+                                <td>每隔固定时间$t$补充固定量$Q$</td>
+                            </tr>
+                            <tr>
+                                <td><strong>$(t, S)$策略</strong></td>
+                                <td>每隔固定时间$t$补充一次，补足最大存储量$S$</td>
+                            </tr>
+                            <tr>
+                                <td><strong>$(s, S)$策略</strong></td>
+                                <td>当存储降至$s$时补充，补足$S$（$s$为订货点）</td>
+                            </tr>
+                            <tr>
+                                <td><strong>$(t, s, S)$策略</strong></td>
+                                <td>每隔时间$t$盘点，若存储$I \leq s$则补足$S$</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <button class="collapsible">4. 费用</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <p>在存储论研究中，常以费用标准来评价和优选存储策略。经常考虑的费用项目有：</p>
+                        <div class="concept-box">
+                            <p><strong>(1) 存储费：</strong>资金利息、保险、仓库使用、物资保管、损坏变质等费用，一般和物资存储数量及时间成比例</p>
+                            <p><strong>(2) 订货费：</strong>包括订购费用（手续费、差旅费等，与订货次数有关）和物资进货成本（货款、运费等，与订货数量有关）</p>
+                            <p><strong>(3) 生产费：</strong>包括装配费用（与生产次数有关）和生产数量相关费用（原材料、零配件成本、直接加工费等）</p>
+                            <p><strong>(4) 缺货费：</strong>存储不能满足需求而造成的损失（失去销售机会、停工待料、延期交货额外支出、损失赔偿等）</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="section2">
+                <h2>第二节 确定型存储模型</h2>
+                
+                <h3>一、模型一：不允许缺货，补充时间极短</h3>
+                
+                <div class="concept-box">
+                    <h4>模型假设：</h4>
+                    <ul>
+                        <li>(1) 需求是连续均匀的，需求速度$R$是常数</li>
+                        <li>(2) 补充可以瞬时实现，补充时间近似为零</li>
+                        <li>(3) 单位存储费为$C_1$，单位缺货费$C_2$为无穷大，订货费为$C_3$，货物单价为$K$</li>
+                    </ul>
+                </div>
+                
+                <p>采用$(t, Q)$循环策略，设补充间隔时间为$t$，补充时存储已用尽，每次补充量为$Q$。</p>
+                
+                <div class="formula-box">
+                    <p><strong>关键关系：</strong>一次补充量$Q$必须满足$t$时间内的需求，故 $Q = Rt$</p>
+                    <p><strong>$t$时间内的平均订货费：</strong></p>
+                    $$\frac{C_3 + KRt}{t} = \frac{C_3}{t} + KR$$
+                    <p><strong>$t$时间内的平均存储量：</strong></p>
+                    $$\frac{1}{t}\int_0^t KT\,dT = \frac{1}{2}Rt$$
+                    <p><strong>$t$时间内的平均存储费：</strong>$\displaystyle\frac{1}{2}C_1Rt$</p>
+                </div>
+                
+                <div class="formula-box">
+                    <p><strong>因此，$t$时间内的平均总费用为：</strong></p>
+                    $$C(t) = \frac{C_3}{t} + KR + \frac{1}{2}C_1Rt \quad\quad (11.1)$$
+                </div>
+                
+                <p>为了求得最优值$t^*$，令 $\displaystyle\frac{dC(t)}{dt} = 0$，解得：</p>
+                
+                <div class="formula-box">
+                    <p class="highlight">经济订购批量(EOQ)公式：</p>
+                    $$t^* = \sqrt{\frac{2C_3}{C_1R}} \quad\quad (11.2)$$
+                    
+                    $$Q^* = Rt^* = \sqrt{\frac{2C_3R}{C_1}} \quad\quad (11.3)$$
+                    
+                    $$C^* = C(t^*) = \sqrt{2C_1C_3R} + KR \quad\quad (11.4)$$
+                </div>
+                
+                <div class="note">
+                    <strong>注意：</strong>如果不考虑货物总价$KQ$（因为它是常数，与存储策略无关），则：
+                    $$C^* = \sqrt{2C_1C_3R} \quad\quad (11.5)$$
+                </div>
+                
+                <div class="example-box">
+                    <h4>例1</h4>
+                    <p><strong>问题：</strong>某商品单位成本为5元，每天保管费为成本的0.1%，每次订购费为10元。已知对该商品的需求是100件/天，不允许缺货。假设该商品的进货可以随时实现。问应怎样组织进货，才最经济？</p>
+                    
+                    <p><strong>解：</strong>根据题意，$K = 5$元/件，$C_1 = 5 \times 0.1\% = 0.005$元/(件·天)，$C_3 = 10$元，$R = 100$件/天</p>
+                    
+                    <div class="formula-box">
+                        $$t^* = \sqrt{\frac{2C_3}{C_1R}} = \sqrt{\frac{2 \times 10}{0.005 \times 100}} = 6.32 \text{(天)}$$
+                        
+                        $$Q^* = Rt^* = 100 \times 6.32 = 632 \text{(件)}$$
+                        
+                        $$C^* = \sqrt{2C_1C_3R} = \sqrt{2 \times 0.005 \times 10 \times 100} = 3.16 \text{(元/天)}$$
+                    </div>
+                    
+                    <p><strong>结论：</strong>应该每隔6.32天进货一次，每次进货该商品632件，能使总费用为最少，平均约3.16元/天。若按年计划，则每年大约进货 $365/6.32 \approx 58$(次)，每次进货630件。</p>
+                </div>
+                
+                <h3>二、模型二：允许缺货，补充时间较长</h3>
+                
+                <div class="concept-box">
+                    <h4>模型假设：</h4>
+                    <ul>
+                        <li>(1) 需求是连续均匀的，需求速度$R$为常数</li>
+                        <li>(2) 生产可立刻开始，但生产需要一定周期。设生产连续均匀，生产速度$P$为常数，且$P > R$</li>
+                        <li>(3) 单位存储费为$C_1$，单位缺货费为$C_2$，订购费为$C_3$</li>
+                    </ul>
+                </div>
+                
+                <p>在这个模型中，一个存储周期$[0, t]$可分为几个阶段：</p>
+                <ul>
+                    <li>$[0, t_1]$：存储为零，缺货累积</li>
+                    <li>$[t_1, t_2]$：开始生产，补足缺货</li>
+                    <li>$[t_2, t_3]$：继续生产，增加存储</li>
+                    <li>$[t_3, t]$：停止生产，消耗存储</li>
+                </ul>
+                
+                <div class="formula-box">
+                    <p><strong>从存储状态图分析可得：</strong></p>
+                    $$t_1 = \frac{(P-R)}{P}t_2 \quad\quad (11.6)$$
+                    
+                    $$t_3 - t_2 = \frac{R}{P}(t - t_2) \quad\quad (11.7)$$
+                </div>
+                
+                <p>经过推导，$[0, t]$时间内平均总费用为：</p>
+                
+                <div class="formula-box">
+                    $$C(t, t_2) = \frac{(P-R)R}{2P}\left[C_1t - 2C_1t_2 + (C_1 + C_2)\frac{t_2^2}{t}\right] + \frac{C_3}{t} \quad\quad (11.8)$$
+                </div>
+                
+                <p>解方程组 $\displaystyle\frac{\partial C(t,t_2)}{\partial t} = 0$ 和 $\displaystyle\frac{\partial C(t,t_2)}{\partial t_2} = 0$，可得：</p>
+                
+                <div class="formula-box">
+                    <p class="highlight">模型二最优存储策略：</p>
+                    
+                    <p><strong>最优存储周期：</strong></p>
+                    $$t^* = \sqrt{\frac{2C_3}{C_1R}} \cdot \sqrt{\frac{C_1+C_2}{C_2}} \cdot \sqrt{\frac{P}{P-R}} \quad\quad (11.9)$$
+                    
+                    <p><strong>经济生产批量：</strong></p>
+                    $$Q^* = Rt^* = \sqrt{\frac{2C_3R}{C_1}} \cdot \sqrt{\frac{C_1+C_2}{C_2}} \cdot \sqrt{\frac{P}{P-R}} \quad\quad (11.10)$$
+                    
+                    <p><strong>缺货补足时间：</strong></p>
+                    $$t_2^* = \frac{C_1}{C_1+C_2}t^* \quad\quad (11.11)$$
+                    
+                    <p><strong>开始生产时间：</strong></p>
+                    $$t_1^* = \frac{P-R}{P}t_2^* \quad\quad (11.12)$$
+                    
+                    <p><strong>结束生产时间：</strong></p>
+                    $$t_3^* = \frac{R}{P}t^* + \left(1 - \frac{R}{P}\right)t_2^* \quad\quad (11.13)$$
+                    
+                    <p><strong>最大存储量：</strong></p>
+                    $$A^* = R(t^* - t_3^*) \quad\quad (11.14)$$
+                    
+                    <p><strong>最大缺货量：</strong></p>
+                    $$B^* = Rt_1^* \quad\quad (11.15)$$
+                    
+                    <p><strong>平均总费用：</strong></p>
+                    $$C^* = \frac{2C_3}{t^*} \quad\quad (11.16)$$
+                </div>
+                
+                <div class="example-box">
+                    <h4>例2</h4>
+                    <p><strong>问题：</strong>企业生产某种产品，正常生产条件下可生产10件/天。根据供货合同，需按7件/天供货。存储费每件0.13元/天，缺货费每件0.5元/天，每次生产准备费用为80元，求最优存储策略。</p>
+                    
+                    <p><strong>解：</strong>$P = 10$件/天，$R = 7$件/天，$C_1 = 0.13$元/(天·件)，$C_2 = 0.5$元/(天·件)，$C_3 = 80$元/次</p>
+                    
+                    <div class="formula-box">
+                        $$t^* = \sqrt{\frac{2 \times 80}{0.13 \times 7}} \times \sqrt{\frac{0.13 + 0.5}{0.5}} \times \sqrt{\frac{10}{10-7}} = 27.6 \text{(天)}$$
+                        
+                        $$Q^* = 7 \times 27.6 = 193.2 \text{(件/次)}$$
+                        
+                        $$t_2^* = \frac{0.13}{0.13+0.5} \times 27.6 = 5.5 \text{(天)}$$
+                        
+                        $$t_1^* = \frac{10-7}{10} \times 5.5 = 1.7 \text{(天)}$$
+                        
+                        $$t_3^* = \frac{7}{10} \times 27.6 + \left(1-\frac{7}{10}\right) \times 5.5 = 21.0 \text{(天)}$$
+                        
+                        $$A^* = 7 \times (27.6 - 21.0) = 46.2 \text{(件)}$$
+                        
+                        $$B^* = 7 \times 1.7 = 11.9 \text{(件)}$$
+                        
+                        $$C^* = 2 \times 80 \div 27.6 = 5.8 \text{(元/天)}$$
+                    </div>
+                </div>
+                
+                <h3>三、模型三：不允许缺货，补充时间较长</h3>
+                
+                <p>在模型二的假设条件中，取消允许缺货条件（即设$C_2 \to \infty$，$t_2 = 0$），就成为模型三。</p>
+                
+                <div class="formula-box">
+                    <p class="highlight">模型三最优存储策略：</p>
+                    
+                    <p><strong>最优存储周期：</strong></p>
+                    $$t^* = \sqrt{\frac{2C_3P}{C_1R(P-R)}} \quad\quad (11.17)$$
+                    
+                    <p><strong>经济生产批量：</strong></p>
+                    $$Q^* = Rt^* = \sqrt{\frac{2C_3RP}{C_1(P-R)}} \quad\quad (11.18)$$
+                    
+                    <p><strong>结束生产时间：</strong></p>
+                    $$t_3^* = \frac{R}{P}t^* \quad\quad (11.19)$$
+                    
+                    <p><strong>最大存储量：</strong></p>
+                    $$A^* = R(t^* - t_3^*) = \frac{R(P-R)}{P}t^* \quad\quad (11.20)$$
+                    
+                    <p><strong>平均总费用：</strong></p>
+                    $$C^* = \frac{2C_3}{t^*} \quad\quad (11.21)$$
+                </div>
+                
+                <div class="example-box">
+                    <h4>例3</h4>
+                    <p><strong>问题：</strong>商店经销某商品，月需求量为30件，需求速度为常数。该商品每件进价300元，月存储费为进价的2%。向厂订购该商品时订购费每次20元，订购后需5天才开始到货，到货速度为常数，即2件/天。求最优存储策略。</p>
+                    
+                    <p><strong>解：</strong>本例特点是补充除需要入库时间外，还需考虑拖后时间（5天）。</p>
+                    <p>$P = 2 \times 30 = 60$件/月，$R = 30$件/月，$C_1 = 300 \times 2\% \times \frac{1}{30} = 0.2$元/(天·件)，$C_3 = 20$元/次，$t_0 = 5$天，$L = 1 \times 5 = 5$件</p>
+                    
+                    <div class="formula-box">
+                        $$t^* = 20 \text{天}, \quad Q^* = 20 \text{件}, \quad A^* = 10 \text{件}, \quad t_3^* = 10 \text{天}, \quad C^* = 2 \text{元}$$
+                    </div>
+                    
+                    <p><strong>订货点：</strong>$L = 5$件。每当发现存储量降到5件或更低时就订购。</p>
+                </div>
+                
+                <h3>四、模型四：允许缺货，补充时间极短</h3>
+                
+                <p>在模型二的假设条件中，取消补充需要一定时间的条件（即设$P \to \infty$），就成为模型四。</p>
+                
+                <div class="formula-box">
+                    <p class="highlight">模型四最优存储策略：</p>
+                    
+                    <p><strong>最优存储周期：</strong></p>
+                    $$t^* = \sqrt{\frac{2C_3(C_1+C_2)}{C_1C_2R}} \quad\quad (11.22)$$
+                    
+                    <p><strong>经济生产批量：</strong></p>
+                    $$Q^* = Rt^* = \sqrt{\frac{2RC_3(C_1+C_2)}{C_1 \cdot C_2}} \quad\quad (11.23)$$
+                    
+                    <p><strong>生产时间：</strong></p>
+                    $$t_p^* = t_1 = t_2 = t_3 = \frac{C_1}{C_1+C_2}t^* \quad\quad (11.24)$$
+                    
+                    <p><strong>最大存储量：</strong></p>
+                    $$A^* = \frac{C_2R}{C_1+C_2}t^* = \sqrt{\frac{2C_2C_3R}{C_1(C_1+C_2)}} \quad\quad (11.25)$$
+                    
+                    <p><strong>最大缺货量：</strong></p>
+                    $$B^* = \frac{C_1R}{C_1+C_2}t^* = \sqrt{\frac{2C_1C_3R}{C_2(C_1+C_2)}} \quad\quad (11.26)$$
+                    
+                    <p><strong>平均总费用：</strong></p>
+                    $$C^* = \frac{2C_3}{t^*} \quad\quad (11.27)$$
+                </div>
+                
+                <h3>五、模型五：价格与订货批量有关的存储模型</h3>
+                
+                <p>为了鼓励大批量订货，供方常对需方实行价格优惠。订货批量越大，货物价格就越便宜。</p>
+                
+                <div class="concept-box">
+                    <p>设订货批量为$Q$，对应的货物单价为$K(Q)$。当$Q_{i-1} \leq Q \lt Q_i$时，$K(Q) = K_i$（$i = 1, 2, \ldots, n$）。</p>
+                    <p>其中，$Q_i$为价格折扣的某个分界点，且$0 \leq Q_0 \lt Q_1 \lt Q_2 \lt \cdots \lt Q_n$，$K_1 > K_2 > \cdots > K_n$</p>
+                </div>
+                
+                <p>费用函数为：</p>
+                
+                <div class="formula-box">
+                    $$C(t) = \frac{1}{2}C_1Rt + \frac{C_3}{t} + RK(Q)$$
+                </div>
+                
+                <p>由于货物总价$RK(Q)$的存在，费用曲线呈逐段递减趋势，最小费用点需要通过比较各段的最小值来确定。</p>
+                
+                <div class="note">
+                    <strong>最小平均总费用订购批量$Q^*$的确定步骤：</strong>
+                    <ol>
+                        <li>计算 $\bar{Q} = \sqrt{\frac{2C_3R}{C_1}}$，若$Q_{i-1} \leq \bar{Q} \lt Q_i$，计算平均总费用 $\bar{C} = \sqrt{2C_1C_3R} + RK_i$</li>
+                        <li>对每个$i = j+1, j+2, \ldots, n$，计算 $C^{(i)} = \frac{1}{2}C_1R \cdot \frac{Q_i}{R} + \frac{C_3R}{Q_i} + RK_i$</li>
+                        <li>若$\min\{\bar{C}, C^{(j+1)}, C^{(j+2)}, \ldots, C^{(n)}\} = C^*$，则$C^*$对应的批量为最小费用订购批量$Q^*$</li>
+                    </ol>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例4</h4>
+                    <p><strong>问题：</strong>工厂每周需要零配件32箱，存储费每箱每周1元，每次订购费25元，不允许缺货。零配件进货时若：(1)订货量1-9箱时，每箱12元；(2)订货量10-49箱时，每箱10元；(3)订货量50-99箱时，每箱9.5元；(4)订货量100箱及以上时，每箱9元。求最优存储策略。</p>
+                    
+                    <p><strong>解：</strong></p>
+                    
+                    <div class="formula-box">
+                        $$\bar{Q} = \sqrt{\frac{2C_3R}{C_1}} = \sqrt{\frac{2 \times 25 \times 32}{1}} = 40 \text{(箱)}$$
+                        
+                        <p>因$\bar{Q} = 40$在10-49之间，故每箱价格为$K_2 = 10$元</p>
+                        
+                        $$\bar{C} = \sqrt{2C_1C_3R} + RK_2 = \sqrt{2 \times 1 \times 25 \times 32} + 32 \times 10 = 360 \text{(元/周)}$$
+                        
+                        $$C^{(3)} = \frac{1}{2} \times 1 \times 50 + \frac{25 \times 32}{50} + 32 \times 9.5 = 345 \text{(元)}$$
+                        
+                        $$C^{(4)} = \frac{1}{2} \times 1 \times 100 + \frac{25 \times 32}{100} + 32 \times 9 = 346 \text{(元)}$$
+                        
+                        $$\min\{360, 345, 346\} = 345 = C^{(3)}$$
+                    </div>
+                    
+                    <p><strong>结论：</strong>最优订购批量$Q^* = 50$箱，最小费用$C^* = 345$元/周，订购周期$t^* = Q^*/R = 50/32 \approx 1.56$周 ≈ 11天</p>
+                </div>
+            </section>
+            
+            <section id="section3">
+                <h2>第三节 单周期的随机型存储模型</h2>
+                
+                <p>在随机型存储问题中，常见的随机性因素是需求和拖后时间。本节讲述单周期的存储模型。周期中只能提出一次订货，发生短缺时也不允许再提出订货，周期结束后，剩余货可以处理。</p>
+                
+                <h3>一、模型六：需求是离散随机变量</h3>
+                
+                <div class="concept-box">
+                    <h4>报童问题：</h4>
+                    <p>报童每天售出的报纸份数$r$是一个离散随机变量，其概率$P(r)$已知。报童每售出一份报纸能赚$k$元；如售剩报纸，每剩一份赔$h$元。问报童每天应准备多少份报纸？</p>
+                </div>
+                
+                <p>报童每天售出$r$份报纸的概率为$P(r)$，$\sum P(r) = 1$</p>
+                
+                <p>设报童每天准备$Q$份报纸。当供过于求（$r \leq Q$）时，因报纸售剩而遭到的损失期望值为：</p>
+                
+                <div class="formula-box">
+                    $$\sum_{r=0}^Q h(Q-r)P(r)$$
+                </div>
+                
+                <p>当供不应求（$r > Q$）时，因失去销售机会而少赚钱的损失期望值为：</p>
+                
+                <div class="formula-box">
+                    $$\sum_{r=Q+1}^{\infty} k(r-Q)P(r)$$
+                </div>
+                
+                <p>因此，当每天准备$Q$份报纸时，报童每天总的损失期望值为：</p>
+                
+                <div class="formula-box">
+                    $$C(Q) = h\sum_{r=0}^Q (Q-r)P(r) + k\sum_{r=Q+1}^{\infty} (r-Q)P(r)$$
+                </div>
+                
+                <p>采用边际分析法，计算$\Delta C(Q) = C(Q+1) - C(Q)$，经过推导得：</p>
+                
+                <div class="formula-box">
+                    $$\Delta C(Q) = (k+h)\left[F(Q) - N\right]$$
+                    
+                    <p>其中，$F(Q) = \sum_{r=0}^Q P(r)$，$N = \frac{k}{k+h}$（称为<span class="highlight">损益转折概率</span>）</p>
+                </div>
+                
+                <div class="formula-box">
+                    <p class="highlight">模型六最佳订购量$Q^*$确定关系式：</p>
+                    $$\sum_{r=0}^{Q^*-1} P(r) \lt N = \frac{k}{k+h} \leq \sum_{r=0}^{Q^*} P(r) \quad\quad (11.28)$$
+                </div>
+                
+                <div class="example-box">
+                    <h4>例5</h4>
+                    <p><strong>问题：</strong>某厂将从国外进口150台设备。这种设备有一个关键部件，其备件必须在进口设备时同时购买，不能单独订货。该种备件订购单价为500元，无备件时导致的停产损失和修复费用合计为10,000元。根据有关资料计算，在计划使用期内，150台设备因关键部件损坏而需要$r$个备件的概率$P(r)$见下表。问厂应为这些设备同时购买多少关键部件的备件？</p>
+                    
+                    <table>
+                        <tr>
+                            <th>$r$</th>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>4</td>
+                            <td>5</td>
+                            <td>6</td>
+                            <td>7</td>
+                            <td>8</td>
+                            <td>9</td>
+                            <td>9以上</td>
+                        </tr>
+                        <tr>
+                            <th>$P(r)$</th>
+                            <td>0.47</td>
+                            <td>0.20</td>
+                            <td>0.07</td>
+                            <td>0.05</td>
+                            <td>0.05</td>
+                            <td>0.03</td>
+                            <td>0.03</td>
+                            <td>0.03</td>
+                            <td>0.03</td>
+                            <td>0.02</td>
+                            <td>0.02</td>
+                        </tr>
+                    </table>
+                    
+                    <p><strong>解：</strong>当某设备的关键部件损坏时，如有备件替换，则可避免10,000元的损失，故边际收益$k = 10000 - 500 = 9500$元；当备件多余时，每多余一个备件将造成500元的浪费，故边际损失$h = 500$元。</p>
+                    
+                    <div class="formula-box">
+                        $$N = \frac{k}{k+h} = \frac{9500}{9500+500} = 0.95$$
+                        
+                        <p>计算累积概率：</p>
+                        $$\sum_{r=0}^7 P(r) = 0.93 \lt N = 0.95 \leq \sum_{r=0}^8 P(r) = 0.96$$
+                    </div>
+                    
+                    <p><strong>结论：</strong>$Q^* = 8$，即厂应同时购买8个关键部件的备件，可使损失期望值最小。</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例6</h4>
+                    <p><strong>问题：</strong>某商品每件进价40元，售价73元。商品过期后将削价为每件20元并一定可以售出。已知该商品销售量$r$服从泊松分布：</p>
+                    $$P(r) = \frac{e^{-\lambda}\lambda^r}{r!}$$
+                    <p>根据以往经验，平均销售量$\lambda = 6$件。问商店应采购多少件该商品？</p>
+                    
+                    <p><strong>解：</strong>每件商品销售盈利（边际收益）$k = 73 - 40 = 33$（元），滞销损失（边际损失）$h = 40 - 20 = 20$（元）。</p>
+                    
+                    <div class="formula-box">
+                        $$N = \frac{33}{33+20} = 0.623$$
+                        
+                        <p>销售量$r$累积概率$F(Q) = \sum_{r=0}^Q \frac{e^{-6} \cdot 6^r}{r!}$。查泊松分布累积概率值表可得：</p>
+                        
+                        $$F(6) = 0.6063 \lt 0.623 \lt F(7) = 0.7440$$
+                    </div>
+                    
+                    <p><strong>结论：</strong>商店应采购7件该商品，可使损失期望值最小。</p>
+                </div>
+                
+                <h3>二、模型七：需求是连续的随机变量</h3>
+                
+                <p>设单位货物进价为$k$，售价为$p$，存储费为$c$。又设货物需求$r$是连续型随机变量，密度函数为$\phi(r)$，分布函数为$F(a) = \int_0^a \phi(r)\,dr$（$a > 0$）。问货物的订购量（或生产量）$Q$为何值时，能使盈利期望值最大？</p>
+                
+                <p>当订货量为$Q$、需求量为$r$时：</p>
+                <ul>
+                    <li>实际销售量为$\min[r, Q]$</li>
+                    <li>实际销售收入为$p \cdot \min[r, Q]$</li>
+                    <li>进货成本为$kQ$</li>
+                    <li>货物存储费为$c(Q-r)$（当$r \leq Q$时）</li>
+                </ul>
+                
+                <p>因此，盈利期望值为：</p>
+                
+                <div class="formula-box">
+                    $$E[W(Q)] = pE(r) - \left[\int_Q^{\infty} p(r-Q)\phi(r)\,dr + \int_0^Q c(Q-r)\phi(r)\,dr + kQ\right]$$
+                </div>
+                
+                <p>令$\displaystyle\frac{dE[C(Q)]}{dQ} = 0$，得：</p>
+                
+                <div class="formula-box">
+                    <p class="highlight">模型七最佳订货量$Q^*$确定关系式：</p>
+                    $$F(Q) = \int_0^Q \phi(r)\,dr = \frac{p-k}{p+c} \quad\quad (11.29)$$
+                </div>
+                
+                <p>当缺货损失不只是考虑销售收入的减少（如还要考虑赔偿需方损失等）时，单位缺货费$c_2 > p$，此时，只需在前面推导过程中用$c_2$代替$p$即可。所以，这种情况下$Q^*$由下式确定：</p>
+                
+                <div class="formula-box">
+                    $$F(Q) = \int_0^Q \phi(r)\,dr = \frac{c_2-k}{c_2+c} \quad\quad (11.30)$$
+                </div>
+                
+                <div class="note">
+                    <strong>注意：</strong>模型七和模型六一样，都是一次性订购问题。在多阶段订购问题中，由于需求$r$是随机变量，所以，在每一阶段开始时，很可能存在期初存储。可以采用$(s, S)$存储策略：由式(11.30)确定$Q^*$（$Q^*$相当于最大存储量$S$），若$I > Q^*$，本阶段不订货；若$I \lt Q^*$，本阶段订货，订货量$Q = Q^* - I$，以使订货后本阶段存储量达到$Q^*$。
+                </div>
+                
+                <div class="example-box">
+                    <h4>例7</h4>
+                    <p><strong>问题：</strong>工厂生产某产品，成本220元/吨，售价320元，每月存储费10元。月销售量为正态分布，平均值为60吨，标准差为3吨。问该厂应每月生产该产品多少，使获利的期望值最大？</p>
+                    
+                    <p><strong>解：</strong>$k = 220$，$p = 320$，$c = 10$。销售量$r \sim N(60, 3^2)$</p>
+                    
+                    <div class="formula-box">
+                        由式(11.29)：
+                        $$\int_0^Q \frac{1}{3\sqrt{2\pi}}e^{-\frac{(r-60)^2}{2 \times 3^2}}\,dr = \frac{p-k}{p+c} = \frac{320-220}{320+10} = 0.3030$$
+                        
+                        <p>从正态分布的累积值表查得：</p>
+                        $$\frac{Q-60}{3} = -0.515$$
+                        
+                        <p>从中解得：</p>
+                        $$Q^* = 58.455 \approx 58.5$$
+                    </div>
+                    
+                    <p><strong>结论：</strong>工厂每月应生产这种产品约58.5吨，可使期望损失最小。</p>
+                </div>
+            </section>
+            
+            <section id="section4">
+                <h2>第四节 其他的随机型存储模型</h2>
+                
+                <p><strong>问题：</strong>货物单位成本为$k$、单位存储费为$C_1$、单位缺货费为$C_2$、每次订购费为$C_3$、期初存储为$I$。需求$r$为连续随机变量，其概率分布已知。采用$(s, S)$存储策略。问每次定货量$Q$如何确定，才能使损失期望值最小？</p>
+                
+                <h3>一、模型八：需求$r$为连续随机变量的$(s, S)$存储策略</h3>
+                
+                <p>模型中需求$r$为连续随机变量，密度函数为$\phi(r)$，$\int_0^{\infty}\phi(r)\,dr = 1$，分布函数为$F(a) = \int_0^a \phi(r)\,dr$（$a > 0$）</p>
+                
+                <h4>首先考虑最大存储量$S$</h4>
+                
+                <p>当期初存储不足订货点，即$I \lt s$时，需要订货，订货量$Q = S - I$。和模型七类似，本阶段损失期望值：</p>
+                
+                <div class="formula-box">
+                    $$C(S) = C_3 + k(S-I) + \int_0^S C_1(S-r)\phi(r)\,dr + \int_S^{\infty} C_2(r-S)\phi(r)\,dr$$
+                </div>
+                
+                <p>解 $\displaystyle\frac{dC(S)}{dS} = 0$，得：</p>
+                
+                <div class="formula-box">
+                    <p class="highlight">最大存储量$S^*$确定关系式：</p>
+                    $$F(S) = \int_0^S \phi(r)\,dr = \frac{C_2-k}{C_2+C_1} \quad\quad (11.31)$$
+                </div>
+                
+                <p>由于缺货损失至少包括失去销售机会的损失，而售价又高于成本，所以，一般情况下有：</p>
+                $$0 \lt N = \frac{C_2-k}{C_2+C_1} \lt 1$$
+                
+                <p>容易证明，满足式(11.31)的$S^*$是$C(S)$的最小值点。所以，最大存储量$S^*$可由式(11.31)确定。并且，应当注意到，$S^*$的确定和订货点$s$无关。</p>
+                
+                <h4>再考虑订货点$s$</h4>
+                
+                <p>此时，最大存储量$S^*$已经确定。根据订货点$s$的意义，当期初存储$I = s$时，不订货所造成的损失期望值应当不超过订货所造成的损失期望值，因此有：</p>
+                
+                <div class="formula-box">
+                    $$C_1\int_0^s (s-r)\phi(r)\,dr + C_2\int_s^{\infty} (r-s)\phi(r)\,dr$$
+                    $$\leq C_3 + k(S^*-s) + C_1\int_0^{S^*} (S^*-r)\phi(r)\,dr + C_2\int_{S^*}^{\infty} (r-S^*)\phi(r)\,dr \quad\quad (11.32)$$
+                </div>
+                
+                <p>当$s = S^*$时，式(11.32)显然成立，但问题的目的是要选取一个使式(11.32)成立的尽可能小的$s$值。设使式(11.32)成立的最小的$s$为$s^*$，则$s^*$为$(s, S)$存储策略中的订货点。</p>
+                
+                <h3>二、模型九：需求$r$为离散随机变量的$(s, S)$存储策略</h3>
+                
+                <p>模型中需求$r$为离散随机变量。$r = r_i$的概率$P(r_i)$已知，$0 \lt P(r_i) \lt 1$（$i = 1, 2, \ldots, m$），且$\sum P(r_i) = 1$，$0 \lt r_1 \lt r_2 \lt \cdots \lt r_{m-1} \lt r_m$</p>
+                
+                <p>由于$r$是离散取值，为了简单，订货点$s$和最大存储量$S$的值只在$r_1, r_2, \ldots, r_m$中选取。当$S = r_i$时，记$S = S_i$，即$S_i = r_i$（$i = 1, 2, \ldots, m$）</p>
+                
+                <div class="formula-box">
+                    <p class="highlight">模型九用于计算最大存储量$S^*$和订货点$s^*$的公式：</p>
+                    
+                    <p><strong>确定$S^*$：</strong></p>
+                    $$\sum_{r \lt S_i^*} P(r) \lt N = \frac{C_2-k}{C_2+C_1} \leq \sum_{r \leq S_i^*} P(r) \quad\quad (11.33)$$
+                    
+                    <p><strong>确定$s^*$：</strong></p>
+                    $$ks + \sum_{r \lt s} C_1(s-r)P(r) + \sum_{r > s} C_2(r-s)P(r)$$
+                    $$\leq C_3 + kS^* + \sum_{r \leq S^*} C_1(S^*-r)P(r) + \sum_{r > S^*} C_2(r-S^*)P(r) \quad\quad (11.34)$$
+                </div>
+                
+                <div class="example-box">
+                    <h4>例8</h4>
+                    <p><strong>问题：</strong>石油公司经销某种燃料油。已知该燃料油每月销售量$r$(kg)服从指数分布，密度函数：</p>
+                    $$\phi(r) = \begin{cases} 0.000001e^{-0.000001r} & r \geq 0 \\ 0 & r \lt 0 \end{cases}$$
+                    <p>该燃料油进价$k = 1.40$元/kg，不需考虑订购费和存储费，即$C_3 = 0$和$C_1 = 0$。当缺货时需从其他石油公司购进，市场价为1.60元/kg，即$C_2 = 1.60$元/kg。试制定$(s, S)$存储策略。</p>
+                    
+                    <p><strong>解：</strong></p>
+                    <div class="formula-box">
+                        由式(11.31)：
+                        $$\int_0^S \phi(r)\,dr = \int_0^S 0.000001e^{-0.000001r}\,dr = \frac{C_2-k}{C_2+C_1} = \frac{1.60-1.40}{1.60+0} = 0.125$$
+                        
+                        解之，得 $S = 133500$ (kg)
+                        
+                        由式(11.32)，因$C_1 = C_3 = 0$，$C_2 = 1.60$，$S = 133500$，故有：
+                        $$1.4s + 1.6\int_s^{\infty} (r-s)\phi(r)\,dr \leq 1.4 \times 133500 + 1.6\int_{133500}^{\infty} (r-133500)\phi(r)\,dr$$
+                    </div>
+                    
+                    <p><strong>结论：</strong>上式有唯一解$s = S = 133500$。因此，石油公司对该种燃料油应采取$(s, S) = (133500, 133500)$的存储策略，即当库存燃料油减少到133,500kg时，应订购，使库存重新达到133,500kg。</p>
+                    <p class="note"><strong>注：</strong>本例$s = S$，是由于$C_1 = C_3 = 0$，频繁补充和较大存储都不会增加费用。</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>例9</h4>
+                    <p><strong>问题：</strong>商店销售某种商品。每月销售量$r$（件）为离散随机变量，其概率为：</p>
+                    <table>
+                        <tr>
+                            <th>$P(r=100)$</th>
+                            <th>$P(r=110)$</th>
+                            <th>$P(r=120)$</th>
+                            <th>$P(r=130)$</th>
+                            <th>$P(r=140)$</th>
+                            <th>$P(r=150)$</th>
+                        </tr>
+                        <tr>
+                            <td>0.1</td>
+                            <td>0.2</td>
+                            <td>0.3</td>
+                            <td>0.2</td>
+                            <td>0.1</td>
+                            <td>0.1</td>
+                        </tr>
+                    </table>
+                    <p>订货费$C_3 = 100$元，每件商品进货成本$k = 500$元。一个月中，每件商品存储费$C_1 = 10$元，缺货费（销售损失等）$C_2 = 800$元。求$(s, S)$存储策略。</p>
+                    
+                    <p><strong>解：</strong></p>
+                    <div class="formula-box">
+                        由式(11.33)：$N = \frac{800-500}{800+10} = 0.37$
+                        
+                        又 $P(r=100) + P(r=110) = 0.3 \lt 0.37$
+                        
+                        $P(r=100) + P(r=110) + P(r=120) = 0.6 > 0.37$
+                        
+                        所以，$S^* = 120$件
+                        
+                        <p>因为$s \leq S^* = 120$，所以$s$只可能是100、110或120。由于$s$要尽可能小，故先将100代入式(11.34)检验。</p>
+                        
+                        对于本例，式(11.34)右边为：
+                        $$100 + 500 \times 120 + \sum_{r \leq 120} 10(120-r)P(r) + \sum_{r > 120} 500(r-120)P(r)$$
+                        $$= 100 + 60000 + 10(20 \times 0.1 + 10 \times 0.2 + 0 \times 0.3) + 800(10 \times 0.2 + 20 \times 0.1 + 30 \times 0.1)$$
+                        $$= 65740$$
+                        
+                        将$s = 100$代入，左边 = $68400 > 65740$（不满足）
+                        
+                        将$s = 110$代入，左边 = $66210 > 65740$（不满足）
+                        
+                        将$s = 120$代入，左边 = $65640 \lt 65740$（满足）
+                    </div>
+                    
+                    <p><strong>结论：</strong>$s^* = 120$件。商店对该商品应采取$(s, S) = (120, 120)$的存储策略。</p>
+                </div>
+            </section>
+            
+            <section id="section5">
+                <h2>第五节 存储论应用研究中的一些问题</h2>
+                
+                <p>库存管理的实际需求是非常迫切的，即使是简单的库存策略，也会带来巨大的经济效益。运筹学的任务是建立更实用的库存模型，并用于实际。</p>
+                
+                <h3>一、多品种多级库存系统的控制</h3>
+                
+                <p>多品种多级库存系统可以用下图表示：</p>
+                
+                <div class="concept-box">
+                    <p><strong>系统结构：</strong></p>
+                    <ul>
+                        <li><strong>第一级：</strong>货源点（中心仓库），供应第二级的库存点</li>
+                        <li><strong>中间级：</strong>批发仓库等</li>
+                        <li><strong>最低级：</strong>零售仓库，直接满足顾客需求</li>
+                    </ul>
+                </div>
+                
+                <p>多品种多级库存系统的一个特点是可能有多种不同的订货策略：</p>
+                <ul>
+                    <li><strong>单个物品分别订货</strong></li>
+                    <li><strong>联合订货：</strong>同时订购所有物品</li>
+                    <li><strong>混合式策略：</strong>允许同时订购所有物品或部分物品</li>
+                </ul>
+                
+                <div class="note">
+                    <strong>问题的复杂性表现在：</strong>
+                    <ol>
+                        <li>整个系统具有层次结构，与不同的库存策略结合起来的需求过程是复杂的过程的叠加</li>
+                        <li>决策变量需要从系统的角度同时优化</li>
+                        <li>某一级的安全库存量会影响另一级的缺货情况，必须从总体上考虑</li>
+                        <li>当缺货出现时，可采用的处理方式灵活多样</li>
+                        <li>计算量非常大</li>
+                        <li>管理协调困难，局部利益常妨碍系统成功地实施</li>
+                    </ol>
+                </div>
+                
+                <p>已经开发出一些比较实用的库存控制方法，例如<strong>发送式库存(PUSH)系统</strong>。发送式库存系统采取集中控制，从系统全局着眼把货物发送到下一级，这样可以消除过多的订货次数，使费用减小并达到要求的服务水平。</p>
+                
+                <h3>二、易腐物品库存管理</h3>
+                
+                <p>在库存问题的研究中，通常假定存放物品的使用价值保持不变。但许多实际情况并非如此，如：</p>
+                <ul>
+                    <li>血库中供输血用的血液一般可存放21天（固定寿命）</li>
+                    <li>农产品、食品、药品、武器弹药等，其寿命无法事先确定（随机寿命）</li>
+                </ul>
+                
+                <div class="concept-box">
+                    <h4>固定寿命模型假定：</h4>
+                    <ol>
+                        <li>周期盘点，在周期开始时订货，瞬时交货，新到的货年龄为0</li>
+                        <li>相继周期中的需求量独立同分布，分布已知，不能满足的需求事后补足</li>
+                        <li>货物按先进先出(FIFO)的规则供应需求。当存货年龄超过$m$时，这部分货物失去使用价值，因而报废</li>
+                        <li>费用：包括购货费、保管费、缺货损失费及过期损失费</li>
+                    </ol>
+                </div>
+                
+                <p>由于易腐物品库存模型（特别是随机寿命类型）的复杂性，寻找最优策略是十分困难的。现有的研究主要集中在各种限定条件下的近似最优策略上。</p>
+                
+                <h3>三、有概率约束的库存管理</h3>
+                
+                <div class="concept-box">
+                    <p><strong>问题表述：</strong>设工厂B以固定的速度消耗某种原材料。某季度开始前，B与A签订合同，由A提供该季度B所需的原材料。A可分若干次交货，但具体交货时间不能事先确定。为保证生产连续进行，B在季度开始时需要有一定数量的原材料贮备，那么应贮备多少才能维持正常生产？</p>
+                </div>
+                
+                <div class="formula-box">
+                    <p><strong>基本模型：</strong></p>
+                    <p>考虑在固定的$(0, T)$区间内，假定交货次数$n$取定，且设：</p>
+                    <ol>
+                        <li>B厂在$(0, T)$中连续使用这些原材料，单位时间的用量$c$是常数</li>
+                        <li>交货时刻是随机的，假定是$(0, T)$区间内独立同分布的$n$个均匀随机变量</li>
+                        <li>每次的交货量相同，为$\frac{1}{n}cT$</li>
+                    </ol>
+                    
+                    <p>取B的初始库存水平$M$为模型的决策变量。记$X(t)$为时刻$t$以前的累积交货量，则问题归结为求$M$，使：</p>
+                    
+                    $$P\left(\inf_{0 \leq t \leq T}(M + X(t) - ct) \geq 0\right) = 1 - \epsilon$$
+                    
+                    <p>式中：$\epsilon$是事先指定的$(0, 1)$中的数。</p>
+                </div>
+                
+                <p>这个基本模型有许多推广。例如，每次交货量相等的条件可减弱；B厂以均匀速率消费原材料的过程可推广到更一般的随机过程；此外，还可推广到多种原材料的模型等。</p>
+            </section>
+            
+            <section id="exercises">
+                <h2>习题</h2>
+                
+                <button class="collapsible">习题 11.1 - 11.5</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <div class="example-box">
+                            <h4>11.1</h4>
+                            <p>某建筑工地每月需用水泥800吨，每吨定价2,000元，不可缺货。设每吨每月保管费率为0.2%，每次订购费为300元，求最佳订购批量。</p>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.2</h4>
+                            <p>一汽车公司每年使用某种零件150,000件，每件每年保管费0.2元，不允许缺货，试比较每次订购费为1,000元和100元两种情况下的经济订购批量。</p>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.3</h4>
+                            <p>某拖拉机厂生产一种小型拖拉机，每月可生产1,000台，但对该拖拉机的市场需要量为每年4,000台。已知每次生产的准备费用为15,000元，每台拖拉机每月的存储费为10元，如不允许供应短缺，求经济生产批量。</p>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.4</h4>
+                            <p>某产品每月需求量为8件，生产准备费用为100元，存储费为5元/(月·件)。在不允许缺货条件下，比较生产速度分别为每月20件和40件两种情况下的经济生产批量和最小费用。</p>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.5</h4>
+                            <p>对某种电子元件每月需求量为4,000件，每件成本为150元，每年的存储费为成本的10%，每次订购费为500元。求：</p>
+                            <ol>
+                                <li>不允许缺货条件下的最优存储策略</li>
+                                <li>允许缺货（缺货费为100元/(件·年)）条件下的最优存储策略</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">习题 11.6 - 11.10</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <div class="example-box">
+                            <h4>11.6</h4>
+                            <p>某农机维修站需购一种农机配件，其每月需要量为150件，订购费为每次400元，存储费为0.96元/(月·件)，并不允许缺货。</p>
+                            <ol>
+                                <li>求经济订购批量(EOQ)</li>
+                                <li>该厂为少占用流动资金，希望进一步降低存储量。因此，决定使订购和存储总费用可以超过原最低费用的10%，求这时的最优存储策略</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.7</h4>
+                            <p>某公司每年需电容器15,000个，每次订购费80元，保管费1元/(个·年)，不允许缺货。若采购量少于1,000时每个单价为5元，当一次采购1,000个以上时每个单价降为4.9元。求该公司的最优采购策略。</p>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.8</h4>
+                            <p>某工厂对某种物料的年需要量为10,000单位，每次订货费为2,000元，存储费率为20%。该物料采购单价和采购数量有关，当采购数量在2,000单位以下时，单价为100元；当采购数量在2,000单位及以上时，单价为80元。求最优采购策略。</p>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.9</h4>
+                            <p>某制造厂在装配作业中需用一种外购件，需求率为常数，全年需要量为300万件，不允许缺货。一次订购费为100元。存储费为0.1元/(件·月)。库存占用资金每年利息、保险等费用为年平均库存金额的20%。该外购件进货单价和订购批量$Q$有关，具体关系见下表，试求经济订购批量。</p>
+                            <table>
+                                <tr>
+                                    <th>批量/件</th>
+                                    <td>$0 \leq Q \lt 10000$</td>
+                                    <td>$10000 \leq Q \lt 30000$</td>
+                                    <td>$30000 \leq Q \lt 50000$</td>
+                                    <td>$Q \geq 50000$</td>
+                                </tr>
+                                <tr>
+                                    <th>单价/元</th>
+                                    <td>1.00</td>
+                                    <td>0.98</td>
+                                    <td>0.96</td>
+                                    <td>0.94</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.10</h4>
+                            <p>一个允许缺货的EOQ模型的费用，绝不会超过一个只有相同存储费、订购费，但又不允许缺货的EOQ模型的费用，请加以说明。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">习题 11.11 - 11.15</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <div class="example-box">
+                            <h4>11.11</h4>
+                            <p>某时装屋在某年春季欲销售某种流行时装。据估计该时装可能的销售量见下表：</p>
+                            <table>
+                                <tr>
+                                    <th>销售量$r$/套</th>
+                                    <td>150</td>
+                                    <td>160</td>
+                                    <td>170</td>
+                                    <td>180</td>
+                                    <td>190</td>
+                                </tr>
+                                <tr>
+                                    <th>概率$P$</th>
+                                    <td>0.05</td>
+                                    <td>0.1</td>
+                                    <td>0.5</td>
+                                    <td>0.3</td>
+                                    <td>0.05</td>
+                                </tr>
+                            </table>
+                            <p>该款式时装每套进价180元，售价200元。因隔季会过时，故在季末需低价抛售完，较有把握的抛售价为每套120元。问该时装屋在季度初时一次性进货多少为宜？</p>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.12</h4>
+                            <p>某冬季商品每件进价25元，售价45元。订购费每次20元，单位缺货费45元，单位存储费5元。期初无存货。该商品的需求量$r$的概率分布见下表。为取得最大利润，该商店在冬季来临前应订购多少件这种商品？</p>
+                            <table>
+                                <tr>
+                                    <th>需求量$r$/件</th>
+                                    <td>100</td>
+                                    <td>125</td>
+                                    <td>150</td>
+                                </tr>
+                                <tr>
+                                    <th>概率$P$</th>
+                                    <td>0.4</td>
+                                    <td>0.4</td>
+                                    <td>0.2</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.13</h4>
+                            <p>某厂生产需某种部件。该部件外购价每只800元，订购费每次2,825元。若自产，每只成本1,250元，单位存储费45元。该部件需求量见下表。在选择外购策略时，若发生订购数少于实际需求量的情况，差额部分工厂将自产。假定期初存货为零。求工厂的订购策略。</p>
+                            <table>
+                                <tr>
+                                    <th>需求量$r$/只</th>
+                                    <td>80</td>
+                                    <td>90</td>
+                                    <td>100</td>
+                                    <td>110</td>
+                                    <td>120</td>
+                                </tr>
+                                <tr>
+                                    <th>概率$P$</th>
+                                    <td>0.1</td>
+                                    <td>0.2</td>
+                                    <td>0.3</td>
+                                    <td>0.3</td>
+                                    <td>0.1</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.14</h4>
+                            <p>某企业对某种材料的需求见下表。每次订购费500元，材料进价400元/吨、存储费50元、缺货费600元，求$(s, S)$存储策略。</p>
+                            <table>
+                                <tr>
+                                    <th>需求量$r$/吨</th>
+                                    <td>20</td>
+                                    <td>30</td>
+                                    <td>40</td>
+                                    <td>50</td>
+                                    <td>60</td>
+                                </tr>
+                                <tr>
+                                    <th>概率$P$</th>
+                                    <td>0.1</td>
+                                    <td>0.2</td>
+                                    <td>0.3</td>
+                                    <td>0.3</td>
+                                    <td>0.1</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.15</h4>
+                            <p>已知某产品的单位成本$K = 3.0$元，单位存储费$C_1 = 1.0$元，单位缺货损失$C_2 = 2.0$元，每次订购费$C_3 = 50$元。需求量$x$的概率密度函数为：</p>
+                            $$f(x) = \begin{cases} 1/5, & 5 \leq x \lt 10 \\ 0, & x \text{ 为其他值} \end{cases}$$
+                            <p>设期初存货为零，试依据$(s, S)$型存储策略的模型确定$s$和$S$的值。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="collapsible">习题 11.16 - 11.18</button>
+                <div class="content">
+                    <div class="content-inner">
+                        <div class="example-box">
+                            <h4>11.16</h4>
+                            <p>试根据下列条件推导并建立一个经济订货批量的公式：</p>
+                            <ol>
+                                <li>(a) 订货必须在每月的第一天提出</li>
+                                <li>(b) 订货提前期为零</li>
+                                <li>(c) 每月需求量为$R$，均在各月中的第15日一天发生</li>
+                                <li>(d) 不允许发生供货短缺</li>
+                                <li>(e) 存储费为每件每月$C$元</li>
+                                <li>(f) 每次订购的费用为$V$元</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.17</h4>
+                            <p>在单周期随机存储模型中，对报童问题若采用获利期望值最大的准则，要求：</p>
+                            <ol>
+                                <li>证明其最佳订购量$Q^*$，式(11.28)同样成立</li>
+                                <li>简要说明两种准则下结果相同的原因</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4>11.18</h4>
+                            <p>判断下列说法，其中正确的有：</p>
+                            <ol>
+                                <li>在其他费用不变条件下，最优订货批量随单位存储费用的增加而增大</li>
+                                <li>在其他费用不变条件下，最优订货批量随单位缺货费用的增大而减小</li>
+                                <li>在同一存储模型中，可能既发生存储费用，又发生短缺费用</li>
+                                <li>在单时期的存储模型中，计算时都不包括订货费用这一项，理由是该项费用通常很小可以忽略不计</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 运筹学教程（第5版）- 存储论交互式教程</p>
+            <p>建议使用现代浏览器查看，确保网络连接可用以加载MathJax数学公式</p>
+        </footer>
+    </div>
+    
+    <div class="scroll-top" id="scrollTop">↑</div>
+    
+    <script>
+        // 折叠功能
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 回到顶部按钮
+        var scrollTopBtn = document.getElementById("scrollTop");
+        
+        window.onscroll = function() {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollTopBtn.style.display = "flex";
+            } else {
+                scrollTopBtn.style.display = "none";
+            }
+        };
+        
+        scrollTopBtn.onclick = function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        };
+        
+        // 活动导航链接高亮
+        window.addEventListener('scroll', function() {
+            var sections = document.querySelectorAll('section');
+            var navLinks = document.querySelectorAll('nav a');
+            
+            var current = '';
+            sections.forEach(function(section) {
+                var sectionTop = section.offsetTop;
+                var sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 100)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(function(link) {
+                link.style.background = '';
+                link.style.borderBottomColor = 'transparent';
+                if (link.getAttribute('href') === '#' + current) {
+                    link.style.background = '#f27d00';
+                    link.style.borderBottomColor = '#f7d117';
+                }
+            });
+        });
+    </script>
+    
+    <!-- 
+    使用说明：
+    1. 将此HTML文件保存为 .html 格式（如 inventory_theory.html）
+    2. 需要网络连接以加载MathJax数学公式渲染库
+    3. 在浏览器中打开文件即可查看交互式教程
+    4. 所有数学公式使用LaTeX格式，通过MathJax自动渲染
+    5. 点击可折叠按钮展开/收起内容
+    6. 使用导航栏快速跳转到不同章节
+    7. 页面完全响应式，支持桌面和移动设备
+    
+    技术特性：
+    - 完整的MathJax 2.7.7配置，支持所有LaTeX数学公式
+    - 使用指定的配色方案：#f27d00, #a6d6c9, #f7d117, #ffffff, #343434
+    - 交互式折叠面板和平滑滚动
+    - 响应式设计，适配各种屏幕尺寸
+    - 回到顶部按钮
+    - 活动导航链接高亮显示
+    -->
+</body>
+</html>

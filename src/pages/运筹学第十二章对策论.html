@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第十二章 对策论 - 交互式教程</title>
+    
+    <!-- MathJax配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+            line-height: 1.8;
+            background: linear-gradient(135deg, #f7d117 0%, #a6d6c9 100%);
+            color: #343434;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00 0%, #f7d117 100%);
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        nav {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        
+        nav h3 {
+            color: #f27d00;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        nav ul {
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin: 8px 0;
+        }
+        
+        nav ul li a {
+            color: #343434;
+            text-decoration: none;
+            padding: 8px 15px;
+            display: block;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        nav ul li a:hover {
+            background: #f7d117;
+            color: #343434;
+            transform: translateX(5px);
+        }
+        
+        .content {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #f27d00;
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #a6d6c9;
+        }
+        
+        h3 {
+            color: #f27d00;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+        
+        h4 {
+            color: #343434;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .important {
+            background: #a6d6c9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #f27d00;
+        }
+        
+        .example {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #a6d6c9;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .example-title {
+            color: #f27d00;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        
+        .formula-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #a6d6c9;
+            overflow-x: auto;
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        .collapsible {
+            background: #f27d00;
+            color: #ffffff;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        
+        .collapsible:hover {
+            background: #d96d00;
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            color: #ffffff;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #ffffff;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .collapsible-content-inner {
+            padding: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #f27d00;
+            color: #ffffff;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #f27d00;
+            color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .back-to-top:hover {
+            background: #d96d00;
+            transform: translateY(-3px);
+        }
+        
+        footer {
+            background: #343434;
+            color: #ffffff;
+            text-align: center;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            nav {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第十二章 对策论</h1>
+            <p>Game Theory - 博弈论基础教程</p>
+        </header>
+        
+        <nav id="nav">
+            <h3>📑 目录导航</h3>
+            <ul>
+                <li><a href="#section1">第一节 引言</a></li>
+                <li><a href="#section2">第二节 矩阵对策的基本理论</a></li>
+                <li><a href="#section3">第三节 矩阵对策的解法</a></li>
+                <li><a href="#section4">第四节 其他类型对策简介</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <!-- 第一节 -->
+            <section id="section1" class="section">
+                <h2>第一节 引言</h2>
+                
+                <h3>一、对策行为和对策论</h3>
+                <p><span class="highlight">对策论</span>（Game Theory）又称<span class="highlight">竞赛论</span>或<span class="highlight">博弈论</span>，是研究具有对抗或竞争性质现象的数学理论和方法。它既是现代数学的一个新分支，也是运筹学的一个重要学科。</p>
+                
+                <p>对策论发展的历史并不长，但由于它所研究的现象与政治、经济、军事活动乃至一般的日常生活等有着密切联系，并且处理问题的方法具有鲜明特色，所以日益引起广泛的重视。</p>
+                
+                <div class="important">
+                    <strong>📌 纳什均衡理论</strong><br>
+                    特别是从20世纪50年代纳什（Nash）建立了非合作博弈的"纳什均衡"理论后，标志着对策论发展的一个新时期的开始。正是由于纳什在对策论研究和将对策论应用于经济学研究方面的突出贡献，使得他1994年获得了诺贝尔经济学奖。
+                </div>
+                
+                <p>在日常生活中经常可以看到一些具有对抗或竞争性质的现象，如下棋、打牌、体育比赛等。在战争中的双方，都力图选取对自己最有利的策略，千方百计去战胜对手；在政治方面，国际间的谈判，各种政治力量间的较量，各国际集团间的角逐等都无不具有对抗性质；在经济活动中，各国之间的贸易摩擦、企业之间的竞争等，举不胜举。</p>
+                
+                <div class="example">
+                    <div class="example-title">📖 经典案例：田忌赛马</div>
+                    <p>在我国古代，"齐王赛马"就是一个典型的对策论研究的例子。</p>
+                    <p>战国时期，有一天齐王提出要与田忌赛马，双方约定：从各自的上、中、下三个等级的马中各选一匹参赛；每匹马均只能参赛一次；每一次比赛双方各出一匹马，负者要付给胜者千金。已经知道的是，在同等级的马中，田忌的马不如齐王的马，而如果田忌的马比齐王的马高一等级，则田忌的马可取胜。</p>
+                    <p>当时，田忌手下的一个谋士给他出了个主意：每次比赛时先看齐王牵出他要参赛的马，然后采用<span class="highlight">下马对齐王的上马，用中马对齐王的下马，用上马对齐王的中马</span>。比赛结果，田忌二胜一负，夺得千金。</p>
+                    <p>由此看来，两个人各采取什么样的出马次序对胜负是至关重要的。</p>
+                </div>
+                
+                <h3>二、对策现象的三要素</h3>
+                <p>为对对策问题进行数学上的分析，需要建立对策问题的数学模型，称为<span class="highlight">对策模型</span>。根据所研究问题的不同性质，可以建立不同的对策模型。但不论对策模型在形式上有何不同，都必须包括以下3个基本要素：</p>
+                
+                <button class="collapsible">1. 局中人（Players）</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>一个对策中有权决定自己行动方案的对策参加者称为<span class="highlight">局中人</span>，通常用 $I$ 表示局中人的集合。如果有 $n$ 个局中人，则 $I = \{1, 2, \ldots, n\}$。一般要求一个对策中至少要有两个局中人。</p>
+                        <p>如在"齐王赛马"的例子中，局中人是齐王和田忌。</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">2. 策略集（Strategies）</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>对策中，可供局中人选择的一个实际可行的完整的行动方案称为<span class="highlight">一个策略</span>。参加对策的每一局中人 $i \in I$ 都有自己的策略集 $S_i$。一般，每一局中人的策略集中至少应包括两个策略。</p>
+                        <p>在"齐王赛马"的例子中，如果用（上，中，下）表示以上马、中马、下马依次参赛，就是一个完整的行动方案，即为一个策略。可见，局中人齐王和田忌各自都有6个策略：<br>
+                        （上，中，下）、（上，下，中）、（中，上，下）、（中，下，上）、（下，中，上）、（下，上，中）</p>
+                    </div>
+                </div>
+                
+                <button class="collapsible">3. 赢得函数（支付函数）（Payoff Function）</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <p>一个对策中，每一局中人所出策略形成的策略组称为<span class="highlight">一个局势</span>，即若 $s_i$ 是第 $i$ 个局中人的一个策略，则 $n$ 个局中人的策略形成的策略组 $s = (s_1, s_2, \ldots, s_n)$ 就是一个局势。</p>
+                        <p>若记 $S$ 为全部局势的集合，则当一个局势 $s$ 出现后，应该为每个局中人 $i$ 规定一个赢得值（或所失值）$H_i(s)$。显然，$H_i(s)$ 是定义在 $S$ 上的函数，称为局中人 $i$ 的<span class="highlight">赢得函数</span>。</p>
+                    </div>
+                </div>
+                
+                <p style="margin-top: 20px;">一般地，当局中人、策略集和赢得函数这3个要素确定后，一个对策模型也就给定了。</p>
+                
+                <h3>三、对策问题举例及对策的分类</h3>
+                
+                <div class="example">
+                    <div class="example-title">例1 市场购买力争夺问题</div>
+                    <p>据预测，某乡镇下一年的饮食品购买力将有4000万元。乡镇企业和中心城市企业饮食品的生产情况是：乡镇企业有特色饮食品和低档饮食品两类，中心城市企业有高档饮食品和低档饮食品两类产品。它们争夺这一部分购买力的结局见下表（表中数字是相应策略下对乡镇企业的营销额，单位是万元）。</p>
+                    <table>
+                        <tr>
+                            <th>乡镇企业策略</th>
+                            <th>出售高档饮食品</th>
+                            <th>出售低档饮食品</th>
+                        </tr>
+                        <tr>
+                            <td>出售特色饮食品</td>
+                            <td>2000</td>
+                            <td>3000</td>
+                        </tr>
+                        <tr>
+                            <td>出售低档饮食品</td>
+                            <td>1000</td>
+                            <td>3000</td>
+                        </tr>
+                    </table>
+                    <p>问题是乡镇企业和中心城市企业应如何选择对自己最有利的产品策略？</p>
+                </div>
+                
+                <div class="important">
+                    <strong>📊 对策的常见分类方式：</strong>
+                    <ul style="margin-top: 10px; list-style-position: inside;">
+                        <li>根据<strong>局中人的个数</strong>：分为二人对策和多人对策</li>
+                        <li>根据<strong>赢得函数的代数和</strong>：分为零和对策与非零和对策</li>
+                        <li>根据<strong>是否允许合作</strong>：分为合作对策和非合作对策</li>
+                        <li>根据<strong>策略集中的策略个数</strong>：分为有限对策和无限对策</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 第二节 -->
+            <section id="section2" class="section">
+                <h2>第二节 矩阵对策的基本理论</h2>
+                
+                <h3>一、矩阵对策的纯策略</h3>
+                <p><span class="highlight">矩阵对策</span>即为二人有限零和对策。"二人"是指参加对策的局中人有两个；"有限"是指每个局中人的策略集均为有限集；"零和"是指在任一局势下，两个局中人的赢得之和总等于零，即一个局中人的所得值恰好等于另一局中人的所失值，双方的利益是完全对抗的。</p>
+                
+                <p>一般地，用Ⅰ和Ⅱ分别表示两个局中人，并设局中人Ⅰ有 $m$ 个纯策略 $\alpha_1, \ldots, \alpha_m$，局中人Ⅱ有 $n$ 个纯策略 $\beta_1, \ldots, \beta_n$；则局中人Ⅰ和Ⅱ的策略集分别为 $S_1 = \{\alpha_1, \ldots, \alpha_m\}$ 和 $S_2 = \{\beta_1, \ldots, \beta_n\}$。</p>
+                
+                <p>当局中人Ⅰ选定纯策略 $\alpha_i$ 和局中人Ⅱ选定纯策略 $\beta_j$ 后，就形成了一个纯局势 $(\alpha_i, \beta_j)$，这样的纯局势共有 $m \times n$ 个。对任一纯局势 $(\alpha_i, \beta_j)$，记局中人Ⅰ的赢得值为 $a_{ij}$，称</p>
+                
+                <div class="formula-box">
+                    $$A = \begin{pmatrix}
+                    a_{11} & a_{12} & \cdots & a_{1n} \\
+                    a_{21} & a_{22} & \cdots & a_{2n} \\
+                    \vdots & \vdots & & \vdots \\
+                    a_{m1} & a_{m2} & \cdots & a_{mn}
+                    \end{pmatrix}$$
+                </div>
+                
+                <p>为局中人Ⅰ的<span class="highlight">赢得矩阵</span>。由于对策为零和的，故局中人Ⅱ的赢得矩阵就是 $-A$。</p>
+                
+                <div class="important">
+                    <strong>定义1：鞍点与平衡局势</strong><br>
+                    设 $G = \{S_1, S_2; A\}$ 为一矩阵对策，若
+                    $$\max_i \min_j a_{ij} = \min_j \max_i a_{ij}$$
+                    记其值为 $V_G$，则称 $V_G$ 为对策的值，称使上式成立的纯局势 $(\alpha_{i^*}, \beta_{j^*})$ 为 $G$ 在纯策略意义下的解（或平衡局势），称 $\alpha_{i^*}$ 和 $\beta_{j^*}$ 分别为局中人Ⅰ和Ⅱ的最优纯策略。
+                </div>
+                
+                <h3>二、矩阵对策的混合策略</h3>
+                <p>当 $v_1 = \max_i \min_j a_{ij} < v_2 = \min_j \max_i a_{ij}$ 时，对策不存在纯策略意义下的解。在这种情况下，一个比较自然且合乎实际的想法是：既然局中人没有最优策略可出，是否可以给出一个选择不同策略的概率分布。</p>
+                
+                <div class="formula-box">
+                    <p>设局中人Ⅰ的混合策略为 $x = (x_1, x_2, \ldots, x_m)^T$，其中 $x_i \geq 0$，$\sum_{i=1}^m x_i = 1$；</p>
+                    <p>局中人Ⅱ的混合策略为 $y = (y_1, y_2, \ldots, y_n)^T$，其中 $y_j \geq 0$，$\sum_{j=1}^n y_j = 1$。</p>
+                    <p>局中人Ⅰ的赢得函数记为：</p>
+                    $$E(x, y) = x^T A y = \sum_i \sum_j a_{ij} x_i y_j$$
+                </div>
+                
+                <div class="important">
+                    <strong>定义3：混合策略意义下的解</strong><br>
+                    如果
+                    $$\max_{x \in S_1^*} \min_{y \in S_2^*} E(x,y) = \min_{y \in S_2^*} \max_{x \in S_1^*} E(x,y)$$
+                    记其值为 $V_G$，则称 $V_G$ 为对策 $G$ 的值，称使上式成立的混合局势 $(x^*, y^*)$ 为 $G$ 在混合策略意义下的解（或平衡局势），称 $x^*$ 和 $y^*$ 分别为局中人Ⅰ和Ⅱ的最优混合策略。
+                </div>
+                
+                <h3>三、矩阵对策的基本定理</h3>
+                
+                <div class="important">
+                    <strong>⭐ 定理5（基本定理）</strong><br>
+                    对任一矩阵对策 $G = \{S_1, S_2; A\}$，一定存在混合策略意义下的解。
+                </div>
+                
+                <p>定理5的证明是构造性的，不仅证明了矩阵对策解的存在性，同时给出了利用线性规划方法求解矩阵对策的思路。</p>
+            </section>
+            
+            <!-- 第三节 -->
+            <section id="section3" class="section">
+                <h2>第三节 矩阵对策的解法</h2>
+                
+                <h3>一、图解法</h3>
+                <p>图解法适用于赢得矩阵为 $2 \times n$ 或 $m \times 2$ 阶的对策问题，这种方法不仅提供了一个简单直观的解法，而且通过这种方法可以使我们从几何上理解对策论的思想。</p>
+                
+                <div class="example">
+                    <div class="example-title">例8 用图解法求解矩阵对策</div>
+                    <p>设赢得矩阵为：</p>
+                    <div class="formula-box">
+                        $$A = \begin{pmatrix} 3 & 6 \\ 5 & 4 \end{pmatrix}$$
+                    </div>
+                    <p><strong>解：</strong>设局中人Ⅰ的混合策略为 $(x, 1-x)^T$，$x \in [0,1]$。过数轴上坐标为0和1的两点分别作两条垂线。垂线上的纵坐标分别表示局中人Ⅰ采取纯策略 $\alpha_1$ 和 $\alpha_2$ 时，局中人Ⅱ采取各纯策略时的赢得值。</p>
+                    <p>当局中人Ⅰ选择混合策略 $(x, 1-x)^T$ 后，他的最少可能的收入为由三条直线在 $x$ 处的纵坐标中之最小者决定。所以，对局中人Ⅰ来说，他的最优选择是确定 $x$，使3个纵坐标中的最小者尽可能的大。</p>
+                    <p>联立过平衡点的两条直线的方程求解，得到：$x^* = \frac{1}{4}$，$V_G = \frac{9}{2}$</p>
+                    <p>所以，局中人Ⅰ的最优策略为 $x^* = (\frac{1}{4}, \frac{3}{4})^T$</p>
+                </div>
+                
+                <h3>二、方程组法</h3>
+                <p>对于 $2 \times 2$ 阶矩阵对策，当赢得矩阵不存在鞍点时，容易证明：各局中人的最优混合策略中的 $x_i^*$，$y_j^*$ 均大于零。于是，可以得到求解 $2 \times 2$ 阶矩阵对策的公式：</p>
+                
+                <div class="formula-box">
+                    <p>设赢得矩阵为 $A = \begin{pmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{pmatrix}$，则：</p>
+                    $$x_1^* = \frac{a_{22} - a_{21}}{(a_{11} + a_{22}) - (a_{12} + a_{21})}$$
+                    $$x_2^* = \frac{a_{11} - a_{12}}{(a_{11} + a_{22}) - (a_{12} + a_{21})}$$
+                    $$y_1^* = \frac{a_{22} - a_{12}}{(a_{11} + a_{22}) - (a_{12} + a_{21})}$$
+                    $$y_2^* = \frac{a_{11} - a_{21}}{(a_{11} + a_{22}) - (a_{12} + a_{21})}$$
+                    $$V_G = \frac{a_{11}a_{22} - a_{12}a_{21}}{(a_{11} + a_{22}) - (a_{12} + a_{21})}$$
+                </div>
+                
+                <h3>三、线性规划法</h3>
+                <p>本节给出一个具有一般性的求解矩阵对策的方法——线性规划方法，用这种方法可以求解任一矩阵对策。</p>
+                
+                <p>由定理5可知，求解矩阵对策可等价地转化为求解互为对偶的线性规划问题 $(P)$ 和 $(D)$：</p>
+                
+                <div class="formula-box">
+                    <p><strong>问题 $(P)$：</strong></p>
+                    $$\begin{cases}
+                    \max w \\
+                    \sum_i a_{ij} x_i \geq w \quad (j = 1, \ldots, n) \\
+                    \sum_i x_i = 1 \\
+                    x_i \geq 0 \quad (i = 1, \ldots, m)
+                    \end{cases}$$
+                    
+                    <p><strong>问题 $(D)$：</strong></p>
+                    $$\begin{cases}
+                    \min v \\
+                    \sum_j a_{ij} y_j \leq v \quad (i = 1, \ldots, m) \\
+                    \sum_j y_j = 1 \\
+                    y_j \geq 0 \quad (j = 1, \ldots, n)
+                    \end{cases}$$
+                </div>
+                
+                <p>求解后，再由变换关系即可得到原对策问题的解和对策的值。</p>
+            </section>
+            
+            <!-- 第四节 -->
+            <section id="section4" class="section">
+                <h2>第四节 其他类型对策简介</h2>
+                
+                <h3>一、二人无限零和对策</h3>
+                <p>矩阵对策最简单的推广就是局中人的策略集从有限集变为无限集，例如是 $[0,1]$ 区间。一般用 $G = \{S_1, S_2; H\}$ 表示一个二人无限零和对策，其中 $S_1$ 和 $S_2$ 中至少有一个是无限集合，$H$ 为局中人Ⅰ的赢得函数。</p>
+                
+                <div class="important">
+                    <strong>定理12</strong><br>
+                    对任何连续对策，一定有 $v_1 = v_2$
+                </div>
+                
+                <h3>二、多人非合作对策</h3>
+                <p>实际问题中，会经常出现多人对策的问题，且每个局中人的赢得函数之和也不一定为零，特别是许多经济过程中的对策模型一般都是非零和的，因为经济过程总是有新价值的产生。</p>
+                
+                <div class="important">
+                    <strong>⭐ 定理13（Nash定理）</strong><br>
+                    非合作 $n$ 人对策在混合策略意义下的平衡局势一定存在。
+                </div>
+                
+                <p>具体到二人有限非零和对策（亦称为双矩阵对策），Nash定理的结论可表述为：一定存在 $x^* \in S_1^*$，$y^* \in S_2^*$，使得</p>
+                
+                <div class="formula-box">
+                    $$x^{*T} A y^* \geq x^T A y^* \quad x \in S_1^*$$
+                    $$x^{*T} B y^* \geq x^{*T} B y \quad y \in S_2^*$$
+                </div>
+                
+                <h3>三、合作对策</h3>
+                <p>合作对策的基本特征是参加对策的局中人可以进行充分的合作，即可以事先商定好，把各自的策略协调起来；可以在对策后对所得到的支付进行重新分配。</p>
+                
+                <h4>1. 合作对策的概念和意义</h4>
+                <div class="example">
+                    <div class="example-title">例16 产品定价问题</div>
+                    <p>设有两家厂商（厂商1、厂商2）为同一市场生产同样产品，可选择的竞争策略是价格，目的是赚得最多的利润。已知两个厂商的需求函数为：</p>
+                    <div class="formula-box">
+                        $$Q_1 = 12 - 2P_1 + P_2$$
+                        $$Q_2 = 12 - 2P_2 + P_1$$
+                    </div>
+                    <p>其中，$P_1$，$P_2$ 分别为两个厂商的价格，$Q_1$，$Q_2$ 分别为市场对两个厂商产品的需求量。</p>
+                    <p>通过分析可知：如果两个厂商互不合作，各自从自身利润最大化出发，最稳妥的策略显然是都选择"定价4元"，也就是实现Nash均衡，各自可以得到12元的利润。但如果两个厂商合作起来，都选择"定价6元"，则双方都可以赚得16元的利润，显然比不合作时要好。因此，两个厂商可以结成一个"价格联盟"，统一把价格定在6元，形成一个合作均衡，导致一个双赢的结果。</p>
+                </div>
+                
+                <h4>2. 合作对策的特征函数</h4>
+                <p>构成合作对策的两个基本要素是：局中人集合 $I$ 和特征函数 $v(S)$，其中 $I = \{1, 2, \ldots, n\}$，$S$ 为 $I$ 的任一子集，也就是任何一个可能形成的联盟，$v(S)$ 表示的是联盟 $S$ 在对策中的所得。</p>
+                
+                <h4>3. 合作对策的核心（Core）</h4>
+                <div class="important">
+                    <strong>定义9：核心</strong><br>
+                    设 $G = \{I, v\}$ 为一合作对策，称
+                    $$C = \{x | x \in X, v(S) \leq x(S), S \text{为} I \text{中所有可能的子集}\}$$
+                    为合作对策 $G$ 的核心（Core）。
+                </div>
+                
+                <p>核心中的分配 $x$ 提供给联盟 $S$ 的分配不会少于 $S$ 中成员各自单干时可能获得收入的总和 $v(S)$，即没有一个联盟 $S$ 可以提出对自身更为有利的分配，因而 $x$ 是能被所有可能的联盟都接受的分配方案。</p>
+                
+                <h4>4. 合作对策的Shapley值</h4>
+                <p>Shapley值是根据Lloyd Shapley提出的合作对策应该满足的4个公理来定义的更加公平的合作对策解的概念。</p>
+                
+                <div class="important">
+                    <strong>定理15</strong><br>
+                    设 $v$ 为合作对策 $G$ 的特征函数，则存在唯一的分配 $x = (x_1, x_2, \ldots, x_n)$ 满足公理1至公理4。局中人 $i$ 的所得为：
+                    $$x_i = \sum_{\text{所有不包括局中人}i\text{的联盟}S} p_i(S)[v(S \cup \{i\}) - v(S)]$$
+                    其中
+                    $$p_i(S) = \frac{|S|!(n - |S| - 1)!}{n!}$$
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>© 2025 对策论交互式教程 | 运筹学教程（第5版）</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                <strong>使用说明：</strong><br>
+                1. 将此页面保存为 .html 文件（Ctrl+S）<br>
+                2. 需要网络连接以加载 MathJax 数学公式渲染<br>
+                3. 在任何现代浏览器中打开即可使用<br>
+                4. 点击章节标题可展开/折叠内容
+            </p>
+        </footer>
+        
+        <div class="back-to-top" id="backToTop" onclick="scrollToTop()">
+            ↑ 顶部
+        </div>
+    </div>
+    
+    <script>
+        // 折叠面板功能
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+        
+        // 回到顶部按钮
+        window.onscroll = function() {
+            var backToTop = document.getElementById("backToTop");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTop.style.display = "block";
+            } else {
+                backToTop.style.display = "none";
+            }
+        };
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

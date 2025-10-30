@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第九章 网络计划 - 交互式教程</title>
+    
+    <!-- MathJax完整配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-orange: #f27d00;
+            --secondary-mint: #a6d6c9;
+            --accent-yellow: #f7d117;
+            --white: #ffffff;
+            --dark-gray: #343434;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: var(--dark-gray);
+            background: linear-gradient(135deg, #fef6e4 0%, #f3f9f1 100%);
+            min-height: 100vh;
+        }
+        
+        /* 导航栏 */
+        nav {
+            background: linear-gradient(90deg, var(--primary-orange) 0%, #ff9a3c 100%);
+            color: var(--white);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        nav .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        /* 侧边栏导航 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 100px;
+            width: 250px;
+            height: calc(100vh - 100px);
+            background: var(--white);
+            padding: 2rem 1rem;
+            overflow-y: auto;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--dark-gray);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar a:hover {
+            background: var(--secondary-mint);
+            transform: translateX(5px);
+        }
+        
+        /* 主内容区 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            margin-left: 280px;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 章节标题 */
+        .chapter-title {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--secondary-mint) 0%, #c8e6d7 100%);
+            border-radius: 12px;
+        }
+        
+        .chapter-title h1 {
+            font-size: 2.5rem;
+            color: var(--primary-orange);
+            margin-bottom: 0.5rem;
+        }
+        
+        .chapter-title p {
+            font-size: 1.1rem;
+            color: var(--dark-gray);
+        }
+        
+        /* 小节标题 */
+        section h2 {
+            color: var(--primary-orange);
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--secondary-mint);
+        }
+        
+        section h3 {
+            color: var(--primary-orange);
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        section h4 {
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem;
+        }
+        
+        /* 段落 */
+        p {
+            margin: 1rem 0;
+            text-align: justify;
+        }
+        
+        /* 重要提示框 */
+        .important-box {
+            background: #fff3cd;
+            border-left: 5px solid var(--accent-yellow);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        .important-box strong {
+            color: var(--primary-orange);
+            font-size: 1.1rem;
+        }
+        
+        /* 公式块 */
+        .formula-box {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-orange);
+        }
+        
+        /* 表格 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        table thead {
+            background: var(--primary-orange);
+            color: var(--white);
+        }
+        
+        table th, table td {
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        table tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        table tbody tr:hover {
+            background: var(--secondary-mint);
+            transition: background 0.3s ease;
+        }
+        
+        /* 可折叠内容 */
+        .collapsible {
+            background: var(--secondary-mint);
+            color: var(--dark-gray);
+            cursor: pointer;
+            padding: 1.2rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .collapsible:hover {
+            background: #8cc5b0;
+        }
+        
+        .collapsible:after {
+            content: '\002B';
+            color: var(--primary-orange);
+            font-weight: bold;
+            float: right;
+            font-size: 1.5rem;
+        }
+        
+        .collapsible.active:after {
+            content: "\2212";
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #f9f9f9;
+            padding: 0 1.5rem;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .content.show {
+            max-height: 3000px;
+            padding: 1.5rem;
+        }
+        
+        /* 例题样式 */
+        .example {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .example-title {
+            color: #1976d2;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+        }
+        
+        /* 按钮 */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-orange);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: #d66d00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 练习题区域 */
+        .exercise {
+            background: #f1f8e9;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            border-left: 5px solid #689f38;
+        }
+        
+        /* 图片占位符 */
+        .image-placeholder {
+            background: #e0e0e0;
+            padding: 3rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            color: #757575;
+            font-style: italic;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .container {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            nav h1 {
+                font-size: 1.4rem;
+            }
+            
+            .chapter-title h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        /* MathJax公式样式调整 */
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-orange);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d66d00;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>📊 运筹学教程（第5版）</h1>
+        <p class="subtitle">第九章 网络计划 | 交互式在线教程</p>
+    </nav>
+    
+    <div class="sidebar">
+        <h3 style="color: var(--primary-orange); margin-bottom: 1rem;">章节导航</h3>
+        <a href="#intro">📖 章节概述</a>
+        <a href="#section1">🔷 第一节 网络图</a>
+        <a href="#section2">⏱️ 第二节 时间参数的计算</a>
+        <a href="#section3">🎯 第三节 网络计划的优化</a>
+        <a href="#section4">📈 第四节 图解评审法简介</a>
+        <a href="#exercises">✏️ 习题</a>
+    </div>
+    
+    <div class="container">
+        <div class="chapter-title">
+            <h1>第九章 网络计划</h1>
+            <p>Network Planning</p>
+        </div>
+        
+        <section id="intro">
+            <h2>📖 章节概述</h2>
+            <p>20世纪50年代以来，国外陆续出现了一些计划管理的新方法，如<strong>关键路线法</strong>（Critical Path Method, CPM）、<strong>计划评审方法</strong>（Program Evaluation & Review Technique, PERT）等，这些方法都是建立在网络模型基础上，称为网络计划技术。</p>
+            
+            <p>我国已故著名数学家<strong>华罗庚</strong>先生将这些方法总结概括称为<strong>统筹方法</strong>，在20世纪60年代初引入我国，著名科学家钱学森将其应用于航天工程项目的研制。目前，这些方法被世界各国广泛应用于工业、农业、国防、科研等计划管理以及工程项目的招投标等管理中，对缩短工期、节约人力、物力和财力，提高经济效益发挥了重要作用。</p>
+            
+            <div class="important-box">
+                <strong>📌 重要发展：</strong>
+                <p>20世纪后半叶，随着不确定因素在科学研究以及在大型工程和服务系统中的作用、影响越来越大，陆续出现了<strong>图示评审法</strong>（GERT）、<strong>风险评审技术</strong>（VERT）等网络技术，它们以随机网络为基础，可以解决更多复杂的项目管理问题。</p>
+            </div>
+        </section>
+        
+        <section id="section1">
+            <h2>🔷 第一节 网络图</h2>
+            
+            <p>网络图又称<strong>箭头图</strong>，由带箭头的线和节点组成。箭线表示工作（或工序、活动），节点表示事项。工作是组成整个任务的各个局部任务，需要一定的时间与资源，而事项则是表示一个或若干个工作的开始或结束，与工作相比，它不需要时间或所需时间少到可以忽略不计。</p>
+            
+            <div class="formula-box">
+                <p><strong>工作表示法：</strong></p>
+                <p>例如某工作 $a$ 可以表示为：圆圈和里面的数字代表各事项，写在箭杆中间的数字5为完成本工作所需时间，即工作 $a:(1,2)$，事项：1, 2</p>
+            </div>
+            
+            <p><strong>虚工作</strong>用虚箭线"----▶"表示。它表示工时为零，不消耗任何资源的虚构工作。其作用只是为了正确表示工作的前行、后继关系。</p>
+            
+            <button class="collapsible">一、画网络图的规则</button>
+            <div class="content">
+                <p>把表示各个工作的箭线按照先后顺序及逻辑关系，由左至右排列画成图。再给节点统一编号，节点①表示整个计划的开始（总开工事项），图中最大的数码，表示计划结束事项（总完工事项），节点由小到大编号，对任一工序 $(i,j)$ 来讲，要求 $j \gt i$。</p>
+                
+                <h4>在绘制网络图时，还要注意以下规则：</h4>
+                
+                <h4>（1）网络图只能有一个总起点事项，一个总终点事项</h4>
+                <p>如果有多个起点或终点，应添加虚工作来统一起点和终点。</p>
+                
+                <h4>（2）网络图是有向图，不允许有回路</h4>
+                <p>回路会导致工作无法完成，违反了工作的先后逻辑关系。</p>
+                
+                <h4>（3）节点 $i, j$ 之间不允许有两个或两个以上的工作</h4>
+                <p>如需表示多个平行工作，应使用虚工作来区分。</p>
+                
+                <h4>（4）必须正确表示工作之间的前行、后继关系</h4>
+                <p>确保每个工作的先决条件都得到正确表示，不能遗漏或错误地添加依赖关系。</p>
+                
+                <h4>（5）虚工作的运用</h4>
+                <p>虚工作用于：</p>
+                <ul>
+                    <li>统一网络的起点和终点</li>
+                    <li>正确表示工作之间的逻辑关系</li>
+                    <li>避免两个节点间有多条工作</li>
+                    <li>表示平行工作与交叉工作</li>
+                </ul>
+                
+                <div class="important-box">
+                    <strong>💡 平行工作与交叉工作：</strong>
+                    <p><strong>平行工作：</strong>一道工作分为几道工作同时进行。例如市场调研需12天，如增加人力分为三组同时进行，可缩短为4天。</p>
+                    <p><strong>交叉工作：</strong>两件或两件以上的工作交叉进行。例如挖沟和埋管子，可以挖一段埋一段，不必等沟全部挖好再埋。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">二、实例</button>
+            <div class="content">
+                <p>一般绘制网络图可分为三步。我们用某新产品投产前全部准备工作来说明。</p>
+                
+                <h4>（1）任务的分解</h4>
+                <p>一个任务首先要分解成若干项工作，并分析清楚这些工作之间在工艺上和组织上的联系及制约关系，确定各工作的先后顺序，列出工作项目明细表。</p>
+                
+                <table>
+                    <caption><strong>表 9-1 工作项目明细表</strong></caption>
+                    <thead>
+                        <tr>
+                            <th>工作</th>
+                            <th>工作内容</th>
+                            <th>紧前工作</th>
+                            <th>工时（周）</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>A</td><td>市场调查</td><td>/</td><td>4</td></tr>
+                        <tr><td>B</td><td>资金筹备</td><td>/</td><td>10</td></tr>
+                        <tr><td>C</td><td>需求分析</td><td>A</td><td>3</td></tr>
+                        <tr><td>D</td><td>产品设计</td><td>A</td><td>6</td></tr>
+                        <tr><td>E</td><td>产品研制</td><td>D</td><td>8</td></tr>
+                        <tr><td>F</td><td>制订成本计划</td><td>C, E</td><td>2</td></tr>
+                        <tr><td>G</td><td>制订生产计划</td><td>F</td><td>3</td></tr>
+                        <tr><td>H</td><td>筹备设备</td><td>B, G</td><td>2</td></tr>
+                        <tr><td>I</td><td>筹备原材料</td><td>B, G</td><td>8</td></tr>
+                        <tr><td>J</td><td>安装设备</td><td>H</td><td>5</td></tr>
+                        <tr><td>K</td><td>调集人员</td><td>G</td><td>2</td></tr>
+                        <tr><td>L</td><td>准备开工投产</td><td>I, J, K</td><td>1</td></tr>
+                    </tbody>
+                </table>
+                
+                <h4>（2）绘制网络图</h4>
+                <p>按照明细表中所示的工作遵循前面的画图规则作出网络图，并在箭线上标出工时。</p>
+                
+                <div class="image-placeholder">
+                    [网络图 9-11：显示从节点①到节点⑩的完整工作网络，包含所有工作A-L及其相应工时]
+                </div>
+                
+                <h4>（3）节点编号</h4>
+                <p>事项节点编号要满足前述的要求，即从始点到终点要从小到大编号，且工序 $(i,j)$ 要求 $i \lt j$。编号不一定连续，留些间隔便于修改和增添工作。</p>
+            </div>
+            
+            <button class="collapsible">三、网络图分类</button>
+            <div class="content">
+                <h4>（1）确定型与概率型网络图</h4>
+                <p><strong>确定型网络图：</strong>每个工作的预计工时只估一个值，实现的概率等于或近于1。</p>
+                <p><strong>概率型网络图：</strong>每个工作用三种特定情况下的工时——最快可能完成工时、最可能完成工时、最慢可能完成工时来估计。</p>
+                
+                <h4>（2）总网络图与多级网络图</h4>
+                <p>同一个任务可以画成几种详略程度不同的网络图：</p>
+                <ul>
+                    <li><strong>总网络图：</strong>综合概括，反映任务的主要组成部分，供总指挥部门使用</li>
+                    <li><strong>一级、二级网络图：</strong>逐级细化，便于具体部门及单位执行</li>
+                </ul>
+                
+                <h4>（3）有时间坐标与无时间坐标网络图</h4>
+                <p><strong>有时间坐标网络图：</strong>附有工作天或日历天的标度，箭杆长度按工时长度准确画出。</p>
+            </div>
+        </section>
+        
+        <section id="section2">
+            <h2>⏱️ 第二节 时间参数的计算</h2>
+            
+            <p>计算网络图中有关的时间参数，主要目的是找出关键路线，为网络计划的优化、调整和执行提供明确的时间概念。</p>
+            
+            <div class="important-box">
+                <strong>🎯 关键路线：</strong>
+                <p>网络图中需时最长的路线称为<strong>关键路线</strong>。关键路线上的工作称为<strong>关键工作</strong>。要想使任务按期或提前完工，就要在关键路线的关键工作上想办法。</p>
+            </div>
+            
+            <button class="collapsible">一、工作时间 $t(i,j)$ 的确定</button>
+            <div class="content">
+                <h4>（1）确定型</h4>
+                <p>在具备工时定额和劳动定额的任务中，工作的工时 $t(i,j)$ 可以用这些定额资料确定。有些工作虽无定额可查，但有关工作的统计资料，也可利用统计资料通过分析来确定工作的工时。</p>
+                
+                <h4>（2）概率型</h4>
+                <p>对于开发性、试制性的任务，或对工作所需工时难以准确估计时，可以采用<strong>三点时间估计法</strong>来确定工作的工时。这种方法对每道工作先要作出下面三种情况的时间估计：</p>
+                <ul>
+                    <li>$a$ —— 最快可能完成时间（最乐观时间）</li>
+                    <li>$m$ —— 最可能完成时间</li>
+                    <li>$b$ —— 最慢可能完成时间（最悲观时间）</li>
+                </ul>
+                
+                <div class="formula-box">
+                    <p><strong>工作期望工时：</strong></p>
+                    $$t(i,j) = \frac{a + 4m + b}{6}$$
+                    
+                    <p><strong>方差：</strong></p>
+                    $$\sigma^2 = \left(\frac{b - a}{6}\right)^2$$
+                </div>
+                
+                <p>华罗庚教授曾对这些公式的由来做了详细说明：由实际工作情况表明，工作进行时出现最顺利和最不利情况都比较少，更多的是在最可能完成时间内完成，工时的分布近似服从于正态分布。假定 $m$ 的可能性两倍于 $a$ 或 $b$ 的可能性，应用加权平均法得出上述公式。</p>
+            </div>
+            
+            <button class="collapsible">二、事项时间参数</button>
+            <div class="content">
+                <h4>（1）事项的最早时间</h4>
+                <p>事项 $j$ 的最早时间用 $t_E(j)$ 表示，它表明以它为始点的各工作最早可能开始的时间，也表示以它为终点的全部工作的最早可能完成时间，它等于从始点事项到该事项的最长路线上所有工作的工时总和。</p>
+                
+                <div class="formula-box">
+                    <p><strong>事项最早时间递推公式：</strong></p>
+                    $$\begin{cases}
+                    t_E(1) = 0 \\
+                    t_E(j) = \max_i\{t_E(i) + t(i,j)\}
+                    \end{cases}$$
+                </div>
+                
+                <h4>（2）事项的最迟时间</h4>
+                <p>事项 $i$ 的最迟时间用 $t_L(i)$ 表示，它表明在不影响任务总工期条件下，以它为始点的工作的最迟必须开始时间，或以它为终点的各工作的最迟必须完成时间。</p>
+                
+                <div class="formula-box">
+                    <p><strong>事项最迟时间递推公式：</strong></p>
+                    $$\begin{cases}
+                    t_L(n) = \text{总工期（或 } t_E(n)\text{）} \\
+                    t_L(i) = \min_j\{t_L(j) - t(i,j)\}
+                    \end{cases}$$
+                </div>
+            </div>
+            
+            <button class="collapsible">三、工作的时间参数</button>
+            <div class="content">
+                <h4>（1）工作的最早可能开工时间与工作的最早可能完工时间</h4>
+                
+                <div class="formula-box">
+                    $$\begin{cases}
+                    t_{ES}(i,j) = t_E(i) \\
+                    t_{EF}(i,j) = t_{ES}(i,j) + t(i,j)
+                    \end{cases}$$
+                </div>
+                
+                <h4>（2）工作的最迟必须开工时间与工作的最迟必须完工时间</h4>
+                
+                <div class="formula-box">
+                    $$\begin{cases}
+                    t_{LF}(i,j) = t_L(j) \\
+                    t_{LS}(i,j) = t_{LF}(i,j) - t(i,j)
+                    \end{cases}$$
+                </div>
+            </div>
+            
+            <button class="collapsible">四、时差</button>
+            <div class="content">
+                <p>工作的时差又叫工作的机动时间或富裕时间，常用的时差有两种。</p>
+                
+                <h4>（1）工作的总时差</h4>
+                <p>在不影响任务总工期的条件下，某工作 $(i,j)$ 可以延迟其开工时间的最大幅度，叫作该工作的总时差，用 $R(i,j)$ 表示。</p>
+                
+                <div class="formula-box">
+                    $$R(i,j) = t_{LF}(i,j) - t_{EF}(i,j) = t_{LS}(i,j) - t_{ES}(i,j)$$
+                </div>
+                
+                <h4>（2）工作的自由时差</h4>
+                <p>在不影响紧后工作的最早开工时间条件下，该工作可以延迟其开工时间的最大幅度，用 $r(i,j)$ 表示。</p>
+                
+                <div class="formula-box">
+                    $$r(i,j) = t_{ES}(j,k) - t_{EF}(i,j)$$
+                </div>
+                
+                <div class="important-box">
+                    <strong>⚠️ 注意：</strong>
+                    <p>占用一道工序的总时差虽然不影响整个任务的最短工期，却有可能使其紧后工作失去自由机动的余地。所以在使用时差时应尽量先用自由时差。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">五、时间参数的图上计算法</button>
+            <div class="content">
+                <div class="example">
+                    <div class="example-title">例1 时间参数计算</div>
+                    <p>资料数据见图9-15，计算各项时间参数并确定关键路线。</p>
+                    
+                    <div class="image-placeholder">
+                        [网络图 9-15：显示完整的网络结构，节点上方矩形框显示最早时间，下方显示最迟时间]
+                    </div>
+                    
+                    <h4>计算步骤：</h4>
+                    <ol>
+                        <li><strong>计算事项最早时间：</strong>从总开工事项①开始，由编号小到大逐个计算
+                            <ul>
+                                <li>$t_E(1) = 0$</li>
+                                <li>$t_E(2) = 0 + 4 = 4$</li>
+                                <li>$t_E(3) = 4 + 6 = 10$</li>
+                                <li>$t_E(4) = \max\{4+3, 10+8\} = 18$</li>
+                                <li>...</li>
+                                <li>$t_E(10) = 32$</li>
+                            </ul>
+                        </li>
+                        <li><strong>计算事项最迟时间：</strong>从总完工事项⑩开始，由后向前计算
+                            <ul>
+                                <li>$t_L(10) = 32$</li>
+                                <li>$t_L(9) = 32 - 1 = 31$</li>
+                                <li>$t_L(8) = 31 - 5 = 26$</li>
+                                <li>...</li>
+                                <li>$t_L(1) = 4 - 4 = 0$</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    
+                    <p><strong>关键路线：</strong>①→②→③→④→⑤→⑥→⑦→⑨→⑩</p>
+                    <p><strong>总工期：</strong>32周</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">六、时间参数的表上计算法</button>
+            <div class="content">
+                <p>在网络图上直接计算时间参数，方法简便直观。但是当工作数目多，图形复杂时容易遗漏和出错，故常常采用表上计算法。</p>
+                
+                <table>
+                    <caption><strong>表上计算示例</strong></caption>
+                    <thead>
+                        <tr>
+                            <th rowspan="2">箭尾<br>$i$</th>
+                            <th rowspan="2">箭头<br>$j$</th>
+                            <th rowspan="2">工时<br>$t(i,j)$</th>
+                            <th colspan="2">最早</th>
+                            <th colspan="2">最迟</th>
+                            <th rowspan="2">总时差<br>$R$</th>
+                            <th rowspan="2">自由时差<br>$r$</th>
+                            <th rowspan="2">关键<br>工作</th>
+                        </tr>
+                        <tr>
+                            <th>开工</th>
+                            <th>完工</th>
+                            <th>开工</th>
+                            <th>完工</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>①</td><td>②</td><td>4</td><td>0</td><td>4</td>
+                            <td>0</td><td>4</td><td>0</td><td>0</td><td>①→②</td>
+                        </tr>
+                        <tr>
+                            <td>②</td><td>③</td><td>6</td><td>4</td><td>10</td>
+                            <td>4</td><td>10</td><td>0</td><td>0</td><td>②→③</td>
+                        </tr>
+                        <tr>
+                            <td>③</td><td>④</td><td>8</td><td>10</td><td>18</td>
+                            <td>10</td><td>18</td><td>0</td><td>0</td><td>③→④</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p>通过表上计算，总时差为零的工作即为关键工作，连接起来就是关键路线。</p>
+            </div>
+            
+            <button class="collapsible">七、概率型网络图的时间参数计算</button>
+            <div class="content">
+                <p>当求出每道工作的平均期望工时 $t$ 和方差 $\sigma^2$ 后，就可以同确定型网络图一样，计算有关时间参数及总完工期 $T_Z$。</p>
+                
+                <p>由于工作工时本身包含着随机因素，所以整个任务的总完工期也是个期望工期。它是关键路线上各道工作的平均工时之和：$T_Z = \sum t$</p>
+                
+                <p>总完工期的方差就是关键路线上所有工序的方差之和：$\sum \sigma^2$</p>
+                
+                <p>若工作足够多，每一工作的工时对整个任务的完工期影响不大时，由<strong>中心极限定理</strong>可知，总完工期服从以 $T_Z$ 为均值，以 $\sqrt{\sum\sigma^2}$ 为标准差的正态分布。</p>
+                
+                <div class="formula-box">
+                    <p><strong>在给定期限 $T$ 前完工的概率：</strong></p>
+                    $$P(T \leq T_*) = \Phi\left(\frac{T_* - T_Z}{\sqrt{\sum\sigma^2}}\right)$$
+                    
+                    <p>其中，$\Phi$ 为标准正态分布函数。</p>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例2 概率型网络计算</div>
+                    <p>已知某一计划中各件工作的 $a, m, b$ 值（单位为月），要求：</p>
+                    <ol>
+                        <li>每件工作的平均工时 $t$ 及标准差 $\sigma$</li>
+                        <li>画出网络图，确定关键路线</li>
+                        <li>在25个月前完工的概率</li>
+                    </ol>
+                    
+                    <p><strong>解：</strong></p>
+                    <p>（1）用三点估计法计算各工作的期望工时和方差</p>
+                    <p>（2）计算出关键路线为：①→③→⑥→⑦，总工期为 24.833 月</p>
+                    <p>（3）关键路线方差：$\sqrt{\sum\sigma^2} = \sqrt{0.5^2 + 1.5^2 + 0.833^2} \approx 1.787$</p>
+                    <p>在25个月前完工的概率：</p>
+                    $$P(T \leq 25) = \Phi\left(\frac{25 - 24.833}{1.787}\right) = \Phi(0.099) = 53.98\%$$
+                </div>
+            </div>
+        </section>
+        
+        <section id="section3">
+            <h2>🎯 第三节 网络计划的优化</h2>
+            
+            <p>通过画网络图并计算时间参数，已得到了一个初步的网络计划。而网络计划技术的核心却在于从工期、成本、资源等方面对这个初步方案做进一步的改善和调整，以求得最佳效果。这一过程，就是<strong>网络计划的优化</strong>。</p>
+            
+            <button class="collapsible">一、把串联工作改为平行工作或平行交叉工作</button>
+            <div class="content">
+                <p>为了缩短整个任务的完工期，达到时间优化的目标，可以研究关键路线上串联的每一个工作有无可能改为平行工作或交叉进行的工作，以缩短工期。</p>
+                
+                <div class="example">
+                    <div class="example-title">示例</div>
+                    <ul>
+                        <li><strong>平行工作：</strong>原计划市场调研需12天，如增加人力改为三组同时进行，则只需4天即可。</li>
+                        <li><strong>交叉工作：</strong>挖沟工作A需9天，埋管子工作B需6天，串联工作需时15天，而变为三段交叉工作，只需11天。</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <button class="collapsible">二、利用时差</button>
+            <div class="content">
+                <p>由于网络图中的非关键路工作都有时差，所以这些工作在开工时间上、具体工时上都具有一定的弹性。为了缩短任务的总工期，可以考虑放慢非关键工作的进度，减少这些工作的人力、资源，转去支援关键工作，以使关键工作的工时缩短来达到目的。</p>
+            </div>
+            
+            <button class="collapsible">三、有限资源的合理分配</button>
+            <div class="content">
+                <p>一项任务的可用资源总是有限的，因此时间计划必须考虑资源问题。下面以人力资源为例说明资源调整的方法。</p>
+                
+                <div class="example">
+                    <div class="example-title">例3 资源调整</div>
+                    <p>某工程网络图已计算出关键路线为 ①→②→③→⑤→⑥，总工期为11天。假设资源有限，每日可用人力为10人，求在此条件下工期最短的施工方案。</p>
+                    
+                    <p><strong>调整的基本原则：</strong></p>
+                    <ol>
+                        <li>尽量保证关键工作的日资源需求量</li>
+                        <li>利用非关键工作的时差错开各工作的使用资源时间</li>
+                        <li>在技术章程允许条件下，可适当延长时差大的工作的工时，或切断某些非关键工作，以减少日总需求量</li>
+                    </ol>
+                    
+                    <p><strong>具体方法：</strong></p>
+                    <p>按资源的日需求量所划分的时间段逐步从始点向终点进行调整。对每个时间段内各工作按总时差的递增顺序排队编号，对编号小的优先满足资源需求量，当累计和超过10人时，未得到人力安排的工作应移入下一时间段。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">四、最低成本日程</button>
+            <div class="content">
+                <p>项目或任务的成本一般包括<strong>直接费用</strong>和<strong>间接费用</strong>两部分。</p>
+                
+                <ul>
+                    <li><strong>直接费用：</strong>完成各项工作直接所需人力、资源、设备等费用。工时越短，直接费用越大。</li>
+                    <li><strong>间接费用：</strong>包括管理费、办公费等，常按任务期长短分摊。工期越长，间接费用越大。</li>
+                </ul>
+                
+                <div class="formula-box">
+                    <p><strong>成本斜率：</strong></p>
+                    <p>工作 $(i,j)$ 从正常工时每缩短一个单位时间所需增加的费用：</p>
+                    $$c_{ij} = \frac{m_{ij} - M_{ij}}{D_{ij} - d_{ij}}$$
+                    
+                    <p>其中：</p>
+                    <ul>
+                        <li>$D_{ij}$ —— 正常工时</li>
+                        <li>$M_{ij}$ —— 正常工时所需费用</li>
+                        <li>$d_{ij}$ —— 特急工时</li>
+                        <li>$m_{ij}$ —— 特急工时所需费用</li>
+                    </ul>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">例4 最低成本日程计算</div>
+                    <p>已知网络计划各工作的正常工时、特急工时及相应费用，设正常工时下，任务总间接费用为18000元，工期每缩短一天，间接费用可节省330元，求最低成本日程。</p>
+                    
+                    <p><strong>计算步骤：</strong></p>
+                    <ol>
+                        <li>从关键工作中选出缩短工时所需直接费用最少的方案，并确定该方案可能缩短的天数</li>
+                        <li>按照工作的新工时，重新计算网络计划的关键路线及关键工作</li>
+                        <li>计算由于缩短工时所增加的直接费用</li>
+                        <li>不断重复上述三个步骤，直到工期不能再缩短为止</li>
+                    </ol>
+                    
+                    <p><strong>结果：</strong>通过计算得到最低成本日程为62天，总成本为63,440元。</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section4">
+            <h2>📈 第四节 图解评审法简介</h2>
+            
+            <p>前面介绍的网络计划方法主要研究以时间为主要参数的确定型网络模型。由于这类网络模型的建立有严格的规则，大量研究与开发类的计划尚无法用它们表达。为解决这类不确定性的网络规划问题，1966年普列茨克（Pritsker）提出了<strong>图解评审法（GERT）</strong>。</p>
+            
+            <button class="collapsible">一、随机网络（GERT网络）</button>
+            <div class="content">
+                <p>随机网络为双代号网络，由节点和边组成，节点分为输入侧和输出侧。输入侧有3种逻辑关系，输出侧有2种逻辑关系，可得到6种不同的节点。</p>
+                
+                <h4>（1）输入侧逻辑类型</h4>
+                <ul>
+                    <li><strong>异或型：</strong>输入边为互斥型，即在规定时间内只能有一个边实现，该节点实现</li>
+                    <li><strong>或型：</strong>输入该节点的任一边实现，该节点实现。实现的时间是各输入边中完成时间最短者</li>
+                    <li><strong>与型：</strong>输入该节点的全部边均实现，该节点才能实现。实现的时间是各输入边中完成时间最长者</li>
+                </ul>
+                
+                <h4>（2）输出侧逻辑类型</h4>
+                <ul>
+                    <li><strong>确定型：</strong>该节点输出的边都必须实现（各边实现概率均为1）</li>
+                    <li><strong>概率型：</strong>该节点输出的边只有一条实现（全部输出边之实现概率和为1）</li>
+                </ul>
+                
+                <p>GERT网络中每条边表示工作，一般有两项参数 $(P, t)$：$P$ 为该工作实现的概率；$t$ 为工作工时，可以是常数或随机变量。</p>
+                
+                <div class="important-box">
+                    <strong>💡 重要说明：</strong>
+                    <p>前面各节介绍的确定型网络模型，其节点输入侧为与型，输出侧为确定型，工作实现概率为1，只是GERT网络模型的一个特例。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">二、图解评审法的基本原理</button>
+            <div class="content">
+                <p>由于随机网络所描述的问题，工作与事项的实现都具有随机性，所要解决的目标随之也有变化，不再是简单地计算计划的确定工期与关键路线。</p>
+                
+                <h4>图解评审法解决问题的步骤：</h4>
+                <ol>
+                    <li>进行系统分析，明确问题的目标，各工作间的关系，正确绘制GERT网络图</li>
+                    <li>对工作工时及出现概率等参数进行认真测算与估计</li>
+                    <li>对模型进行分析、计算，不仅要求解网络中所消耗的时间、费用和资源，而且还要求得网络中的流</li>
+                    <li>对计算结果进行分析和评价，作出预测或决策指导或监控计划的实施</li>
+                </ol>
+            </div>
+            
+            <button class="collapsible">三、图解评审法的基本解法</button>
+            <div class="content">
+                <p>目前有两大类解法：</p>
+                
+                <h4>1. 解析法</h4>
+                <p>直接使用网络中的参数进行计算，把随机和概率问题化为确定问题求解，或采用信号流图理论，用等效函数法求解。</p>
+                
+                <h4>2. 模拟法</h4>
+                <p>在计算机上进行模拟实验，用反复进行随机抽样方法模拟各种概率及随机变量，进而通过统计模拟结果得到网络问题的解。</p>
+                
+                <div class="example">
+                    <div class="example-title">例5 生产某种产品的随机网络</div>
+                    <p>生产某种产品，需经一系列工作，经过检查后，或成功（成品，概率为0.7），或失败（废品处理，概率为0.1），或修改图纸，进一步研制（概率为0.2）。</p>
+                    
+                    <p><strong>分析：</strong></p>
+                    <p>零件的生产过程可以是以下5条路线中的一条：</p>
+                    <ol>
+                        <li>路线a：①→②→⑤→⑥→⑧（成品），概率 $P_a = 0.7125$，工时 $T_a = 16$</li>
+                        <li>路线b：①→②→③→④→⑤→⑥→⑧（成品），概率 $P_b = 0.16625$，工时 $T_b = 21$</li>
+                        <li>路线c：①→②→⑤→⑥→⑦（废品），概率 $P_c = 0.0375$，工时 $T_c = 16$</li>
+                        <li>路线d：①→②→③→④→⑤→⑥→⑦（废品），概率 $P_d = 0.00875$，工时 $T_d = 21$</li>
+                        <li>路线e：①→②→③→④→⑤→⑥→⑧（成品），概率 $P_e = 0.07125$，工时 $T_e = 21$</li>
+                    </ol>
+                    
+                    <p><strong>成品率：</strong>$P_{\text{成品}} = P_a + P_b + P_e = 0.95$</p>
+                    <p><strong>平均加工时间：</strong>$\overline{T} = \frac{\sum P_i \times T_i}{\sum P_i} \approx 17.38$ 小时</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="exercises">
+            <h2>✏️ 习题</h2>
+            
+            <div class="exercise">
+                <h3>9.1</h3>
+                <p>有A, B, C, D, E, F 6项工作，关系分别如图所示，试分别画出网络图。</p>
+            </div>
+            
+            <div class="exercise">
+                <h3>9.2</h3>
+                <p>试画出下列各题的网络图，并为事项编号。</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>工作</th>
+                            <th>工时/d</th>
+                            <th>紧前工作</th>
+                            <th>工作</th>
+                            <th>工时/d</th>
+                            <th>紧前工作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>A</td><td>15</td><td>—</td><td>F</td><td>5</td><td>D, E</td></tr>
+                        <tr><td>B</td><td>10</td><td>—</td><td>G</td><td>20</td><td>C, F</td></tr>
+                        <tr><td>C</td><td>10</td><td>A, B</td><td>H</td><td>10</td><td>D, E</td></tr>
+                        <tr><td>D</td><td>10</td><td>A, B</td><td>I</td><td>15</td><td>G, H</td></tr>
+                        <tr><td>E</td><td>5</td><td>B</td><td></td><td></td><td></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="exercise">
+                <h3>9.3</h3>
+                <p>设有如图所示的网络图，分别用图上计算法和表上计算法计算事项时间参数，并求出关键路线。</p>
+            </div>
+            
+            <div class="exercise">
+                <h3>9.4</h3>
+                <p>绘制网络图，分别用图上计算法和表上计算法计算工作的各项时间参数，确定关键路线。</p>
+            </div>
+            
+            <div class="exercise">
+                <h3>9.5</h3>
+                <p>某工程资料如表所示。要求：</p>
+                <ol>
+                    <li>画出网络图</li>
+                    <li>求出每件工作工时的期望值和方差</li>
+                    <li>求出工程完工期的期望值和方差</li>
+                    <li>计算工程期望完工期提前3天的概率和推迟5天的概率</li>
+                </ol>
+            </div>
+            
+            <div class="exercise">
+                <h3>9.6</h3>
+                <p>对网络图所示的各项工作旁边的3个数分别为工作的最乐观时间、最可能时间和最悲观时间，确定其关键路线和最早完工时间的概率。</p>
+            </div>
+            
+            <div class="exercise">
+                <h3>9.7</h3>
+                <p>某项工程各道工序时间及每天需要的人力资源如图所示。若人力资源限制每天只有15人，求此条件下工期最短的施工方案。</p>
+            </div>
+            
+            <div class="exercise">
+                <h3>9.8</h3>
+                <p>已知下列网络图有关数据，设间接费用为15元/d，求最低成本日程。</p>
+            </div>
+            
+            <div class="exercise">
+                <h3>9.9</h3>
+                <p>一项小修计划包括的工作如表所示：</p>
+                <ol>
+                    <li>正常计划工期与最小工期各是多少天？</li>
+                    <li>日常经营费为50元/d，最佳工期应是多少天，列出每项工作的相应工时。</li>
+                </ol>
+            </div>
+            
+            <div class="exercise">
+                <h3>9.10</h3>
+                <p>生产某种产品，需经一系列工作，试画出随机网络图，并假设产品经过工作g即为成品，试计算产品的成品率及平均加工时间。</p>
+            </div>
+            
+            <div class="exercise">
+                <h3>9.11</h3>
+                <p>判断下列说法，其中正确的为：</p>
+                <ol>
+                    <li>网络关键路线上的作业，其总时差与自由时差均为零</li>
+                    <li>若一项作业的总时差为10h，说明该作业安排时有10h的机动时间</li>
+                    <li>任何非关键路线上的作业，其总时差与自由时差均不为零</li>
+                    <li>当作业时间用a、m、b三点估计时，m等于完成该作业的期望时间</li>
+                </ol>
+            </div>
+        </section>
+        
+        <div style="text-align: center; margin: 3rem 0; padding: 2rem; background: linear-gradient(135deg, var(--secondary-mint) 0%, #c8e6d7 100%); border-radius: 12px;">
+            <h3 style="color: var(--primary-orange); margin-bottom: 1rem;">🎓 学习完成</h3>
+            <p>恭喜您完成了第九章《网络计划》的学习！</p>
+            <p>建议您继续练习习题以巩固所学知识。</p>
+        </div>
+    </div>
+    
+    <script>
+        // 折叠功能
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                content.classList.toggle("show");
+            });
+        }
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 页面加载完成后提示
+        window.addEventListener('load', function() {
+            console.log('📚 网络计划教程加载完成！');
+            console.log('💡 提示：点击章节标题可以展开/折叠内容');
+            console.log('🔗 使用侧边栏可以快速跳转到各个章节');
+        });
+    </script>
+    
+    <!--
+    📝 使用说明：
+    1. 将此文件保存为 .html 格式（例如：network_planning.html）
+    2. 需要网络连接以加载 MathJax（用于数学公式渲染）和 Google Fonts
+    3. 直接在浏览器中打开即可查看完整的交互式教程
+    4. 所有内容都在单个文件中，便于分发和使用
+    
+    ✨ 特色功能：
+    - 完整的 MathJax 配置，正确渲染所有数学公式
+    - 可折叠的章节内容，便于浏览
+    - 侧边栏导航，快速跳转
+    - 丰富的色彩设计，提升视觉体验
+    - 响应式布局，支持移动设备
+    - 所有LaTeX公式已正确标记
+    
+    📧 如有问题，请检查：
+    - 网络连接是否正常（MathJax需要从CDN加载）
+    - 浏览器是否支持HTML5和CSS3
+    - 是否启用了JavaScript
+    -->
+</body>
+</html>

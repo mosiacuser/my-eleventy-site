@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第八章 图与网络分析 - 运筹学教程交互式版</title>
+    
+    <!-- MathJax配置 -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            "HTML-CSS": {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'SimSun', sans-serif;
+            background: linear-gradient(135deg, #a6d6c9 0%, #ffffff 50%, #f7d117 100%);
+            color: #343434;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #f27d00, #f7d117);
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #343434;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+        
+        nav h3 {
+            color: #f7d117;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        nav ul {
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin: 8px 0;
+        }
+        
+        nav ul li a {
+            color: #a6d6c9;
+            text-decoration: none;
+            padding: 8px 15px;
+            display: block;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        nav ul li a:hover {
+            background: #f27d00;
+            color: #ffffff;
+            transform: translateX(5px);
+        }
+        
+        section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: #f27d00;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f7d117;
+        }
+        
+        h3 {
+            color: #f27d00;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+        
+        h4 {
+            color: #343434;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-indent: 2em;
+        }
+        
+        .definition, .theorem, .example {
+            background: #a6d6c9;
+            border-left: 5px solid #f27d00;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .definition strong, .theorem strong, .example strong {
+            color: #f27d00;
+            font-size: 1.1em;
+        }
+        
+        .formula-block {
+            background: #f7f7f7;
+            border: 2px solid #f7d117;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        
+        .collapsible {
+            background: #f27d00;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+        
+        .collapsible:hover {
+            background: #d96d00;
+        }
+        
+        .collapsible.active {
+            background: #a6d6c9;
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            float: right;
+            margin-left: 5px;
+        }
+        
+        .collapsible.active:after {
+            content: '▲';
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: rgba(166, 214, 201, 0.1);
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .content-inner {
+            padding: 20px;
+        }
+        
+        .figure-placeholder {
+            background: #f7d117;
+            border: 2px dashed #f27d00;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            border-radius: 8px;
+            color: #343434;
+            font-weight: bold;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        
+        th, td {
+            border: 1px solid #a6d6c9;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        th {
+            background: #f27d00;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background: rgba(166, 214, 201, 0.2);
+        }
+        
+        .highlight {
+            background: #f7d117;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .note {
+            background: rgba(247, 209, 23, 0.2);
+            border-left: 4px solid #f7d117;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        ul, ol {
+            margin-left: 40px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .algorithm {
+            background: #343434;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .algorithm-step {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #343434;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            nav {
+                position: static;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+        
+        .mjx-chtml {
+            font-size: 1.1em !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第八章 图与网络分析</h1>
+            <p class="subtitle">运筹学教程（第5版）交互式学习版</p>
+        </header>
+        
+        <nav>
+            <h3>📚 章节导航</h3>
+            <ul>
+                <li><a href="#intro">引言</a></li>
+                <li><a href="#section1">第一节 图与网络的基本知识</a></li>
+                <li><a href="#section2">第二节 树</a></li>
+                <li><a href="#section3">第三节 最短路问题</a></li>
+                <li><a href="#section4">第四节 最大流问题</a></li>
+                <li><a href="#section5">第五节 最小费用流问题</a></li>
+                <li><a href="#exercises">习题</a></li>
+            </ul>
+        </nav>
+        
+        <section id="intro">
+            <h2>📖 引言：从七桥问题说起</h2>
+            
+            <p>18世纪的哥尼斯堡城中流过一条河（普雷格尔河），河上有七座桥连接着河的两岸和河中的两个小岛。当时那里的人们热衷于这样的游戏：一个游戏者怎样才能一次连续走过这七座桥而每座桥只走一次，回到原出发点？没有人想出这种走法，又无法说明走法不存在，这就是著名的"七桥"难题。</p>
+            
+            <p>瑞士数学家欧拉（L. Euler）在1736年发表了一篇题为《依据几何位置的解题方法》的论文，有效地解决了哥尼斯堡七桥难题，这是有记载的第一篇图论论文，欧拉被公认为图论的创始人。</p>
+            
+            <div class="figure-placeholder">
+                图8-1：哥尼斯堡七桥示意图<br>
+                图8-2：欧拉将七桥问题抽象为图论问题
+            </div>
+            
+            <p>欧拉的求解思路是将这个问题归结为：用A、B、C、D四点表示河的两岸和小岛，用两点间的连线表示桥。七桥问题变为：从A、B、C、D任一点出发，能否通过每条边一次且仅一次，再回到该点？欧拉证明了这样的走法是不存在的，并给出了这类问题的一般结论。</p>
+            
+            <button class="collapsible">🎯 其他经典问题</button>
+            <div class="content">
+                <div class="content-inner">
+                    <h4>哈密尔顿环球旅行问题</h4>
+                    <p>1857年，英国数学家哈密尔顿（Hamilton）发明了一种游戏，他用一个实心正12面体象征地球，正12面体的20个顶点分别表示世界上20座名城，要求游戏者从任一城市出发，寻找一条可经由每个城市一次且仅一次再回到原出发点的路。</p>
+                    
+                    <h4>中国邮路问题</h4>
+                    <p>运筹学中的"中国邮路问题"：一个邮递员从邮局出发要走遍他所负责的每条街道去送信，问应如何选择适当的路线可使所走的总路程最短？这个问题就与欧拉回路有密切的关系。</p>
+                    
+                    <h4>货郎担问题</h4>
+                    <p>著名的"货郎担问题"则是一个带权的哈密尔顿回路问题。</p>
+                </div>
+            </div>
+            
+            <div class="note">
+                <strong>💡 图论的发展：</strong>从1736年欧拉的第一篇论文到1936年匈牙利数学家O. König写的《有限图与无限图的理论》，前后经历了200年之久。直到20世纪中期，电子计算机的发展以及离散的数学问题占有越来越重要的地位，使得作为提供离散数学模型的图论得以迅速发展，成为运筹学中十分活跃的重要分支。
+            </div>
+        </section>
+        
+        <section id="section1">
+            <h2>📊 第一节 图与网络的基本知识</h2>
+            
+            <h3>一、图与网络的基本概念</h3>
+            
+            <button class="collapsible">1. 图及其分类</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="definition">
+                        <strong>定义1</strong> 一个图是由点集$V=\{v_i\}$和$V$中元素的无序对的一个集合$E=\{e_k\}$所构成的二元组，记为$G=(V, E)$。$V$中的元素$v_i$叫作顶点，$E$中的元素$e_k$叫作边。
+                    </div>
+                    
+                    <p>当$V$、$E$为有限集合时，$G$称为有限图，否则称为无限图。本章只讨论有限图。</p>
+                    
+                    <div class="example">
+                        <strong>例1</strong> 在图中：<br>
+                        $V=\{v_1, v_2, v_3, v_4, v_5\}$<br>
+                        $E=\{e_1, e_2, e_3, e_4, e_5, e_6\}$<br>
+                        其中：$e_1=(v_1,v_4)$，$e_2=(v_1,v_2)$，$e_3=(v_1,v_3)$，<br>
+                        $e_4=(v_2,v_3)$，$e_5=(v_2,v_3)$，$e_6=(v_3,v_4)$
+                    </div>
+                    
+                    <h4>相关术语</h4>
+                    <ul>
+                        <li><strong>相邻</strong>：两个点$u$，$v$属于$V$，如果边$(u,v)$属于$E$，则称$u$，$v$两点相邻</li>
+                        <li><strong>端点</strong>：$u$，$v$称为边$(u,v)$的端点</li>
+                        <li><strong>关联边</strong>：两条边$e_i$，$e_j$属于$E$，如果它们有一个公共端点$u$，则称$e_i$，$e_j$为点$u$的关联边</li>
+                    </ul>
+                    
+                    <div class="formula-block">
+                        用$m(G)=|E|$表示图$G$中的边数<br>
+                        用$n(G)=|V|$表示图$G$的顶点个数<br>
+                        在不引起混淆情况下简记为$m$，$n$
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">2. 图的分类</button>
+            <div class="content">
+                <div class="content-inner">
+                    <h4>无向图与有向图</h4>
+                    <p>对于任一条边$(v_i,v_j)$属于$E$，如果边$(v_i,v_j)$端点无序，则它是<span class="highlight">无向边</span>，此时图$G$称为无向图。如果边$(v_i,v_j)$的端点有序，即它表示以$v_i$为始点，$v_j$为终点的有向边（或称弧），这时图$G$称为<span class="highlight">有向图</span>。</p>
+                    
+                    <h4>简单图与多重图</h4>
+                    <div class="definition">
+                        <strong>定义2</strong> 不含环和多重边的图称为<span class="highlight">简单图</span>，含有多重边的图称为<span class="highlight">多重图</span>。以后我们讨论的图，如不特别说明，都是简单图。
+                    </div>
+                    
+                    <div class="note">
+                        <strong>注意：</strong>
+                        <ul>
+                            <li>一条边的两个端点如果相同，称此边为<strong>环</strong>（自回路）</li>
+                            <li>两个点之间多于一条边的，称为<strong>多重边</strong></li>
+                            <li>有向图中两点之间有不同方向的两条边，不是多重边</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>完全图</h4>
+                    <div class="definition">
+                        <strong>定义3</strong> 每一对顶点间都有边相连的无向简单图称为<span class="highlight">完全图</span>。有$n$个顶点的无向完全图记作$K_n$。
+                    </div>
+                    
+                    <h4>二部图</h4>
+                    <div class="definition">
+                        <strong>定义4</strong> 图$G=(V, E)$的点集$V$可以分为两个非空子集$X$，$Y$，即$X \cup Y = V$，$X \cap Y = \emptyset$，使得$E$中每条边的两个端点必有一个端点属于$X$，另一个端点属于$Y$，则称$G$为<span class="highlight">二部图</span>（偶图），有时记作$G=(X, Y, E)$。
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">3. 顶点的次</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="definition">
+                        <strong>定义5</strong> 以点$v$为端点的边数叫作点$v$的<span class="highlight">次</span>（degree），记作$\text{deg}(v)$，简记为$d(v)$。
+                    </div>
+                    
+                    <p>例如：点$v_1$的次$d(v_1)=4$（因为边$e_6$要计算两次）。次为1的点称为<strong>悬挂点</strong>，连接悬挂点的边称为<strong>悬挂边</strong>。次为零的点称为<strong>孤立点</strong>。次为奇数的点称为<strong>奇点</strong>；次为偶数的点称为<strong>偶点</strong>。</p>
+                    
+                    <div class="theorem">
+                        <strong>定理1</strong> 任何图中，顶点次数的总和等于边数的2倍。
+                        $$\sum_{v \in V} d(v) = 2m$$
+                        <strong>证明：</strong>由于每条边必与两个顶点关联，在计算点的次时，每条边均被计算了两次，所以顶点次数的总和等于边数的2倍。
+                    </div>
+                    
+                    <div class="theorem">
+                        <strong>定理2</strong> 任何图中，次为奇数的顶点必为偶数个。
+                        <br><strong>证明：</strong>设$V_1$和$V_2$分别为图$G$中奇点与偶点的集合（$V_1 \cup V_2 = V$）。由定理1知
+                        $$\sum_{u \in V_1} d(u) + \sum_{u \in V_2} d(u) = \sum_{v \in V} d(v) = 2m$$
+                        由于$2m$为偶数，而$\sum_{u \in V_2} d(u)$是若干个偶数之和，也是偶数，所以$\sum_{u \in V_1} d(u)$必为偶数，即$|V_1|$是偶数。
+                    </div>
+                    
+                    <h4>有向图的入次和出次</h4>
+                    <div class="definition">
+                        <strong>定义6</strong> 有向图中，以$v$为始点的边数称为点$v$的<span class="highlight">出次</span>，用$d^+(v)$表示；以$v$为终点的边数称为点$v$的<span class="highlight">入次</span>，用$d^-(v)$表示。$v$点的出次与入次之和就是该点的次。
+                    </div>
+                    
+                    <p>容易证明有向图中，所有顶点的入次之和等于所有顶点的出次之和。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">4. 子图</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="definition">
+                        <strong>定义7</strong> 图$G=(V, E)$，若$E'$是$E$的子集，$V'$是$V$的子集，且$E'$中的边仅与$V'$中的顶点相关联，则称$G'=(V', E')$是$G$的一个<span class="highlight">子图</span>。特别是，若$V'=V$，则$G'$称为$G$的<span class="highlight">生成子图</span>（支撑子图）。
+                    </div>
+                    
+                    <p>子图在描述图的性质和局部结构中有重要作用。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">5. 网络</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>在实际问题中，往往只用图来描述所研究对象之间的关系还是不够的，与图联系在一起的，通常还有与点或边有关的某些数量指标，我们常称之为"权"。权可以代表如距离、费用、通过能力（容量）等。这种点或边带有某种数量指标的图称为<span class="highlight">网络</span>（赋权图）。</p>
+                    
+                    <p>与无向图和有向图相对应，网络又分为<strong>无向网络</strong>和<strong>有向网络</strong>。</p>
+                    
+                    <div class="note">
+                        <strong>💡 网络优化模型的优势：</strong>实际上，许多网络优化问题都可以用规划的数学模型来表述，如本章中的最短路问题、最大流问题、最小费用流问题等，都可以通过建立线性规划或整数规划的模型求解。但是借助网络模型求解会更简便，可以说网络优化模型为管理决策提供了更有效的工具。
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section1-2">
+            <h3>二、连通图</h3>
+            
+            <button class="collapsible">链、路、圈的概念</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="definition">
+                        <strong>定义8</strong> 无向图$G=(V, E)$，若图$G$中某些点与边的交替序列可以排成$(v_{i_0}, e_{i_1}, v_{i_1}, e_{i_2}, \ldots, v_{i_{k-1}}, e_{i_k}, v_{i_k})$的形式，且$e_{i_j} = (v_{i_{j-1}}, v_{i_j})$ $(j=1,\ldots,k)$，则称这个点边序列为连接$v_{i_0}$与$v_{i_k}$的一条<span class="highlight">链</span>，链长为$k$。
+                    </div>
+                    
+                    <p>点边列中没有重复的点和重复边者为<strong>初等链</strong>。</p>
+                    
+                    <div class="definition">
+                        <strong>定义9</strong> 无向图$G$中，连接$v_{i_0}$与$v_{i_k}$的一条链，当$v_{i_0}$与$v_{i_k}$是同一个点时，称此链为<span class="highlight">圈</span>。圈中既无重复点也无重复边者为<strong>初等圈</strong>。
+                    </div>
+                    
+                    <p>对于有向图可以类似于无向图定义链和圈、初等链、圈，此时不考虑边的方向。而当链（圈）上的边方向相同时，称为<strong>道路</strong>（<strong>回路</strong>）。</p>
+                    
+                    <div class="note">
+                        对于无向图来说，道路与链、回路与圈意义相同。
+                    </div>
+                </div>
+            </div>
+            
+            <div class="definition">
+                <strong>定义10</strong> 一个图中任意两点间至少有一条链相连，则称此图为<span class="highlight">连通图</span>。任何一个不连通图都可以分为若干个连通子图，每一个称为原图的一个<strong>分图</strong>。
+            </div>
+        </section>
+        
+        <section id="section1-3">
+            <h3>三、图的矩阵表示</h3>
+            
+            <p>用矩阵表示图对研究图的性质及应用常常是比较方便的，图的矩阵表示方法有权矩阵、邻接矩阵、关联矩阵、回路矩阵、割集矩阵等，这里只介绍其中两种常用矩阵。</p>
+            
+            <div class="definition">
+                <strong>定义11</strong> 网络（赋权图）$G=(V, E)$，其边$(v_i,v_j)$有权$w_{ij}$，构造矩阵$A=(a_{ij})_{n \times n}$，其中：
+                $$a_{ij} = \begin{cases} w_{ij} & (v_i,v_j) \in E \\ 0 & \text{其他} \end{cases}$$
+                称矩阵$A$为网络$G$的<span class="highlight">权矩阵</span>。
+            </div>
+            
+            <div class="definition">
+                <strong>定义12</strong> 对于图$G=(V, E)$，$|V|=n$，构造一个矩阵$A=(a_{ij})_{n \times n}$，其中：
+                $$a_{ij} = \begin{cases} 1 & (v_i,v_j) \in E \\ 0 & \text{其他} \end{cases}$$
+                则称矩阵$A$为图$G$的<span class="highlight">邻接矩阵</span>。
+            </div>
+            
+            <div class="note">
+                <strong>💡 提示：</strong>当$G$为无向图时，邻接矩阵为对称矩阵。
+            </div>
+        </section>
+        
+        <section id="section1-4">
+            <h3>四、欧拉回路与中国邮路问题</h3>
+            
+            <button class="collapsible">1. 欧拉回路与道路</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="definition">
+                        <strong>定义13</strong> 连通图$G$中，若存在一条道路，经过每边一次且仅一次，则称这条路为<span class="highlight">欧拉道路</span>。若存在一条回路，经过每边一次且仅一次，则称这条回路为<span class="highlight">欧拉回路</span>。
+                    </div>
+                    
+                    <p>具有欧拉回路的图称为<strong>欧拉图（E图）</strong>。在引言中提到的哥尼斯堡七桥问题就是要在图中寻找一条欧拉回路。</p>
+                    
+                    <div class="theorem">
+                        <strong>定理3</strong> 无向连通图$G$是欧拉图，当且仅当$G$中无奇点。
+                    </div>
+                    
+                    <div class="theorem">
+                        <strong>推论1</strong> 无向连通图$G$为欧拉图，当且仅当$G$的边集可划分为若干个初等回路。
+                    </div>
+                    
+                    <div class="theorem">
+                        <strong>推论2</strong> 无向连通图$G$有欧拉道路，当且仅当$G$中恰有两个奇点。
+                    </div>
+                    
+                    <p>根据定理来检查哥尼斯堡七桥问题，从图中可以看到$d(A)=3$，$d(B)=3$，$d(C)=5$，$d(D)=3$，有四个奇点，所以不是欧拉图，即给出了哥尼斯堡七桥问题的否定回答。</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">2. 中国邮路问题</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>一个邮递员，负责某一地区的信件投递。他每天要从邮局出发，走遍该地区所有街道再返回邮局，问应如何安排送信的路线可以使所走的总路程最短？这个问题是我国管梅谷教授在1962年首先提出的。因此国际上通称为<span class="highlight">中国邮路问题</span>。</p>
+                    
+                    <p><strong>用图论的语言描述：</strong>给定一个连通图$G$，每边有非负权$l(e)$，要求一条回路过每边至少一次，且满足总权最小。</p>
+                    
+                    <p>由定理3知，如果$G$没有奇点，则是一个欧拉图，显然按欧拉回路走就是满足要求的过每边至少一次且总权最小的回路。</p>
+                    
+                    <p>如果$G$中有奇点，要求连续走过每边至少一次，必然有些边不止一次走过，这相当于在图$G$中对某些边增加一些重复边，使所得到的新图$G^*$没有奇点且满足总路程最短。</p>
+                    
+                    <div class="theorem">
+                        <strong>定理5</strong> 已知图$G^* = G + E_1$无奇点，则$L(E_1) = \sum_{e \in E_1} l(e)$最小的充分必要条件为：
+                        <ol>
+                            <li>每条边最多重复一次；</li>
+                            <li>对图$G$中每个初等圈来讲，重复边的长度和不超过圈长的一半。</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section2">
+            <h2>🌲 第二节 树</h2>
+            
+            <h3>一、树的概念和性质</h3>
+            
+            <p>树是图论中结构最简单但又十分重要的图，在自然科学和社会科学的许多领域都有广泛的应用。企业组织机构、一些通村的公路和一些不重要的通信网络也可以表为树状结构。</p>
+            
+            <div class="definition">
+                <strong>定义14</strong> 连通且不含圈的无向图称为<span class="highlight">树</span>。树中次为1的点称为<strong>树叶</strong>，次大于1的点称为<strong>分枝点</strong>。
+            </div>
+            
+            <div class="theorem">
+                <strong>定理6</strong> 图$T=(V, E)$，$|V|=n$，$|E|=m$，则下列关于树的说法是等价的：
+                <ol>
+                    <li>$T$是一个树</li>
+                    <li>$T$无圈，且$m=n-1$</li>
+                    <li>$T$连通，且$m=n-1$</li>
+                    <li>$T$无圈，但每加一新边即得唯一一个圈</li>
+                    <li>$T$连通，但任何去一边就不连通</li>
+                    <li>$T$中任意两点，有唯一链相连</li>
+                </ol>
+            </div>
+            
+            <h3>二、图的生成树</h3>
+            
+            <div class="definition">
+                <strong>定义15</strong> 若图$G$的生成子图是一棵树，则称该树为$G$的<span class="highlight">生成树</span>（支撑树），或简称为图$G$的<strong>树</strong>。
+            </div>
+            
+            <p>图$G$中属于生成树的边称为<strong>树枝</strong>，不在生成树中的边称为<strong>弦</strong>。</p>
+            
+            <div class="theorem">
+                <strong>定理7</strong> 图$G=(V, E)$有生成树的充分必要条件为$G$是连通图。
+            </div>
+            
+            <button class="collapsible">寻找生成树的方法</button>
+            <div class="content">
+                <div class="content-inner">
+                    <h4>方法1：深探法（避圈法/加边法）</h4>
+                    <div class="algorithm">
+                        <div class="algorithm-step">① 在点集V中任取一点v，给v以标号0。</div>
+                        <div class="algorithm-step">② 若某点v_i已得标号i，检查一端点为v_i的各边，另一端点是否均已标号。</div>
+                        <div class="algorithm-step">   若有(v_i,v_j)边之v_j未标号，则给v_j以标号i+1，记下边(v_i,v_j)。令v_j代v_i，重复②。</div>
+                        <div class="algorithm-step">   若这样的边的另一端点均已有标号，就退到标号为i-1的r点，以r代v_i，重复②。</div>
+                        <div class="algorithm-step">   直到全部点得到标号为止。</div>
+                    </div>
+                    
+                    <h4>方法2：广探法</h4>
+                    <div class="algorithm">
+                        <div class="algorithm-step">① 在点集V中任取一点v，给v以标号0。</div>
+                        <div class="algorithm-step">② 令所有标号为i的点集为V_i，检查[V_i, V\V_i]中的边端点是否均已标号。</div>
+                        <div class="algorithm-step">   对所有未标号之点均标以i+1，记下这些边。</div>
+                        <div class="algorithm-step">③ 对标号i+1的点重复步骤②，直到全部点得到标号为止。</div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>三、最小生成树问题</h3>
+            
+            <div class="definition">
+                <strong>定义16</strong> 连通图$G=(V, E)$，每条边上有非负权$l(e)$。一棵生成树所有树枝上权的总和，称为这个生成树的权。具有最小权的生成树称为<span class="highlight">最小生成树</span>（最小支撑树），简称<strong>最小树</strong>。
+            </div>
+            
+            <button class="collapsible">算法1：Kruskal算法（避圈法）</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p><strong>基本步骤：</strong>每步从未选的边中选取边$e$，使它与已选边不构成圈，且$e$是未选边中的最小权边，直到选够$n-1$条边为止。</p>
+                    
+                    <div class="example">
+                        <strong>例5</strong> 一个乡有9个自然村，其间道路及各道路长度如图所示，各边上的数字表示距离，问如何架设电线做到村村通电又能使用线最短。这就是一个最小生成树问题，用Kruskal算法。
+                    </div>
+                    
+                    <div class="theorem">
+                        <strong>定理8</strong> 用Kruskal算法得到的子图$T^* = (e_1, e_2, \ldots, e_{n-1})$是一棵最小树。
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">算法2：破圈法</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p><strong>基本步骤：</strong></p>
+                    <ol>
+                        <li>从图$G$中任选一棵树$T_1$。</li>
+                        <li>加上一条弦$e_1$，$T_1 + e_1$中立即生成一个圈。去掉此圈中最大权边，得到新树$T_2$。</li>
+                        <li>以$T_2$代$T_1$，重复(2)再检查剩余的弦，直到全部弦检查完毕为止。</li>
+                    </ol>
+                    
+                    <div class="theorem">
+                        <strong>定理9</strong> 图$G$的生成树$T$为最小树，当且仅当对任一弦$e$来说，$e$是$T + e$中与之对应的圈$\mu_e$中的最大权边。
+                    </div>
+                </div>
+            </div>
+            
+            <h3>四、根树及其应用</h3>
+            
+            <div class="definition">
+                <strong>定义17</strong> 若一个有向图在不考虑边的方向时是一棵树，则称这个有向图为<span class="highlight">有向树</span>。
+            </div>
+            
+            <div class="definition">
+                <strong>定义18</strong> 有向树$T$，恰有一个结点入次为0，其余各点入次均为1，则称$T$为<span class="highlight">根树</span>（又称外向树）。
+            </div>
+            
+            <p>根树中入次为0的点称为<strong>根</strong>。根树中出次为0的点称为<strong>叶</strong>，其他顶点称为<strong>分枝点</strong>。</p>
+            
+            <div class="definition">
+                <strong>定义19</strong> 在根树中，若每个顶点的出次小于或等于$m$，称这棵树为<span class="highlight">$m$叉树</span>。若每个顶点的出次恰好等于$m$或零，则称这棵树为<span class="highlight">完全$m$叉树</span>。当$m=2$时，称为<strong>二叉树</strong>、<strong>完全二叉树</strong>。
+            </div>
+            
+            <button class="collapsible">霍夫曼编码（Huffman Coding）</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>在实际问题中常讨论叶上带权的二叉树。令有$s$个叶子的二叉树$T$各叶子的权分别为$p_i$，根到各叶子的距离（层次）为$l_i$ $(i=1,\ldots,s)$，这棵二叉树$T$的总权数为：</p>
+                    $$m(T) = \sum_{i=1}^{s} p_i l_i$$
+                    
+                    <p>满足总权最小的二叉树称为<strong>最优二叉树</strong>。霍夫曼（D. A. Huffman）给出了一个求最优二叉树的算法，所以又称<strong>霍夫曼树</strong>。</p>
+                    
+                    <p><strong>算法步骤：</strong></p>
+                    <ol>
+                        <li>将$s$个叶子按权由小至大排序，设$p_1 \leq p_2 \leq \cdots \leq p_s$。</li>
+                        <li>将二个具有最小权的叶子合并成一个分支点，其权为$p_1 + p_2$，将新的分支点作为一个叶子。令$s \leftarrow s-1$，若$s=1$停止，否则转(1)。</li>
+                    </ol>
+                    
+                    <div class="example">
+                        <strong>例6</strong> $s=6$，其权分别为$4, 3, 3, 2, 2, 1$，求最优二叉树。
+                        <br><strong>解：</strong>该树构造过程如图所示，总权为
+                        $$1 \times 4 + 2 \times 4 + 2 \times 3 + 3 \times 2 + 3 \times 2 + 4 \times 2 = 38$$
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section3">
+            <h2>🛣️ 第三节 最短路问题</h2>
+            
+            <p>最短路问题是网络理论中应用最广泛的问题之一。许多优化问题可以使用这个模型，如设备更新、管道敷设、线路安排、厂区布局等。</p>
+            
+            <h3>一、Dijkstra算法</h3>
+            
+            <p>本算法由Dijkstra于1959年提出，可用于求解指定两点$v_s$，$v_t$间的最短路，或从指定点$v_s$到其余各点的最短路，目前被认为是求无负权网络最短路问题的最好方法。</p>
+            
+            <button class="collapsible">Dijkstra算法步骤</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>算法采用标号法。可用两种标号：T标号与P标号，T标号为试探性标号（tentative label），P为永久性标号（Permanent label）。</p>
+                    
+                    <div class="algorithm">
+                        <strong>步骤：</strong>
+                        <div class="algorithm-step">(1) 给v_s以P标号，P(v_s)=0，其余各点均给T标号，T(v_i)=+∞</div>
+                        <div class="algorithm-step">(2) 若v_i点为刚得到P标号的点，考虑这样的点v_j：(v_i,v_j)属于E，且v_j为T标号。对v_j的T标号进行如下的更改：</div>
+                        <div class="algorithm-step">    T(v_j) = min[T(v_j), P(v_i) + l_{ij}]</div>
+                        <div class="algorithm-step">(3) 比较所有具有T标号的点，把最小者改为P标号，即</div>
+                        <div class="algorithm-step">    P(v̄) = min[T(v_i)]</div>
+                        <div class="algorithm-step">    当存在两个以上最小者时，可同时改为P标号。若全部点均为P标号则停止。否则用v̄代v_i转回(2)。</div>
+                    </div>
+                    
+                    <div class="example">
+                        <strong>例7</strong> 用Dijkstra算法求图中$v_1$点到$v_6$点的最短路。
+                    </div>
+                    
+                    <div class="note">
+                        <strong>⚠️ 重要提醒：</strong>这个算法只适用于全部权为非负情况，如果某边上权为负的，算法失效。
+                    </div>
+                </div>
+            </div>
+            
+            <button class="collapsible">应用实例：设备更新问题</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="example">
+                        <strong>例8</strong> 设备更新问题
+                        <p>某工厂使用一台设备，每年年初工厂都要作出决定，如果继续使用旧的，要付较多维修费；若购买一台新设备，要付更新费。试制订一个5年的更新计划，使总支出最少。由表知该设备在不同役龄的年效益、更新费与维修费。</p>
+                    </div>
+                    
+                    <p><strong>解法：</strong>把这个问题化为最长路问题。</p>
+                    
+                    <p>用点$v_i$表示第$i$年年初购进一台新设备，虚设一个点$v_6$，表示第5年年底。边$(v_i,v_j)$表示第$i$年年初购进的设备一直使用到第$j$年年初（即第$j-1$年年底）。</p>
+                    
+                    <p>边$(v_i,v_j)$上的数字表示第$i$年年初购进设备，一直使用到第$j$年年初的累计效益减去累计维修费及$(j-1)$年末更新费用后的净收益。</p>
+                    
+                    <p>这样设备更新问题就变为：求从$v_1$到$v_6$的最长路问题。</p>
+                </div>
+            </div>
+            
+            <h3>二、Floyd算法</h3>
+            
+            <p>某些问题中，要求网络上任意两点间的最短路。这类问题可以用Dijkstra算法依次改变起点的办法计算，但比较烦琐。这里介绍的Floyd方法（1962年）可直接求出网络中任意两点间的最短路。</p>
+            
+            <button class="collapsible">Floyd算法步骤</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p>为计算方便，令网络的权矩阵为$D=(d_{ij})_{n \times n}$，$l_{ij}$为$v_i$到$v_j$的距离：</p>
+                    $$d_{ij} = \begin{cases} l_{ij} & \text{当}(v_i,v_j) \in E \\ \infty & \text{其他} \end{cases}$$
+                    
+                    <div class="algorithm">
+                        <strong>算法基本步骤：</strong>
+                        <div class="algorithm-step">(1) 输入权矩阵D^(0) = D</div>
+                        <div class="algorithm-step">(2) 计算D^(k) = (d_{ij}^{(k)})_{n×n} (k=1,2,3,...,n)</div>
+                        <div class="algorithm-step">    其中 d_{ij}^{(k)} = min[d_{ij}^{(k-1)}, d_{ik}^{(k-1)} + d_{kj}^{(k-1)}]</div>
+                        <div class="algorithm-step">(3) D^(n) = (d_{ij}^{(n)})_{n×n}中元素d_{ij}^{(n)}就是v_i到v_j的最短路长。</div>
+                    </div>
+                    
+                    <p>矩阵中$d_{ij}^{(k)}$表示从$v_i$点到$v_j$点，最多经由中间点$v_1, v_2, \ldots, v_k$的最短路长。</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section4">
+            <h2>💧 第四节 最大流问题</h2>
+            
+            <p>最大流问题是一类应用极为广泛的问题，例如在交通运输网络中有人流、车流、货物流，供水网络中有水流，金融系统中有现金流，通信系统中有信息流，等等。20世纪50年代福特（Ford）、富克逊（Fulkerson）建立的"网络流理论"，是网络应用的重要组成部分。</p>
+            
+            <h3>一、最大流有关概念</h3>
+            
+            <div class="definition">
+                <strong>定义20</strong> 设有向连通图$G=(V, E)$，$G$的每条边$(v_i,v_j)$上有非负数$c_{ij}$称为边的<span class="highlight">容量</span>，仅有一个入次为0的点$v_s$称为<strong>发点</strong>（源），一个出次为0的点$v_t$称为<strong>收点</strong>（汇），其余点为<strong>中间点</strong>，这样的网络$G$称为<strong>容量网络</strong>，常记做$G=(V, E, c)$。
+            </div>
+            
+            <p>对任一$G$中的边$(v_i,v_j)$有流量$f_{ij}$，称集合$f=\{f_{ij}\}$为网络$G$上的一个<strong>流</strong>。称满足下列条件的流$f$为<span class="highlight">可行流</span>：</p>
+            
+            <ol>
+                <li><strong>容量限制条件：</strong>对$G$中每条边$(v_i,v_j)$，有$0 \leq f_{ij} \leq c_{ij}$</li>
+                <li><strong>平衡条件：</strong>对中间点$v_i$，有$\sum_j f_{ij} = \sum_k f_{ki}$，即物资的输入量与输出量相等</li>
+                <li>对收、发点$v_s$，$v_t$，有$\sum_j f_{sj} = \sum_k f_{kt} = w$，$w$为网络流的<strong>总流量</strong></li>
+            </ol>
+            
+            <p>所谓<span class="highlight">最大流问题</span>就是在容量网络中，寻找流量最大的可行流。</p>
+            
+            <div class="definition">
+                <strong>定义21</strong> 容量网络$G=(V, E, c)$，$v_s$，$v_t$为发、收点，若有边集$E'$为$E$的子集，将$G$分为两个子图$G_1$，$G_2$，其顶点集合分别记$S$，$\bar{S}$，$S \cup \bar{S} = V$，$S \cap \bar{S} = \emptyset$，$v_s$，$v_t$分属$S$，$\bar{S}$，满足：
+                <ol>
+                    <li>$G(V, E-E')$不连通；</li>
+                    <li>$E''$为$E'$的真子集，而$G(V, E-E'')$仍连通，</li>
+                </ol>
+                则称$E'$为$G$的<span class="highlight">割集</span>，记$E'=(S, \bar{S})$。
+            </div>
+            
+            <p>割集$(S, \bar{S})$中所有始点在$S$，终点在$\bar{S}$的边的容量之和，称为$(S, \bar{S})$的<strong>割集容量</strong>，记为$C(S, \bar{S})$。容量网络$G$的割集有多个，其中割集容量最小者称为网络$G$的<span class="highlight">最小割集容量</span>（简称最小割）。</p>
+            
+            <h3>二、最大流-最小割定理</h3>
+            
+            <div class="theorem">
+                <strong>定理10</strong> 设$f$为网络$G=(V, E, c)$的任一可行流，流量为$w$，$(S, \bar{S})$是分离$v_s$，$v_t$的任一割集，则有$w \leq C(S, \bar{S})$。
+            </div>
+            
+            <div class="theorem">
+                <strong>定理11（最大流-最小割定理）</strong> 任一个网络$G$中，从$v_s$到$v_t$的最大流的流量等于分离$v_s$、$v_t$的最小割的容量。
+            </div>
+            
+            <div class="definition">
+                <strong>定义22</strong> 容量网络$G$，若$\mu$为网络中从$v_s$到$v_t$的一条链，给$\mu$定向为从$v_s$到$v_t$，$\mu$上的边凡与$\mu$同向称为<strong>前向边</strong>，凡与$\mu$反向称为<strong>后向边</strong>，其集合分别用$\mu^+$和$\mu^-$表示，$f$是一个可行流，如果满足
+                $$\begin{cases} f_{ij} < c_{ij} & (v_i,v_j) \in \mu^+ \\ f_{ij} > 0 & (v_i,v_j) \in \mu^- \end{cases}$$
+                则称$\mu$为从$v_s$到$v_t$的（关于$f$的）<span class="highlight">可增广链</span>。
+            </div>
+            
+            <h3>三、求最大流的标号算法</h3>
+            
+            <p>设已有一个可行流$f$，标号的方法可分为两步：第1步是标号过程，通过标号来寻找可增广链；第2步是调整过程，沿可增广链调整$f$以增加流量。</p>
+            
+            <button class="collapsible">标号算法详细步骤</button>
+            <div class="content">
+                <div class="content-inner">
+                    <h4>1. 标号过程</h4>
+                    <div class="algorithm">
+                        <div class="algorithm-step">(1) 给发点以标号(Δ, +∞)。</div>
+                        <div class="algorithm-step">(2) 选择一个已标号的顶点v_i，对于v_i的所有未给标号的邻接点v_j按下列规则处理：</div>
+                        <div class="algorithm-step">    ① 若边(v_i,v_j)∈E，且f_{ij}>0，则令δ_j=min(f_{ij},δ_i)，并给v_j以标号(-v_i,δ_j)。</div>
+                        <div class="algorithm-step">    ② 若边(v_i,v_j)∈E，且f_{ij}<c_{ij}时，令δ_j=min(c_{ij}-f_{ij},δ_i)，并给v_j以标号(+v_i,δ_j)。</div>
+                        <div class="algorithm-step">(3) 重复(2)直到收点v_t或不再有顶点可标号时为止。</div>
+                    </div>
+                    
+                    <p>若$v_t$得到标号，说明存在一条可增广链，所以标号过程结束，转入调整过程。若$v_t$未获得标号，标号过程已无法进行下去，说明$f$已是最大流。</p>
+                    
+                    <h4>2. 调整过程</h4>
+                    <div class="algorithm">
+                        <div class="algorithm-step">(1) 令δ=δ_t为调整量，从v_t点开始，由逆可增广链方向按标号调整流量。</div>
+                        <div class="algorithm-step">(2) 去掉所有标号，回到第1步，对新可行流f'重新标号。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section5">
+            <h2>💰 第五节 最小费用流问题</h2>
+            
+            <p>上一节讨论的寻求网络最大流问题，只考虑了流的数量，没有考虑流的费用。实际上许多问题要考虑流的费用最小问题。</p>
+            
+            <h3>最小费用流问题的一般提法</h3>
+            
+            <p>已知容量网络$G=(V, E, c)$，每条边$(v_i,v_j)$除了已给出容量$c_{ij}$外，还给出了单位流量的费用$d_{ij}$ $(d_{ij} \geq 0)$，记$G=(V, E, c, d)$。求$G$的一个可行流$f=\{f_{ij}\}$，使得流量$W(f)=v$，且总费用最小：</p>
+            
+            $$d(f) = \sum_{(v_i,v_j) \in E} d_{ij} f_{ij}$$
+            
+            <p>特别地，当要求$f$为最大流时，此问题即为<span class="highlight">最小费用最大流问题</span>。</p>
+            
+            <button class="collapsible">对偶算法（最小费用流算法）</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p><strong>基本思路：</strong>先找一个流量为$W(f^{(0)}) < v$的最小费用流$f^{(0)}$，然后寻找从$v_s$到$v_t$可增广链$\mu$，用最大流方法将$f^{(0)}$调整到$f^{(1)}$，使$f^{(1)}$流量为$W(f^{(0)})+\theta$，且保证$f^{(1)}$是在$W(f^{(0)})+\theta$流量下的最小费用流，不断进行到$W(f^{(k)})=v$为止。</p>
+                    
+                    <div class="definition">
+                        <strong>定义25</strong> 对网络$G=(V, E, c, d)$，有可行流$f$，保持原网络各点，每条边用两条方向相反的有向边代替，各边的权$l_{ij}$按如下规则：
+                        <ol>
+                            <li>当边$(v_i,v_j) \in E$，令$l_{ij} = \begin{cases} d_{ij} & \text{当}f_{ij}<c_{ij} \\ +\infty & \text{当}f_{ij}=c_{ij} \end{cases}$</li>
+                            <li>当边$(v_j,v_i)$为原来$G$中边$(v_i,v_j)$的反向边，令$l_{ji} = \begin{cases} -d_{ij} & \text{当}f_{ij}>0 \\ +\infty & \text{当}f_{ij}=0 \end{cases}$</li>
+                        </ol>
+                        这样得到的网络$L(f)$称为<strong>长度网络</strong>（将费用看成长度）。
+                    </div>
+                    
+                    <p>显然在$G$中求关于$f$的最小费用可增广链等价于在长度网络$L(f)$中求从$v_s$到$v_t$的最短路。</p>
+                    
+                    <div class="algorithm">
+                        <strong>对偶算法的基本步骤：</strong>
+                        <div class="algorithm-step">(1) 取零流为初始可行流，即f^(0)={0}</div>
+                        <div class="algorithm-step">(2) 若有f^(k-1)，流量为W(f^(k-1))<v，构造长度网络L(f^(k-1))</div>
+                        <div class="algorithm-step">(3) 在长度网络L(f^(k-1))中求从v_s到v_t的最短路。若不存在最短路，则f^(k-1)已为最大流，不存在流量等于v的流，停止；否则转(4)</div>
+                        <div class="algorithm-step">(4) 在G中与这条最短路相应的可增广链μ上，做f^(k)=f_μ^(k-1)θ</div>
+                        <div class="algorithm-step">    其中 θ = min{min(c_{ij}-f_{ij}^(k-1)), min f_{ij}^(k-1)}</div>
+                        <div class="algorithm-step">    此时f^(k)的流量为W(f^(k-1))+θ，若W(f^(k-1))+θ=v则停止，否则令f^(k)代替f^(k-1)返回(2)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="exercises">
+            <h2>📝 习题</h2>
+            
+            <button class="collapsible">习题8.1 - 化学药品储存问题</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p><strong>题目：</strong>有8种化学药品A、B、C、D、E、F、G、H要放进储藏室。从安全角度考虑，下列各组药品不能储存在同一室内：A-C, A-F, A-H, B-D, B-F, B-H, C-D, C-G, D-E, D-G, E-G, E-F, F-G, G-H，问至少需要几间储藏室存放这些药品？</p>
+                </div>
+            </div>
+            
+            <button class="collapsible">习题8.2 - 图的性质判断</button>
+            <div class="content">
+                <div class="content-inner">
+                    <p><strong>题目：</strong>下列说法中正确的有：</p>
+                    <ol>
+                        <li>具有$n$个顶点的完全图有$\frac{1}{2}n(n-1)$条边；</li>
+                        <li>具有$n$个顶点的二部图恒有$\frac{1}{2}n(n-1)$条边；</li>
+                        <li>任一图$G$中，当点集$V$确定后，树图是$G$中边数最少的连通图；</li>
+                        <li>一个连通图中奇点的总数可以是奇数个，也可以是偶数个。</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <button class="collapsible">更多习题...</button>
+            <div class="content">
+                <div class="content-inner">
+                    <div class="note">
+                        <p><strong>💡 学习提示：</strong>本章涉及大量的算法和应用实例，建议：</p>
+                        <ul>
+                            <li>首先理解基本概念（图、树、网络等）</li>
+                            <li>重点掌握各种算法的步骤（Dijkstra、Floyd、最大流标号法等）</li>
+                            <li>通过实例练习加深理解</li>
+                            <li>注意算法的适用条件和限制</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>📚 运筹学教程（第5版）第八章 - 图与网络分析</p>
+            <p>💻 交互式HTML版本 | 基于MathJax数学公式渲染</p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
+                <strong>使用说明：</strong><br>
+                1. 保存此文件为.html格式<br>
+                2. 需要网络连接以加载MathJax库进行公式渲染<br>
+                3. 在浏览器中打开即可查看和学习<br>
+                4. 点击橙色按钮可展开/折叠内容
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        // 折叠/展开功能
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
